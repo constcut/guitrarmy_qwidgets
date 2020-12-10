@@ -102,7 +102,7 @@ void AmplitudeAnalys::startAnalys(short *samples, long monoLength)
         if(scaledWave[i].energy > maxValue)
         {
             for (unsigned int j = 0; j < rythmicMaxSequence.size(); ++j)
-                if (abs(rythmicMaxSequence[j].localOffset - i)<=2)//32&&&&&&
+                if (abs(int(rythmicMaxSequence[j].localOffset - i))<=2)//32&&&&&&
                     goto xBreakMax;
 
 
@@ -167,7 +167,7 @@ for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
 {    if(scaledWave[i].energy < minValue)
     {
         for (unsigned int j = 0; j < rythmicMinSequence.size(); ++j)
-            if (abs(rythmicMinSequence[j].localOffset - i)<=2)//32&&&&&&
+            if (abs(int(rythmicMinSequence[j].localOffset - i))<=2)//32&&&&&&
                 goto xBreakMin;
 
 
