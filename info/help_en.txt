@@ -1,0 +1,245 @@
+<center>
+<h2>Main menu</h2><br>
+<img src="mainMenu.png">
+<pre>
+
+Some of buttons get hidden in portrait screen orientation:
+They still can me accesed from other buttons,
+If tap and hold on some buttons that will show you additional menu.
+
+1) back - to previos view
+
+2) new tab
+
+3) open tab from file
+
+4) tablature view
+
+5) tests view - this button gets hidden
+
+6) tap rhythm - this button gets hidden
+
+7) pattern input
+Button also have inside menu:
+	*tap rhythm
+	*record
+	*morse
+	*and itself - pattern
+
+8) configuration
+Button also have inside menu:
+	*info
+	*tests
+	*and itself - config
+
+9) record view (doesn't displays yet on android) - this button gets hidden
+
+10) Morse code input - this button gets hidden
+
+11) infromation (about) - this button gets hidden
+
+12) undo
+
+13) play tablature
+
+14) open pannel
+
+</pre><br>
+
+<hr>
+<h2>
+Pannels
+<br>
+A) Tab pannel
+</h2><br>
+<img src="tabPannel.png">
+
+<pre>
+
+
+1) next Bar
+2) prev Bar
+3) prev Track
+4) next Track
+5) goto to Bar by number
+6) open track
+7) add track
+8) delete track
+9) make track drums
+10) add marker
+11) change bar signature size
+12) start reprise
+13) end reprise
+14) alternative repeate
+15) change bpm
+16) change instrument
+17) change volume
+18) change balance (panoram)
+19) change track name
+20) change tuning
+21) mute track
+22) make track solo
+</pre>
+<hr>
+<br>
+
+<h2>B) Track Pannel</h2>
+<br>
+<img src="trackPannel.png">
+
+<pre>
+1) 0-9 - input keys
+2) play tab with stage of Abstract Music
+3) play tab directly
+4) increace note len
+5) decrease note len
+6) pause
+7) delete note
+8) save in own format (fast save)
+9) load own format (fast load)
+10) dot
+11) trumplet
+12) leeg
+13) dead note
+14) undo
+15) new bar
+16) prev Track
+17) next Track
+18) effects pannel
+19) clipboard pannel
+20) on the right navigation - upper - pages navigation, midle - bars, lower - beats, keys up down - strings
+
+In newer versions sequence could be different, to be easier accesed from portrait orientation.
+We try to find most effecient way, when it would be done this help would be updated.
+
+</pre>
+<hr>
+<br>
+
+<h2>C) Clipboard pannel</h2><br>
+<img src="clipPannel.png">
+<pre>
+1) copy
+2) copy beats
+3) copy bars
+4) cut
+5) paste
+6) select bars
+7) select bars
+8) switch to first clipboard
+9) switch to second clipboard
+10) switch to third clipboard
+11) back to pannel of track
+</pre>
+<hr>
+<br>
+
+<h2>
+D) Pannel of effects</h2><br>
+<img src="effPannel.png">
+<pre>
+1) vibrato
+2) slide
+3) hummer
+4) let ring
+5) palm mute
+6) harmonics
+7) tremolo
+8) trill
+9) stokato
+10) tapping
+11) slap
+12) popping
+13) fade in
+14) mediate up
+15) mediate down
+16) accent
+17) heavy accent
+18) benc
+19) chord (chord diagram)
+20) text
+21) changes (bpm instr etc)
+22) fingering
+23) upstroke
+24) downstroke
+25) back to track pannel
+</pre>
+<hr>
+
+<br>
+<pre>
+
+Types of views:
+
+A) Tab view
+Possible actions:
+
+*Chose bar by press - twice will open track on that bar
+
+*Scroll gesture left\right - navigation
+
+B) Track view
+
+*Chose bar and beat by press
+
+*Scroll tablature up\down 
+
+*Double click sets end of the selection for coping
+
+C) Tests view
+
+*Contains files for alpha tests, first two sections are simple functions,
+third - mine and mine friends compositions 
+
+D) Tap rhythm vire
+
+*Lets you to tap rhythm and make tab from it
+
+E) Pattern input view
+
+*Lets to create drums as pattern
+
+F) Configutarion view
+
+*Shows current configuration
+
+*Scale buttons(zoom in and out)
+
+*Logging buttons
+
+*Gesture for pinch scale(works only on that window)
+
+G) Record view
+
+*Records audio
+	
+*Shows audio wave and lets navigate through it
+	(not on android yet)
+
+H) Morce Code Rhythm
+
+*Lets imput text and get tablature from it
+
+I) Infomation view
+
+*About the project
+
+J) Welcome view
+
+*Contains help information you just read
+</pre>
+
+<h2>Logging</h2>
+<pre>
+Also there is logging system to help find bugs or crash reasons.
+Now log files could be found at the root of you sdcard,
+log file name: Guitarmy.log
+
+Please note, that every time you launch guitarmy - log gets replaced by new,
+so if you need save log after crash - do it before launching Guitarmy again
+</pre>
+<br>
+<a href="info_en.txt">Information about Guitarmy</a>
+<br>
+<a href="help.txt">Back to select language</a href>
+</center>

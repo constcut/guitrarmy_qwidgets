@@ -1,0 +1,14 @@
+
+
+<hr>
+<br>
+
+<center>
+Choose language for help: <br>
+<pre>          </pre>
+<a href="help_en.txt" align="center">English</a> <br><br>
+<pre>          </pre>
+<a href="help_ru.txt" align="center">Russian</a>
+</center>
+
+<hr>

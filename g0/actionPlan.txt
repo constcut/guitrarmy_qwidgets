@@ -1,0 +1,140 @@
+Информация об эффектах и функциях интерфейса
+(сохранить).
+
+        *полный список других
+                {
+                        1) акцентирования (просто и хэви)
+                        2) лет ринг
+                        3) фладжалеты  а) натуральные
+                        4) тремоло
+                        5) трель (тут может и нужен)
+                        6) пальм мьют
+                        7) стокатто
+                        8) теп слеп поп
+                        9) фейд ин
+                        10) направление медиатора вверх или вниз
+                }
+        б) эффекты требующие ввода
+        {
+                1) бенд
+                2) фладж б) искуственные
+                3) чорд диаграм
+                4) текст
+                5) микс тейбл
+                6) пальцы
+                7) ап даун по всем струнам проходилка
+        }
+(сохранить информацию внутри проекта)
+3) базовый ввод: track view
+        а) нахождение всех функций используемых для базового ввода
+        {
+                1) установка точки
+                2) установка триолей (вначале можно только лишь их)
+                3) установка лиги
+                4) установка громкости
+                5) установка дед ноты Х
+        }
+        б) документирование или реализация их
+        {
+                *триоли в эноли
+        }
+        в) прочие функции (например tab view)
+        {
+                0) добавление и отображение маркера
+                1) установка размера такта
+                2) установка реприз (начала и конец)
+                3) установка бпм (кстати тапать тоже круто там бы)
+                4) смена инструмента
+                5) смена громкости\панорамы
+                6) смена названия
+                7) Альт концовки* и их отображение!
+                8) строй трека + число ладов
+        }
+        г) буфер обмена
+        {
+                1) одиночный
+                *механизм выделения
+                2) множественный
+                *механизм переключения между ними
+        }
+
+....
+Запись звука с микрофона
+
+Можно так:
+
+Declare Function mciSendString Lib "winmm.dll" Alias "mciSendStringA" ( _
+     Byval lpstrCommand As String, _
+     Byval lpstrReturnString As String, _
+     Byval uReturnLength As Long, _
+     Byval hwndCallback As Long) As Long
+Print "If cancel record, press any key"
+mciSendString("open new type waveaudio alias mywav", "", 0, 0)
+mciSendString("record mywav", "", 0, 0)
+Sleep
+mciSendString("stop mywav", "", 0, 0)
+mciSendString("save mywav c:\cdtest.wav", "", 0, 0)
+mciSendString("close mywav", "", 0, 0)
+
+Или так:
+
+Declare Function mciSendString Lib "winmm.dll" Alias "mciSendStringA" ( _
+     Byval lpstrCommand As String, _
+     Byval lpstrReturnString As String, _
+     Byval uReturnLength As Long, _
+     Byval hwndCallback As Long) As Long
+Print "If cancel record, press any key"
+mciSendString("OPEN NEW TYPE WAVEAUDIO ALIAS rec", "", 0, 0)
+mciSendString("set rec bitspersample 8 samplespersec 8000 channels 1", "", 0, 0)
+mciSendString("record rec", "", 0, 0)
+Sleep
+mciSendString("STOP rec", "", 0, 0)
+mciSendString("SAVE rec temp.wav", "", 0, 0)
+mciSendString("CLOSE rec", "", 0, 0)
+
+Старые мысли:
+1) довести и стандартизировать G0
+        *проклятая генерация миди файлов
+        *собственный формат с контролем версий
+
+2) разработать интерфейс
+        * отображение таблатуры
+        * синхронное отображению - воспроизведение
+        * зачатки возможностей - заметки на полях, множественные буферы обмена, тестирования
+3) элементы ввода
+        *pattern
+        *piano roll
+        *настукивание ритма
+        *зачаток нотного редактора
+        *зачаток формы распознавания записанного
+4) база данных таблатур
+        *грабер
+        *упаковщик\распаковщик
+5) последние фазы
+        *экспорт и импорт распространенных форматов
+        *замечания и предложения
+
+
+QPrinter printer;
+        printer.setOutputFormat( QPrinter::PdfFormat );
+        printer.setPageSize( QPrinter::A4 );
+        printer.setOrientation( QPrinter::Landscape );
+        printer.setOutputFileName( "test.pdf" );
+        printer.setPageMargins( 20, 20, 15, 10, QPrinter::Millimeter );
+        QPainter painter;
+        QFont font;
+        font.setStyleHint( QFont::TypeWriter ); // игнорируется, какой шрифт не задай, печатает только гельветикой
+        // font.setFamily( "Courier" ); // тоже по барабану
+        // ради эксперимента написал:
+        font.setUnderline( true ); // и это проигнорировалось...
+        painter.setFont( font );
+        if( ! painter.begin( &printer ) )
+                return 1;
+        QTextCodec::setCodecForTr( QTextCodec::codecForName( "Windows-1251" ) );
+        painter.drawText( 0,  0, QObject::tr( "Проверка русских and latinic!" ) );
+        painter.drawText( 0, 20, QObject::tr( "Но шрифт не моноширинный" ) );
+
+        if( ! printer.newPage() )
+                return 1;
+
+        return 0;

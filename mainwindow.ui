@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>gUI</string>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="action800x480">
+   <property name="text">
+    <string>800x480</string>
+   </property>
+  </action>
+  <action name="action1024x600">
+   <property name="text">
+    <string>1024x600</string>
+   </property>
+  </action>
+  <action name="action1280x720">
+   <property name="text">
+    <string>1280x720</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

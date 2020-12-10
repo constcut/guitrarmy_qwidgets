@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>info/help_en.txt</file>
+        <file>info/help_ru.txt</file>
+        <file>info/pic.png</file>
+        <file>info/clipPannel.png</file>
+        <file>info/effPannel.png</file>
+        <file>info/mainMenu.png</file>
+        <file>info/tabPannel.png</file>
+        <file>info/trackPannel.png</file>
+        <file>info/help.txt</file>
+        <file>info/info_en.txt</file>
+        <file>info/info_ru.txt</file>
+    </qresource>
+</RCC>

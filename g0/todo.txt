@@ -1,0 +1,187 @@
+POWER TAB TODO:
+1) determine which track bars are
+3) trumplets missing
+4) leeg and other states
+
+
+
+
+
+
+//please note possible that first and last pa don't own the notes already
+//then there would be broken chain, beacuse they were not extracted from track
+
+        //must start inserting bars from last - to save fine sequence in
+        //our odd inserBefore method
+
+        //lastpa always just inserted but not always there is a bar created for them
+        //how could we know
+
+        //if next beat then last, in prev doesn't shows mirror
+        //means we have cut the last bar
+        //so - just coppy beats into empty one
+
+        ///FIND beat that still parrents to lastPa,
+        /// find the border - then we have range from border to last
+        /// create a new bar for it - try to fit the size
+        /// insert it - here we got our LAST bar
+
+        ///then after border we fall into cycle of inserting bars
+        /// right untill the first pa - seams its easy to cycle
+        /// and then we have the beat last befor the first Pa
+
+        /// so walking into prev we got into sequence from it to firstBeat
+        /// it
+
+
+        if (beatN)
+        {
+            //it was not from a start
+            //first fa don't owns the note
+
+            //search for next one - he owns the beats
+
+            //search untill the lastPa
+
+            //dont touch it
+        }
+        {
+            //it was right from the start just go on with bars
+            Bar *preLast = lastPa->getPrev();
+
+            if (preLast == 0)
+            {
+
+            }
+
+            for (Bar *b = firstPa; b!=lastPa; b = b->getNext())
+            {
+                if (b==0)
+                    break;
+                    //oups - means last Pa is out of our range
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+LINUX TODO:
+
+all todo moved to trello
+
+CLEAN UP MAIN FUNCTION WELL
+
+1) scales of size
+2) midi playback better
+
+3) start up check + set up globals
+
+
+toolchains:
+1) gdb python
+2) v-play
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    mediaPlayer.setMedia(QUrl::fromLocalFile(filePath));
+    mediaPlayer.play();
+}
+
+void MusicPlayer::togglePlayback()
+{
+    if (mediaPlayer.mediaStatus() == QMediaPlayer::NoMedia)
+        openFile();
+    else if (mediaPlayer.state() == QMediaPlayer::PlayingState)
+        mediaPlayer.pause();
+    else
+        mediaPlayer.play();
+}
+
+ON NOT WIN VERSIONS
+
+
+
+1) getP for poly returning pointer
+
+
+
+TODO:
+
+    Beats in pair - clean this debug info
+
+ 1) Refactoring:
+
+*Midi file: tracks indexation Refactoring
+
+    0) Create test files with 10 tracks
+    1) with 3 drum tracks
+
+*Mifi First Set
+
+    A) BOTH tracks
+
+*Attempt to unite pause accumulators
+
+    B) MINI class
+
+*Changes subfunctions
+
+2) GP3
+
+    Z) Implementation for 1 and 2
+    A) * REFACTORING to unite parts together
+    B) RECHECK all
+
+
+3) Effects refactoring
+
+*Clean up all of the useless effects, before push (can set meta event here as text)
+
+*Harmonical handle review:
+        *Function for single note push
+        *By help of chain try to solve leeg effects as it possible from now - if possible to stay without LZPlane
+
+!!! *CutDownLisOfMistakes;
+
+4) top own format:
+
+64bit header;  3 bit for base types: test, base, versioned, packed, base, archive etc, poly 8-reserved(adaptation model first)
+test:
+
+ 5bit amount of tracks;
+ 16bit amount of measures;//256 . . . . . .16k
+ +5 bytes:
+ 2b: text info, - common fields + custome flag;
+
+--------------------------HOLDER--------------------------------------
+

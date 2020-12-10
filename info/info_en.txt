@@ -1,0 +1,41 @@
+<center>
+<pre>
+Guitarmy is a tablature editor with functions that didn't appear before in such software.
+
+Tablature is standard to store guitar notes, that is very popular over the world, now there are thousands of tabs for many songs, and its also the easiest way to compose you own songs with you band, or alone.
+
+Guitarmy main features:
+1) Different tablature input ways:
+
+* classic input - just as it was in any other tabs software
+* pattern input - helps you easily tab your drums, with intuitive interface, and without any special knowledge
+* tap input - helps you to tab rhythm that you can just tap on the screen
+* guitar input(in progress) - makes able to write tabs using your guitar, but not the keyboard
+* experimental inputs - for example you can use text to create Morse code, that would be converted to tab
+
+2) Own file format, that helps:
+
+a) store different input methods as part of tab
+b) control the versions of you tab(in progress) - not to lose any change, or be able to return back to an older version, or switch between different variations of one riff
+c) poly-rhythmic - no longer each bar in tablature must have the same signature sizes for all instruments, you can mix together them, for example using 4/4 for first track and 3/4 for second
+
+3) Musical analyse(in progress) - decompose tablature into separated melody and rhythm, that helps:
+
+* know and learn the scales
+* know and learn rhythm patterns such as shuffle, gallop etc
+* change melody or rhythm - to another scale or another pattern
+* use polyphonic tricks as simple as using clipboard
+
+4) Other useful features 
+
+* configuration that make you able to set you own personal look of editor, combinations of shortcuts and other useful details that helps to make you editor look more personal
+* multiple clipboards - helps you to edit your tabs easier, you can copy or cut few part of tablature at the same time
+
+And of course Guitarmy reads most of the tablature file formats, instead it's own, and we work to cover them all. 
+
+Current status of Guitarmy is - Alpha test,
+Some of the features may not work as they used to, but we work to make it appear in a proper way as soon as possible, with you help it would be much easier.
+</pre>
+<br>
+<a href="help.txt">Back</a>
+</center>
