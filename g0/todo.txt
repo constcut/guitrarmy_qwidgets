@@ -1,12 +1,23 @@
 
 
 
-    1) Убрать все зависимости оставшиеся от враппера
 
-    2) Перенести файлы из ideas
+        1) afile, apainter и множество других избавиться от всех их следов
 
-    3) Видимо пока что избавиться от идей музыкального промежуточного анализа
+        2) tab.h \ poly template review
 
-    4) Начать готовить к полному переносу на QML
+        3) tests midi\tab->midi : greatCheck() : scenario.cpp
 
-    5) Проведения эксперимента по указанному пути, сбор статистики
+        4) sf2 generation: midirender gtab3, timidity config?
+
+        5) gb0 tests run
+
+        6) full base tests
+
+        7) remove types.h\cpp
+
+        8) statistic: fret, note (exact + key), note length, pause length,
+
+        9) wav recorder \ loader \ recognizer - console access to sf generated audio
+
+        10) g0 lib: std c++ gtab, midi, action stream (edit, redo\undo, copy\cut), MIT
