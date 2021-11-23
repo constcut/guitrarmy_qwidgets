@@ -629,7 +629,7 @@ void readNoteEffects(AFile &file, Note *newNote, int gpVersion=4)
         readBendGTP(&file,bend);
 
         if (gtpLog)
-        LOG( <<(int)bend<< " Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType());
+        LOG(<< " Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType());
 
         newNote->setEffect(17);//first common pattern
         newNote->effPack.addPack(17,2,bend); //type 2 is bend
@@ -1549,7 +1549,7 @@ bool Gp4Import::import(AFile &file, Tab *tab, byte knownVersion)
 //  ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
 
-/* void writeString(AFile &file, std::string value, ul stringLen=0)
+void writeString(AFile &file, std::string value, ul stringLen=0)
 {
     if (stringLen==0)
         stringLen = value.length();
@@ -1614,7 +1614,7 @@ void writeBeatEffects(AFile &file, Beat *cursorBeat)
     if (beatEffectsHead2 & 4)
     {   //tremolo
        BendPoints tremoloBend;
-       writeBend(file,tremoloBend);
+       writeBend(&file, &tremoloBend);
     }
 
     if (beatEffectsHead1 & 64)
@@ -1746,7 +1746,7 @@ void writeNoteEffects(AFile &file, Note *newNote)
 
     if (noteEffectsHead1&1)
     {
-        writeBend(file,newNote->bend);
+        writeBend(&file, &newNote->bend);
     }
 
 
@@ -1809,7 +1809,7 @@ void writeNote(AFile &file, Note *newNote)
 
     if (noteHeader & 1)
     {
-        if (gtpLog)  log  <<"Time independent ";
+        if (gtpLog)  logger  <<"Time independent ";
         byte t1,t2;
         file.write(&t1,1);
         file.write(&t2,1);
@@ -1844,124 +1844,13 @@ void writeNote(AFile &file, Note *newNote)
 }
 
 
-bool Gp4Export::exPort(AFile &file, Tab &tab)
-{
-    file.opened();
-
-    tab.getV(0);
-
-    if (gtpLog)  logger << "Starting GP4 export";
-
-    byte preVersion; //=len?
-    std::string formatVersion = ""; //deadcode?
-    byte postVersion; //==0?
-
-    file.write(&preVersion,1);
-    file.write(formatVersion.c_str(),29);
-    file.write(&postVersion,1);
-
-    //writing text information
-    std::string title,subtitle,interpret,albumn,author,copyright,tabAuthor,instructions;
-
-    writeString(file,title);
-    writeString(file,subtitle);
-    writeString(file,interpret);
-    writeString(file,albumn);
-    writeString(file,author);
-    writeString(file,copyright);
-    writeString(file,tabAuthor);
-    writeString(file,instructions);
-
-    //notices
-    ul noticeLen = 0;
-    file.write(&noticeLen,4);
-
-    if (noticeLen > 0)
-    {
-        if (gtpLog)  logger << "Write notices";
-        std::string anotherNotice;
-        for (ul i=0; i < noticeLen; ++i)
-            writeString(file,anotherNotice);
-    }
-
-    byte tripletFeel = 0;
-    file.write(&tripletFeel,1);
-
-    //lyrics
-    ul lyTrack = 0;
-    file.write(&lyTrack,4);
-
-    for (int i = 0; i < 5; ++i)
-    {
-        ul emWo = 0; //what does this mean? refact
-        file.write(&emWo,4);
-        std::string lyricsOne;
-        writeString(file,lyricsOne);
-    }
-
-    //other values
-    ul bpm = 0;
-    int signKey = 0;
-    byte octave = 0;
-
-    file.write(&bpm,4);
-    file.write(&signKey,4);
-    file.write(&octave,1);
-
-    //midi channels data
-    char midiChannelsData[768];
-    file.write(midiChannelsData,768); // 64*each
-
-    //anounts
-    ul beatsAmount = 0;
-    ul tracksAmount = 0;
-
-    file.write(&beatsAmount,4);
-    file.write(&tracksAmount,4);
-
-    for (ul i = 0; i < beatsAmount; ++i)
-    {
-        //prepare header
-        byte beatHeader = 0;
-        file.write(&beatHeader,1);
-
-        //WRITE BEAT - as subfunction after read beat would be done
-    }
 
 
-    for (ul i = 0; i < tracksAmount; ++i)
-    {
-        //should not use old silly - subfunctions go on
-    }
-
-    ul globalBeatsAmount = beatsAmount*tracksAmount;
-    for (ul i = 0; i < globalBeatsAmount; ++i)
-    {
-        ul beatsInPair = 0;
-        file.write(&beatsInPair,4);
-
-        ul indexOfTrack = i % tracksAmount;
-        ul indexOfBar = i / tracksAmount;
-
-
-        for (ul j = 0; j < beatsInPair; ++j)
-        {
-            //go on beats subfunction that covers all
-            //and also beats effects
-            //and also note function
-            //that covers notes effects
-        }
-
-    }
-
-    if (gtpLog)  logger << "Exporting finish";
-
-    return true;
-}
-
-*/
 
 //END of WRITE OPERATIONS
+
+
+
 
 //////////////////////FORMAT GTP5////////////////////////////////
 //--////////////////////////////////////////////////////////////////

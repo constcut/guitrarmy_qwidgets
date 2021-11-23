@@ -879,7 +879,7 @@ int CenterView::getHeight()
     return response;
 }
 
-void CenterView::setStatusBarMessage(int index, std::string text, int timeOut=0)
+void CenterView::setStatusBarMessage(int index, std::string text, int timeOut)
 {
    if (statusSetter)
    {
@@ -1449,15 +1449,15 @@ void CenterView::paintEvent(QPaintEvent *event)
         ownChild->setVisible(true);
 
 
-        MainView *mw = getFirstChild();
-        TabView *tabV = mw->getCurrenView();
+        MainView *mw = (MainView *)getFirstChild();
+        TabView *tabV = (TabView *)mw->getCurrenView();
 
         if (tabV->tracksView.size())
         {
             TrackView *trackV = tabV->tracksView[tabV->getCurTrack()];
             trackV->setMaster(mw->getMaster());
 
-            MainView *mw2 =  ownChild->getFirstChild();
+            MainView *mw2 =  (MainView *)ownChild->getFirstChild();
             mw2->changeCurrentView(trackV);
         }
 
@@ -1776,8 +1776,8 @@ void CenterView::ondblclick(int x1, int y1)
         if (curVType==2) //opens on tab view
             {//is a child
 
-            MainView *mw = getFirstChild();
-            TrackView *trackView = mw->getCurrenView();
+            MainView *mw = (MainView *)getFirstChild();
+            TrackView *trackView = (TrackView *) mw->getCurrenView();
 
                 char track[2]={0};
                 char currentTrack = trackView->getPa()->getCurTrack();

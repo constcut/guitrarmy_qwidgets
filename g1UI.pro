@@ -8,6 +8,8 @@
 #       core gui
 QT   += widgets multimedia network
 
+#
+
 android:QT += androidextras
 
 
