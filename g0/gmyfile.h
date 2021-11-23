@@ -22,7 +22,6 @@ protected:
 //also here should be some abstraction for adaption from gp4
 //and in the end here would be connected with AHistory VersionFile
 
-
 //TODO:
 /// 1) better packing !
 /// 2) effects full save\load (33 change, 19 tremolo, 17 bend + chord + grace)

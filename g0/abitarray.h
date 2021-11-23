@@ -5,7 +5,7 @@
 
 #include <map>
 
-class Package
+class Package //TODO review
 {
 protected:
 

@@ -5,12 +5,13 @@
 #include <QTextBlock>
 #include <QTextCodec>
 
-//base
+#include <QDebug>
 #include <QFileDialog>
 #include "g0/aexpimp.h"
 
 
-static AStreaming logger("c-v");
+//static AStreaming logger("c-v");
+#define logger qDebug()
 
 
 GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
@@ -24,7 +25,7 @@ GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
 
 void GQCombo::elementChosen(int index)
 {
-    LOG(<<"log from combo "<<elementNumber<<" "<<index);
+    qDebug()<<"log from combo "<<elementNumber<<" "<<index;
     stringExtended line;
     line<<"com:"<<elementNumber<<":"<<index;
 

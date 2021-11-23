@@ -1614,7 +1614,7 @@ void writeBeatEffects(AFile &file, Beat *cursorBeat)
     if (beatEffectsHead2 & 4)
     {   //tremolo
        BendPoints tremoloBend;
-       writeBend(&file, &tremoloBend);
+       writeBendGTP(&file, &tremoloBend);
     }
 
     if (beatEffectsHead1 & 64)
@@ -1746,7 +1746,7 @@ void writeNoteEffects(AFile &file, Note *newNote)
 
     if (noteEffectsHead1&1)
     {
-        writeBend(&file, &newNote->bend);
+        writeBendGTP(&file, &newNote->bend);
     }
 
 

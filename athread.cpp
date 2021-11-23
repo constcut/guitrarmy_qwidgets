@@ -4,7 +4,7 @@
 
 #include "g0/astreaming.h"
 
-static AStreaming logger("thread");
+//static AStreaming logger("thread");
 
 AThread::AThread()
 {

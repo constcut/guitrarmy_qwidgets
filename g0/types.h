@@ -15,24 +15,12 @@
 
 typedef unsigned int uint;
 typedef unsigned char byte; //old definition
-//typedef short short int byte; //new definition
 typedef unsigned long long ul;
 
 
 //types checker
 
 bool check_types();
-/*{
-    bool allisfine = true;
-    allisfine &= (sizeof(long long) == 8);
-    allisfine &= (sizeof(long) == 4);
-    allisfine &= (sizeof(short) == 2);
-    if (allisfine)
-        std::cout << "Check Types fine" << std::endl;
-    else
-        std::cout << "Failed to check types" << std::endl;
-    return allisfine;
-} */
 
 int getTime();
 
@@ -63,8 +51,6 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v);
 #define SHIFT_VOLUME 0x0
 #define MASK_VOLUME 0x0
 
-//YO
-//yet Poly lays here
 
 
 
@@ -201,6 +187,8 @@ template <typename CT> class Poly
     }
 
 };
+
+
 /// NOW OVER THE NEW
 ///
 /// also make PolyPtrChain to avoid 2 ptrs for each block
@@ -369,6 +357,7 @@ public:
     void clear() { inside.clear(); }
 };
 
+
 class TimeCosts
 {
     //small timer for scenes time calculations - use for better way of
@@ -378,38 +367,7 @@ public:
     void stop() {}
 };
 
-//typedef stringExtended sX;
-// iX; ulX; lX; dX; bX;
 
-/*
-class Chain;
-
-template <typename CT> class  ChainElement
-{
-  public:
-
-  ChainElement(CT &source) { ptr = &source;}
-  CT *get() { return ptr; }
-
-
-  void setPrev(ChainElement *prevOne) { prev=prevOne; }
-  void setChain(Chain *chPtr) { master = chPtr; }
-
-  protected:
-
-  ChainElement *prev;
-  CT *ptr;
-  Chain *master;
-
-};
-
-class Chain
-{
-
-
-};
-
-*/
 
 
 

@@ -14,7 +14,7 @@
 
 #include "g0/astreaming.h"
 
-static AStreaming logger("android_helper");
+//static AStreaming logger("android_helper");
 
 android_helper::android_helper()
 {
