@@ -4,15 +4,18 @@
 
 
 #include "g0/midifile.h"
-#include "g0/amusic.h"
 #include "g0/tab.h"
-#include "g0/texttab.h"
 #include "g0/gtpfiles.h"
 #include "g0/aconfig.h"
 
 #include "g0/aexpimp.h"
 
 #include <QMediaPlayer>
+
+#include <fstream>
+#include <QDebug>
+
+#define log qDebug()
 
 #ifdef WIN32
 #include <windows.h>
@@ -142,7 +145,6 @@ void checks()
    // bool typesFine = check_types();
     //AF ile afi le; //compile check           - no need for output
     MidiFile mfile;//compile check      - because if failed
-    AMusic amusic; //compile check - then none would be anyway
     Tab tablature;
 }
 

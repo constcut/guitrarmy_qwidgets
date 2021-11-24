@@ -9,7 +9,6 @@
 #include "g0/gmyfile.h"
 #include "g0/aexpimp.h"
 #include "g0/gtpfiles.h"
-#include "g0/amusic.h"
 
 #include <QInputDialog>
 

@@ -4,7 +4,6 @@
 
 #include "g0/tab.h"
 #include "g0/gtpfiles.h"
-#include "g0/amusic.h"
 #include "g0/midifile.h"
 
 #include "g0/aconfig.h"
@@ -16,7 +15,7 @@
 
 #include "athread.h"
 
-
+#include <QDebug>
 
 
 bool gViewLog=false;
@@ -24,7 +23,7 @@ bool gViewLog=false;
 void not_used(void *p)
 {
     if (gViewLog)
-        LOG( << "Not used ptr "<<(int)p);
+        qDebug() << "Not used ptr "<<(int)p;
 
     //this message must never apear if no errors
 }
@@ -114,7 +113,7 @@ bool GLabel::hit(int hX, int hY)
 
     if (hitten)
     {
-        LOG(<<"GLabel hitten "<<this->getText().c_str());
+        qDebug()<<"GLabel hitten "<<this->getText().c_str();
     }
 
     return hitten;

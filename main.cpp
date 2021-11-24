@@ -38,7 +38,8 @@
 #include "midiengine.h"
 #include "g0/aexpimp.h"
 
-std::ofstream *mainLogFile;
+#include <QDebug>
+
 
 
 //OMGC its a nightmare
@@ -48,10 +49,7 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
     std::cerr << "Crash happend signal:"<<signum;
     signal(signum, SIG_DFL);
 
-    mainLogFile->close();
 
-    delete mainLogFile;
-    mainLogFile = 0;
     std::string logName = getTestsLocation() + std::string("log.txt");
 
 
@@ -220,9 +218,9 @@ int main(int argc, char *argv[])
     configuration.checkConfig();
     std::string confFileName = currentPath + "g.config";
     if (QFile::exists(confFileName.c_str())) {
-        std::ofstream outFile(confFileName) {
+        std::ifstream confFile(confFileName);
+        if (confFile.is_open())
             configuration.load(confFile);
-        }
     }
 
     configuration.printValues();
@@ -256,19 +254,15 @@ int main(int argc, char *argv[])
     QIcon winIcon(winIconName.c_str());
     w.setWindowIcon(winIcon);
 
-    std::string logName = getTestsLocation() + std::string("log.txt");
-    mainLogFile = std::ofstream(logName);
+    std::string logName = getTestsLocation() + std::string("log.txt"); //TODO log init
+    //TODO add init logger form gtab3
 
     if (globals.platform == "android")
         if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
             logName = "/sdcard/Guitarmy.log";
 
 
-    //TODO replace with init logger form gtab3
-    if (logFile->open(logName, false))
-      std::cout << "Log file opened."<< logName.c_str()<<std::endl;
-    else
-      std::cout << "Failed to open log out file :( "<< logName.c_str()<<std::endl;
+
 
     w.setAttribute(Qt::WA_AcceptTouchEvents);
     w.grabGesture(Qt::SwipeGesture);
@@ -343,19 +337,14 @@ int main(int argc, char *argv[])
        //__except (EXCEPTION_EXECUTE_HANDLER) // __try{}  __finally
     }
     catch(...){
-        LOG( << "Exception thrown");
+        qDebug() << "Exception thrown";
         //crash log saver
     }
 
     delete mw;
-    LOG( << "Main function done");
+    qDebug() << "Main function done" ;
     std::cout << "Main end reached"<<std::endl;
 
-    if (mainLogFile)
-    {
-        logFile->close();
-        delete logFile;
-    }
 
     return out;
 }

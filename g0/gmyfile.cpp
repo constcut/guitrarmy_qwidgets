@@ -2,7 +2,12 @@
 
 
 #include "g0/gtpfiles.h"
-]
+#include <fstream>
+
+#include <QDebug>
+#define LOG(m)
+//TODO log turned off
+#define logger qDebug()
 
 GmyFile::GmyFile()
 {
@@ -13,10 +18,10 @@ GmyFile::GmyFile()
 void writeBendGMY(std::ofstream *file, BendPoints *bend)
 {
     byte bendType = bend->getType();
-    file->write(&bendType,1);
+    file->write((char*)&bendType,1);
 
     byte pointsCount = bend->len();
-    file->write(&pointsCount,1);
+    file->write((char*)&pointsCount,1);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
     {
@@ -26,9 +31,9 @@ void writeBendGMY(std::ofstream *file, BendPoints *bend)
         byte verticalPosition = point->vertical;
         byte vibratoFlag = point->vFlag;
 
-        file->write(&absolutePosition,1);
-        file->write(&verticalPosition,1); //could be packed more
-        file->write(&vibratoFlag,1); //but don't optimize before there is a need
+        file->write((char*)(char*)&absolutePosition,1);
+        file->write((char*)(char*)&verticalPosition,1); //could be packed more
+        file->write((char*)(char*)&vibratoFlag,1); //but don't optimize before there is a need
     }
 }
 
@@ -36,10 +41,10 @@ void writeBendGMY(std::ofstream *file, BendPoints *bend)
 void readBendGMY(std::ifstream* file, BendPoints *bend)
 {
     byte bendType=0;
-    file->read(&bendType,1);
+    file->read((char*)&bendType,1);
 
     ul pointsCount = 0;
-    file->read(&pointsCount,1); //cannot be more then 255
+    file->read((char*)&pointsCount,1); //cannot be more then 255
 
     LOG(<< "Type "<<bendType<<"; N= "<<pointsCount);
     bend->setType(bendType); //trem yet not handled anyway
@@ -50,9 +55,9 @@ void readBendGMY(std::ifstream* file, BendPoints *bend)
         byte verticalPosition = 0;
         byte vibratoFlag = 0;
 
-        file->read(&absolutePosition,1);
-        file->read(&verticalPosition,1);
-        file->read(&vibratoFlag,1);
+        file->read((char*)&absolutePosition,1);
+        file->read((char*)&verticalPosition,1);
+        file->read((char*)&vibratoFlag,1);
 
         LOG( << "Point# "<< pointInd << "; absPos="<<absolutePosition<<"; vertPos="
                <<verticalPosition<<"; vibrato- "<<vibratoFlag);
@@ -72,9 +77,9 @@ void readBendGMY(std::ifstream* file, BendPoints *bend)
     //from the tab gp originally
 bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 {
-    file->write("GA",2);
+    file->write((char*)"GA",2);
     char byteZero = 0;
-    file->write(&byteZero,1);
+    file->write((char*)&byteZero,1);
     //fill file with 8bit 0
 
 
@@ -83,10 +88,10 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     byte barsByteLen = 2;
     byte noteByteLen = 1; //attention - all this fields yet not used directly
 
-    file->write(&effectsSet,1);
-    file->write(&tracksByteLen,1);
-    file->write(&barsByteLen,1);
-    file->write(&noteByteLen,1);
+    file->write((char*)&effectsSet,1);
+    file->write((char*)&tracksByteLen,1);
+    file->write((char*)&barsByteLen,1);
+    file->write((char*)&noteByteLen,1);
 
     //must not exceed the value!!
     //IDEA REFACT ATTENTION
@@ -97,8 +102,8 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     ul tracksCount = tab->len();//attention please
     ul barsCount = tab->getV(0)->len(); //search largerst or not do such thing? refact
 
-    file->write(&tracksCount,1); //256 tracks are insane
-    file->write(&barsCount,2); //65 535 bars are insace
+    file->write((char*)&tracksCount,1); //256 tracks are insane
+    file->write((char*)&barsCount,2); //65 535 bars are insace
     //first 8 bytes of format
 
 
@@ -106,7 +111,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
     //1 bpm
     ul bpm = tab->getBPM();
-    file->write(&bpm,2); //values more then 10 bits used for the 0.025 of bpm
+    file->write((char*)&bpm,2); //values more then 10 bits used for the 0.025 of bpm
 
 
     for (ul i = 0; i < tracksCount; ++i)
@@ -122,7 +127,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
         //strings N
         byte stringsCount = track->tuning.getStringsAmount();
-        file->write(&stringsCount,1);
+        file->write((char*)&stringsCount,1);
         //tuning
 
         LOG( << "Write strings count "<<stringsCount);
@@ -130,17 +135,17 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
         for (byte sI=0; sI < stringsCount; ++ sI)
         {
             byte tune = track->tuning.getTune(sI);
-            file->write(&tune,1);
+            file->write((char*)&tune,1);
 
             LOG( <<"Write tune "<<tune<<" for i="<<sI);
         }
 
         //maximum frets
         byte fretsLimit = track->getGPCOMPInts(3); //frets
-        file->write(&fretsLimit,1);
+        file->write((char*)&fretsLimit,1);
         //prepare for capo
         byte capoSet = track->getGPCOMPInts(4);
-        file->write(&capoSet,1);
+        file->write((char*)&capoSet,1);
 
         LOG( << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet);
 
@@ -155,19 +160,19 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             //isDrums
         bool isDrums = track->isDrums();
 
-        file->write(&isDrums,1);
+        file->write((char*)&isDrums,1);
 
         int instr = track->getInstrument();
         byte pan = track->getPan();
         byte vol = track->getVolume();
 
-        file->write(&instr,2);
+        file->write((char*)&instr,2);
 
         //cover under track functions refact: getVolume getPan GeInstrument
             /// pan
-        file->write(&pan,1);
+        file->write((char*)&pan,1);
             /// volume
-        file->write(&vol,1);
+        file->write((char*)&vol,1);
 
         LOG( <<"IsD "<<isDrums<<"; instr-"<<
 (int)track->getInstrument()<<
@@ -244,31 +249,31 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 //Now according to barHead WRITE DOWN information
 
                 LOG(<< "Bar head "<<barHead);
-                file->write(&barHead,1);
+                file->write((char*)&barHead,1);
 
                 if (barHead & 1)
-                    file->write(&barNum,1);
+                    file->write((char*)&barNum,1);
 
                 if (barHead & 2)
-                    file->write(&barDen,1);
+                    file->write((char*)&barDen,1);
 
                 if (barHead & 8)
-                    file->write(&repeatTimes,1);
+                    file->write((char*)&repeatTimes,1);
 
                 if (barHead & 16)
-                    file->write(&altRepeat,1);
+                    file->write((char*)&altRepeat,1);
 
                 if (barHead & 32)
                 {
                    //WRITE TEXT function;
                    //saveString(file,markerText);
-                   file->write(&markerColor,4);
+                   file->write((char*)&markerColor,4);
                 }
             }
 
 
             ul barLen = bar->len();
-            file->write(&barLen,1); //more then 256 notes in beat are strange
+            file->write((char*)&barLen,1); //more then 256 notes in beat are strange
 
             for (ul k = 0; k < bar->len(); ++k)
             {
@@ -276,16 +281,16 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 Beat *beat = (bar->getV(k));
 
                 bool isPause = beat->getPause();
-                //file->write(&isPause,1);
+                //file->write((char*)&isPause,1);
 
                 byte dur = beat->getDuration();
-                //file->write(&dur,1);
+                //file->write((char*)&dur,1);
 
                 byte dot = beat->getDotted();
-                //file->write(&dot,1);
+                //file->write((char*)&dot,1);
 
                 byte det = beat->getDurationDetail();
-                //file->write(&det,1);
+                //file->write((char*)&det,1);
 
                 std::string beatText;
                 beat->getGPCOMPText(beatText);
@@ -309,14 +314,14 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 if (isPause)
                     beatHead += 1 << 7;
 
-                file->write(&beatHead,1);
+                file->write((char*)&beatHead,1);
 
 
                 if (det)
-                    file->write(&det,1);
+                    file->write((char*)&det,1);
 
                 if (effPackBeatValue)
-                    file->write(&effPackBeatValue,4);
+                    file->write((char*)&effPackBeatValue,4);
 
 
                 if (effPackBeat == 28)
@@ -329,7 +334,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
                         ul amountOfChanges = changes->len();
 
-                        file->write(&amountOfChanges,1);
+                        file->write((char*)&amountOfChanges,1);
 
                         for (ul indexChange=0; indexChange != amountOfChanges; ++indexChange)
                         {
@@ -339,9 +344,9 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                             byte changeDur = (changes->getV(indexChange)).changeCount;
                             //change count (apply effect on few beats later)
 
-                            file->write(&changeType,1);
-                            file->write(&changeValue,2); //pack it
-                            file->write(&changeDur,1);
+                            file->write((char*)&changeType,1);
+                            file->write((char*)&changeValue,2); //pack it
+                            file->write((char*)&changeDur,1);
                         }
                     }
 
@@ -351,7 +356,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 //tremolo, chord etc should be stored here
 
                 ul beatLen = beat->len();
-                file->write(&beatLen,1); //256 notes in beat are too much
+                file->write((char*)&beatLen,1); //256 notes in beat are too much
 
                 //and notes inside
                 for (ul el=0; el < beat->len(); ++el)
@@ -383,26 +388,26 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                     }
 
 
-                    //file->write(&fret,1);
-                    //file->write(&stringNum,1);
-                    file->write(&packFret,1);
+                    //file->write((char*)&fret,1);
+                    //file->write((char*)&stringNum,1);
+                    file->write((char*)&packFret,1);
 
                     byte noteSpec = 0;
 
                     byte vol = note->getVolume();
-                    //file->write(&vol,1);
+                    //file->write((char*)&vol,1);
 
                     byte state = note->getState();
                     byte effectsPrec = effPackNote.empty() == true ? 0 : 1;
 
                     noteSpec = (vol & 0xF) + ((state&7)<<4) + (effectsPrec<<7);
 
-                    file->write(&noteSpec,1);
+                    file->write((char*)&noteSpec,1);
 
                     if (effectsPrec)
                     {
                         ul noteEffValue = effPackNote.takeBits();
-                        file->write(&noteEffValue,4);
+                        file->write((char*)&noteEffValue,4);
 
                         if (effPackNote == 17) //bend
                         {
@@ -427,9 +432,9 @@ bool GmyFile::saveString(std::ofstream *file, std::string &strValue)
 {
     ul stringLen = strValue.size();
 
-    file->write(&stringLen,2);
+    file->write((char*)&stringLen,2);
 
-    file->write(strValue.c_str(),strValue.size());
+    file->write((char*)strValue.c_str(),strValue.size());
     return true;
 }
 
@@ -439,9 +444,9 @@ bool GmyFile::loadString(std::ifstream* file, std::string &strValue)
     char bufer[2048];
 
     ul stringLen = 0;
-    file->read(&stringLen,2);
+    file->read((char*)&stringLen,2);
 
-    file->read(&bufer,stringLen);
+    file->read((char*)&bufer,stringLen);
     bufer[stringLen] = 0;
 
     strValue = bufer;
@@ -455,7 +460,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     if (skipVersion==false)
     {
         char firstBytes[3]={0};
-        file->read(firstBytes,2);
+        file->read((char*)firstBytes,2);
 
         if ((firstBytes[0]!='G') ||
             (firstBytes[1]!='A'))
@@ -466,7 +471,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     }
 
     char byteZero = 0;
-    file->read(&byteZero,1);
+    file->read((char*)&byteZero,1);
     if (byteZero != 0)
     {
         logger << "Not a base format version";
@@ -478,17 +483,17 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     byte barsByteLen = 2;
     byte noteByteLen = 1; //attention - all this fields yet not used directly
 
-    file->read(&effectsSet,1);
-    file->read(&tracksByteLen,1);
-    file->read(&barsByteLen,1);
-    file->read(&noteByteLen,1);
+    file->read((char*)&effectsSet,1);
+    file->read((char*)&tracksByteLen,1);
+    file->read((char*)&barsByteLen,1);
+    file->read((char*)&noteByteLen,1);
 
 
     ul tracksCount = 0;
     ul barsCount = 0;
 
-    file->read(&tracksCount,1);
-    file->read(&barsCount,2);
+    file->read((char*)&tracksCount,1);
+    file->read((char*)&barsCount,2);
     //here could reserve values
     /*
     for (ul tI = 0; tI < tracksCount; ++tI)
@@ -504,7 +509,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
     //1 bpm
     ul bpm = 0;
-    file->read(&bpm,2); //values more then 1200 could be used as parts of bpm
+    file->read((char*)&bpm,2); //values more then 1200 could be used as parts of bpm
 
     tab->setBPM(bpm);
 
@@ -521,7 +526,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
         track->setName(trackName);
         //strings N
         byte stringsCount = 0; //track->tuning.getStringsAmount();
-        file->read(&stringsCount,1);
+        file->read((char*)&stringsCount,1);
         //tuning
         track->tuning.setStringsAmount(stringsCount);
 
@@ -529,18 +534,18 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
         for (byte sI=0; sI < stringsCount; ++sI)
         {
             byte tune = 0;
-            file->read(&tune,1);
+            file->read((char*)&tune,1);
             track->tuning.setTune(sI,tune);
             LOG( << "Read tune "<<sI<<" "<<tune);
         }
 
         //maximum frets
         byte fretsLimit = 0; //frets
-        file->read(&fretsLimit,1);
+        file->read((char*)&fretsLimit,1);
         track->setGPCOMPInts(3,fretsLimit);
         //prepare for capo
         byte capoSet = 0;
-        file->read(&capoSet,1);
+        file->read((char*)&capoSet,1);
         track->setGPCOMPInts(4,capoSet);
 
 
@@ -552,7 +557,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
             //isDrums
         bool isDrums = false; //track->isDrums();
 
-        file->read(&isDrums,1);
+        file->read((char*)&isDrums,1);
         track->setDrums(isDrums);
 
         //SET GET REFACT
@@ -560,18 +565,18 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
         byte pan = 0;
         byte volume = 0;
 
-        file->read(
+        file->read((char*)
  //&(tab->GpCompMidiChannels[midiChanPortIndex].instrument),
     &instr,
                     2);
 
         //cover under track functions refact: getVolume getPan GeInstrument
             /// pan
-        file->read(
+        file->read((char*)
   //&(tab->GpCompMidiChannels[midiChanPortIndex].balance)
                     &pan,1);
             /// volume
-        file->read(
+        file->read((char*)
  //&(tab->GpCompMidiChannels[midiChanPortIndex].volume)
                     &volume
                     ,1);
@@ -604,7 +609,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
 
                 byte barHead = 0;
-                file->read(&barHead,1);
+                file->read((char*)&barHead,1);
 
                 LOG( << "Read bar head "<<barHead);
 
@@ -617,13 +622,13 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                 if (barHead & 1)
                 {
-                    file->read(&barNum,1);
+                    file->read((char*)&barNum,1);
                     bar->setSignNum(barNum);
                 }
 
                 if (barHead & 2)
                 {
-                    file->read(&barDen,1);
+                    file->read((char*)&barDen,1);
                     bar->setSignDenum(barDen);
                 }
 
@@ -634,13 +639,13 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                 if (barHead & 8)
                 {
-                    file->read(&repeatTimes,1);
+                    file->read((char*)&repeatTimes,1);
                     bar->setRepeat(2,repeatTimes);
                 }
 
                 if (barHead & 16)
                 {
-                    file->read(&altRepeat,1);
+                    file->read((char*)&altRepeat,1);
                     bar->setAltRepeat(altRepeat);
                 }
 
@@ -650,7 +655,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                    //read TEXT function;
                    //loadString(file,markerText);
                    ul markerColor = 0;
-                   file->read(&markerColor,4);
+                   file->read((char*)&markerColor,4);
                 }
             }
             else
@@ -668,7 +673,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
 
             ul barLen = 0;
-            file->read(&barLen,1); //more then 256 notes in beat are strange
+            file->read((char*)&barLen,1); //more then 256 notes in beat are strange
 
             if (barLen == 0)
             {
@@ -687,22 +692,22 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                 bool isPause = false;
 
-                //file->read(&isPause,1);
+                //file->read((char*)&isPause,1);
 
                 byte dur =0;
-                //file->read(&dur,1);
+                //file->read((char*)&dur,1);
 
 
                 byte dot = 0;
-                //file->read(&dot,1);
+                //file->read((char*)&dot,1);
 
 
                 byte det = 0;
-                //file->read(&det,1);
+                //file->read((char*)&det,1);
 
 
                 byte beatHead = 0;
-                file->read(&beatHead,1);
+                file->read((char*)&beatHead,1);
 
                 dur = beatHead & 0x7;
                 isPause = ((beatHead >> 7) & 1) > 0;
@@ -713,7 +718,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                 if (det)
                 {
-                    file->read(&det,1);
+                    file->read((char*)&det,1);
                 }
 
                 /*
@@ -731,7 +736,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                 ul effPackBeatValue = 0;
 
                 if (gotEff)
-                    file->read(&effPackBeatValue,4);
+                    file->read((char*)&effPackBeatValue,4);
 
 
                 beat->setPause(isPause);
@@ -747,7 +752,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                     Beat::ChangesList *newChanges = new Beat::ChangesList();
 
-                    file->read(&amountOfChanges,1);
+                    file->read((char*)&amountOfChanges,1);
 
                     for (ul indexChange=0; indexChange != amountOfChanges; ++indexChange)
                     {
@@ -757,9 +762,9 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                         byte changeDur = 0;
                         //change count (apply effect on few beats later)
 
-                        file->read(&changeType,1);
-                        file->read(&changeValue,2); //pack it
-                        file->read(&changeDur,1);
+                        file->read((char*)&changeType,1);
+                        file->read((char*)&changeValue,2); //pack it
+                        file->read((char*)&changeDur,1);
 
                         Beat::SingleChange change;
                         change.changeCount = changeDur;
@@ -775,7 +780,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                 //tremolo, chord etc should be loaded here
 
                 ul beatLen = 0;
-                file->read(&beatLen,1); //256 notes are even too much
+                file->read((char*)&beatLen,1); //256 notes are even too much
 
                 //and notes inside
                 for (ul el=0; el < beatLen; ++el)
@@ -790,11 +795,11 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                     byte stringNum = 0;
 
                     byte fretPack = 0;
-                    //file->read(&fret,1);
-                    //file->read(&stringNum,1);
+                    //file->read((char*)&fret,1);
+                    //file->read((char*)&stringNum,1);
 
 
-                    file->read(&fretPack,1);
+                    file->read((char*)&fretPack,1);
 
                     if (isDrums)
                     {
@@ -814,13 +819,13 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
                     byte noteSpec = 0;
 
-                    file->read(&noteSpec,1);
+                    file->read((char*)&noteSpec,1);
 
                     byte vol = noteSpec & 0xF;
-                    //file->read(&vol,1);
+                    //file->read((char*)&vol,1);
 
                     byte effectState = 1&(noteSpec >> 7);
-                    //file->read(&effectState,1);
+                    //file->read((char*)&effectState,1);
 
                     byte state = (noteSpec >>4) &7;
 
@@ -830,7 +835,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                     if (effectState == 1)
                     {
                         ul noteEffValue = 0;
-                        file->read(&noteEffValue,4);
+                        file->read((char*)&noteEffValue,4);
                         note->effPack.putBits(noteEffValue);
 
                         //note.effPack.set(17,false); //turn off bend

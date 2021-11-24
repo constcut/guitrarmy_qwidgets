@@ -1,5 +1,4 @@
 #include "midifile.h"
-#include "amusic.h"
 
 #include "aconfig.h"
 
@@ -12,8 +11,34 @@
 // if (midiLog)  logFile(MidiFileCpp)
 
 #include <iostream>
+#include <fstream>
+
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO logs turned off yet
+
 
 bool midiLog = false;
+
+void reverseEndian(void *p,int s) {
+    char *bytes = (char*)p;
+    if (s == 4){
+        char b = bytes[0];
+        bytes[0] = bytes[3];
+        bytes[3] = b;
+        b = bytes[1];
+        bytes[1] = bytes[2];
+        bytes[2] = b;
+    }
+    if (s == 2) {
+        char b = bytes[0];
+        bytes[0] = bytes[1];
+        bytes[1] = b;
+    }
+}
+
+
 
 ul VariableInt::readStream(std::ifstream & ifile)
 {
@@ -22,7 +47,7 @@ ul VariableInt::readStream(std::ifstream & ifile)
 	byte lastByte = 0;
 	do
 	{
-		ifile.read(&lastByte, 1);
+        ifile.read((char*)&lastByte, 1);
 
 		byte valueByte = lastByte & 127;
 		this->add(valueByte);
@@ -77,7 +102,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 	byte p1 = 0;				// param 1
 	byte p2 = 0;				// param 2;
 
-	ifile.read(&p00, 1);
+    ifile.read((char*)&p00, 1);
 	totalRead += 1;
 
 	//first fill the structure
@@ -91,7 +116,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
         if (midiLog)  logger << "This is a meta event! " ;
 
 		byte metaType;
-		ifile.read(&metaType, 1);
+        ifile.read((char*)&metaType, 1);
 		int metaEvType = metaType;
 		totalRead += 1;
 
@@ -111,7 +136,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 
 		for (ul k = 0; k < bytesToSkip; ++k)
 		{
-			ifile.read(&bBufer, 1);
+            ifile.read((char*)&bBufer, 1);
 			this->metaStore.bufer.add(bBufer);
 		}
 		
@@ -124,7 +149,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 		int evValue = p00;
         if (midiLog)  LOG( << "Not meta event. value = " << evValue);
 
-		ifile.read(&p1, 1);
+        ifile.read((char*)&p1, 1);
 		totalRead += 1;
 		
 		this->param1 = p1;
@@ -137,7 +162,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 
 		if ((eventType != 0xC) && (eventType != 0xD))
 		{
-			ifile.read(&p2, 1);
+            ifile.read((char*)&p2, 1);
 			totalRead += 1;
 			this->param2 = p2;
 
@@ -160,14 +185,19 @@ bool MidiFile::readStream(std::ifstream & ifile)
     //char headerData[14] = { 0 };
 
     //long long lldata;
-	ifile.read(midiHeader.chunkId, 4);	// chunk header // aS Abstract String
+    ifile.read((char*)midiHeader.chunkId, 4);	// chunk header // aS Abstract String
 	midiHeader.chunkId[4] = 0;
 
 	// ifile >>
-	ifile.r(&(midiHeader.chunkSize), 4);
-	ifile.r(&(midiHeader.formatType), 2);
-	ifile.r(&(midiHeader.nTracks), 2);
-	ifile.r(&(midiHeader.timeDevision), 2);
+    //TODO revese indian
+    ifile.read((char*)&(midiHeader.chunkSize), 4);
+    reverseEndian(&(midiHeader.chunkSize), 4);
+    ifile.read((char*)&(midiHeader.formatType), 2);
+    reverseEndian(&(midiHeader.formatType), 2);
+    ifile.read((char*)&(midiHeader.nTracks), 2);
+    reverseEndian(&(midiHeader.nTracks), 2);
+    ifile.read((char*)&(midiHeader.timeDevision), 2);
+    reverseEndian(&(midiHeader.timeDevision), 2);
 	
 	//allocate tracks:
 	for (int nT=0; nT < midiHeader.nTracks; ++nT)
@@ -193,14 +223,15 @@ bool MidiFile::readStream(std::ifstream & ifile)
             // to if (midiLog)  logging
             if (midiLog)  LOG( << "Reading track " << i);
 
-            ifile.read(getV(i)->trackHeader.chunkId, 4);
+            ifile.read((char*)getV(i)->trackHeader.chunkId, 4);
             getV(i)->trackHeader.chunkId[4] = 0;
 
             // to if (midiLog)  logging
             if (midiLog)  LOG( << "Track " << i << " header " << getV(i)->trackHeader.chunkId);
 
 			ul trackSize = 0;
-			ifile.r(&trackSize, 4);
+            ifile.read((char*)&trackSize, 4);
+            reverseEndian(&trackSize, 4);
 
             // to if (midiLog)  logging
             if (midiLog)  LOG( << "Size of track " << trackSize);
@@ -308,7 +339,7 @@ ul VariableInt::writeStream(std::ofstream &file)
         if (i != (amountOfBytes - 1))
 				byteToWrite |= 128;	
 		
-		file.write(&byteToWrite,1);
+        file.write((const char*)&byteToWrite,1);
 
       // if (midiLog)  logger <<"V WROTE "<<byteToWrite;
     }
@@ -327,12 +358,12 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
     }
 	
     bytesWritten += time.writeStream(ofile); //CHECK 0
-	ofile.write(&byte0,1);
+    ofile.write((const char*)&byte0,1);
     //if (midiLog)  logger <<"WROTE "<<byte0;
 
     //int zFuck = 00; //check???? OUPS
-    //ofile.write(&zFuck,1);
-    ofile.write(&param1,1);
+    //ofile.write((const char*)&zFuck,1);
+    ofile.write((const char*)&param1,1);
     //if (midiLog)  logger <<"WROTE "<<param1;
 
 	bytesWritten += 2;
@@ -342,12 +373,12 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
     {
         //if (midiLog)  logger << "META EVENT WROTEN!";
 
-		//ofile.write(&metaStore.metaType,1);
+        //ofile.write((const char*)&metaStore.metaType,1);
 		bytesWritten += metaStore.metaLen.writeStream(ofile);
 		
 		size_t metaBufLen = metaStore.bufer.len();
 		for (size_t i = 0; i < metaBufLen; ++i)
-			ofile.write(&metaStore.bufer.getV(i),1);
+            ofile.write((const char*)&metaStore.bufer.getV(i),1);
 		
 		bytesWritten += metaBufLen;
 	}
@@ -356,7 +387,7 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
         byte eventType = getEventType();
         if ((eventType != 0xC) && (eventType != 0xD))
 		{
-              ofile.write(&param2,1);
+              ofile.write((const char*)&param2,1);
               //if (midiLog)  logger <<"WROTE "<<param2;
               bytesWritten += 1;
         }
@@ -364,6 +395,9 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
 									
 	return bytesWritten;	
 }
+
+
+
 
 ul MidiFile::writeStream(std::ofstream &ofile)
 {
@@ -374,19 +408,24 @@ ul MidiFile::writeStream(std::ofstream &ofile)
     calculateHeader(); //also fills header of tracks
 		
 	//write header
-	ofile.write(midiHeader.chunkId,4);
-	ofile.w(&midiHeader.chunkSize,4);
-	ofile.w(&midiHeader.formatType,2);
-	ofile.w(&midiHeader.nTracks,2);
-	ofile.w(&midiHeader.timeDevision,2);
+    ofile.write((const char*)midiHeader.chunkId,4);
+    ofile.write((const char*)&midiHeader.chunkSize,4);
+    reverseEndian(&midiHeader.chunkSize, 4);
+    ofile.write((const char*)&midiHeader.formatType,2);
+    reverseEndian(&midiHeader.formatType, 2);
+    ofile.write((const char*)&midiHeader.nTracks,2);
+    reverseEndian(&midiHeader.nTracks, 2);
+    ofile.write((const char*)&midiHeader.timeDevision,2);
+    reverseEndian(&midiHeader.timeDevision, 2);
 		
 	bytesWritten += 14;
 		
 	for (short int i = 0; i < midiHeader.nTracks; ++i)
     {
 
-        ofile.write(getV(i)->trackHeader.chunkId,4);
-        ofile.w(&getV(i)->trackHeader.trackSize,4);
+        ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
+        ofile.write((const char*)&getV(i)->trackHeader.trackSize,4);
+        reverseEndian(&midiHeader.timeDevision, 4);
 		
 		bytesWritten += 8;
 		
@@ -409,11 +448,15 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
     int tracks = 1;
 
     //write header
-    ofile.write(midiHeader.chunkId,4);
-    ofile.w(&midiHeader.chunkSize,4);
-    ofile.w(&midiHeader.formatType,2);
-    ofile.w(&tracks,2);
-    ofile.w(&midiHeader.timeDevision,2);
+    ofile.write((const char*)midiHeader.chunkId,4);
+    ofile.write((const char*)&midiHeader.chunkSize,4);
+    reverseEndian(&midiHeader.chunkSize,4);
+    ofile.write((const char*)&midiHeader.formatType,2);
+    reverseEndian(&midiHeader.formatType,2);
+    ofile.write((const char*)&tracks,2);
+    reverseEndian(&tracks,2);
+    ofile.write((const char*)&midiHeader.timeDevision,2);
+    reverseEndian(&midiHeader.timeDevision, 2);
 
     bytesWritten += 14;
 
@@ -422,8 +465,9 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
     //don't skip first track ??
     for (short int i = 1; i < 2; ++i) //shit condition
     {
-        ofile.write(getV(i)->trackHeader.chunkId,4);
-        ofile.w(&getV(i)->trackHeader.trackSize,4);
+        ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
+        ofile.write((const char*)&getV(i)->trackHeader.trackSize,4);
+        reverseEndian(&getV(i)->trackHeader.trackSize, 4);
 
         bytesWritten += 8;
 
@@ -605,847 +649,6 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, ul timeShift):byte0(b0),param1
     }
 }
 
-bool MidiFile::generateFromAMusic(AMusic &music)
-{
-    setBPM(music.getBPM());
-
-    ul tracksAmount = music.lenR();
-
-    ul melodyIndex = 0;
-
-    for (ul trackIndex = 0; trackIndex != tracksAmount; ++trackIndex)
-    //single track midi!
-    {
-        MidiTrack *newMidiTrack=new MidiTrack(); //yet a single track
-
-        ul notesCount = music.gR(trackIndex).len();
-
-        ul pauseAccumulator = 0;
-        ul rythmAccumulator = 0;
-
-        ul pauseCounter = 0;
-        byte velocyShift = 0;
-        byte lastVelocy = 95; //default one
-
-        bool drumsTrack = false;
-
-        byte normalChannel = 0;
-        byte effectChannel = 1;
-        //attention isn't inside subfunctions,
-        //but drums shouldn live there
-        //yet shifted
-        //not just to add another value into functions call
-
-        //track selection
-        if (tracksAmount <= 4)
-        {
-            //we don't have too much tracks and can sepparate them all
-            byte channelsShift = trackIndex*2; //temp way
-            normalChannel += channelsShift;
-            effectChannel += channelsShift;
-        }
-        else
-        {
-            if (trackIndex <=16)
-            {
-                byte channelsShift = trackIndex; //temp way
-
-                if ((trackIndex==9)||(trackIndex==10))
-                    channelsShift += 5;
-
-                normalChannel = effectChannel = channelsShift;
-
-                /*
-                normalChannel += channelsShift;
-                effectChannel += channelsShift;
-                */
-
-                //if ((trackIndex==9)||(trackIndex==10))
-            }
-            else
-            {
-                /*
-                byte channelsShift = (trackIndex+1)*2; //temp way
-                normalChannel += channelsShift;
-                effectChannel += channelsShift;
-                */
-            }
-            if (midiLog)  logger <<"Too many tracks!";
-        }
-
-        unsigned long instrument = music.gM(trackIndex).instrument;
-
-        if (instrument == 666)
-        {
-            drumsTrack = true;
-            instrument = 25;
-        }
-
-        if (drumsTrack)
-            normalChannel = effectChannel = 9;
-// ------------------------------------------------------
-        /////SET UP MIDI CHANNELS VALUES -refact awaits
-
-
-        {                                       //FIRST SET
-            newMidiTrack->pushChangeBPM(bpm);
-
-            newMidiTrack->pushChangeInstrument(instrument,normalChannel);
-            newMidiTrack->pushChangeInstrument(instrument,effectChannel);
-
-            byte midiPanoram = newMidiTrack->calcMidiPanoramGP(music.gM(trackIndex).panoram);
-            newMidiTrack->pushChangePanoram(midiPanoram,normalChannel); //ch 0 also add effect please
-
-            byte midiVolume = newMidiTrack->calcMidiVolumeGP(music.gM(trackIndex).volume);
-            newMidiTrack->pushChangeVolume(midiVolume,normalChannel);
-        }
-
-        melodyIndex = 0;
-
-        for (ul i = 0; i < notesCount; ++i)
-        {
-
-            ul rhythmValue = music.gR(trackIndex).getV(i);
-            if (midiLog)  LOG( << "Rhythm value is "<<rhythmValue);
-
-            byte baseRValue = rhythmValue & 7;
-
-            bool lastNoteInSeq = false;
-            bool nextIsPause = false;
-
-            if ((i+1) == notesCount)
-                lastNoteInSeq = true;
-            else
-            {
-               ul rhythmValueNext = music.gR(trackIndex).getV(i+1);
-               if ((rhythmValueNext & 128) > 0)
-                   nextIsPause = true;
-               //empty taks 3 5 after let ring
-            }
-
-            //MAIN rhythm value
-            ul rOffset = 0;
-            byte special = (rhythmValue>>15) & 1;
-
-            short int rhyBase = 120; //constant for midi values
-
-            if (special)
-            {
-                ul specialValue = (rhythmValue>>16) & 0xffff;
-
-                if (midiLog)
-                LOG( << "MIDI_SPECIAL value "<<specialValue );
-
-                short int power2 = 2<<(3);
-                ul preRValue = rhyBase*power2/4;
-
-                preRValue *= specialValue;
-                preRValue /= 1000;
-
-                rOffset = preRValue;
-
-                if (midiLog)
-                LOG( <<"GOT R OFFSET "<<rOffset );
-            }
-            else
-            {
-                byte rhythmDetail = rhythmValue & 0x78; //4 bits after first 3
-                rhythmDetail>>=3;
-
-                byte dotAppear = (rhythmValue>>8) & 3;
-
-                //2 is 4th 3 is 8th 4 is 16th etc
-                byte powOfTwo = 6 - baseRValue;
-                short int power2 = 2<<(powOfTwo-1);//-1 because 2 is 1 pow itself
-                rOffset = rhyBase*power2/4;
-
-
-                if (dotAppear==1) //dotted
-                {
-                    if (midiLog)  logger << "Dot did appear";
-                    rOffset *= 3;
-                    rOffset /= 2;
-                    //BETTER TO BE COVERED UNDER CAL RHY DETAIL
-                }
-
-                if (rhythmDetail)
-                    rOffset = newMidiTrack->calcRhythmDetail(rhythmDetail,rOffset);
-            }
-
-
-
-            bool isPause = false;
-
-            if ((rhythmValue & 128) > 0)
-                isPause = true;
-
-            if (isPause)
-            {
-                pauseAccumulator += rOffset;
-                if (midiLog)  LOG( << "Pause in AMUSIC to MIDI "<<pauseAccumulator );
-                ++pauseCounter;
-            }
-            else
-            {
-                //Melody handling
-                //ul melodyIndex = i-pauseCounter;
-                Melody::mnote noteValue = music.gM(trackIndex).getMNote(melodyIndex); //i
-
-                ul roughMelodyValue = music.gM(trackIndex).getV(melodyIndex);
-                ul hasHarmony = (roughMelodyValue>>24) & 1;
-                byte noteState = (roughMelodyValue>>8) & 7;
-                byte effectsOnNote = (roughMelodyValue>>16)&0xff;
-                byte noteStateHarm = 0;
-                byte velocyValue = (roughMelodyValue>>11)&15;
-
-                byte midiVelocy = velocyValue*15;
-                if (midiLog)  LOG( << "Velocity value "<<velocyValue <<" midi "<<midiVelocy);
-                if (velocyShift)
-                {
-                    velocyShift = 0;
-                    midiVelocy = newMidiTrack->calcLeggatoVelocy(midiVelocy);
-                    if (midiLog)  LOG( <<"SHIFT velocy "<<midiVelocy);
-                }
-                if (midiVelocy == 0)
-                    midiVelocy = lastVelocy;
-
-                if (midiLog)  LOG( <<"AM note state = "<<noteState);
-                if (midiLog)  LOG( <<"Effects are: "<<effectsOnNote);
-                if (midiLog)  LOG( <<"Has harmony "<<hasHarmony);
-
-                EffectsPack effects;
-
-                if (effectsOnNote == 1)
-                {
-                    effects = music.gM(trackIndex).mapOfEffects.getEffect(melodyIndex);
-
-                    effects.set(29,false); //tap
-                    effects.set(30,false); //slap
-                    effects.set(31,false); //pop
-                }
-                else
-                {
-                    if (midiLog)  logger << "No effects";
-                }
-
-                //HANDLING CHANGES
-                if (effectsOnNote==0)
-                    effects = music.gM(trackIndex).mapOfEffects.getEffect(melodyIndex);
-
-                Package *changePack = effects.getPack(28);
-
-                if (changePack)
-                {
-                    Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
-
-                    for (ul indexChange = 0; indexChange != changes->len(); ++indexChange)
-                    {
-                      if (changes->getV(indexChange).changeType==8)
-                      {
-                          ul newBPM = changes->getV(indexChange).changeValue;
-
-                          if (midiLog)  LOG( << "New BPM "<<newBPM);
-
-                          pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                          rythmAccumulator = 0; //should fix this
-
-                          newMidiTrack->pushChangeBPM(newBPM,pauseAccumulator); //PARAMZ
-
-                          pauseAccumulator = 0;
-                      }
-
-                      if (changes->getV(indexChange).changeType==1)
-                      {
-                          ul newInstr = changes->getV(indexChange).changeValue;
-
-                          if (midiLog)  LOG( << "New instr "<<newInstr);
-
-                          pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                          rythmAccumulator = 0;
-
-                         newMidiTrack->pushChangeInstrument(newInstr,normalChannel,pauseAccumulator); //PARAMZ (ch 1?) refact to channel
-
-                         pauseAccumulator = 0;
-                      }
-
-                      if (changes->getV(indexChange).changeType==2)
-                      {
-                          ul newVol = changes->getV(indexChange).changeValue;
-
-                          if (midiLog)  LOG( << "New volume "<<newVol);
-
-                          byte midiNewVolume = newVol*8;
-                          if (midiNewVolume > 127)
-                              midiNewVolume = 127;
-
-                          newMidiTrack->pushChangeVolume(midiNewVolume,normalChannel); //PARAMZ (ch 1 2?)
-                      }
-
-                      if (changes->getV(indexChange).changeType==3)
-                      {
-                            ul newPan = changes->getV(indexChange).changeValue;
-
-                            if (midiLog)  LOG( << "New panoram "<<newPan);
-
-                            byte midiNewPanoram = newPan*8;
-                            if (midiNewPanoram > 127)
-                                midiNewPanoram = 127;
-
-                            newMidiTrack->pushChangePanoram(midiNewPanoram,normalChannel); //PARAMZ (ch 1 2?)
-                      }
-                    }
-                }
-
-
-                effects.set(28,false); //turn off changes for now
-
-
-                if (midiLog)  LOG( <<"Velocuty "<<velocyValue);
-
-                Poly<ul> harmonyVertical;
-
-                byte harmonyNote = 255; //later vector or Poly!!
-                //struct from hNote, noteState
-                ul strokeStep = 0; //updown stroke
-
-                while (hasHarmony)
-                {
-                    //here should be collected data about other notes
-                    //but first we just skip harmonis
-                    ++melodyIndex;
-                    roughMelodyValue = music.gM(trackIndex).getV(melodyIndex);
-                    hasHarmony = (roughMelodyValue>>24) & 1;
-
-                    noteStateHarm = (roughMelodyValue>>8) & 7; //too will go to vector..
-
-                    Melody::mnote noteHarmValue = music.gM(trackIndex).getMNote(melodyIndex);
-                    harmonyNote = noteHarmValue.octave*12 + noteHarmValue.key;
-
-                    harmonyVertical.add(melodyIndex);
-                }
-
-                ++melodyIndex;
-
-
-                if (noteState == Melody::continingNote)
-                {
-                     rythmAccumulator += rOffset;
-                     rOffset = 0;
-                     continue;
-                }
-
-
-                byte midiNote = noteValue.octave*12 + noteValue.key;
-
-
-                bool alreadyFinished = false;
-
-                //MAIN NOTE POSITION ON
-                if ((noteState != Melody::endingNote))
-                {
-                    if (noteState != Melody::deadNote)
-                    {
-
-                        if (effects == 2)
-                        { //palm mute
-                            byte palmMuteVel = newMidiTrack->calcPalmMuteVelocy(midiVelocy);
-                            midiVelocy = palmMuteVel;
-                            //MidiSignal mSignalOn(0x90  | normalChannel,midiNote,palmMuteVel,pauseAccumulator);
-                            //newMidiTrack->add(mSignalOn);
-                            //pauseAccumulator = 0; //flush accumulated
-                            effects.set(2,false);
-                        }
-
-                        //NORMAL NOTE
-                        if (effects.empty())
-                        {
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0; //flush accumulated
-                        }
-
-
-                        if  (effects.inRange(3,10)) //((effects >= 3) && (effects <= 10))
-                        { //slides
-                            if ( (effects == 4) || (effects == 5))
-                            {
-                                   if (effects==5) velocyShift=19; //set decreace legatto slide
-
-                                    MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                                    newMidiTrack->add(mSignalOn);
-                                    pauseAccumulator = 0;
-                                    short int slideStep = rOffset/8;
-                                    //real function depends on next note...
-                                    newMidiTrack->pushSlideUp(effectChannel,2,slideStep);//channel + shift
-                                    rOffset = 0;
-                            }
-                            else if ((effects == 8) || (effects == 6))
-                            {
-                                /*/slide /. + // slide . \
-                                //not really same but generates somth */
-
-                                MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                                newMidiTrack->add(mSignalOn);
-                                pauseAccumulator = 0;
-                                short int slideStep = rOffset/8;
-
-                                newMidiTrack->pushSlideDown(effectChannel,7,slideStep);//channel + shift
-                                rOffset = 0;
-                            }
-                            else if ((effects == 9)|| (effects == 7))
-                            {
-                                MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                                newMidiTrack->add(mSignalOn);
-                                pauseAccumulator = 0;
-                                short int slideStep = rOffset/8;
-
-                                newMidiTrack->pushSlideUp(effectChannel,7,slideStep);//channel + shift
-                                rOffset = 0;
-
-                            }
-                            else if (effects == 10)
-                            {   //legato - as normal one should decreace sound of next note
-                                MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                                newMidiTrack->add(mSignalOn);
-                                pauseAccumulator = 0; //flush accumulated
-                                velocyShift=19; //set decreace
-                            }
-                        }//slides
-                        else if (effects == 17) //bend default pattern
-                        {
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0;
-
-                            //effects = music.gM(trackIndex).mapOfEffects.getEffect(melodyIndex);
-                            Package *bendPack = effects.getPack(17);
-                            BendPoints *bend = (BendPoints*) bendPack->getPointer();
-
-                            if (midiLog)
-                            LOG( <<(int)bend<< "Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType());
-
-                            newMidiTrack->pushBend(rOffset,bend,effectChannel);
-                            rOffset = 0; //attention for chords
-                        }
-                        else if (effects == 19)
-                        { //TREMOLO default pattern
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0;
-
-                            newMidiTrack->pushTremolo(rOffset);
-                            rOffset = 0; //attention for chords
-                            //is closed well???
-                        }
-                        else if (effects == 20)
-                        { //fade in
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0;
-
-                            //fade in as not effect
-                            newMidiTrack->pushFadeIn(rOffset, normalChannel);
-                            //ATTENTION - must return it back later
-                            rOffset = 0;
-
-                            effectsOnNote = 0; // to finish well
-                        }
-                        else if (effects == 21)
-                        {
-                            //ghost note
-                            byte ghostVelocy = midiVelocy - 10;
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,ghostVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0;
-
-                            effectsOnNote = 0; // to finish well
-                        }
-                        else if (effects == 22)
-                        {
-                            //GRACE NOTE
-                            //dead code of value
-                            MidiSignal *mSignalGraceOn=new MidiSignal(0x90  | normalChannel,midiNote+2,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalGraceOn);
-                            pauseAccumulator = 0;
-
-                            short int graceLen = (rOffset/8);
-                            MidiSignal *mSignalGraceOff=new MidiSignal(0x80  | normalChannel,midiNote+2,80,graceLen-1);
-                            newMidiTrack->add(mSignalGraceOff);
-                            MidiSignal *mSignalOn=new MidiSignal(0x90  | normalChannel,midiNote,midiVelocy,1);
-                            newMidiTrack->add(mSignalOn);
-                            rOffset -= graceLen;
-
-                            effectsOnNote = 0; // to finish well
-
-                        }
-                        else if (effects == 23)
-                        {
-                            //staccato
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90  | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0; //flush accumulated
-
-                            pauseAccumulator = rOffset/2;
-                            rOffset-=rOffset/2;
-
-                            effectsOnNote = 0;
-                        }
-                        else if (effects == 24)
-                        {
-                            //tremolo pick - trills
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90  | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0; //flush accumulated
-
-                            short int tremoloStep = rOffset/4;
-
-                            for (int i = 0; i < 3; ++i)
-                            {
-                                MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,midiVelocy,tremoloStep);
-                                newMidiTrack->add(mSignalOff);
-                                MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,0);
-                                newMidiTrack->add(mSignalOn);
-                            }
-
-                            rOffset = tremoloStep;
-
-                            effectsOnNote = 0;
-
-                        }
-                        else if ((effects == 25) || (effects == 26))
-                        {
-                            //upstroke + down stroke effects
-
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            strokeStep = rOffset/12;
-
-                            if (effects == 25)
-                            {
-                                pauseAccumulator += strokeStep;
-                                rOffset -= strokeStep;
-                                MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                                newMidiTrack->add(mSignalOn);
-                                pauseAccumulator = 0; //flush accumulated
-                            }
-
-                            //FIRST UPDOWN STROKE WORK AS UPSTROKE
-                            //rOffset-=rOffset/4;
-                        }
-                        else if (effects == 27)
-                        {
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            byte accentVelocy = midiVelocy + midiVelocy/10;//cali)
-                            if (accentVelocy > 127) accentVelocy = 127;
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,accentVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0; //flush accumulated
-                            effectsOnNote = 0; //other cases
-                        }
-
-                        if (effects == 1)
-                        {   //vibratto
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | effectChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0;
-
-                            short int vibroStep = rOffset/6;
-                            newMidiTrack->pushVibration(effectChannel,3,vibroStep); //channel + depth
-
-                            rOffset = 0;
-                        }
-
-                        bool needAfterAdd = false;
-
-                        if (effects == 18)
-                                needAfterAdd = true;
-
-                        if (effects.inRange(11,16))
-                            needAfterAdd = true;
-
-                        if (effects.inRange(28,32))
-                            needAfterAdd = true;
-
-
-                        if (needAfterAdd) //and many other cases
-                        { //ANY OTHER CASE !!!
-
-                            //LOT ATTENTION HERE
-                            pauseAccumulator += rythmAccumulator; ///ATTENTION!!!
-                            rythmAccumulator = 0; //should fix this
-                            //FUCKEN SHIT
-
-                            MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalOn);
-                            pauseAccumulator = 0; //flush accumulated
-                            effectsOnNote = 0; //other cases
-                        }
-
-
-                    } //not DEAD
-                    else
-                    { //X NOTE - DEAD NOTE by conditions
-
-                       MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                       newMidiTrack->add(mSignalOn);
-                       pauseAccumulator = rOffset-20;
-                       rOffset = 20;//let of ghost note
-                      //ATTENTION COULD BE BUGS IN ACCORDS WITH GHOSTS - check
-                    }
-                } //not ending note
-                else
-                {
-                    //ENDING NOTE YEARH
-                    if (midiLog)  logger << "We run on ending note";
-
-                    //rOffset += rythmAccumulator;
-                    //rythmAccumulator = 0;
-
-                    //MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,80,rOffset);
-                    //newMidiTrack->add(mSignalOff);
-                    //rOffset = 0;
-                    //alreadyFinished = true;
-
-
-
-                }
-
-
-                //ON Cycle
-                for (ul hInd = 0; hInd < harmonyVertical.len(); ++hInd)
-                {
-                    ul hIndReal = hInd;
-
-                    if (effects==26)
-                        hIndReal = harmonyVertical.len()-1-hInd;//upside down
-
-                    ul mHarmonyIndex = harmonyVertical.getV(hIndReal);
-                    ul roughHarmony = music.gM(trackIndex).getV(mHarmonyIndex);
-                    byte harmStat = (roughHarmony>>8) & 7; //too will go to vector..
-                    Melody::mnote harmValNote = music.gM(trackIndex).getMNote(mHarmonyIndex);
-                    byte harmVal = harmValNote.octave*12 + harmValNote.key;
-
-                    byte HvelocyValue = (roughHarmony>>11)&15;
-                    byte HmidiVelocy = HvelocyValue*15; //velocy HERE !!!
-                    if (HmidiVelocy == 0) HmidiVelocy = 95;//default
-
-                    noteStateHarm = harmStat; //to old
-                    harmonyNote = harmVal;
-
-                    if ((effects == 25)||(effects == 26))
-                    {
-                        pauseAccumulator += strokeStep;
-                        rOffset -= strokeStep;
-                    }
-
-                    if ((noteStateHarm != Melody::endingNote))
-                    {
-
-                        {
-                            MidiSignal *mSignalHarmOn=new MidiSignal(0x90 | normalChannel,harmonyNote,HmidiVelocy,pauseAccumulator);
-                            newMidiTrack->add(mSignalHarmOn);
-                            pauseAccumulator = 0; //flush accumulated
-                        }
-                    }
-                }
-
-                if ((effects == 25) ||  (effects == 26))
-                {
-                    if (effects == 26)
-                    {
-                        //pushFirstNote!
-                        pauseAccumulator += strokeStep;
-                        rOffset -= strokeStep;
-                        MidiSignal *mSignalOn=new MidiSignal(0x90 | normalChannel,midiNote,midiVelocy,pauseAccumulator);
-                        newMidiTrack->add(mSignalOn);
-                        pauseAccumulator = 0; //flush accumulated
-                    }
-
-                    //rOffset-=rOffset/4;
-
-                    effectsOnNote =  0;
-                }
-
-
-
-                //MAIN NOTE POSITION OFF
-                //if (alreadyFinished==false)
-                {
-
-                    if ((noteState != Melody::startingNote))
-                    {
-
-                        rOffset += rythmAccumulator;
-                        if (midiLog)  LOG( << "rOffset in the End "<<rOffset);
-                        rythmAccumulator = 0;
-
-
-
-
-
-                        if (effects.empty() || (effectsOnNote == 0))
-                        {
-                            MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,80,rOffset);
-                            newMidiTrack->add(mSignalOff);
-                            rOffset = 0;
-
-                            if (noteState == Melody::endingNote) //fix bad one - attention refact
-                            {
-                                MidiSignal *mSignalOff=new MidiSignal(0x80 | effectChannel,midiNote,80,rOffset);
-                                newMidiTrack->add(mSignalOff);
-                                rOffset = 0;
-                            }
-
-                        }
-                        else
-                        {
-                            if (noteState == Melody::endingNote) //fix
-                            {
-                                MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,80,rOffset);
-                                newMidiTrack->add(mSignalOff);
-                                rOffset = 0;
-                            }
-                        }
-
-                        if (effects == 1)
-                        {
-                            MidiSignal *mSignalOff=new MidiSignal(0x80 | effectChannel,midiNote,80,rOffset);
-                            newMidiTrack->add(mSignalOff);
-                            rOffset = 0;
-                        }
-                        if (effects == 2)
-                        { //palm mute
-                            short int shiftTime = rOffset/4;
-                            pauseAccumulator += shiftTime;
-                            rOffset -= shiftTime;
-                            MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,80,rOffset);
-                            newMidiTrack->add(mSignalOff);
-                            rOffset = 0;
-
-                        }
-                        if  (effects.inRange(3,10)) //if ((effects >= 3)&&(effects <=10))
-                        {
-                            //slides +
-                            MidiSignal *mSignalOff=new MidiSignal(0x80 | effectChannel,midiNote,80,rOffset);
-                            newMidiTrack->add(mSignalOff);
-
-                            rOffset = 0;
-                        }
-                        if  (effects==17) //if ((effects >10) && (effects <=17)) //17 is bend
-                        {
-                            //slide + bend
-                            MidiSignal *mSignalOff=new MidiSignal(0x80 | effectChannel,midiNote,80,rOffset);
-                            newMidiTrack->add(mSignalOff);
-                            rOffset = 0;
-
-                        } //error herer
-
-                    }
-                    else
-                    {   //double code refact
-
-
-                        if (lastNoteInSeq)
-                        {
-                            rOffset += rythmAccumulator;
-                            if (midiLog)  LOG( << "rOffset in the End "<<rOffset);
-                            rythmAccumulator = 0;
-                            //if (effects.empty()||(effects == 18))
-                            {
-                                MidiSignal *mSignalOff=new MidiSignal(0x80 | normalChannel,midiNote,80,rOffset);
-                                newMidiTrack->add(mSignalOff);
-                            }
-                            rOffset=0;
-                        }
-                    }
-
-                }
-
-                //OFF cycle
-                for (ul hInd = 0; hInd < harmonyVertical.len(); ++hInd)
-                {
-                    ul mHarmonyIndex = harmonyVertical.getV(hInd);
-                    ul roughHarmony = music.gM(trackIndex).getV(mHarmonyIndex);
-                    byte harmStat = (roughHarmony>>8) & 7; //too will go to vector..
-                    Melody::mnote harmValNote = music.gM(trackIndex).getMNote(mHarmonyIndex);
-                    byte harmVal = harmValNote.octave*12 + harmValNote.key;
-
-                    //to old
-                    noteStateHarm = harmStat;
-                    harmonyNote = harmVal;
-
-                    if (midiLog)  LOG( << "Harmony index "<<hInd<<" harmonyState "<<harmonyNote);
-
-                    if ((noteStateHarm != Melody::startingNote))
-                    {
-                       if (harmonyNote != midiNote) //let ring fix
-                       {
-                           rOffset += rythmAccumulator;
-                           rythmAccumulator = 0;
-                           MidiSignal *mSignalHarmOff=new MidiSignal(0x80 | normalChannel,harmonyNote,80,rOffset);
-                           newMidiTrack->add(mSignalHarmOff);
-
-                           //std::cout<<std::endl;
-                           //mSignalHarmOff.printToStream(std::cout);
-                           rOffset=0;
-                       }
-                    }
-                    else
-                    { //double code refact
-                        if (lastNoteInSeq)
-                            //next is pause?
-                        {
-                            rOffset += rythmAccumulator;
-                            rythmAccumulator = 0;
-                            MidiSignal *mSignalHarmOff=new MidiSignal(0x80 | normalChannel,harmonyNote,80,rOffset);
-                            newMidiTrack->add(mSignalHarmOff);
-                            rOffset=0;
-                        }
-                    }
-                }
-
-                rythmAccumulator += rOffset;
-                rOffset = 0;
-
-            }
-
-
-
-        }
-
-        newMidiTrack->pushEvent47();
-        add(newMidiTrack);
-
-    }
-
-    return true;
-}
-
-///GENERATOR END
 
 //HELPERS BEGIN
 
@@ -1458,7 +661,7 @@ void MidiTrack::pushChangeInstrument(byte newInstr, byte channel, ul timeShift)
     this->add(instrumentChange);
 }
 
-void MidiTrack::pushMetrSignature(byte num, byte den,ul timeShift=0, byte metr=24, byte perQuat=8)
+void MidiTrack::pushMetrSignature(byte num, byte den,ul timeShift=0, byte metr, byte perQuat)
 {
     MidiSignal *signatureEvent = new MidiSignal(0xff,88,0,timeShift);
 

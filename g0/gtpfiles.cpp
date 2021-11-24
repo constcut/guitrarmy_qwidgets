@@ -1,9 +1,17 @@
 #include "gtpfiles.h"
 
+#include <QDebug>
+#include <fstream>
+
 bool gtpLog = false;
 
 ////////////////////////////////////////////////////////////////////////////
 char miniBufer[20480];
+
+#define logger qDebug()
+
+#define LOG(m)
+//Some of the logs disabled yet
 
 
 std::string readString(std::ifstream &file, ul stringLen)
@@ -11,27 +19,27 @@ std::string readString(std::ifstream &file, ul stringLen)
    //for current max
    //refact dynamic
 
-   if (gtpLog)  LOG( <<"Reaging string "<<stringLen<<" bytes");
-   file.read(miniBufer,stringLen);//changed attention
+   if (gtpLog)  qDebug() <<"Reaging string "<<stringLen<<" bytes";
+   file.read((char*)miniBufer,stringLen);//changed attention
    miniBufer[stringLen] = 0;
 
-   if (gtpLog)  LOG( << "Readen string "<<miniBufer);
+   if (gtpLog)  qDebug() << "Readen string "<<miniBufer;
 
    std::string response = std::string(miniBufer);
    return response;
 }
 
-std::string readString(AFistd::ifstreamle &file)
+std::string readString(std::ifstream &file)
 {
     ul stringLen = 0;
     std::string response = "";
 
-    file.read(&stringLen,4);
+    file.read((char*)&stringLen,4);
 
     if (stringLen > 0)
     {
         if (gtpLog)
-            LOG(<<"String len "<<stringLen);
+            qDebug()<<"String len "<<stringLen;
         response = readString(file,stringLen); //attention and check old
     }
     else
@@ -46,9 +54,9 @@ std::string readStringShiByte(std::ifstream &file)
     ul stringLen = 0;
     std::string response = "";
 
-    file.read(&stringLen,4);
+    file.read((char*)&stringLen,4);
 
-    byte whatFo = 0; file.read(&whatFo,1);
+    byte whatFo = 0; file.read((char*)&whatFo,1);
 
     if (stringLen == 0)
         stringLen = whatFo;
@@ -61,7 +69,7 @@ std::string readStringShiByte(std::ifstream &file)
     if (stringLen > 0)
     {
         if (gtpLog)
-            LOG(<<"String len "<<stringLen);
+            qDebug()<<"String len "<<stringLen;
         response = readString(file,stringLen); //attention and check old
     }
     else
@@ -76,13 +84,14 @@ void writeBendGTPOLD(std::ofstream *file, BendPointsGPOld *bend)
 {
     //saved to be somewhere in the code
     byte bendType=bend->getType();
-    file->write(&bendType,1);
+    file->write((const char*)&bendType,1);
+
 
     ul bendHeight = bend->getHeight();
-    file->write(&bendHeight,4); //attention again
+    file->write((const char*)&bendHeight,4); //attention again
 
     ul pointsCount = bend->len();
-    file->write(&pointsCount,4);
+    file->write((const char*)&pointsCount,4);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
     {
@@ -92,9 +101,9 @@ void writeBendGTPOLD(std::ofstream *file, BendPointsGPOld *bend)
         ul verticalPosition = point->heightPosition;
         byte vibratoFlag = point->vibratoFlag;
 
-        file->write(&absolutePosition,4);
-        file->write(&verticalPosition,4);
-        file->write(&vibratoFlag,1);
+        file->write((const char*)&absolutePosition,4);
+        file->write((const char*)&verticalPosition,4);
+        file->write((const char*)&vibratoFlag,1);
     }
 }
 
@@ -103,14 +112,14 @@ void writeBendGTP(std::ofstream *file, BendPoints *bend)
     byte bendType=bend->getType();
     if (bendType>=1) bendType += 5;
 
-    file->write(&bendType,1);
+    file->write((const char*)&bendType,1);
 
     //need to find a hieghest point - but this is only for output
     ///ul bendHeight = bend->getHeight();
-    ///file->write(&bendHeight,4); //attention again
+    ///file->write((const char*)&bendHeight,4); //attention again
 
     ul pointsCount = bend->len();
-    file->write(&pointsCount,4);
+    file->write((const char*)&pointsCount,4);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
     {
@@ -120,9 +129,9 @@ void writeBendGTP(std::ofstream *file, BendPoints *bend)
         ul verticalPosition = point->vertical*25;
         byte vibratoFlag = point->vFlag;
 
-        file->write(&absolutePosition,4);
-        file->write(&verticalPosition,4);
-        file->write(&vibratoFlag,1);
+        file->write((const char*)&absolutePosition,4);
+        file->write((const char*)&verticalPosition,4);
+        file->write((const char*)&vibratoFlag,1);
     }
 }
 
@@ -130,17 +139,17 @@ void writeBendGTP(std::ofstream *file, BendPoints *bend)
 void readBendGTP(std::ifstream *file, BendPoints *bend)
 {
     byte bendType=0;
-    file->read(&bendType,1);
+    file->read((char*)&bendType,1);
 
     ul bendHeight = 0;
-    file->read(&bendHeight,4); //attention again
+    file->read((char*)&bendHeight,4); //attention again
     //25 quarter ; 75 - 3 quartes
     //50 half ; 100 - tone
     //... 300 - three tones
     ul pointsCount = 0;
-    file->read(&pointsCount,4);
+    file->read((char*)&pointsCount,4);
 
-    if (gtpLog)  LOG(<< "Type "<<bendType<<"; Height "<<bendHeight<<"; N= "<<pointsCount);
+    if (gtpLog)  qDebug()<< "Type "<<bendType<<"; Height "<<bendHeight<<"; N= "<<pointsCount;
 
     if (bendType >= 6)
         bend->setType(bendType-5); //temp action, yet not handled anyway
@@ -153,13 +162,13 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
         ul verticalPosition = 0;
         byte vibratoFlag = 0;
 
-        file->read(&absolutePosition,4);
-        file->read(&verticalPosition,4);
-        file->read(&vibratoFlag,1);
+        file->read((char*)&absolutePosition,4);
+        file->read((char*)&verticalPosition,4);
+        file->read((char*)&vibratoFlag,1);
 
         if (gtpLog)
-            LOG( << "Point# "<< pointInd << "; absPos="<<absolutePosition<<"; vertPos="
-               <<verticalPosition<<"; vibrato- "<<vibratoFlag);
+            qDebug() << "Point# "<< pointInd << "; absPos="<<absolutePosition<<"; vertPos="
+               <<verticalPosition<<"; vibrato- "<<vibratoFlag;
 
 
         BendPoint point;
@@ -169,7 +178,7 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
         bend->add(point);
     }
 
-    if (gtpLog)  LOG( << "Beng if (gtpLog)  logging finished with "<<(int)bend->len());
+    if (gtpLog)  qDebug() << "Beng if (gtpLog)  logging finished with "<<(int)bend->len();
 
     //return bend;
 }
@@ -182,40 +191,40 @@ void readChordDiagramGP3(std::ifstream &file)
        if (gtpLog)  logger << "CHORD_";
 
     int header=0;
-    file.read(&header,1);
+    file.read((char*)&header,1);
 
     if (header&0x01)
     {
         char skipper[40];
-        file.read(skipper,25);
+        file.read((char*)skipper,25);
 
-        file.read(skipper,1); //read byte ze
+        file.read((char*)skipper,1); //read byte ze
 
-        file.read(skipper,34);
+        file.read((char*)skipper,34);
         skipper[34] = 0;
         ///std::string chStr = std::string(skipper);
         int firstFret = 0;
-        file.read(&firstFret,4);
+        file.read((char*)&firstFret,4);
 
         for (int i = 0; i < 6; ++i)
         {
             int fret =0;
-            file.read(&fret,4);
+            file.read((char*)&fret,4);
         }
 
-        file.read(skipper,36);
+        file.read((char*)skipper,36);
     }
     else
     {
          std::string chStr = readStringShiByte(file);
          int firstFret = 0;
-         file.read(&firstFret,4);
+         file.read((char*)&firstFret,4);
 
          if (firstFret != 0)
              for (int i = 0; i < 6; ++i)
              {
                  int fret =0;
-                 file.read(&fret,4);
+                 file.read((char*)&fret,4);
              }
     }
 }
@@ -226,7 +235,7 @@ void readChordDiagramGP4(std::ifstream &file)
    if (gtpLog)  logger << "CHORD";
 
    int header=0;
-   file.read(&header,1);
+   file.read((char*)&header,1);
 
 
    char skipper[40];
@@ -234,32 +243,32 @@ void readChordDiagramGP4(std::ifstream &file)
     if (header&0x01)
     {
 
-        file.read(skipper,16);
+        file.read((char*)skipper,16);
 
 
         byte singleBy = 0;
-        file.read(&singleBy,1);
+        file.read((char*)&singleBy,1);
 
-        file.read(skipper,21);
+        file.read((char*)skipper,21);
         skipper[21] = 0;
         std::string chStr = std::string(skipper);
 
         if (gtpLog)
-            LOG( << "Ch text "<<chStr.c_str());
+            qDebug() << "Ch text "<<chStr.c_str();
 
         int firstFret = 0;
-        file.read(&firstFret,4);//skli
-        file.read(&firstFret,4);
+        file.read((char*)&firstFret,4);//skli
+        file.read((char*)&firstFret,4);
 
         for (int i = 0; i < 7; ++i)
         {
             int fret =0;
-            file.read(&fret,4);
+            file.read((char*)&fret,4);
 
 
         }
 
-        file.read(skipper,32);
+        file.read((char*)skipper,32);
     }
     else
     {
@@ -267,27 +276,27 @@ void readChordDiagramGP4(std::ifstream &file)
 
 
          int fullLen = 0;
-         file.read(&fullLen,4);
+         file.read((char*)&fullLen,4);
 
          byte singleBy = 0;
-         file.read(&singleBy,1);
+         file.read((char*)&singleBy,1);
 
-         file.read(skipper,singleBy);
+         file.read((char*)skipper,singleBy);
          skipper[singleBy] = 0;
 
          std::string chStr = std::string(skipper);
 
          if (gtpLog)
-             LOG( << "Chh text "<<chStr.c_str() );
+             qDebug() << "Chh text "<<chStr.c_str() ;
 
          int firstFret = 0;
-         file.read(&firstFret,4);
+         file.read((char*)&firstFret,4);
 
          if (firstFret != 0)
              for (int i = 0; i < 6; ++i)
              {
                  int fret =0;
-                 file.read(&fret,4);
+                 file.read((char*)&fret,4);
              }
     }
 }
@@ -299,19 +308,19 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     changeStruct.newTempo = 0;
 
-    file.read(&changeStruct.newInstr,1);  //1
+    file.read((char*)&changeStruct.newInstr,1);  //1
 
-    file.read(&changeStruct.newVolume,1);
-    file.read(&changeStruct.newPan,1);
-    file.read(&changeStruct.newChorus,1);
-    file.read(&changeStruct.newReverb,1);
-    file.read(&changeStruct.newPhaser,1);
-    file.read(&changeStruct.newTremolo,1);
-    file.read(&changeStruct.newTempo,4); //8
+    file.read((char*)&changeStruct.newVolume,1);
+    file.read((char*)&changeStruct.newPan,1);
+    file.read((char*)&changeStruct.newChorus,1);
+    file.read((char*)&changeStruct.newReverb,1);
+    file.read((char*)&changeStruct.newPhaser,1);
+    file.read((char*)&changeStruct.newTremolo,1);
+    file.read((char*)&changeStruct.newTempo,4); //8
 
-    if (gtpLog)  LOG( <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
+    if (gtpLog)  qDebug() <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
           "; C "<<changeStruct.newChorus<<"; R "<<changeStruct.newReverb<<"; Ph "<<changeStruct.newPhaser<<
-          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo);
+          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo;
 
 
     //NO INSTR IN DOCS
@@ -328,7 +337,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newVolume != 255)
     {
-        file.read(&changeStruct.volumeDur,1);
+        file.read((char*)&changeStruct.volumeDur,1);
 
         Beat::SingleChange volCh;
         volCh.changeCount = 0;
@@ -339,7 +348,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newPan != 255)
     {
-        file.read(&changeStruct.panDur,1);
+        file.read((char*)&changeStruct.panDur,1);
 
         Beat::SingleChange panCh;
         panCh.changeCount = 0;
@@ -350,7 +359,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newChorus != 255)
     {
-        file.read(&changeStruct.chorusDur,1);
+        file.read((char*)&changeStruct.chorusDur,1);
 
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
@@ -360,7 +369,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newReverb != 255)
     {
-         file.read(&changeStruct.reverbDur,1);
+         file.read((char*)&changeStruct.reverbDur,1);
 
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
@@ -370,7 +379,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newPhaser != 255)
     {
-        file.read(&changeStruct.phaserDur,1);
+        file.read((char*)&changeStruct.phaserDur,1);
 
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
@@ -380,7 +389,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newTremolo != 255)
     {
-         file.read(&changeStruct.tremoloDur,1);
+         file.read((char*)&changeStruct.tremoloDur,1);
 
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
@@ -392,7 +401,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
         if (changeStruct.newTempo < 10000) //some attention here
         {
-             file.read(&changeStruct.tempoDur,1);
+             file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
              Beat::SingleChange tempCh;
              tempCh.changeCount = 0;
@@ -408,7 +417,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     cursorBeat->effPack.addPack(28,1,&(cursorBeat->changes));
 
     //refact
-    file.read(&changeStruct.changesTo,1); //not applied! attention
+    file.read((char*)&changeStruct.changesTo,1); //not applied! attention
 
 
 }
@@ -417,7 +426,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int trackIndex=0, byte verInd=255)
 {
     byte trackHeader = 0;
-    file.read(&trackHeader,1);
+    file.read((char*)&trackHeader,1);
 
 
     if (trackHeader & 1)
@@ -432,71 +441,71 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
         if ((trackIndex==0)||(verInd==0))
         {
             ul byteZero = 0;
-            //file.read(&byteZero,4);
+            //file.read((char*)&byteZero,4);
 
-            file.read(&byteZero,1);
+            file.read((char*)&byteZero,1);
         }
     }
 
     ul trackNameLen = 0;
-    file.read(&trackNameLen,1);
+    file.read((char*)&trackNameLen,1);
 
-    if (gtpLog)  LOG( <<"XLENTRACK " <<trackNameLen);
+    if (gtpLog)  qDebug() <<"XLENTRACK " <<trackNameLen;
 
     char trackName[40];
-    file.read(trackName,40); //39? or 40?
+    file.read((char*)trackName,40); //39? or 40?
     std::string trackNameStr(trackName);
 
     currentTrack->setName(trackNameStr);
 
     //trackName[trackNameLen] = 0;
 
-    if (gtpLog)  LOG( << " Track name '" << trackName << "' ; head = " <<(int)trackHeader);
+    if (gtpLog)  qDebug() << " Track name '" << trackName << "' ; head = " <<(int)trackHeader;
 
 
     ul stringsAmount = 0;
-    file.read(&stringsAmount,4);
+    file.read((char*)&stringsAmount,4);
 
-    if (gtpLog)  LOG( <<"N strings " << (int) stringsAmount);
+    if (gtpLog)  qDebug() <<"N strings " << (int) stringsAmount;
 
 
     ul tunes[7] = {0}; //TUNEC!!!
     for (ul ii = 0; ii < 7; ++ii)
     {
-        file.read(&tunes[ii],4);
+        file.read((char*)&tunes[ii],4);
     }
 
     currentTrack->tuning.setStringsAmount(stringsAmount);
     for (ul ii = 0; ii < stringsAmount; ++ii)
     {
 
-        if (gtpLog)  LOG( << "Tunes for "<<ii<<" is "<<tunes[ii]);
+        if (gtpLog)  qDebug() << "Tunes for "<<ii<<" is "<<tunes[ii];
         currentTrack->tuning.setTune(ii,tunes[ii]);
     }
 
 
     ul port=0, chan=0, chanE=0;
-    file.read(&port,4);
-    file.read(&chan,4);
-    file.read(&chanE,4);
+    file.read((char*)&port,4);
+    file.read((char*)&chan,4);
+    file.read((char*)&chanE,4);
 
     currentTrack->setGPCOMPInts(0,port);
     currentTrack->setGPCOMPInts(1,chan);
     currentTrack->setGPCOMPInts(2,chanE);
 
-    if (gtpLog)  LOG( << "Port " << port << "; chan " <<chan <<"; chanE "<<chanE);
+    if (gtpLog)  qDebug() << "Port " << port << "; chan " <<chan <<"; chanE "<<chanE;
 
     ul frets=0;
-    file.read(&frets,4);
+    file.read((char*)&frets,4);
     ul capo=0;
-    file.read(&capo,4);
+    file.read((char*)&capo,4);
 
-    if (gtpLog)  LOG( << "Frets " << frets <<"; capo " << capo);
+    if (gtpLog)  qDebug() << "Frets " << frets <<"; capo " << capo;
 
     ul trackColor=0;
-    file.read(&trackColor,4);
+    file.read((char*)&trackColor,4);
 
-    if (gtpLog)  LOG( << "Color - "<<trackColor);
+    if (gtpLog)  qDebug() << "Color - "<<trackColor;
 
     currentTrack->setColor(trackColor);
     currentTrack->setGPCOMPInts(3,frets);
@@ -507,21 +516,21 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
         char toSkip[256];
 
         if (verInd == 1)
-            file.read(toSkip,49);
+            file.read((char*)toSkip,49);
         if (verInd == 0)
-            file.read(toSkip,44);
+            file.read((char*)toSkip,44);
 
         ul intLen = 0;
         byte byteLen = 0;
 
         if (verInd == 1)
         {
-            file.read(&intLen,4);
-            file.read(&byteLen,1);
-            file.read(toSkip,intLen-1);
-            file.read(&intLen,4);
-            file.read(&byteLen,1);
-            file.read(toSkip,intLen-1);
+            file.read((char*)&intLen,4);
+            file.read((char*)&byteLen,1);
+            file.read((char*)toSkip,intLen-1);
+            file.read((char*)&intLen,4);
+            file.read((char*)&byteLen,1);
+            file.read((char*)toSkip,intLen-1);
         }
 
         //+after track?
@@ -533,12 +542,12 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     byte beatEffectsHead1;
     byte beatEffectsHead2;
 
-    file.read(&beatEffectsHead1,1);
-    file.read(&beatEffectsHead2,1);
+    file.read((char*)&beatEffectsHead1,1);
+    file.read((char*)&beatEffectsHead2,1);
 
     //LARGE
-    if (gtpLog)  LOG( << "Beat effects flag present. H1=" << beatEffectsHead1 <<
-           "; H2=" << beatEffectsHead2);
+    if (gtpLog)  qDebug() << "Beat effects flag present. H1=" << beatEffectsHead1 <<
+           "; H2=" << beatEffectsHead2;
 
     //name as bools
 
@@ -546,9 +555,9 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     {   //tapping poping slaping
 
         byte tapPopSlap;
-        file.read(&tapPopSlap,1);
+        file.read((char*)&tapPopSlap,1);
 
-        if (gtpLog)  LOG( << "TapPopSlap byte = "<<tapPopSlap);
+        if (gtpLog)  qDebug() << "TapPopSlap byte = "<<tapPopSlap;
 
         if (tapPopSlap)
         {
@@ -577,9 +586,9 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead1 & 64)
     {   //updown stroke
         byte upStroke, downStroke;
-        file.read(&upStroke,1);
-        file.read(&downStroke,1);
-        if (gtpLog)  LOG( << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke);
+        file.read((char*)&upStroke,1);
+        file.read((char*)&downStroke,1);
+        if (gtpLog)  qDebug() << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke;
 
         if (upStroke)
         cursorBeat->setEffects(25); //upstroke
@@ -592,7 +601,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead2 & 2)
     {   //pick stoke
         byte pickStoke;
-        file.read(&pickStoke,1);
+        file.read((char*)&pickStoke,1);
         if (gtpLog)  logger << "Pick stoke ";
 
         if (pickStoke)
@@ -609,11 +618,11 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (gtpLog)  logger <<"Bit 3 in header turned on";
     //NOT SET
     byte noteEffectsHead1, noteEffectsHead2;
-    file.read(&noteEffectsHead1,1);
-    file.read(&noteEffectsHead2,1);
+    file.read((char*)&noteEffectsHead1,1);
+    file.read((char*)&noteEffectsHead2,1);
 
-    if (gtpLog)  LOG( << "Note effects heads. H1=" <<noteEffectsHead1<<
-            "; H2=" <<noteEffectsHead2);
+    if (gtpLog)  qDebug() << "Note effects heads. H1=" <<noteEffectsHead1<<
+            "; H2=" <<noteEffectsHead2;
 
 
     if (noteEffectsHead1&1)
@@ -625,7 +634,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         readBendGTP(&file,bend);
 
         if (gtpLog)
-        LOG(<< " Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType());
+        qDebug()<< " Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType();
 
         newNote->setEffect(17);//first common pattern
         newNote->effPack.addPack(17,2,bend); //type 2 is bend
@@ -641,17 +650,17 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         byte graceTransition = 0;
         byte graceDuration = 0;
 
-        file.read(&graceFret,1);
-        file.read(&graceDynamic,1);
-        file.read(&graceTransition,1);
-        file.read(&graceDuration,1);
+        file.read((char*)&graceFret,1);
+        file.read((char*)&graceDynamic,1);
+        file.read((char*)&graceTransition,1);
+        file.read((char*)&graceDuration,1);
 
-        if (gtpLog)  LOG(<<"Fret "<<graceFret<<" Dyn "<<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration);
+        if (gtpLog)  qDebug()<<"Fret "<<graceFret<<" Dyn "<<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration;
 
         if (gpVersion==5)
         {
             byte flags =0;
-            file.read(&flags,1);
+            file.read((char*)&flags,1);
             if (gtpLog)  logger<<"Gp5 grace flags "<<flags;
         }
 
@@ -696,7 +705,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&4)
     {//Tremolo picking : b
         byte tremoloPicking;
-        file.read(&tremoloPicking,1);
+        file.read((char*)&tremoloPicking,1);
         if (gtpLog)  logger << "Tremolo byte "<<tremoloPicking;
         newNote->setEffect(24); //tremolo picking
     }
@@ -704,7 +713,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&8)
     {//Slide : b
         byte slide;
-        file.read(&slide,1);
+        file.read((char*)&slide,1);
         if (gtpLog)  logger << "Slide byte " <<slide;
         byte effect = 3;
         if (slide < 5)
@@ -726,7 +735,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&16)
     {//Harmonics : b
         byte harmonics;
-        file.read(&harmonics,1);
+        file.read((char*)&harmonics,1);
         if (gtpLog)  logger << "Harmonics byte "<<harmonics;
 
         if (gpVersion==5)
@@ -738,14 +747,14 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
             if (harmonics==2) //artif
             {
                 byte skipIt;
-                file.read(&skipIt,1);
-                file.read(&skipIt,1);
-                file.read(&skipIt,1);
+                file.read((char*)&skipIt,1);
+                file.read((char*)&skipIt,1);
+                file.read((char*)&skipIt,1);
             }
             if (harmonics==3) //tapp
             {
                 byte skipIt;
-                file.read(&skipIt,1);
+                file.read((char*)&skipIt,1);
 
             }
             if (harmonics==4) //pinch
@@ -775,8 +784,8 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&32)
     {//Trill : 2b
         byte trill1, trill2;
-        file.read(&trill1,1);
-        file.read(&trill2,1);
+        file.read((char*)&trill1,1);
+        file.read((char*)&trill2,1);
         if (gtpLog)  logger << "Trill b1="<<trill1<<" trill b2="<<trill2;
     }\
 
@@ -793,19 +802,19 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     //unused ul beatIndex, Bar *cursorBar,
 
     byte noteHeader;
-    file.read(&noteHeader,1);
+    file.read((char*)&noteHeader,1);
 
     byte noteType=0;
-    if (gtpLog)  LOG( << "Note header "<<(int)noteHeader);
+    if (gtpLog)  qDebug() << "Note header "<<(int)noteHeader;
 
     newNote->setEffect(0); //flush first
 
     if (noteHeader & 0x20)
     {
-        file.read(&noteType,1);
+        file.read((char*)&noteType,1);
         byte bby=0; //^IN DOCS WE HAVE SHORT INT HERE
-        //file.read(&bby,1);
-        if (gtpLog)  LOG( << "Note type = "<<(int)noteType<<" : "<<bby);
+        //file.read((char*)&bby,1);
+        if (gtpLog)  qDebug() << "Note type = "<<(int)noteType<<" : "<<bby;
 
         //could be leag on 2
         //dead on 3 is ghost
@@ -977,9 +986,9 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
         //another duration
         if (gtpLog)  logger  <<"Time independent ";
         byte t1,t2;
-        file.read(&t1,1);
-        file.read(&t2,1);
-        if (gtpLog)  LOG(<<"T: "<<t1<<";"<<t2);
+        file.read((char*)&t1,1);
+        file.read((char*)&t2,1);
+        if (gtpLog)  qDebug()<<"T: "<<t1<<";"<<t2;
         //attention?
         }
     }
@@ -988,8 +997,8 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     {
         if (gtpLog)  logger <<"Bit 4 in header turned on";
         byte bByte=0;
-        file.read(&bByte,1);
-        if (gtpLog)  LOG(<<"velocity byte(forte) "<<bByte);
+        file.read((char*)&bByte,1);
+        if (gtpLog)  qDebug()<<"velocity byte(forte) "<<bByte;
         newNote->setVolume(bByte);
     }
 
@@ -997,8 +1006,8 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     {
         if (gtpLog)  logger <<"Bit 5 in header turned on";
         byte bByte=0;
-        file.read(&bByte,1);
-        if (gtpLog)  LOG(<<"some byte fret "<<bByte);
+        file.read((char*)&bByte,1);
+        if (gtpLog)  qDebug()<<"some byte fret "<<bByte;
         if (noteType != 2)
         {
             if (gtpLog)  logger<<"not leeg setting prev fret";
@@ -1034,10 +1043,10 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
         byte bByte=0;
         byte bByte2=0;
-        file.read(&bByte,1);
-        file.read(&bByte2,1);
+        file.read((char*)&bByte,1);
+        file.read((char*)&bByte2,1);
 
-        if (gtpLog)  LOG(<<"fingering byte "<<bByte<<":"<<bByte2);
+        if (gtpLog)  qDebug()<<"fingering byte "<<bByte<<":"<<bByte2;
     }
 
     if (gpVersion==5)
@@ -1052,10 +1061,10 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
         if (noteHeader & 1)
         {
-            file.read(toSkip,8);
+            file.read((char*)toSkip,8);
         }
 
-        file.read(toSkip,1);
+        file.read((char*)toSkip,1);
     }
 
     if (noteHeader & 8)
@@ -1067,7 +1076,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 void readBeat(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatHeader = 0;
-    file.read(&beatHeader,1);
+    file.read((char*)&beatHeader,1);
 
     bool dotted = beatHeader & 0x1;
     bool precChord = beatHeader & 0x2;
@@ -1078,14 +1087,14 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
     bool precStatus = beatHeader & 0x40;
 
 
-    if (gtpLog)  LOG( << "Beat header " << (int)beatHeader);
+    if (gtpLog)  qDebug() << "Beat header " << (int)beatHeader;
 
     cursorBeat->setPause(false);
     if (precStatus)
     {
         byte beatStatus;
-        file.read(&beatStatus,1);
-        if (gtpLog)  LOG( <<"Beat status "<<(int)beatStatus);
+        file.read((char*)&beatStatus,1);
+        if (gtpLog)  qDebug() <<"Beat status "<<(int)beatStatus;
         if ((beatStatus == 2) || (beatStatus == 0))
          cursorBeat->setPause(true);
     }
@@ -1093,9 +1102,9 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 
 
     byte durationGP =0;
-    file.read(&durationGP,1);
+    file.read((char*)&durationGP,1);
 
-    if (gtpLog)  LOG( <<"Beat duration "<<(int)durationGP);
+    if (gtpLog)  qDebug() <<"Beat duration "<<(int)durationGP;
 
     byte duration=durationGP+2; //moved from -2 double to 1
     //x - double //0 - full //1 - half
@@ -1110,8 +1119,8 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
     if (precNTrump)
     {
         ul trumpletN = 0;
-        file.read(&trumpletN,4);
-        if (gtpLog)  LOG( <<"Beat tump "<<trumpletN);
+        file.read((char*)&trumpletN,4);
+        if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
     }
     else
@@ -1129,18 +1138,18 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  logger << "Text";
 
         ul textLen = 0;
-        file.read(&textLen,4);
+        file.read((char*)&textLen,4);
 
         byte byteLen = 0;
-        file.read(&byteLen,1);
+        file.read((char*)&byteLen,1);
 
         char textBufer[255];
-        file.read(textBufer,byteLen);
+        file.read((char*)textBufer,byteLen);
 
         //len+1
         textBufer[byteLen]=0;
 
-        if (gtpLog)  LOG( <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen);
+        if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
         cursorBeat->setGPCOMPText(foundText);
@@ -1164,7 +1173,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 ul readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
 {
     byte stringsFlag = 0;
-    file.read(&stringsFlag,1);
+    file.read((char*)&stringsFlag,1);
 
     ul totalCountStrings = 0;
 
@@ -1179,8 +1188,8 @@ ul readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
     if (stringsFlag&128) polyStrings.push_back(0);//checkcheck
     totalCountStrings  = polyStrings.size();
 
-    if (gtpLog)  LOG(<<"Strings flag "<<(int)stringsFlag
-      <<"; total count "<<totalCountStrings);
+    if (gtpLog)  qDebug()<<"Strings flag "<<(int)stringsFlag
+      <<"; total count "<<totalCountStrings;
 
     return totalCountStrings;
 }
@@ -1191,7 +1200,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     ul i = index;
 
     byte beatHeader = 0;
-    file.read(&beatHeader,1);
+    file.read((char*)&beatHeader,1);
 
     byte precNum = beatHeader & 0x1;
     byte precDenum = beatHeader & 0x2;
@@ -1202,9 +1211,9 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     byte precTonality = beatHeader & 0x40;
     byte precDoubleBar = beatHeader & 0x80;
 
-    if (gtpLog)  LOG(<< i << " beat h= " << (int)beatHeader);
-    if (gtpLog)  LOG( << "[" << precNum << "][" << precDenum << "][" << precBegRepeat << "][" << precEndRepeat << "][" << precNumAltEnding <<
-    "][" << precMarker << "][" << precTonality << "][" << precDoubleBar << "]");
+    if (gtpLog)  qDebug()<< i << " beat h= " << (int)beatHeader;
+    if (gtpLog)  qDebug() << "[" << precNum << "][" << precDenum << "][" << precBegRepeat << "][" << precEndRepeat << "][" << precNumAltEnding <<
+    "][" << precMarker << "][" << precTonality << "][" << precDoubleBar << "]";
 
 
 
@@ -1227,8 +1236,8 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precNum)
     {
         byte signNumeration = 0;
-        file.read(&signNumeration,1);
-        if (gtpLog)  LOG( << "Set num to " <<(int)signNumeration);
+        file.read((char*)&signNumeration,1);
+        if (gtpLog)  qDebug() << "Set num to " <<(int)signNumeration;
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -1248,8 +1257,8 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precDenum)
     {
         byte signDenumeration = 0;
-        file.read(&signDenumeration,1);
-        if (gtpLog)  LOG( << "Set denum to "	<<(int)signDenumeration);
+        file.read((char*)&signDenumeration,1);
+        if (gtpLog)  qDebug() << "Set denum to "	<<(int)signDenumeration;
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -1269,8 +1278,8 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precEndRepeat)
     {
         byte repeatTimes = 0;
-        file.read(&repeatTimes,1);
-        if (gtpLog)  LOG( << "Repeat times " <<(int)repeatTimes);
+        file.read((char*)&repeatTimes,1);
+        if (gtpLog)  qDebug() << "Repeat times " <<(int)repeatTimes;
         //i'm not sure, but repeat flag appear on next bar
         //maybe its bug or how it used to be on gtp
 
@@ -1286,8 +1295,8 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precNumAltEnding)
     {
         byte altEnding = 0;
-        file.read(&altEnding,1);
-        if (gtpLog)  LOG( << "AltEnding " << (int)altEnding);
+        file.read((char*)&altEnding,1);
+        if (gtpLog)  qDebug() << "AltEnding " << (int)altEnding;
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->getV(iTrack)->getV(i);
@@ -1297,19 +1306,19 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precMarker)
     {
         ul unknown = 0;
-        file.read(&unknown,4); //they say its a byte.. fuck them..
+        file.read((char*)&unknown,4); //they say its a byte.. fuck them..
 
         byte markerSize;
-        file.read(&markerSize,1);
+        file.read((char*)&markerSize,1);
 
         char markerBufer[255];
-        file.read(markerBufer,markerSize);
+        file.read((char*)markerBufer,markerSize);
         markerBufer[markerSize] = 0;
 
         ul markerColor;
-        file.read(&markerColor,4);
+        file.read((char*)&markerColor,4);
 
-        if (gtpLog)  LOG( << "Marker size "<<markerSize<<" buf "<<markerBufer);
+        if (gtpLog)  qDebug() << "Marker size "<<markerSize<<" buf "<<markerBufer;
 
         std::string markerBuferStr(markerBufer);
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
@@ -1321,9 +1330,9 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precTonality)  //4?
     {
         byte tonality = 0;
-        file.read(&tonality,1); //skip 1!!
-        file.read(&tonality,1);
-        if (gtpLog)  LOG( << "Tonality " <<(int)tonality);
+        file.read((char*)&tonality,1); //skip 1!!
+        file.read((char*)&tonality,1);
+        if (gtpLog)  qDebug() << "Tonality " <<(int)tonality;
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->getV(iTrack)->getV(i);
@@ -1341,10 +1350,10 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (knownVersion==0)
     {
         byte preVersion;///???
-        file.read(&preVersion,1);
+        file.read((char*)&preVersion,1);
         std::string formatVersion = readString(file,29);
         byte postVersion;///???
-        file.read(&postVersion,1);
+        file.read((char*)&postVersion,1);
     }
 
     std::string title,subtitle,interpret,albumn,author,copyright,tabAuthor,instructions;
@@ -1360,8 +1369,8 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     //notice
     ul noticeLen = 0;
-    file.read(&noticeLen,4);
-    if (gtpLog)  LOG( << "Notice len is " << (int)noticeLen );
+    file.read((char*)&noticeLen,4);
+    if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
@@ -1371,20 +1380,20 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
     byte tripletFeel = 0;
-    file.read(&tripletFeel,1);
+    file.read((char*)&tripletFeel,1);
 
     int tripletFeelInt = (int)tripletFeel; //hate this - if (gtpLog)  log should fix it
     //refact
-    if (gtpLog)  LOG( << "Triplet feel = " << tripletFeelInt );
+    if (gtpLog)  qDebug() << "Triplet feel = " << tripletFeelInt;
 
     ul lyTrack = 0;
-    file.read(&lyTrack,4);
-    if (gtpLog)  LOG( << "Lyrics track " <<(int)lyTrack );
+    file.read((char*)&lyTrack,4);
+    if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack;
 
     for (int i = 0; i < 5; ++i)
     {
         ul emWo = 0;
-        file.read(&emWo,4);
+        file.read((char*)&emWo,4);
         std::string lyricsOne = readString(file);
     }
 
@@ -1392,18 +1401,18 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     int signKey = 0;
     byte octave = 0;
 
-    file.read(&bpm,4);
-    file.read(&signKey,4);
-    file.read(&octave,1);
+    file.read((char*)&bpm,4);
+    file.read((char*)&signKey,4);
+    file.read((char*)&octave,1);
 
     tab->setBPM(bpm);
 
-    if (gtpLog)  LOG( <<"Bpm rate is " << bpm );
-    if (gtpLog)  LOG( <<"Sign Key = " <<signKey << " ; octave " <<octave );
+    if (gtpLog)  qDebug() <<"Bpm rate is " << bpm;
+    if (gtpLog)  qDebug() <<"Sign Key = " <<signKey << " ; octave " <<octave ;
 
     //4 8 - 12
     char midiChannelsData[768];
-    file.read(midiChannelsData,768);
+    file.read((char*)midiChannelsData,768);
 
     //debug
     if (gtpLog)
@@ -1417,8 +1426,8 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     ul beatsAmount = 0;
     ul tracksAmount = 0;
 
-    file.read(&beatsAmount,4);
-    file.read(&tracksAmount,4);
+    file.read((char*)&beatsAmount,4);
+    file.read((char*)&tracksAmount,4);
 
     if (gtpLog)  LOG( << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount );
 
@@ -1462,7 +1471,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     {
 
         ul beatsInPair = 0;
-        file.read(&beatsInPair,4);
+        file.read((char*)&beatsInPair,4);
 
         if (gtpLog)  LOG( <<i <<" Beats in pair " <<beatsInPair );
 
@@ -1475,7 +1484,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
                 for (int iii = 0; iii < 10; ++iii)
                 {
                     byte singleB;
-                    file.read(&singleB,1);
+                    file.read((char*)&singleB,1);
                     if (gtpLog)  LOG( << "[" << iii << "] = " << singleB);
                 }
                 if (gtpLog)  logger << "DEBUG OUT";
@@ -1550,8 +1559,8 @@ void writeString(std::ofstream &file, std::string value, ul stringLen=0)
     if (stringLen==0)
         stringLen = value.length();
 
-    file.write(&stringLen,4);
-    file.write(value.c_str(),stringLen);
+    file.write((const char*)&stringLen,4);
+    file.write((const char*)value.c_str(),stringLen);
 }
 
 
@@ -1559,36 +1568,36 @@ void writeTrack(std::ofstream &file, Track *currentTrack)
 {
     //TEMPLATE
     byte trackHeader = 0;
-    file.write(&trackHeader,1);
+    file.write((const char*)&trackHeader,1);
 
     ul trackNameLen = 0;
-    file.write(&trackNameLen,1);
+    file.write((const char*)&trackNameLen,1);
 
     char trackName[40];
-    file.write(trackName,40);
+    file.write((const char*)trackName,40);
 
     ul stringsAmount = 0;
-    file.write(&stringsAmount,4);
+    file.write((const char*)&stringsAmount,4);
 
 
     ul tunes[7] = {0}; //TUNEC!!!
     for (ul ii = 0; ii < 7; ++ii)
-        file.write(&tunes[ii],4);
+        file.write((const char*)&tunes[ii],4);
 
 
     ul port=0, chan=0, chanE=0;
-    file.write(&port,4);
-    file.write(&chan,4);
-    file.write(&chanE,4);
+    file.write((const char*)&port,4);
+    file.write((const char*)&chan,4);
+    file.write((const char*)&chanE,4);
 
     ul frets=0;
-    file.write(&frets,4);
+    file.write((const char*)&frets,4);
     ul capo=0;
-    file.write(&capo,4);
+    file.write((const char*)&capo,4);
 
 
     ul trackColor=0;
-    file.write(&trackColor,4);
+    file.write((const char*)&trackColor,4);
 
 }
 
@@ -1598,13 +1607,13 @@ void writeBeatEffects(std::ofstream &file, Beat *cursorBeat)
     byte beatEffectsHead1; //prepare function!
     byte beatEffectsHead2;
 
-    file.write(&beatEffectsHead1,1);
-    file.write(&beatEffectsHead2,1);
+    file.write((const char*)&beatEffectsHead1,1);
+    file.write((const char*)&beatEffectsHead2,1);
 
     if (beatEffectsHead1 & 32)
     {   //tapping poping slaping
         byte tapPopSlap;
-        file.write(&tapPopSlap,1);
+        file.write((const char*)&tapPopSlap,1);
     }
 
     if (beatEffectsHead2 & 4)
@@ -1616,14 +1625,14 @@ void writeBeatEffects(std::ofstream &file, Beat *cursorBeat)
     if (beatEffectsHead1 & 64)
     {   //updown stroke
         byte upStroke, downStroke;
-        file.write(&upStroke,1);
-        file.write(&downStroke,1);
+        file.write((const char*)&upStroke,1);
+        file.write((const char*)&downStroke,1);
     }
 
     if (beatEffectsHead2 & 2)
     {   //pick stoke
         byte pickStoke;
-        file.write(&pickStoke,1);
+        file.write((const char*)&pickStoke,1);
     }
 }
 
@@ -1631,7 +1640,7 @@ void writeBeat(std::ofstream &file, Beat *cursorBeat)
 {   //template
 
     byte beatHeader = 0; //prepare function
-    file.read(&beatHeader,1);
+    file.write((char*)&beatHeader,1);
 
     bool precChord = beatHeader & 0x2;
     bool precText = beatHeader & 0x4;
@@ -1643,16 +1652,16 @@ void writeBeat(std::ofstream &file, Beat *cursorBeat)
     if (precStatus)
     {
         byte beatStatus;
-        file.write(&beatStatus,1);
+        file.write((const char*)&beatStatus,1);
     }
 
     byte durationGP =0;
-    file.write(&durationGP,1);
+    file.write((const char*)&durationGP,1);
 
     if (precNTrump)
     {
         ul trumpletN = 0;
-        file.write(&trumpletN,4);
+        file.write((const char*)&trumpletN,4);
     }
 
     if (precChord)
@@ -1682,7 +1691,7 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
 {   //TEMPLATE
 
     byte beatHeader = 0; //PREPARE
-    file.write(&beatHeader,1);
+    file.write((const char*)&beatHeader,1);
 
     byte precNum = beatHeader & 0x1;
     byte precDenum = beatHeader & 0x2;
@@ -1694,41 +1703,41 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
     if (precNum)
     {
         byte signNumeration = 0;
-        file.write(&signNumeration,1);
+        file.write((const char*)&signNumeration,1);
     }
 
     if (precDenum)
     {
         byte signDenumeration = 0;
-        file.write(&signDenumeration,1);
+        file.write((const char*)&signDenumeration,1);
     }
 
     if (precEndRepeat)
     {
         byte repeatTimes = 0;
-        file.write(&repeatTimes,1);
+        file.write((const char*)&repeatTimes,1);
     }
 
     if (precNumAltEnding)
     {
         byte altEnding = 0;
-        file.write(&altEnding,1);
+        file.write((const char*)&altEnding,1);
     }
 
     if (precMarker)
     {
         byte markerSize;
-        file.write(&markerSize,1);
+        file.write((const char*)&markerSize,1);
         char markerBufer[255];
-        file.write(markerBufer,markerSize);
+        file.write((const char*)markerBufer,markerSize);
         ul markerColor;
-        file.write(&markerColor,4);
+        file.write((const char*)&markerColor,4);
     }
     if (precTonality)  //4?
     {
         byte tonality = 0;
-        file.write(&tonality,1); //skip 1!! ???
-        file.write(&tonality,1);
+        file.write((const char*)&tonality,1); //skip 1!! ???
+        file.write((const char*)&tonality,1);
     }
 }
 
@@ -1737,8 +1746,8 @@ void writeNoteEffects(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
     byte noteEffectsHead1, noteEffectsHead2; //prepare
-    file.write(&noteEffectsHead1,1);
-    file.write(&noteEffectsHead2,1);
+    file.write((const char*)&noteEffectsHead1,1);
+    file.write((const char*)&noteEffectsHead2,1);
 
     if (noteEffectsHead1&1)
     {
@@ -1753,36 +1762,36 @@ void writeNoteEffects(std::ofstream &file, Note *newNote)
         byte graceTransition = 0;
         byte graceDuration = 0;
 
-        file.write(&graceFret,1);
-        file.write(&graceDynamic,1);
-        file.write(&graceTransition,1);
-        file.write(&graceDuration,1);
+        file.write((const char*)&graceFret,1);
+        file.write((const char*)&graceDynamic,1);
+        file.write((const char*)&graceTransition,1);
+        file.write((const char*)&graceDuration,1);
     }
 
     if (noteEffectsHead2&4)
     {//Tremolo picking : b
         byte tremoloPicking;
-        file.write(&tremoloPicking,1);
+        file.write((const char*)&tremoloPicking,1);
     }
 
     if (noteEffectsHead2&8)
     {//Slide : b
         byte slide;
-        file.write(&slide,1);
+        file.write((const char*)&slide,1);
     }
 
 
     if (noteEffectsHead2&16)
     {//Harmonics : b
         byte harmonics;
-        file.write(&harmonics,1);
+        file.write((const char*)&harmonics,1);
     }
 
     if (noteEffectsHead2&32)
     {//Trill : 2b
         byte trill1, trill2;
-        file.write(&trill1,1);
-        file.write(&trill2,1);
+        file.write((const char*)&trill1,1);
+        file.write((const char*)&trill2,1);
     }\
 }
 
@@ -1795,42 +1804,42 @@ void writeNote(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
     byte noteHeader; //prepare
-    file.write(&noteHeader,1);
+    file.write((const char*)&noteHeader,1);
 
     if (noteHeader & 0x20)
     {
         byte noteType;
-        file.write(&noteType,1);
+        file.write((const char*)&noteType,1);
     }
 
     if (noteHeader & 1)
     {
         if (gtpLog)  logger  <<"Time independent ";
         byte t1,t2;
-        file.write(&t1,1);
-        file.write(&t2,1);
+        file.write((const char*)&t1,1);
+        file.write((const char*)&t2,1);
     }
 
     if (noteHeader & 16)
     {
         if (gtpLog)  logger <<"Bit 4 in header turned on";
         byte bByte=0;
-        file.write(&bByte,1);
+        file.write((const char*)&bByte,1);
     }
 
     if (noteHeader & 32)
     {
         if (gtpLog)  logger <<"Bit 5 in header turned on";
         byte bByte=0;
-        file.write(&bByte,1);
+        file.write((const char*)&bByte,1);
     }
 
     if (noteHeader & 128)
     {
         byte bByte=0;
         byte bByte2=0;
-        file.write(&bByte,1);
-        file.write(&bByte2,1);
+        file.write((const char*)&bByte,1);
+        file.write((const char*)&bByte2,1);
     }
 
     if (noteHeader & 8)
@@ -1859,26 +1868,26 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     changeStruct.newTempo = 0;
 
-    file.read(&changeStruct.newInstr,1);  //1
+    file.read((char*)&changeStruct.newInstr,1);  //1
 
     char toSkip[60];
 
-    file.read(toSkip,16);
+    file.read((char*)toSkip,16);
 
 
-    file.read(&changeStruct.newVolume,1);
-    file.read(&changeStruct.newPan,1);
-    file.read(&changeStruct.newChorus,1);
-    file.read(&changeStruct.newReverb,1);
-    file.read(&changeStruct.newPhaser,1);
-    file.read(&changeStruct.newTremolo,1);
+    file.read((char*)&changeStruct.newVolume,1);
+    file.read((char*)&changeStruct.newPan,1);
+    file.read((char*)&changeStruct.newChorus,1);
+    file.read((char*)&changeStruct.newReverb,1);
+    file.read((char*)&changeStruct.newPhaser,1);
+    file.read((char*)&changeStruct.newTremolo,1);
 
     ul strLen  = 0;
-    file.read(&strLen,4);
+    file.read((char*)&strLen,4);
     if (strLen > 1)
     {
         //byte readByte;
-        //file.read(&readByte,1);
+        //file.read((char*)&readByte,1);
 
         std::string tempoName = readString(file,strLen); //not -1
         if (gtpLog)
@@ -1888,11 +1897,11 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
     {
         if (gtpLog) logger<<"tempo name is empty";
         byte readByte;
-        file.read(&readByte,1);
+        file.read((char*)&readByte,1);
     }
 
 
-    file.read(&changeStruct.newTempo,4); //8
+    file.read((char*)&changeStruct.newTempo,4); //8
 
     if (gtpLog)  LOG( <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
           "; C "<<changeStruct.newChorus<<"; R "<<changeStruct.newReverb<<"; Ph "<<changeStruct.newPhaser<<
@@ -1913,7 +1922,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newVolume != 255)
     {
-        file.read(&changeStruct.volumeDur,1);
+        file.read((char*)&changeStruct.volumeDur,1);
 
         Beat::SingleChange volCh;
         volCh.changeCount = 0;
@@ -1924,7 +1933,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newPan != 255)
     {
-        file.read(&changeStruct.panDur,1);
+        file.read((char*)&changeStruct.panDur,1);
 
         Beat::SingleChange panCh;
         panCh.changeCount = 0;
@@ -1935,7 +1944,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newChorus != 255)
     {
-        file.read(&changeStruct.chorusDur,1);
+        file.read((char*)&changeStruct.chorusDur,1);
 
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
@@ -1945,7 +1954,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newReverb != 255)
     {
-         file.read(&changeStruct.reverbDur,1);
+         file.read((char*)&changeStruct.reverbDur,1);
 
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
@@ -1955,7 +1964,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newPhaser != 255)
     {
-        file.read(&changeStruct.phaserDur,1);
+        file.read((char*)&changeStruct.phaserDur,1);
 
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
@@ -1965,7 +1974,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     if (changeStruct.newTremolo != 255)
     {
-         file.read(&changeStruct.tremoloDur,1);
+         file.read((char*)&changeStruct.tremoloDur,1);
 
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
@@ -1977,7 +1986,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
    if (changeStruct.newTempo < 100000) //some attention here
     {
-         file.read(&changeStruct.tempoDur,1);
+         file.read((char*)&changeStruct.tempoDur,1);
          //set changes table inside
          Beat::SingleChange tempCh;
          tempCh.changeCount = 0;
@@ -1989,7 +1998,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
          if (verInd==1)
          {
             byte someSkip;
-            file.read(&someSkip,1);
+            file.read((char*)&someSkip,1);
 
             if (someSkip)
             {
@@ -2003,20 +2012,20 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
     cursorBeat->effPack.addPack(28,1,&(cursorBeat->changes));
 
     //refact
-    file.read(&changeStruct.changesTo,1); //not applied! attention
+    file.read((char*)&changeStruct.changesTo,1); //not applied! attention
 
     //if (1)
     {
         //char toSkip[2];
-        //file.read(toSkip,49); //or 44
+        //file.read((char*)toSkip,49); //or 44
 
         //ul intLen = 0;
         byte byteLen = 0;
 
 
-        file.read(&byteLen,1); //skipperd
+        file.read((char*)&byteLen,1); //skipperd
 
-        //file.read(&intLen,4);
+        //file.read((char*)&intLen,4);
 
         if (verInd==1)
         {
@@ -2024,7 +2033,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
             for (int z=0; z<5; ++z)
             {
                 byte readOne = 0;
-                file.read(&readOne,1);
+                file.read((char*)&readOne,1);
                 logger <<"R n# "<<z<<" "<<readOne;
             }
             */
@@ -2055,30 +2064,30 @@ void readChordDiagramGP5(std::ifstream &file)
     //return;
     char chordBufer[64];
     if (gtpLog)  logger << "Chord";
-    file.read(chordBufer,17);
+    file.read((char*)chordBufer,17);
 
 
-    //file.read(chordBufer,21);
+    //file.read((char*)chordBufer,21);
     //chordBufer[21]=0;
 
-    char fByte = 0; file.read(&fByte,1);
+    char fByte = 0; file.read((char*)&fByte,1);
     std::string chStr = readString(file,21);
 
     if (gtpLog)
         LOG( <<fByte<< " Ch str "<<chStr.c_str());
 
 
-    file.read(chordBufer,4);
+    file.read((char*)chordBufer,4);
 
     int firstFret = 0;
-    file.read(&firstFret,4); //first fret
+    file.read((char*)&firstFret,4); //first fret
 
     for (int i =0; i < 7; ++i)
     {
-        file.read(chordBufer,4);//string fret?
+        file.read((char*)chordBufer,4);//string fret?
     }
 
-    file.read(chordBufer,32);
+    file.read((char*)chordBufer,32);
 
     //on version 4 it could be not always the same!!!
 }
@@ -2087,7 +2096,7 @@ void readChordDiagramGP5(std::ifstream &file)
 void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 {
     byte beatHeader = 0;
-    file.read(&beatHeader,1);
+    file.read((char*)&beatHeader,1);
 
     bool dotted = beatHeader & 0x1;
     bool precChord = beatHeader & 0x2;
@@ -2104,7 +2113,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     if (precStatus)
     {
         byte beatStatus;
-        file.read(&beatStatus,1);
+        file.read((char*)&beatStatus,1);
         if (gtpLog)  LOG( <<"Beat status "<<(int)beatStatus);
         if ((beatStatus == 2) || (beatStatus == 0))
          cursorBeat->setPause(true);
@@ -2113,7 +2122,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 
 
     byte durationGP =0;
-    file.read(&durationGP,1);
+    file.read((char*)&durationGP,1);
 
     if (gtpLog)  LOG( <<"Beat duration "<<(int)durationGP);
 
@@ -2130,7 +2139,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     if (precNTrump)
     {
         ul trumpletN = 0;
-        file.read(&trumpletN,4);
+        file.read((char*)&trumpletN,4);
         if (gtpLog)  LOG( <<"Beat tump "<<trumpletN);
         cursorBeat->setDurationDetail(trumpletN);
     }
@@ -2149,13 +2158,13 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
         if (gtpLog)  logger << "TEXT";
 
         ul textLen = 0;
-        file.read(&textLen,4);
+        file.read((char*)&textLen,4);
 
         byte byteLen = 0;
-        file.read(&byteLen,1);
+        file.read((char*)&byteLen,1);
 
         char textBufer[255];
-        file.read(textBufer,byteLen);
+        file.read((char*)textBufer,byteLen);
 
         //len+1
         textBufer[byteLen]=0;
@@ -2185,7 +2194,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     ul i = index;
 
     byte beatHeader = 0;
-    file.read(&beatHeader,1);
+    file.read((char*)&beatHeader,1);
 
     byte precNum = beatHeader & 0x1;
     byte precDenum = beatHeader & 0x2;
@@ -2221,7 +2230,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precNum)
     {
         byte signNumeration = 0;
-        file.read(&signNumeration,1);
+        file.read((char*)&signNumeration,1);
         if (gtpLog)  LOG( << "Set num to " <<(int)signNumeration );
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
@@ -2242,7 +2251,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precDenum)
     {
         byte signDenumeration = 0;
-        file.read(&signDenumeration,1);
+        file.read((char*)&signDenumeration,1);
         if (gtpLog)  LOG( << "Set denum to "	<<(int)signDenumeration);
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
@@ -2263,7 +2272,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precEndRepeat)
     {
         byte repeatTimes = 0;
-        file.read(&repeatTimes,1);
+        file.read((char*)&repeatTimes,1);
         if (gtpLog)  LOG( << "Repeat times " <<(int)repeatTimes);
         //i'm not sure, but repeat flag appear on next bar
         //maybe its bug or how it used to be on gtp
@@ -2277,19 +2286,19 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precMarker)
     {
         ul unknown = 0;
-        file.read(&unknown,4); //they say its a byte.. fuck them..
+        file.read((char*)&unknown,4); //they say its a byte.. fuck them..
 
         ul markerSize=0;
-        file.read(&markerSize,1);
+        file.read((char*)&markerSize,1);
 
-        //file.read(&markerSize,4);
+        //file.read((char*)&markerSize,4);
 
         char markerBufer[255];
-        file.read(markerBufer,markerSize);
+        file.read((char*)markerBufer,markerSize);
         markerBufer[markerSize] = 0;
 
         ul markerColor;
-        file.read(&markerColor,4);
+        file.read((char*)&markerColor,4);
 
         if (gtpLog)  LOG( << "Marker size "<<markerSize<<" buf "<<markerBufer);
 
@@ -2304,7 +2313,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precNumAltEnding)
     {
         byte altEnding = 0;
-        file.read(&altEnding,1);
+        file.read((char*)&altEnding,1);
         if (gtpLog)  LOG( << "AltEnding " << (int)altEnding);
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -2316,8 +2325,8 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     if (precTonality)  //4?
     {
         byte tonality = 0;
-        file.read(&tonality,1); //skip 1!!
-        file.read(&tonality,1);
+        file.read((char*)&tonality,1); //skip 1!!
+        file.read((char*)&tonality,1);
         if (gtpLog)  LOG( << "Tonality " <<(int)tonality);
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -2329,20 +2338,20 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     char toSkip[5];
     if (precNum || precDenum)
     {
-       file.read(toSkip,4);
+       file.read((char*)toSkip,4);
     }
 
     if (!precNumAltEnding)
     {
-        file.read(toSkip,1);
+        file.read((char*)toSkip,1);
     }
 
     //not fromhere
     byte tripletFeel=0;
-    file.read(&tripletFeel,1);
+    file.read((char*)&tripletFeel,1);
 
    //byte skipByteOh = 0;
-    //file.read(&skipByteOh,1);
+    //file.read((char*)&skipByteOh,1);
 
 }
 
@@ -2364,10 +2373,10 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     else
     {
         byte preVersion;///???
-        file.read(&preVersion,1);
+        file.read((char*)&preVersion,1);
         std::string formatVersion = readString(file,29);
         byte postVersion;///???
-        file.read(&postVersion,1);
+        file.read((char*)&postVersion,1);
 
 
         std::string version0 = "FICHIER GUITAR PRO v5.00";
@@ -2397,7 +2406,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     //notice
     ul noticeLen = 0;
-    file.read(&noticeLen,4);
+    file.read((char*)&noticeLen,4);
     if (gtpLog)  LOG( << "Notice len is " << (int)noticeLen);
 
     if (noticeLen > 0)
@@ -2407,9 +2416,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         {
             /*
             ul intLen = 0;
-            file.read(&intLen,4);
+            file.read((char*)&intLen,4);
             byte noteLen = 0;
-            file.read(&noteLen,1);
+            file.read((char*)&noteLen,1);
             logger <<"Note strlens "<<noteLen<<" "<<intLen;
             */
             std::string noticeOne = readStringShiByte(file); //,noteLen
@@ -2418,36 +2427,36 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
     //byte tripletFeel = 0; //not here in gp5
-    //file.read(&tripletFeel,1);
+    //file.read((char*)&tripletFeel,1);
 
 
     ul lyTrack = 0;
-    file.read(&lyTrack,4);
+    file.read((char*)&lyTrack,4);
     if (gtpLog)  LOG( << "Lyrics track " <<(int)lyTrack) ;
 
     for (int i = 0; i < 5; ++i)
     {
         ul emWo = 0;
-        file.read(&emWo,4);
+        file.read((char*)&emWo,4);
         std::string lyricsOne = readString(file);
     }
 
 
     if (versionIndex == 1)
-        file.read(placeToSkip,49);
+        file.read((char*)placeToSkip,49);
     else
         if (versionIndex == 0)
-            file.read(placeToSkip,30);
+            file.read((char*)placeToSkip,30);
 
     for (int i = 0; i < 11; ++i)
     {
          ul pageInt = 0;
-         file.read(&pageInt,4);
+         file.read((char*)&pageInt,4);
          byte strLenIn = 0;
-         file.read(&strLenIn,1);
+         file.read((char*)&strLenIn,1);
 
          if (gtpLog)
-         LOG(<<"Page int "<<pageInt<<" strLen "<<strLenIn);
+         qDebug()<<"Page int "<<pageInt<<" strLen "<<strLenIn;
          std::string whatIsThat = readString(file,strLenIn);
     }
 
@@ -2457,45 +2466,45 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     int signKey = 0;
     byte octave = 0;
 
-    file.read(&bpm,4);
+    file.read((char*)&bpm,4);
 
 
     if (versionIndex == 1)
     {
         byte skipByte=0;
-        file.read(&skipByte,1);
+        file.read((char*)&skipByte,1);
     }
 
-    file.read(&signKey,4);
-    file.read(&octave,1);
+    file.read((char*)&signKey,4);
+    file.read((char*)&octave,1);
 
     tab->setBPM(bpm);
 
-    if (gtpLog)  LOG( <<"Bpm rate is " << bpm );
-    if (gtpLog)  LOG( <<"Sign Key = " <<signKey << " ; octave " <<octave) ;
+    if (gtpLog)  qDebug() <<"Bpm rate is " << bpm ;
+    if (gtpLog)  qDebug() <<"Sign Key = " <<signKey << " ; octave " <<octave ;
 
 
     //4 8 - 12
     char midiChannelsData[768];
-    file.read(midiChannelsData,768);
+    file.read((char*)midiChannelsData,768);
 
-    if (gtpLog)  LOG( << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
-           "; full size = "<<(int)(sizeof(MidiChannelInfo)*64));
+    if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
+           "; full size = "<<(int)(sizeof(MidiChannelInfo)*64);
 
     memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
 
 
     //Unknonwn skip
-    file.read(placeToSkip,42);
+    file.read((char*)placeToSkip,42);
 
 
     ul beatsAmount = 0;
     ul tracksAmount = 0;
 
-    file.read(&beatsAmount,4);
-    file.read(&tracksAmount,4);
+    file.read((char*)&beatsAmount,4);
+    file.read((char*)&tracksAmount,4);
 
-    if (gtpLog)  LOG( << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount);
+    if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount;
 
 
     for (ul i = 0;i < tracksAmount; ++i)
@@ -2516,7 +2525,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         byte skipOne=0;
         if (i > 0)
         {
-            file.read(&skipOne,1);
+            file.read((char*)&skipOne,1);
         }
 
         readBarGP5(file,tab,tracksAmount,i);
@@ -2543,16 +2552,16 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (cursorBar->len())
      cursorBeat =cursorBar->getV(0);
 
-    if (gtpLog)  LOG( <<"Begining beats amounts "<<beatsAmount );
+    if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount ;
     byte oneSkip = 0;
 
     if (versionIndex == 1)
-        file.read(&oneSkip,1);
+        file.read((char*)&oneSkip,1);
     else
         if (versionIndex == 0)
         {
-            file.read(&oneSkip,1);
-            file.read(&oneSkip,1);
+            file.read((char*)&oneSkip,1);
+            file.read((char*)&oneSkip,1);
         }
 
 
@@ -2564,9 +2573,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             //for (int voices=0; voices <2; ++voices)
             {
             ul beatsInPair = 0;
-            file.read(&beatsInPair,4);
+            file.read((char*)&beatsInPair,4);
 
-            if (gtpLog)  LOG( <<i <<" Beats in pair " <<beatsInPair ) ;
+            if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair  ;
 
             //refact - over here was critical error its not usefull code
             if (beatsInPair > 1000)
@@ -2577,8 +2586,8 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
                     for (int iii = 0; iii < 10; ++iii)
                     {
                         byte singleB;
-                        file.read(&singleB,1);
-                        if (gtpLog)  LOG( << "[" << iii << "] = " << singleB);
+                        file.read((char*)&singleB,1);
+                        if (gtpLog)  qDebug() << "[" << iii << "] = " << singleB;
                     }
                     if (gtpLog)  logger << "DEBUG OUT";
                 }
@@ -2632,13 +2641,13 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
                 //additions
                 byte readByte=0;
-                file.read(&readByte,1);
-                file.read(&readByte,1);
+                file.read((char*)&readByte,1);
+                file.read((char*)&readByte,1);
 
                 if (readByte & 0x8)
                 {
                     byte oneMore;
-                    file.read(&oneMore,1);
+                    file.read((char*)&oneMore,1);
                 }
             }
         }
@@ -2653,10 +2662,10 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
       {
           ul preReader = 0;
 
-          file.read(&preReader,4);
+          file.read((char*)&preReader,4);
 
           if (gtpLog)
-            LOG(<<" PRE-Reader "<<preReader);
+            qDebug()<<" PRE-Reader "<<preReader;
 
           Beat readerBeat;
           //Bar readerBar;
@@ -2679,25 +2688,25 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
               //additions
               byte readByte0,readByte=0;
-              file.read(&readByte0,1);
-              file.read(&readByte,1);
+              file.read((char*)&readByte0,1);
+              file.read((char*)&readByte,1);
 
               if (readByte & 0x8)
               {
                   byte oneMore;
-                  file.read(&oneMore,1);
+                  file.read((char*)&oneMore,1);
               }
           }
 
           byte skipperByte=0;
-          file.read(&skipperByte,1);
+          file.read((char*)&skipperByte,1);
       }
 
       /*
       for (int i = 0; i < 11; ++i)
       {
           byte reader = 0;
-          file.read(&reader,1);
+          file.read((char*)&reader,1);
 
           if (gtpLog)
             logger<<" Reader "<<reader;
@@ -2725,25 +2734,25 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     changeStruct.newTempo = 0;
 
-    file.read(&changeStruct.newInstr,1);  //1
+    file.read((char*)&changeStruct.newInstr,1);  //1
 
-    file.read(&changeStruct.newVolume,1);
-    file.read(&changeStruct.newPan,1);
-    file.read(&changeStruct.newChorus,1);
-    file.read(&changeStruct.newReverb,1);
-    file.read(&changeStruct.newPhaser,1);
-    file.read(&changeStruct.newTremolo,1);
-    file.read(&changeStruct.newTempo,4); //8
+    file.read((char*)&changeStruct.newVolume,1);
+    file.read((char*)&changeStruct.newPan,1);
+    file.read((char*)&changeStruct.newChorus,1);
+    file.read((char*)&changeStruct.newReverb,1);
+    file.read((char*)&changeStruct.newPhaser,1);
+    file.read((char*)&changeStruct.newTremolo,1);
+    file.read((char*)&changeStruct.newTempo,4); //8
 
-    if (gtpLog)  LOG( <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
+    if (gtpLog)  qDebug() <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
           "; C "<<changeStruct.newChorus<<"; R "<<changeStruct.newReverb<<"; Ph "<<changeStruct.newPhaser<<
-          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo);
+          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo;
 
 
     //NO INSTR IN DOCS
     if (changeStruct.newInstr != 255)
     {
-        //file.read(&changeStruct.instrDur,1);
+        //file.read((char*)&changeStruct.instrDur,1);
 
         Beat::SingleChange instrCh;
         instrCh.changeCount = 0;
@@ -2755,7 +2764,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newVolume != 255)
     {
-        file.read(&changeStruct.volumeDur,1);
+        file.read((char*)&changeStruct.volumeDur,1);
 
         Beat::SingleChange volCh;
         volCh.changeCount = 0;
@@ -2766,7 +2775,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newPan != 255)
     {
-        file.read(&changeStruct.panDur,1);
+        file.read((char*)&changeStruct.panDur,1);
 
         Beat::SingleChange panCh;
         panCh.changeCount = 0;
@@ -2777,7 +2786,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newChorus != 255)
     {
-        file.read(&changeStruct.chorusDur,1);
+        file.read((char*)&changeStruct.chorusDur,1);
 
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
@@ -2787,7 +2796,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newReverb != 255)
     {
-         file.read(&changeStruct.reverbDur,1);
+         file.read((char*)&changeStruct.reverbDur,1);
 
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
@@ -2797,7 +2806,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newPhaser != 255)
     {
-        file.read(&changeStruct.phaserDur,1);
+        file.read((char*)&changeStruct.phaserDur,1);
 
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
@@ -2807,7 +2816,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (changeStruct.newTremolo != 255)
     {
-         file.read(&changeStruct.tremoloDur,1);
+         file.read((char*)&changeStruct.tremoloDur,1);
 
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
@@ -2819,7 +2828,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
         if (changeStruct.newTempo < 10000) //some attention here
         {
-             file.read(&changeStruct.tempoDur,1);
+             file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
              Beat::SingleChange tempCh;
              tempCh.changeCount = 0;
@@ -2839,7 +2848,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatEffectsHead;
-    file.read(&beatEffectsHead,1);
+    file.read((char*)&beatEffectsHead,1);
 
     if (gtpLog)  LOG( << "Beat effects flag present. H1=" << beatEffectsHead);
 
@@ -2859,7 +2868,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     {   //tapping poping slaping
 
         byte tapPopSlap;
-        file.read(&tapPopSlap,1);
+        file.read((char*)&tapPopSlap,1);
 
         if (gtpLog)  LOG( << "TapPopSlap byte = "<<tapPopSlap );
 
@@ -2868,14 +2877,14 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
             byte beatEffSet = 29 + tapPopSlap;
             cursorBeat->setEffects(beatEffSet);
             int skipInt;
-            file.read(&skipInt,4);
+            file.read((char*)&skipInt,4);
         }
         else
         {
             if (gtpLog)  logger << " read bend tremolo";
             BendPoints tremoloBend;
             int tremoloValue = 0;
-            file.read(&tremoloValue,4);
+            file.read((char*)&tremoloValue,4);
             //readBend(file,tremoloBend);
             cursorBeat->setEffects(19); //would be tremolo
         }
@@ -2884,8 +2893,8 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead & 64)
     {   //updown stroke
         byte upStroke, downStroke;
-        file.read(&upStroke,1);
-        file.read(&downStroke,1);
+        file.read((char*)&upStroke,1);
+        file.read((char*)&downStroke,1);
         if (gtpLog)  LOG( << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke );
 
         if (upStroke)
@@ -2925,7 +2934,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
 void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
 {
     byte noteEffectsHead;
-    file.read(&noteEffectsHead,1);
+    file.read((char*)&noteEffectsHead,1);
 
     if (gtpLog)  LOG( << "Note effects heads. H1=" <<noteEffectsHead);
 
@@ -2947,10 +2956,10 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
         byte graceTransition = 0;
         byte graceDuration = 0;
 
-        file.read(&graceFret,1);
-        file.read(&graceDynamic,1);
-        file.read(&graceTransition,1);
-        file.read(&graceDuration,1);
+        file.read((char*)&graceFret,1);
+        file.read((char*)&graceDynamic,1);
+        file.read((char*)&graceTransition,1);
+        file.read((char*)&graceDuration,1);
 
         if (gtpLog)  LOG(<<"Fret "<<graceFret<<" Dyn "<<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration);
 
@@ -2993,7 +3002,7 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
 void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatHeader = 0;
-    file.read(&beatHeader,1);
+    file.read((char*)&beatHeader,1);
 
     bool dotted = beatHeader & 0x1;
     bool precChord = beatHeader & 0x2;
@@ -3010,7 +3019,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     if (precStatus)
     {
         byte beatStatus;
-        file.read(&beatStatus,1);
+        file.read((char*)&beatStatus,1);
         if (gtpLog)  LOG( <<"Beat status "<<(int)beatStatus);
         if ((beatStatus == 2) || (beatStatus == 0))
          cursorBeat->setPause(true);
@@ -3019,7 +3028,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
 
     byte durationGP =0;
-    file.read(&durationGP,1);
+    file.read((char*)&durationGP,1);
 
     if (gtpLog)  LOG( <<"Beat duration "<<(int)durationGP);
 
@@ -3036,7 +3045,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     if (precNTrump)
     {
         ul trumpletN = 0;
-        file.read(&trumpletN,4);
+        file.read((char*)&trumpletN,4);
         if (gtpLog)  LOG( <<"Beat tump "<<trumpletN);
         cursorBeat->setDurationDetail(trumpletN);
     }
@@ -3055,13 +3064,13 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  logger << "TEXT";
 
         ul textLen = 0;
-        file.read(&textLen,4);
+        file.read((char*)&textLen,4);
 
         byte byteLen = 0;
-        file.read(&byteLen,1);
+        file.read((char*)&byteLen,1);
 
         char textBufer[255];
-        file.read(textBufer,byteLen);
+        file.read((char*)textBufer,byteLen);
 
         //len+1
         textBufer[byteLen]=0;
@@ -3088,7 +3097,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBar)
 {
     byte noteHeader;
-    file.read(&noteHeader,1);
+    file.read((char*)&noteHeader,1);
 
     byte noteType=0;
     if (gtpLog)  LOG( << "Note header "<<(int)noteHeader);
@@ -3097,9 +3106,9 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
 
     if (noteHeader & 0x20)
     {
-        file.read(&noteType,1);
+        file.read((char*)&noteType,1);
         byte bby=0; //^IN DOCS WE HAVE SHORT INT HERE
-        //file.read(&bby,1);
+        //file.read((char*)&bby,1);
         if (gtpLog)  LOG( << "Note type = "<<(int)noteType<<" : "<<bby);
 
         //could be leag on 2
@@ -3264,8 +3273,8 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
         //another duration
         if (gtpLog)  logger  <<"Time independent ";
         byte t1,t2;
-        file.read(&t1,1);
-        file.read(&t2,1);
+        file.read((char*)&t1,1);
+        file.read((char*)&t2,1);
         if (gtpLog)  LOG(<<"T: "<<t1<<";"<<t2);
         //attention?
 
@@ -3275,7 +3284,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
     {
         if (gtpLog)  logger <<"Bit 4 in header turned on";
         byte bByte=0;
-        file.read(&bByte,1);
+        file.read((char*)&bByte,1);
         if (gtpLog)  LOG(<<"velocity byte(forte) "<<bByte);
         newNote->setVolume(bByte);
     }
@@ -3284,7 +3293,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
     {
         if (gtpLog)  logger <<"Bit 5 in header turned on";
         byte bByte=0;
-        file.read(&bByte,1);
+        file.read((char*)&bByte,1);
         if (gtpLog)  LOG(<<"some byte fret "<<bByte);
         if (noteType != 2)
         {
@@ -3321,8 +3330,8 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
 
         byte bByte=0;
         byte bByte2=0;
-        file.read(&bByte,1);
-        file.read(&bByte2,1);
+        file.read((char*)&bByte,1);
+        file.read((char*)&bByte2,1);
 
         if (gtpLog)  LOG(<<"fingering byte "<<bByte<<":"<<bByte2);
     }
@@ -3343,10 +3352,10 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (knownVersion==0)
     {
         byte preVersion;
-        file.read(&preVersion,1);
+        file.read((char*)&preVersion,1);
         std::string formatVersion = readString(file,29);
         byte postVersion;
-        file.read(&postVersion,1);
+        file.read((char*)&postVersion,1);
     }
 
     std::string title,subtitle,interpret,albumn,author,copyright,tabAuthor,instructions;
@@ -3362,7 +3371,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     //notice
     ul noticeLen = 0;
-    file.read(&noticeLen,4);
+    file.read((char*)&noticeLen,4);
     if (gtpLog)  LOG( << "Notice len is " << (int)noticeLen);
 
     if (noticeLen > 0)
@@ -3373,7 +3382,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
     byte tripletFeel = 0;
-    file.read(&tripletFeel,1);
+    file.read((char*)&tripletFeel,1);
 
     int tripletFeelInt = (int)tripletFeel; //hate this - if (gtpLog)  log should fix it
     if (gtpLog)  LOG( << "Triplet feel = " << tripletFeelInt) ;
@@ -3384,8 +3393,8 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     int signKey = 0;
 
 
-    file.read(&bpm,4);
-    file.read(&signKey,4);
+    file.read((char*)&bpm,4);
+    file.read((char*)&signKey,4);
 
 
     tab->setBPM(bpm);
@@ -3395,7 +3404,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     //4 8 - 12
     char midiChannelsData[768];
-    file.read(midiChannelsData,768);
+    file.read((char*)midiChannelsData,768);
 
     if (gtpLog)  LOG( << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64 ));
@@ -3406,8 +3415,8 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     ul beatsAmount = 0;
     ul tracksAmount = 0;
 
-    file.read(&beatsAmount,4);
-    file.read(&tracksAmount,4);
+    file.read((char*)&beatsAmount,4);
+    file.read((char*)&tracksAmount,4);
 
     if (gtpLog)  LOG( << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount );
 
@@ -3451,7 +3460,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     {
 
         ul beatsInPair = 0;
-        file.read(&beatsInPair,4);
+        file.read((char*)&beatsInPair,4);
 
         if (gtpLog)  LOG( <<i <<" Beats in pair " <<beatsInPair );
 
@@ -3464,7 +3473,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
                 for (int iii = 0; iii < 10; ++iii)
                 {
                     byte singleB;
-                    file.read(&singleB,1);
+                    file.read((char*)&singleB,1);
                     if (gtpLog)  LOG( << "[" << iii << "] = " << singleB);
                 }
                 if (gtpLog)  logger << "DEBUG OUT";

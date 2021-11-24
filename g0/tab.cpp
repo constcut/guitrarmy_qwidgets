@@ -6,7 +6,10 @@
 
 bool tabLog = false;
 
-#include "g0/amusic.h"
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
 
 #include <algorithm>
 
@@ -387,7 +390,7 @@ EffectsPack Note::getEffects()
      //logger << "Alt a : "<<(int)a<< " alt b :"<<(int)b;
 
      ul localInd = 0;
-     for (Bar *barI=a; barI!=b; barI=barI->getNext()
+     for (Bar *barI=a; barI!=b; barI=(Bar*)barI->getNext()
           ,++localInd)
      {
         if (tabLog)
@@ -441,7 +444,7 @@ EffectsPack Note::getEffects()
              for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
              {
                  ul localIndex = 0;
-                 for (Bar *barI=beginRepeat; barI != endRepeat; barI=barI->getNext())
+                 for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                  {
                      timeLoop.add(barI);
                      timeLoopIndexStore.push_back(beginIndex+localIndex);
@@ -460,7 +463,7 @@ EffectsPack Note::getEffects()
             for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
             {
                 ul localIndex = 0;
-                for (Bar *barI=beginRepeat; barI != endRepeat; barI=barI->getNext())
+                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                 {
                     timeLoop.add(barI);
                     timeLoopIndexStore.push_back(beginIndex+localIndex);
@@ -506,7 +509,7 @@ EffectsPack Note::getEffects()
             for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
             {
                 ul localIndex = 0;
-                for (Bar *barI=beginRepeat; barI != preTail; barI=barI->getNext())
+                for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext())
                 {
                     timeLoop.add(barI);
                     timeLoopIndexStore.push_back(beginIndex+localIndex);
@@ -603,7 +606,7 @@ EffectsPack Note::getEffects()
                     timeLoopIndexStore.push_back(beginIndex);
 
                     ++beginIndex;
-                    beginRepeat = beginRepeat->getNext();
+                    beginRepeat = (Bar*)beginRepeat->getNext();
                 }
             }
 
@@ -620,7 +623,7 @@ EffectsPack Note::getEffects()
                             0,0,0, beginIndex, endIndex);
 
                 beginRepeat = endRepeat = 0;
-                curBar = curBar->getNext();
+                curBar = (Bar*)curBar->getNext();
                 ++curIndex;
                 continue;
             }
@@ -632,7 +635,7 @@ EffectsPack Note::getEffects()
             endIndex = curIndex;
 
             //then search for alternative tail
-            curBar = curBar->getNext();
+            curBar = (Bar*)curBar->getNext();
             ++curIndex;
 
             if (curBar)
@@ -652,7 +655,7 @@ EffectsPack Note::getEffects()
                         //could be there appear an error later (if there possible not marked alt bars) attention
                         tailEnd = curBar;
                         tailEndIndex = curIndex;
-                        curBar = curBar->getNext();
+                        curBar = (Bar*)curBar->getNext();
                         ++curIndex;
 
                         if (curIndex>=lastIndex)
@@ -679,7 +682,7 @@ EffectsPack Note::getEffects()
             //logger <<"RUN PRE TAIL SEARCH "<<(int)beginRepeat<<" to "<<(int)endRepeat;
 
             int indX=0;
-            for (Bar *barI=endRepeat; barI != beginRepeat; barI=barI->getPrev()
+            for (Bar *barI=endRepeat; barI != beginRepeat; barI=(Bar*)barI->getPrev()
                  ,++indX)//--barI
             {
                 //logger <<"pre-tail search "<<(int)barI;
@@ -725,7 +728,7 @@ EffectsPack Note::getEffects()
                 timeLoopIndexStore.push_back(curIndex);
             }
 
-            curBar = curBar->getNext();
+            curBar = (Bar*)curBar->getNext();
             ++curIndex;
         }
     }
@@ -898,9 +901,9 @@ EffectsPack Note::getEffects()
     else
     {
         while (curBar && curBar->len()==0)
-             curBar = curBar->getNext();
+             curBar = (Bar*)curBar->getNext();
 
-        if (curBar==0) return;
+        if (curBar==0) return 0;
 
         curBeat = curBar->getV(0);
 

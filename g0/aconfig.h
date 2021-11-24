@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #define CONF_PARAM(z) AConfig::getInstance()->values[ z ]
 

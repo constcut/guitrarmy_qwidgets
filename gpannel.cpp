@@ -1,7 +1,7 @@
 #include "gpannel.h"
 
 
-
+#include <QDebug>
 
 
 void GPannel::onclick(int x1, int y1)
@@ -29,7 +29,7 @@ void GPannel::onclick(int x1, int y1)
         {
             if (buttons[i].hit(x1,y1))
             {
-                LOG(<<"Hit pannel button "<<buttons[i].getText().c_str());
+                qDebug()<<"Hit pannel button "<<buttons[i].getText().c_str();
 
                 keyevent(buttons[i].getPressSyn());
                 break;

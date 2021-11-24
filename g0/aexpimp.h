@@ -6,7 +6,7 @@
 #include "g0/tab.h"
 #include "g0/gmyfile.h"
 #include "g0/gtpfiles.h"
-#include "g0/ptbfile.h"
+
 
 //RENAME	LATER	TO	APORT.h 
 //like both parts of exPORT imPORT

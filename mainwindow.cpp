@@ -63,6 +63,13 @@
 #include "g0/fft.h"
 #include "g0/waveanalys.h"
 
+#include <QDebug>
+#include <fstream>
+#include <sstream>
+
+#define LOG(msg) qDebug() msg
+#define logger qDebug()
+
 
 //-------------------------------
 
@@ -980,7 +987,7 @@ void MainWindow::actionNow(QAction *action)
   textOut=action->iconText();
 
   if (textOut.size()>0)
-  LOG( <<"Action now trig: "<<textOut.toStdString());
+    qDebug() <<"Action now trig: "<<textOut.toStdString().c_str();
 
 /* fixed:
   //bug
@@ -1659,7 +1666,7 @@ void MainWindow::on_actionExit_triggered()
 
 bool MainWindow::gestureEvent(QGestureEvent *event)
 {
-    stringExtended  sX;
+   // std::stringstream  sX;
 
     //if (event-)
 
@@ -1727,15 +1734,15 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
 
 
 
-    sX << "gestureEvent():" << event->gestures().size();
+   // sX << "gestureEvent():" << event->gestures().size();
 
     if (QGesture *swipe = event->gesture(Qt::SwipeGesture))
     {
-        sX << "Swipe"; //swipeTriggered(static_cast<QSwipeGesture *>(swipe));
+        //sX << "Swipe"; //swipeTriggered(static_cast<QSwipeGesture *>(swipe));
         QSwipeGesture *swipeGesture = static_cast<QSwipeGesture *>(swipe);
         if (swipeGesture->horizontalDirection())
         {
-            sX <<"Vert";
+            //sX <<"Vert";
             if (dock5->isVisible()==false)
             {
                 dock5->setVisible(true);
@@ -1749,15 +1756,15 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
 
     if(QGesture *tap = event->gesture(Qt::TapGesture))
     {
-        sX <<"Tap ";
+        //sX <<"Tap ";
         QTapGesture *tapGesture = static_cast<QTapGesture*>(tap);
-        sX<<tapGesture->position().x()<<" "<<tapGesture->position().y();
+        //sX<<tapGesture->position().x()<<" "<<tapGesture->position().y();
 
     }
 
     if (QGesture *tapNhold = event->gesture(Qt::TapAndHoldGesture))
     {
-        sX <<"Tap and hold "<<(int)tapNhold;
+        //sX <<"Tap and hold "<< tapNhold;
 
 
         QTapAndHoldGesture *tapGest = dynamic_cast<QTapAndHoldGesture*>(tapNhold);

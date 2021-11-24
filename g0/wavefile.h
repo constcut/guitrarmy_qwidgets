@@ -3,6 +3,7 @@
 
 #include <QtGlobal>
 #include <string>
+#include <fstream>
 
 
 struct WaveHeader
@@ -47,7 +48,7 @@ public:
 
     bool read(std::string fileName) {
         std::ifstream file(fileName);
-        bool result =file.open(fileName);
+        bool result = file.is_open();
 
         if (result==false)
             return result;
@@ -58,10 +59,10 @@ public:
     }
 
     bool read(std::ifstream *file) {
-        if (file->opened()==false)
+        if (file->is_open()==false)
             return false;
 
-        file->read(&header,sizeof(WaveHeader));
+        file->read((char*)&header,sizeof(WaveHeader));
 
         char isData[5] = {0};
 

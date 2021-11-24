@@ -1,6 +1,13 @@
 #include "aconfig.h"
 
 #include <QImage>
+#include <QFile>
+#include <QDebug>
+#include <iostream>
+#include <string>
+#include <fstream>
+
+
 
 AConfig *AConfig::inst;
 
@@ -32,7 +39,9 @@ void AConfig::load(std::ifstream &file)
     while (!lastLine.empty())
     {
         ++count;
-        std::string line = file.readLine();
+        std::string line;
+        std::getline(file, line);
+
 
         if (line != lastLine)
         {
@@ -101,22 +110,21 @@ void AConfig::save(std::ofstream &file)
      for (std::map<std::string,std::string>::iterator it = values.begin();
           it!= values.end(); ++it)
      {
-         stringExtended curLine;
-         curLine << (*it).first.c_str() <<" = "<<(*it).second.c_str()<<"\n";
-         file.write(curLine.c_str(),curLine.size());
+         std::string curLine = curLine + (*it).first + " = " + (*it).second + "\n";
+         file.write(curLine.c_str(), curLine.size());
      }
      file.close();
 }
 
 void AConfig::printValues()
 {
-    LOG(<<"Configuration parameters");
+    qDebug()<<"Configuration parameters";
     for (std::map<std::string,std::string>::iterator it = values.begin();
          it!= values.end(); ++it)
     {
-        LOG( << (*it).first.c_str() <<" = "<<(*it).second.c_str());
+        qDebug()<< (*it).first.c_str() <<" = "<<(*it).second.c_str();
     }
-    LOG(<<"Config printed");
+    qDebug()<<"Config printed";
 }
 
  void AConfig::addValue(std::string name, std::string val)
@@ -347,8 +355,8 @@ void AConfig::checkConfig()
 
      for (int i = 0; i < 10; ++i)
      {
-         stringExtended sX;
-         sX<<i; loadImage(sX.c_str());
+         std::string sX = std::to_string(i);
+         loadImage(sX.c_str());
      }
  }
 

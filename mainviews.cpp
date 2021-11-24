@@ -5,7 +5,6 @@
 
 #include "g0/tab.h"
 #include "g0/gtpfiles.h"
-#include "g0/amusic.h"
 #include "g0/midifile.h"
 
 #include "g0/aconfig.h"
@@ -15,7 +14,10 @@
 #include "tabviews.h"
 
 
-
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
 
 
 //#include <loguploader.h>

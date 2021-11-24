@@ -1,5 +1,10 @@
 #include "aexpimp.h"
 
+#include <fstream>
+#include <QDebug>
+
+#define logger qDebug()
+
 
 bool GTabLoader::open(std::string fileName)
 {
@@ -42,7 +47,7 @@ bool GTabLoader::open(std::string fileName)
        //logger << "Not gmy format "<<firstBytes;
        // std::cout <<"First byte of file - "<<firstBytes[0]<<";"<<(int)firstBytes[0];
 
-        file.r(firstBytes,2);
+        file.read(firstBytes,2);
 
         std::string headBytes = firstBytes;
         if (headBytes=="IF")
@@ -99,28 +104,6 @@ bool GTabLoader::open(std::string fileName)
             {
                 tab->postGTP();
                 tab->connectTracks();
-
-                file.close();
-                return true;
-            }
-        }
-        else if (headBytes=="at")
-        {
-            PtbFile pImp;
-
-            if (tab)
-            {
-                delete tab;
-                tab = 0;
-            }
-            tab = new Tab;
-
-            bool loaded = pImp.loadFromFile(&file,tab,true);
-
-            if (loaded)
-            {
-                //tab->postGTP();
-                //tab->connectTracks();
 
                 file.close();
                 return true;
