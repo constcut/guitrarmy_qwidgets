@@ -177,14 +177,8 @@ void MainView::keyevent(std::string press)
 
             if (tabsView->gotChanges()==false)
             {
-
-                //load guitarmy file
-                GmyFile gmyFile; //fkldsjfkldsj
-
-                
-                stringExtended gfileName;
-                gfileName <<  getTestsLocation() <<"first.gmy";
-
+                GmyFile gmyFile; 
+                std::string gfileName =  std::string(getTestsLocation())  + "first.gmy";
                 if (QFile::exists(gfileName.c_str()))
                 {
                     std::ifstream file(gfileName.c_str());
@@ -458,31 +452,25 @@ ConfigView::ConfigView():GView()
 
     configPointer = confValues;
 
-    stringExtended sP;
-    sP<<confValues->logsNames[0]<<" "<<(int)*(confValues->logs[0])<<" press 1 to chng";
+    std::string sP = confValues->logsNames[0] + " " +
+        std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
     labA = new GLabel(20,80+200-55,sP.c_str());
 
-    /*
-    sP.clear();
-    sP<<confValues->logsNames[1]<<" "<<(int)*(confValues->logs[1])<<" press 2 to chng";
-
+        /*
+    sP = confValues->logsNames[1] + " " +
+        std::to_string((int)*(confValues->logs[1]))  + " press 1 to chng";
     labB = new GLabel(20,120+200-55,sP.c_str());*/
 
-    sP.clear();
-    sP<<confValues->logsNames[2]<<" "<<(int)*(confValues->logs[2])<<" press 3 to chng";
+    sP = confValues->logsNames[2] + " " +
+        std::to_string((int)*(confValues->logs[2]))  + " press 1 to chng";
+    labC = new GLabel(20,120+200-55,sP.c_str());
 
-    labC = new GLabel(20,160+200-55,sP.c_str());
-
-    sP.clear();
-    sP<<confValues->logsNames[3]<<" "<<(int)*(confValues->logs[3])<<" press 4 to chng";
-
-    labD = new GLabel(20,200+200-55,sP.c_str());
-
+    sP = confValues->logsNames[3] + " " +
+        std::to_string((int)*(confValues->logs[3]))  + " press 1 to chng";
+    labD = new GLabel(20,120+200-55,sP.c_str());
 
     //labScaleMinus = new GLabel(20,80-55,"zoomOut");
-
     //labScalePlus = new GLabel(20,150-55,"zoomIn");
-
 }
 
 void ConfigView::keyevent(std::string press)
@@ -498,9 +486,8 @@ void ConfigView::keyevent(std::string press)
       bool inv = !(*x);
       *x = inv;
 
-      stringExtended sP;
-      sP<<confValues->logsNames[0]<<" "<<(int)*(confValues->logs[0])<<" press 1 to chng";
-
+      std::string sP =confValues->logsNames[0] + " " +
+        std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
       labA->setText(sP.c_str());
     }
     if (press == "2")
@@ -509,9 +496,8 @@ void ConfigView::keyevent(std::string press)
       bool inv = !(*x);
       *x = inv;
 
-      stringExtended sP;
-      sP<<confValues->logsNames[1]<<" "
-         <<(int)*(confValues->logs[1])<<" press 2 to chng";
+      std::string sP =confValues->logsNames[1] + " " +
+        std::to_string((int)*(confValues->logs[1]))  + " press 2 to chng";
 
       labB->setText(sP.c_str());
     }
@@ -521,9 +507,9 @@ void ConfigView::keyevent(std::string press)
       bool inv = !(*x);
       *x = inv;
 
-      stringExtended sP;
-      sP<<confValues->logsNames[2]<<" "
-         <<(int)*(confValues->logs[2])<<" press 3 to chng";
+
+      std::string sP =confValues->logsNames[2] + " " +
+        std::to_string((int)*(confValues->logs[2]))  + " press 3 to chng";
 
       labC->setText(sP.c_str());
     }
@@ -533,9 +519,10 @@ void ConfigView::keyevent(std::string press)
       bool inv = !(*x);
       *x = inv;
 
-      stringExtended sP;
-      sP<<confValues->logsNames[3]<<" "
-         <<(int)*(confValues->logs[3])<<" press 4 to chng";
+
+      std::string sP =confValues->logsNames[3] + " " +
+        std::to_string((int)*(confValues->logs[3]))  + " press 4 to chng";
+
 
       labD->setText(sP.c_str());
     }
@@ -595,7 +582,7 @@ void ConfigView::draw(Painter *painter)
     for (std::map<std::string,std::string>::iterator itV=AConfig::getInstance()->values.begin();
          itV!=AConfig::getInstance()->values.end(); ++itV, ++i)
     {
-            stringExtended line;
+            stri ngExtended line;
             line << itV->first.c_str()<<"="<<itV->second.c_str();
             curY = (i+1)*15 + 60;
 
@@ -626,7 +613,7 @@ void TestsView::fastTestAll()
     /*
     for (size_t i = 0; i < buttons.size(); ++i)
     {
-        stringExtended sX;
+        strin gExtended sX;
         sX << ":/own_tests/"<<buttons[i].getText().c_str()<<".gp4";
 
         QFile qFile; //(sX.c_str());
@@ -657,51 +644,12 @@ void TestsView::fastTestAll()
     }
     */
 
-
-    for (int i = 1217; i < 9570; ++i)//5077 142 error
-    {
-        int curTest = i;
-
-        stringExtended sX;
-        sX << getTestsLocation() << "ptb/"<<curTest;
-
-        Tab *forLoad=0;
-
-        GTabLoader loader;
-        if (loader.open(sX.c_str()) == false)
-        {
-            LOG( << "Failed to open test "<<curTest);
-            continue;
-           //return;
-        }
-
-        LOG( << "Done test "<<i);
-
-        forLoad = loader.getTab();
-        //forLoad->setBPM(120);
-
-        //delete forLoad;
-
-
-
-        MainView *mainView = (MainView*)getMaster()->getFirstChild();
-        mainView->changeCurrentView(tabsView);
-        tabsView->setTab(forLoad);
-        if (CONF_PARAM("skipTabView")=="1")
-        tabsView->keyevent("opentrack");
-
-
-
-
-    }
+    //}
 
 
     clock_t after = getTime();
     clock_t diff = after-now;
-
-    stringExtended mesure;
-    mesure <<"Time spent  - "<<diff<<" ms";;
-    bottom.setText(mesure.c_str());
+    bottom.setText("Time spent  - " + std::to_string(diff) + " ms");
 }
 
 
@@ -799,10 +747,11 @@ void InfoView::onclick(int x1, int y1)
             logData.open(QIODevice::ReadOnly);
             QByteArray allLogData = logData.readAll();
 
-            stringExtended lines[7];
-            lines[0] << "File exists";
-            lines[1] << "Full size " << allLogData.size();
-            lines[2] << "Could be sent in ~ "<< allLogData.size()/1000<<" iterations";
+            std::string lines[7];
+            lines[0] = "File exists";
+            lines[1] = "Full size " + std::to_string( allLogData.size() );
+            lines[2] = "Could be sent in ~ " +  std::to_string(  allLogData.size()/1000 )
+                + " iterations";
 
             labelA->setText(lines[0].c_str());
             labelA2->setText(lines[1].c_str());
@@ -817,8 +766,8 @@ void InfoView::onclick(int x1, int y1)
         }
         else
         {
-            stringExtended lines[7];
-            lines[0] << "File doesn't exists - no crashes saved";
+            std::string lines[7];
+            lines[0] = "File doesn't exists - no crashes saved";
             labelA->setText(lines[0].c_str());
         }
 
@@ -828,7 +777,7 @@ void InfoView::onclick(int x1, int y1)
 
     if (sendCrash->hit(x1,y1))
     {
-        stringExtended requestLine;
+        std::string requestLine;
 
         std::string sendData = "crashlog";
 
@@ -865,8 +814,8 @@ void InfoView::onclick(int x1, int y1)
         std::string time = st.toStdString();
 
 
-        requestLine<< "http://guitarmy.in/glogs/crash.php?log="
-                    <<sendData<<"&date="<<time<<"&user="<<userIdStd;
+        requestLine = "http://guitarmy.in/glogs/crash.php?log="
+                     + sendData + "&date=" + time + "&user=" + userIdStd;
 
 
         HttpFileLoader *logUp= new HttpFileLoader;
@@ -1144,8 +1093,8 @@ void ChangesInput::draw(Painter *painter)
                         ul changeValue = changes->getV(i).changeValue;
                         byte changeCount = changes->getV(i).changeCount;
 
-                        stringExtended sX;
-                        sX<<"Type "<<changeType<<"; Value "<<changeValue<<"; count "<<changeCount;
+                        std::string sX = "Type " + std::to_string( changeType ) + "; Value " +
+                            std::to_string( changeValue )  + "; count " + std::to_string( changeCount );
                         painter->drawText(50,250+25*i,sX.c_str());
 
                         if (changeType==8)
