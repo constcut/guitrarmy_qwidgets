@@ -13,6 +13,8 @@
 
 #include "tabviews.h"
 
+#include <fstream>
+
 
 #include <QDebug>
 #define logger qDebug()
@@ -460,10 +462,11 @@ ConfigView::ConfigView():GView()
     sP<<confValues->logsNames[0]<<" "<<(int)*(confValues->logs[0])<<" press 1 to chng";
     labA = new GLabel(20,80+200-55,sP.c_str());
 
+    /*
     sP.clear();
     sP<<confValues->logsNames[1]<<" "<<(int)*(confValues->logs[1])<<" press 2 to chng";
 
-    labB = new GLabel(20,120+200-55,sP.c_str());
+    labB = new GLabel(20,120+200-55,sP.c_str());*/
 
     sP.clear();
     sP<<confValues->logsNames[2]<<" "<<(int)*(confValues->logs[2])<<" press 3 to chng";
@@ -706,13 +709,13 @@ void TestsView::openTestNumber(int num) {
     if (tabsView->gotChanges()==false) {
 
         LOG( << "Opening test "<<buttons[num].getText().c_str());
-        std::string fn = ":/own_tests/" + buttons[num].getText().c_str() + ".gp4";
+        std::string fn = std::string(":/own_tests/") + buttons[num].getText().c_str() + ".gp4";
         std::ifstream importFile(fn);
-         if (importFile.is_open()) == false)
+         if (importFile.is_open() == false)
              std::cout << "Failed to open";
         Tab *forLoad=new Tab();
         Gp4Import importer;
-        importer.import(file,forLoad);
+        importer.import(importFile,forLoad);
         forLoad->postGTP();
         forLoad->connectTracks();
         LOG( << "file v 4 was opened"<<sX.c_str());
@@ -1126,7 +1129,7 @@ void ChangesInput::draw(Painter *painter)
             Package *changePack = ptrToBeat->effPack.getPack(28);
             if (changePack)
             {
-                Beat::ChangesList *changes = changePack->getPointer();
+                Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
                 if (changes)
                 {
                     getMaster()->setComboBox(5,"changecombo4",550,70,50,40,0);
@@ -1189,7 +1192,7 @@ void ChangesInput::turnOffChange(std::string combo)
     Package *changePack = ptrToBeat->effPack.getPack(28);
     Beat::ChangesList *changes = 0;
     if (changePack)
-        changes = changePack->getPointer();
+        changes = (Beat::ChangesList*)changePack->getPointer();
 
     byte awaitType = 255;
 
@@ -1222,7 +1225,7 @@ void ChangesInput::turnOnChange(std::string combo)
     Package *changePack = ptrToBeat->effPack.getPack(28);
     Beat::ChangesList *changes = 0;
     if (changePack)
-        changes = changePack->getPointer();
+        changes = (Beat::ChangesList *)changePack->getPointer();
 
     byte awaitType = 255;
     ul changeValue = 0;
@@ -1293,7 +1296,7 @@ void ChangesInput::changeMainValue(int combo, int newValue)
     Package *changePack = ptrToBeat->effPack.getPack(28);
     Beat::ChangesList *changes = 0;
     if (changePack)
-        changes = changePack->getPointer();
+        changes = (Beat::ChangesList *)changePack->getPointer();
 
     byte awaitType = 255;
 
@@ -1322,7 +1325,7 @@ void ChangesInput::changeSubValue(int combo, int newValue)
     Package *changePack = ptrToBeat->effPack.getPack(28);
     Beat::ChangesList *changes = 0;
     if (changePack)
-        changes = changePack->getPointer();
+        changes = (Beat::ChangesList *)changePack->getPointer();
 
     byte awaitType = 255;
 

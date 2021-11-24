@@ -151,8 +151,7 @@ void checks()
 
 bool midiPrint(std::string fileName)
 {
-    std::ifstream ifile;
-    ifile.open(fileName.c_str(),std::ifstream::binary);
+    std::ifstream ifile(fileName.c_str(), std::ifstream::binary);
 
     if (ifile.is_open())
         std::cout << "File opened" ;
@@ -164,16 +163,14 @@ bool midiPrint(std::string fileName)
     }
 
     MidiFile midiFile;
-    std::ifstream abstractFile(ifile);
-    midiFile.readStream(abstractFile);
+    midiFile.readStream(ifile);
     std::cout << "Reading file finished";
     midiFile.printToStream(std::cout);
 }
 
 bool testMidi(std::string fileName, std::string outFileName)
 {
-    std::ifstream ifile;
-    ifile.open(fileName.c_str(),std::ifstream::binary);
+    std::ifstream ifile(fileName.c_str(),std::ifstream::binary);
 
     if (ifile.is_open())
         log << "File opened" ;
@@ -185,28 +182,10 @@ bool testMidi(std::string fileName, std::string outFileName)
     }
 
     MidiFile midiFile;
-    std::ifstream abstractFile(ifile);
-    midiFile.readStream(abstractFile);
+    midiFile.readStream(ifile);
     log << "Reading file finished";
     midiFile.printToStream(std::cout);
 
-    //Here we test no metrics
-    std::string fullOutName = getTestsLocation() + outFileName;
-    std::ofstream ofile(fullOutName.c_str());
-
-    if (ofile.is_open())
-        log << "Out file opened.";
-    else
-    {
-        log << "Failed to open out file :(";
-        log<<"Scenario done.";
-        return false;
-    }
-
-    std::ofstream outFile(ofile);
-    ul outFileSize = midiFile.writeStream(outFile);
-    //ul outFileSize = midiFile.noMetricsTest(outFile);
-    log << "File wroten. " << outFileSize << " bytes. " ;
     return true;
 }
 
@@ -224,68 +203,16 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
         return false;
     }
 
-    std::ifstream tabFile(itfile);
     Tab tab;
     Gp3Import importer; //(tabFile,tab);
 
 
     //swtich to different versions of importers 3\4\5
 
-    importer.import(tabFile,&tab);
+    importer.import(itfile,&tab);
     tab.connectTracks(); //new for chains refact
 
     std::cout << "All information about readin is in log"<<std::endl;
-
-    //tab.printToStream(std::cout);
-
-    if (outputLog)
-    {
-        TextTrack tTabTrack;
-        Track *firstTrack = tab.getV(0);
-        tTabTrack.createFromTrack(firstTrack);
-        tTabTrack.print();
-    }
-
-    log << "Text tab operators";
-
-    //std::cin.get();
-
-    log << "Starting exporting operations to AMusic";
-
-    AMusic exporter;
-
-    exporter.readFromTab(&tab);
-
-    //exporter.test();
-    if (outputLog)
-    exporter.printToStream(std::cout);
-
-    MidiFile generatedMidi;
-    generatedMidi.generateFromAMusic(exporter);
-
-    std::ofstream ofile2;
-    std::string fullOutName = getTestsLocation() + outFileName;
-    ofile2.open(fullOutName.c_str(),std::ofstream::binary);
-
-    if (ofile2.is_open())
-        log << "Out file opened.";
-    else
-    {
-        log << "Failed to open out file :(";
-        log<< "Scenario done.";
-        return false;
-    }
-
-    std::ofstream outFile2(ofile2);
-    //ul outFileSize = midiFile.writeStream(outFile);
-    ul outFileSize2 = generatedMidi.writeStream(outFile2);
-
-    log << "File wroten. " << outFileSize2 << " bytes. " ;
-
-    ofile2.close();
-
-    if (outputLog)
-        generatedMidi.printToStream(std::cout);
 
     return true;
 }
@@ -305,73 +232,15 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
         return false;
     }
 
-    std::ifstream tabFile(itfile);
+
     Tab tab;
     Gp4Import importer; //(tabFile,tab);
-
-
     //swtich to different versions of importers 3\4\5
 
-    importer.import(tabFile,&tab);
+    importer.import(itfile,&tab);
     tab.postGTP();
     tab.connectTracks(); //new for chains refact
 
-
-    std::cout << "All information about readin is in log"<<std::endl;
-
-    //tab.printToStream(std::cout);
-
-    if (outputLog)
-    {
-        TextTrack tTabTrack;
-        Track *firstTrack = tab.getV(0);
-        tTabTrack.createFromTrack(firstTrack);
-        tTabTrack.print();
-    }
-
-    log << "Text tab operators";
-
-    //std::cin.get();
-
-    log << "Starting exporting operations to AMusic";
-
-    AMusic exporter;
-
-    exporter.readFromTab(&tab);
-
-    //exporter.test();
-    if (outputLog)
-    exporter.printToStream(std::cout);
-
-    MidiFile generatedMidi;
-    generatedMidi.generateFromAMusic(exporter);
-
-    //MidiFile anotherMidi;
-    //anotherMidi.fromTab(&tab);
-
-    std::ofstream ofile2;
-    std::string fullOutName = getTestsLocation() + outFileName;
-    ofile2.open(fullOutName.c_str(),std::ofstream::binary);
-
-    if (ofile2.is_open())
-        log << "Out file opened.";
-    else
-    {
-        log << "Failed to open out file :(";
-        log<< "Scenario done.";
-        return false;
-    }
-
-    std::ofstream outFile2(ofile2);
-    //ul outFileSize = midiFile.writeStream(outFile);
-    ul outFileSize2 = generatedMidi.writeStream(outFile2);
-
-    log << "File wroten. " << outFileSize2 << " bytes. " ;
-
-    ofile2.close();
-
-    if (outputLog)
-        generatedMidi.printToStream(std::cout);
 
     return true;
 }
@@ -391,69 +260,17 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
         return false;
     }
 
-    std::ifstream tabFile(itfile);
     Tab tab;
     Gp5Import importer; //(tabFile,tab);
 
 
     //swtich to different versions of importers 3\4\5
 
-    importer.import(tabFile,&tab);
+    importer.import(itfile,&tab);
     tab.postGTP();
     tab.connectTracks(); //new for chains
 
 
-    std::cout << "All information about readin is in log"<<std::endl;
-
-    //tab.printToStream(std::cout);
-
-    TextTrack tTabTrack;
-    Track *firstTrack = tab.getV(0);
-    tTabTrack.createFromTrack(firstTrack);
-
-    if (outputLog)
-        tTabTrack.print();
-
-    log << "Text tab operators";
-
-    //std::cin.get();
-
-    log << "Starting exporting operations to AMusic";
-
-    AMusic exporter;
-
-    exporter.readFromTab(&tab);
-
-    //exporter.test();
-    if (outputLog)
-    exporter.printToStream(std::cout);
-
-    MidiFile generatedMidi;
-    generatedMidi.generateFromAMusic(exporter);
-
-    std::ofstream ofile2;
-    std::string fullOutName = getTestsLocation() + outFileName;
-    ofile2.open(fullOutName.c_str(),std::ofstream::binary);
-
-    if (ofile2.is_open())
-        log << "Out file opened.";
-    else
-    {
-        log << "Failed to open out file :(";
-        log<< "Scenario done.";
-        return false;
-    }
-
-    std::ofstream outFile2(ofile2);
-    //ul outFileSize = midiFile.writeStream(outFile);
-    ul outFileSize2 = generatedMidi.writeStream(outFile2);
-
-    log << "File wroten. " << outFileSize2 << " bytes. " ;
-
-    ofile2.close();
-
-    if (outputLog)
-    generatedMidi.printToStream(std::cout);
 
     return true;
 }
@@ -498,7 +315,7 @@ bool greatCheck()
 
             //DONT FORGET
             //if ( testGP4 (gp4File,outGp4,log,doTheLogs)  == false ) return 0; //last true - no out
-            if ( testGP5 (gp5File,outGp5,log,doTheLogs) == false ) return 0;
+            if ( testGP5 (gp5File,outGp5,doTheLogs) == false ) return 0;
 
             std::cout << "done"<<std::endl;
         }
@@ -541,12 +358,12 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             log<<"TestFile "<<newLine.c_str();
 
             if (v==5)
-            if ( testGP5 (gp5File,outGp5,log,doTheLogs) == false )
+            if ( testGP5 (gp5File,outGp5,doTheLogs) == false )
                 log <<"Test gp5 "<<newLine.c_str()<<" failed";
 
             if (v==4)
             {
-                if ( testGP4 (gp4File,outGp4,log,doTheLogs) == false )
+                if ( testGP4 (gp4File,outGp4,doTheLogs) == false )
                   log <<"Test gp4 "<<newLine.c_str()<<" failed";
 
                 GTabLoader loader;
@@ -555,8 +372,8 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
                     log <<"G4+ failed file "<<newLine.c_str();
                 MidiFile mid;
                 mid.fromTab(loader.getTab());
-                std::ofstream outMidiFile;
-                if (outMidiFile.open(outGp4plus,false) == false)
+                std::ofstream outMidiFile(outGp4plus);
+                if (outMidiFile.is_open() == false)
                     log <<"failed to open for output "<<outGp4plus.c_str();
                 mid.writeStream(outMidiFile);
                 outMidiFile.close();
@@ -564,7 +381,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             }
 
             if (v==3)
-            if ( testGP3 (gp3File,outGp3,log,doTheLogs) == false )
+            if ( testGP3 (gp3File,outGp3,doTheLogs) == false )
                 log <<"Test gp3 "<<newLine.c_str()<<" failed";
 
             std::cout << "test file done"<<std::endl;
@@ -584,7 +401,7 @@ void connectConfigs(void *ptr)
 {
     AConfig *config = (AConfig*)ptr;
     config->connectLog(&tabLog,0,"tab");
-    config->connectLog(&museLog,1,"amusic");
+    //config->connectLog(&museLog,1,"amusic");
     config->connectLog(&midiLog,2,"midi");
     config->connectLog(&gtpLog,3,"gtp");
 }

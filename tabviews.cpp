@@ -18,6 +18,11 @@
 
 #include "midiengine.h"
 
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
+
 
 
 int scaleCoef = 1;

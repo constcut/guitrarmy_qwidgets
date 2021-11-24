@@ -22,6 +22,12 @@
 #include <fstream>
 
 
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
+
+
 
 //for record - clean later
 #ifdef WIN32
@@ -219,7 +225,7 @@ void PatternInput::playBar()
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-    outFile.open(fullOutName,false);
+    std::ofstream outFile(fullOutName);
     MidiFile outMidi;
 
     outMidi.fromTab(&patternTab);
@@ -723,12 +729,11 @@ void TapRyView::copyAndPlayBar()
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-    outFile.open(fullOutName,false);
+    std::ofstream outFile(fullOutName);
     MidiFile outMidi;
 
     outMidi.fromTab(&patternTab);
     outMidi.writeStream(outFile);
-    outFile.close();
 
     //outMidi.printToStream(std::cout);
 
@@ -851,7 +856,7 @@ void TapRyView::keyevent(std::string press)
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
 
-        outFile.open(fullOutName,false);
+        std::ofstream outFile(fullOutName);
         MidiFile outMidi;
 
         outMidi.fromTab(&patternTab);

@@ -22,7 +22,12 @@
 
 #include "libtim/miditopcm.h"
 
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
 
+#include <fstream>
 
 void TrackView::reverseCommand(SingleCommand &command)
 {
@@ -181,7 +186,7 @@ void TrackView::reverseCommand(SingleCommand &command)
         Bar *addition = (Bar*)(command.outerPtrEnd);
         Bar *firstBar  = (Bar*)(command.outerPtr);
         //sicky
-        for (;addition != firstBar; addition=addition->getPrev())
+        for (;addition != firstBar; addition=(Bar*)addition->getPrev())
         {
             if (addition == 0)
                 break;
@@ -213,7 +218,7 @@ void TrackView::reverseCommand(SingleCommand &command)
                 while(curBeat != firstBeat)
                 {
                     pTrack->getV(barN)->insertBefore(curBeat,beatN);
-                    curBeat = curBeat->getPrev();
+                    curBeat = (Beat*)curBeat->getPrev();
                     if (curBeat == 0)
                         break;
                 }
@@ -226,7 +231,7 @@ void TrackView::reverseCommand(SingleCommand &command)
             if (value==0)
                 ++barN; //sift when first not full
 
-            Bar *curBar = lastPa->getPrev();
+            Bar *curBar = (Bar*)lastPa->getPrev();
 
             if (value2)
             {
@@ -240,7 +245,7 @@ void TrackView::reverseCommand(SingleCommand &command)
                 while(curBeat->getParent() == lastPa)
                 {
                     pTrack->getV(barN)->insertBefore(curBeat,0);
-                    curBeat = curBeat->getPrev();
+                    curBeat = (Beat*)curBeat->getPrev();
                     if (curBeat == 0)
                     {
                         //what is this
@@ -268,7 +273,7 @@ void TrackView::reverseCommand(SingleCommand &command)
                 {
                     pTrack->insertBefore(currentBar,barN);
 
-                    currentBar = currentBar->getPrev();
+                    currentBar = (Bar*)currentBar->getPrev();
                     if (currentBar==0)
                         break;
                 }
@@ -303,7 +308,7 @@ void TrackView::reverseCommand(SingleCommand &command)
                                                     -counter);
 
                    ++counter;
-                   curBeat = curBeat->getNext();
+                   curBeat = (Beat*)curBeat->getNext();
                    if (curBeat==0)
                        break;
                }
@@ -1152,9 +1157,9 @@ void TrackView::keyevent(std::string press)
 
             if (press == CONF_PARAM("TrackView.playAMusic"))
             {
-                AMusic exporter;
-                exporter.readFromTab(tab,shiftTheCursor);
-                generatedMidi.generateFromAMusic(exporter);
+                //AMusic exporter;
+                //exporter.readFromTab(tab,shiftTheCursor);
+                //generatedMidi.generateFromAMusic(exporter);
             }
             else
             {
@@ -1237,9 +1242,8 @@ void TrackView::keyevent(std::string press)
         //save
         GmyFile gmyFile;
         stringExtended gfileName;
-        std::string gfilename <<  getTestsLocation() <<"first.gmy";
-        std::ofstream file;
-        file.open(gfileName.c_str(), false);
+        std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
+        std::ofstream file;(gfileName.c_str(), false);
         gmyFile.saveToFile(&file,tabParrent->getTab());
         file.close();
         return;
@@ -2435,9 +2439,7 @@ void TabView::keyevent(std::string press)
 
             if (press == CONF_PARAM("TrackView.playAMusic"))
             {
-                AMusic exporter;
-                exporter.readFromTab(tab,shiftTheCursor);
-                generatedMidi.generateFromAMusic(exporter);
+
             }
             else
             {
@@ -2453,7 +2455,7 @@ void TabView::keyevent(std::string press)
 
             std::ofstream outFile2;
 
-            if (!outFile2.is_open(fullOutName,false))
+            if (!outFile2.is_open())
                 logger << "Failed to open out file :(";
             else
                 LOG( <<"File opened "<<fullOutName.c_str());
@@ -2497,7 +2499,6 @@ void TabView::keyevent(std::string press)
             isPlaying = false;
             return;
         }
-        AMusic exporter;
 
 
         Tab *tab = pTab;
@@ -2505,8 +2506,7 @@ void TabView::keyevent(std::string press)
 
         if (press == CONF_PARAM("TrackView.playAMusic"))
         {
-            exporter.readFromTab(tab);
-            generatedMidi.generateFromAMusic(exporter);
+
         }
         else
         {
@@ -2537,18 +2537,11 @@ void TabView::keyevent(std::string press)
     }
 
 
-    if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc")) {
-        //generate
-        AMusic exporter;
-        Tab *tab = pTab;
+    if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc"))
+    {
+
         MidiFile generatedMidi;
-        if (press == CONF_PARAM("TabView.genAMusic")) {
-            exporter.readFromTab(tab);
-            generatedMidi.generateFromAMusic(exporter);
-        }
-        else {
-            generatedMidi.fromTab(pTab);
-        }
+        generatedMidi.fromTab(pTab);
 
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");

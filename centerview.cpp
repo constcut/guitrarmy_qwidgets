@@ -8,9 +8,12 @@
 #include <QFileDialog>
 #include "g0/aexpimp.h"
 
+#include <string>
 
 
 #define logger qDebug()
+#define LOG(m)
+//TODO
 
 
 GQCombo::GQCombo(QWidget *pa):QComboBox(pa)

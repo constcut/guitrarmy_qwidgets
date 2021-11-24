@@ -5,6 +5,12 @@
 
 
 
+#include <QDebug>
+#define logger qDebug()
+#define LOG(m)
+//TODO
+
+
 #define min_DEF(a,b) a>b ? b:a;
 #define max_DEF(a,b) a>b ? a:b;
 

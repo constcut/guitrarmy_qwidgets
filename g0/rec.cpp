@@ -4,6 +4,9 @@
 #include "g0/fft.h"
 #include "g0/waveanalys.h"
 
+#include <QFile>
+#include <QDebug>
+
 Track *GWave::generateTrack()
 {
     int fullLen = origin.size()/2; //16 bit only? yep
@@ -171,7 +174,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
     //refactoring begins here!
     QFile fileHandler;
     fileHandler.setFileName(fileName.c_str());
-    if (fileHandler.open(QIODevice::ReadOnly) == false) return;
+    if (fileHandler.open(QIODevice::ReadOnly) == false) return false;
 
     origin = fileHandler.readAll();
 
@@ -261,7 +264,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
     rAn.findNotesPositions(&energyLevels,&energyTypes,&notes,params);
     mAn.setupFreq(rawData,bpmDependentWindow,&notes);
 
-    LOG( << "Found "<<(int)notes.size()<<" notes ");
+    qDebug()  << "Found "<<(int)notes.size()<<" notes ";
 
 }
 
