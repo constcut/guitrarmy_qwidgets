@@ -305,9 +305,7 @@ public:
 
         for (int i = 0; i < 11; ++i)
         {
-            stringExtended sX;
-            sX<<"1."<<(i+1);
-            GLabel button(xSh,ySh,sX.c_str());
+            GLabel button(xSh,ySh,"1." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
 
@@ -321,9 +319,7 @@ public:
 
         for (int i = 0; i < 38; ++i)
         {
-            stringExtended sX;
-            sX<<"2."<<(i+1);
-            GLabel button(xSh,ySh,sX.c_str());
+            GLabel button(xSh,ySh,"2." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
 
@@ -337,9 +333,7 @@ public:
 
         for (int i = 0; i < 70; ++i)
         {
-            stringExtended sX;
-            sX<<"3."<<(i+1);
-            GLabel button(xSh,ySh,sX.c_str());
+            GLabel button(xSh,ySh,"3." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
 
@@ -470,8 +464,7 @@ public:
 
             for (int i = 51; i < buttons.size(); ++i)
             {
-                stringExtended onText;
-                onText<<"on:"<<i;
+                std::string onText = "on:" + std::to_string(i);
                 std::vector<std::string> playlistElement;
 
                 playlistElement.push_back("tests");
@@ -488,8 +481,7 @@ public:
         {
             for (int i = 51; i < buttons.size(); ++i)
             {
-                stringExtended onText;
-                onText<<"on:"<<i;
+                std::string onText = "on:" + std::to_string(i);
                 std::vector<std::string> playlistElement;
 
                 playlistElement.push_back("tests");
@@ -522,13 +514,9 @@ public:
 
             upper.setText("starting 1 pack");
             //greatCheckScenarioCase(1,1,12,4);
-
             clock_t after = getTime();
             clock_t diff = after-now;
-
-            stringExtended sX;
-            sX <<"TIme spent for pack 1; - "<<diff<<" ms";;
-
+            std::string sX = "TIme spent for pack 1; - " + std::to_string(diff) + " ms";;
             upper.setText(sX.c_str());
         }
         if (press == "2")
@@ -540,10 +528,7 @@ public:
 
             clock_t after = getTime();
             clock_t diff = after-now;
-
-            stringExtended sX;
-            sX <<"TIme spent for pack 2; - "<<diff<<" ms";;
-
+            std::string sX = "TIme spent for pack 2; - " + std::to_string(diff) + " ms";
             upper.setText(sX.c_str());
 
         }
@@ -558,8 +543,7 @@ public:
             clock_t after = getTime();
             clock_t diff = after-now;
 
-            stringExtended sX;
-            sX <<"TIme spent for pack 3; - "<<diff<<" ms";;
+            std::string sX = "TIme spent for pack 3; - " + std::to_string(diff) + " ms";
 
             upper.setText(sX.c_str());
         }
@@ -569,14 +553,9 @@ public:
 
             upper.setText("starting 4 pack");
             //greatCheckScenarioCase(4,1,109,4);
-
-
             clock_t after = getTime();
             clock_t diff = after-now;
-
-            stringExtended sX;
-            sX <<"TIme spent for pack 14; - "<<diff<<" ms";
-
+            std::string sX = "TIme spent for pack 4; - " + std::to_string(diff) + " ms";
             upper.setText(sX.c_str());
         }
         if (press=="m")
