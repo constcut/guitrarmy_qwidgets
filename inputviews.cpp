@@ -354,9 +354,7 @@ void PatternInput::keyevent(std::string press)
                 }
             }
 
-            stringExtended sX;
-            sX << newNum;
-            sigNumBut->setText(sX.c_str());
+            sigNumBut->setText(std::to_string(newNum));
             getMaster()->requestWidth(maxShX + 10);
 
         }
@@ -439,7 +437,6 @@ void PatternInput::onclick(int x1, int y1)
                                 35,127,1,&ok);
            if (ok)
            {
-               stringExtended sX;
                sX<<newInstr;
                lineInstrLabels[i].setText(sX.c_str());
            }
@@ -688,7 +685,6 @@ void TapRyView::createBar()
 
     int thatBPM = atoi(bpmLabel->getText().c_str());
 
-    stringExtended sX;
 
     if (ryBar) delete ryBar;
 
@@ -711,7 +707,6 @@ void TapRyView::createBar()
         --dur;
         lastDur = dur;
 
-        sX<<i<<"="<<step<<"["<<dur<<"] ";
          //<<":"<<det<<":"<<dot<<"];";
 
         //find closest
@@ -795,7 +790,7 @@ void TapRyView::createBar()
 
     logger << "tap ry done";
 
-    getMaster()->setStatusBarMessage(0,sX.c_str(),3000);
+    //getMaster()->setStatusBarMessage(0,sX.c_str(),3000);
     //labStat->setText(sX.c_str());
 
     //ryBar to the bar view
@@ -878,19 +873,13 @@ void TapRyView::keyevent(std::string press)
 
     if (press == "clean tap")
     {
-        //cleans vector
-
-        stringExtended info;
-        info << "Cleaned "<<(int)presses.size()<<" presses;";
-
+        //info << "Cleaned "<<(int)presses.size()<<" presses;";
         presses.clear();
-
         if (ryBar) delete ryBar;
-        ryBar = 0;
+            ryBar = 0;
         if (barView) delete barView;
-        barView = 0;
-
-        labStat->setText(info.c_str());
+            barView = 0;
+        //labStat->setText(info.c_str());
         //getMaster()->pleaseRepaint();
     }
 

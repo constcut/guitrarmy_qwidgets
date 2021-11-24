@@ -9,7 +9,6 @@
 
 #include <QTextCodec>
 //#include <QSettings>
-#include "g0/frequlate.h"
 
 #include <QMediaPlayer>
 #include <QAudioFormat>

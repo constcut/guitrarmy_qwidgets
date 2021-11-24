@@ -9,6 +9,7 @@
 #include "g0/aexpimp.h"
 
 #include <string>
+#include <sstream>
 
 
 #define logger qDebug()
@@ -28,15 +29,11 @@ GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
 void GQCombo::elementChosen(int index)
 {
     qDebug()<<"log from combo "<<elementNumber<<" "<<index;
-    stringExtended line;
-    line<<"com:"<<elementNumber<<":"<<index;
-
-    if (keyPress)
-    {
+    std::string line = "com:" + std::to_string(elementNumber) + ":" + std::to_string(index);
+    if (keyPress) {
         if (pushItem==false)
         keyPress->pushForceKey(line.c_str());
-        else
-        {
+        else {
             QString itemStr = this->currentText();
             std::string itemStd = itemStr.toStdString();
             keyPress->pushForceKey(itemStd);
@@ -51,20 +48,14 @@ GQButton::GQButton(QWidget *pa):QPushButton(pa)
     connect(this, SIGNAL (clicked()), SLOT (buttonWasClicked()));
 }
 
-void GQButton::buttonWasClicked()
-{
-    if (buttonNumber!= -1)
-    {
-        if (pressSyn.empty() == false)
-        {
+void GQButton::buttonWasClicked() {
+    if (buttonNumber!= -1) {
+        if (pressSyn.empty() == false) {
              keyPress->pushForceKey(pressSyn);
         }
         else
-            if (keyPress)
-            {
-                stringExtended genPress;
-                genPress<<"b:"<<buttonNumber;
-                keyPress->pushForceKey(genPress.c_str());
+            if (keyPress) {
+                keyPress->pushForceKey("b:" + std::to_string(buttonNumber));
                 //audio_logger<<"log from button"<<genPress.c_str();
             }
     }
@@ -88,7 +79,7 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
  QComboBox:focus{ background-color: white; }\
  QComboBox:hover{ background-color: dark blue; }"; */
 
-    stringExtended styleString;
+    std::stringstream styleString;
 
     styleString << "QComboBox{ font-size: 10; }"
                 << "QComboBox{ background-color:" << CONF_PARAM("colors.combo.background") << "; }"
@@ -97,7 +88,7 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
                 << "QComboBox:hover{ background-color:"  << CONF_PARAM("colors.combo.focus")<< "; }";
 
 
-    style = QString(styleString.c_str());
+    style = QString(styleString.str().c_str());
 
     newBox->setStyleSheet(style);
 
@@ -177,22 +168,22 @@ void CenterView::ViewWasChanged()
         requestWidth(650);
 
 
-    stringExtended tipLine;
+    std::string tipLine;
 
     if (VType == 1)
-        tipLine << "Double-click on preview or bar number to open track";
+        tipLine = "Double-click on preview or bar number to open track";
     if (VType == 2)
-        tipLine << "TrackView opened. You can edit tab here";
+        tipLine = "TrackView opened. You can edit tab here";
     if (VType == 3)
-        tipLine << "PatternInput opened. You can set drums here";
+        tipLine = "PatternInput opened. You can set drums here";
     if (VType == 4)
-        tipLine << "TapInput opened. You can tap rhythm here";
+        tipLine = "TapInput opened. You can tap rhythm here";
     if (VType == 5)
-        tipLine << "RecordInput opened. Yet you can only record sound here";
+        tipLine = "RecordInput opened. Yet you can only record sound here";
     if (VType == 6)
-        tipLine << "ConfigView opened. You can set configuration here, to apply - move to any view, to save - use toolMenu";
+        tipLine = "ConfigView opened. You can set configuration here, to apply - move to any view, to save - use toolMenu";
     if (VType == 8)
-        tipLine << "TestsView opened. Some tablatures prepared here for tests";
+        tipLine = "TestsView opened. Some tablatures prepared here for tests";
 
     int showTime = 2000;
     if (VType == 1)
@@ -414,11 +405,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
             if (params=="volume")
             {
                 for (int i = 0; i < 17; ++i)
-                {
-                    stringExtended sX;
-                    sX<<i;
-                    newBox->addItem(sX.c_str());
-                }
+                    newBox->addItem(std::to_string(i).c_str());
             }
 
 
@@ -513,12 +500,9 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
             {
                 newBox->addItem("right now");
                 //in 1 beat etc
-
-                for (int i = 1; i < 32; ++i)
-                {
-                    stringExtended sX;
-                    sX << i << " beats later";
-                    newBox->addItem(sX.c_str());
+                for (int i = 1; i < 32; ++i) {
+                    auto s = std::to_string(i) + " beats later";
+                    newBox->addItem(s.c_str());
                 }
             }
 
@@ -599,11 +583,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
             if (params=="bpm")
             {
                 for (int i = 1; i < 300; ++i)
-                {
-                    stringExtended sX;
-                    sX<<i;
-                    newBox->addItem(sX.c_str());
-                }
+                    newBox->addItem(std::to_string(i).c_str());
             }
 
             while (countBefore--)
@@ -767,7 +747,7 @@ QPushButton:focus{ background-color: white; }\
 QPushButton:hover{ background-color: darkblue; }"; */
 
 
-   stringExtended styleString;
+   std::stringstream styleString;
 
    styleString << "QPushButton{ font-size: 10; }"
 
@@ -782,7 +762,7 @@ QPushButton:hover{ background-color: darkblue; }"; */
    else
        styleString << "QPushButton{ background-color:" << CONF_PARAM("colors.button.background") << "; }";
 
-   style = QString(styleString.c_str());
+   style = QString(styleString.str().c_str());
 
    newBut->setStyleSheet(style);
 
@@ -933,7 +913,7 @@ void checkBase()
                 QString mdsum = mdfiver.result().toHex();
 
                 ///+testsLoc
-                stringExtended sX;
+                  sX;
 
                 int fileType = sayType(wholeFile);
 
@@ -1124,7 +1104,7 @@ void CenterView::pushForceKey(std::string keyevent)
             QByteArray fileHead = fileDesc.read(40);
             fileDesc.close();
 
-            stringExtended sX; sX<<fullCount<<" : ";
+            std::string sX = std::to_string(fullCount) + " : ";
             QString currentLine = QString(sX.c_str()) + currentFile + QString(" : ");
 
             if (i%100 == 0)
@@ -1696,7 +1676,7 @@ checkView();
 
 bool CenterView::gestureEvent(QGestureEvent *event)
 {
-    stringExtended  sX;
+    //stringEx tended  sX;
 
 
 
@@ -1840,18 +1820,15 @@ void CenterView::showConf()
         confEdit = new QTextEdit(this);
         confEdit->show();
 
-        stringExtended sX;
-
         int i = 0;
         QString qs;
 
         for (std::map<std::string,std::string>::iterator it = AConfig::getInstance()->values.begin();
              it!= AConfig::getInstance()->values.end(); ++it)
         {
-            sX << (*it).first.c_str() <<" = "<<(*it).second.c_str()<<"\n";
-            qs += sX.c_str();
-            //++i;
-            sX.clear();
+            qs += (*it).first.c_str();
+            qs += " = ";
+            qs += (*it).second.c_str();
         }
 
         confEdit->insertPlainText(qs);

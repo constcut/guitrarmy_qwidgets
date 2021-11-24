@@ -6,7 +6,6 @@
 #include "g0/tab.h"
 #include "g0/aconfig.h"
 
-#include "g0/frequlate.h"
 
 //#include <QPainter>
 #include "apainter.h"
