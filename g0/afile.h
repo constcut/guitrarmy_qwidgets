@@ -1,8 +1,9 @@
-#ifndef AFILE_H
+/*#ifndef AFILE_H
 #define AFILE_H
 
 #include "types.h"
 #include <fstream>
+
 
 #include <QFile>
 
@@ -68,4 +69,7 @@ public:
 	//specificators for big endian and little one
 };
 
+
+
 #endif // AFILE_H
+*/

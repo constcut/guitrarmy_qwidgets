@@ -2,14 +2,10 @@
 
 #include <iostream>
 
-//WINDOWS build for console desktop version
 
-//as we work from single file first we had to build all of the sources
-#include "g0/afile.h"
 #include "g0/midifile.h"
 #include "g0/amusic.h"
 #include "g0/tab.h"
-#include "g0/astreaming.h"
 #include "g0/texttab.h"
 #include "g0/gtpfiles.h"
 #include "g0/aconfig.h"
@@ -27,8 +23,6 @@
 //#include <strstream>
 
 
-
-//AStreaming log("scene");
 
 
 //configuration connectors
@@ -142,19 +136,11 @@ UINT playMIDIFile(HWND hWndNotify, LPSTR lpszMIDIFileName, UINT replay=0)
 }*/
 
 
-
-//UINT lastDev = 0;
-
-
-
-
-// MIDI windows
-
 void checks()
 {
     std::cout << "Starting checks function [004]" <<std::endl;
    // bool typesFine = check_types();
-    AFile afile; //compile check           - no need for output
+    //AF ile afi le; //compile check           - no need for output
     MidiFile mfile;//compile check      - because if failed
     AMusic amusic; //compile check - then none would be anyway
     Tab tablature;
@@ -176,15 +162,13 @@ bool midiPrint(std::string fileName)
     }
 
     MidiFile midiFile;
-    AFile abstractFile(ifile);
+    std::ifstream abstractFile(ifile);
     midiFile.readStream(abstractFile);
-
     std::cout << "Reading file finished";
-
     midiFile.printToStream(std::cout);
 }
 
-bool testMidi(std::string fileName, std::string outFileName, AStreaming &log)
+bool testMidi(std::string fileName, std::string outFileName)
 {
     std::ifstream ifile;
     ifile.open(fileName.c_str(),std::ifstream::binary);
@@ -199,19 +183,14 @@ bool testMidi(std::string fileName, std::string outFileName, AStreaming &log)
     }
 
     MidiFile midiFile;
-    AFile abstractFile(ifile);
+    std::ifstream abstractFile(ifile);
     midiFile.readStream(abstractFile);
-
     log << "Reading file finished";
-
     midiFile.printToStream(std::cout);
 
     //Here we test no metrics
-
-    std::ofstream ofile;
     std::string fullOutName = getTestsLocation() + outFileName;
-    ofile.open(fullOutName.c_str(),std::ofstream::binary);
-    //FUCK SHIT HELL NEVER MORE!!!
+    std::ofstream ofile(fullOutName.c_str());
 
     if (ofile.is_open())
         log << "Out file opened.";
@@ -222,18 +201,14 @@ bool testMidi(std::string fileName, std::string outFileName, AStreaming &log)
         return false;
     }
 
-    AFile outFile(ofile);
+    std::ofstream outFile(ofile);
     ul outFileSize = midiFile.writeStream(outFile);
     //ul outFileSize = midiFile.noMetricsTest(outFile);
-
     log << "File wroten. " << outFileSize << " bytes. " ;
-
-    ofile.close();
-
     return true;
 }
 
-bool testGP3(std::string fileName, std::string outFileName, AStreaming &log, bool outputLog)
+bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -247,7 +222,7 @@ bool testGP3(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile tabFile(itfile);
+    std::ifstream tabFile(itfile);
     Tab tab;
     Gp3Import importer; //(tabFile,tab);
 
@@ -299,7 +274,7 @@ bool testGP3(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile outFile2(ofile2);
+    std::ofstream outFile2(ofile2);
     //ul outFileSize = midiFile.writeStream(outFile);
     ul outFileSize2 = generatedMidi.writeStream(outFile2);
 
@@ -314,7 +289,7 @@ bool testGP3(std::string fileName, std::string outFileName, AStreaming &log, boo
 }
 
 
-bool testGP4(std::string fileName, std::string outFileName, AStreaming &log, bool outputLog)
+bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -328,7 +303,7 @@ bool testGP4(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile tabFile(itfile);
+    std::ifstream tabFile(itfile);
     Tab tab;
     Gp4Import importer; //(tabFile,tab);
 
@@ -385,7 +360,7 @@ bool testGP4(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile outFile2(ofile2);
+    std::ofstream outFile2(ofile2);
     //ul outFileSize = midiFile.writeStream(outFile);
     ul outFileSize2 = generatedMidi.writeStream(outFile2);
 
@@ -400,7 +375,7 @@ bool testGP4(std::string fileName, std::string outFileName, AStreaming &log, boo
 }
 
 //refact later
-bool testGP5(std::string fileName, std::string outFileName, AStreaming &log, bool outputLog)
+bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -414,7 +389,7 @@ bool testGP5(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile tabFile(itfile);
+    std::ifstream tabFile(itfile);
     Tab tab;
     Gp5Import importer; //(tabFile,tab);
 
@@ -467,7 +442,7 @@ bool testGP5(std::string fileName, std::string outFileName, AStreaming &log, boo
         return false;
     }
 
-    AFile outFile2(ofile2);
+    std::ofstream outFile2(ofile2);
     //ul outFileSize = midiFile.writeStream(outFile);
     ul outFileSize2 = generatedMidi.writeStream(outFile2);
 
@@ -481,7 +456,7 @@ bool testGP5(std::string fileName, std::string outFileName, AStreaming &log, boo
     return true;
 }
 
-bool greatCheck(AStreaming &log)
+bool greatCheck()
 {
 
     //phase 1
@@ -539,9 +514,6 @@ bool greatCheck(AStreaming &log)
 bool greatCheckScenarioCase(int scen, int from, int to, int v)
 {
     bool doTheLogs = false;
-
-    AStreaming log("tests");
-
     for (int i = from; i <= to; ++i)
     {
         try
@@ -581,7 +553,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
                     log <<"G4+ failed file "<<newLine.c_str();
                 MidiFile mid;
                 mid.fromTab(loader.getTab());
-                AFile outMidiFile;
+                std::ofstream outMidiFile;
                 if (outMidiFile.open(outGp4plus,false) == false)
                     log <<"failed to open for output "<<outGp4plus.c_str();
                 mid.writeStream(outMidiFile);
@@ -631,7 +603,6 @@ bool testScenario()
     std::ofstream lofile;
     lofile.open(logName.c_str());
 
-    //AStreaming log("scenario");
 
     if (lofile.is_open())
       std::cout << "Log file opened."<<std::endl;
@@ -641,8 +612,8 @@ bool testScenario()
       return false;
     }
 
-    AFile logFile(lofile);
-    AStreaming::setLogFile(&logFile);*/
+    A F ile logFile(lofile);
+    A S treaming::setLogFile(&logFile);*/
     //Log operation finished
 
     /////////////////////////////////////////////////////////////////
@@ -656,11 +627,9 @@ bool testScenario()
     bool waitAfterMidi = useMidi;
     /////*////////////////////////
 
-
-    AStreaming log("scene");
     //Full line check
     //UPDATE: greatCheck(Scen,start,end); greatestCheck - with all the ranges
-    greatCheck(log);
+    greatCheck();
     return false;
 
 

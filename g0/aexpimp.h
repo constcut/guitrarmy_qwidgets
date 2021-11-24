@@ -59,7 +59,7 @@ public:
 
 //class Gp4Import
 //{
-	//from AFile to Tab	
+	//from A File to Tab	
 //};
 
 class GTabLoader

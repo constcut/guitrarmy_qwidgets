@@ -1,17 +1,11 @@
 #include "aexpimp.h"
 
 
-#include "g0/astreaming.h"
-
-
-static AStreaming logger("aexpimp");
-
 bool GTabLoader::open(std::string fileName)
 {
-    AFile file;
+    std::ifstream file(fileName);
 
-    if (file.open(fileName) == false)
-    {
+    if (file.is_open() == false) {
         logger << "Failed to open file from loader";
         return false;
     }

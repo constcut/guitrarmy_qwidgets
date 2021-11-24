@@ -2,7 +2,7 @@
 
 
 
-        1) afile, apainter и множество других избавиться от всех их следов
+        1) a file, apainter и множество других избавиться от всех их следов
 
         2) tab.h \ poly template review
 
@@ -21,3 +21,12 @@
         9) wav recorder \ loader \ recognizer - console access to sf generated audio
 
         10) g0 lib: std c++ gtab, midi, action stream (edit, redo\undo, copy\cut), MIT
+
+        11) QML components
+            a) GTab\GTrack\GBar
+            b) Piano roll
+            c) Pattern input
+            d) Graph map
+            e) Tuner
+
+        12) C++ qml engine, that can be loaded as dynamic lib

@@ -1,6 +1,5 @@
 #include "centerview.h"
 
-#include "g0/astreaming.h"
 
 #include <QTextBlock>
 #include <QTextCodec>
@@ -10,7 +9,7 @@
 #include "g0/aexpimp.h"
 
 
-//static AStreaming logger("c-v");
+
 #define logger qDebug()
 
 

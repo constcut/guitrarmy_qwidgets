@@ -2,7 +2,6 @@
 #define MIDIFILE_H
 
 #include "types.h"
-#include "afile.h"
 
 #include <iostream>
 
@@ -33,15 +32,15 @@ public:
         return *this;
     }
 
-    ul readStream(AFile &file); //reads from file and returns amount of bytes stored inside
-    ul writeStream(AFile &file);
+    ul readStream(std::ifstream &file); //reads from file and returns amount of bytes stored inside
+    ul writeStream(std::ofstream &file);
 
 	ul getValue();
 	
     ul getLen() { return this->len(); } //cover
 	//for future - get extended values for many many parts
 
-	//for future - ul writeStream(AFile &file);
+	//for future - ul writeStream(AF ile &file);
 
     //operator = int, char, long long, VariableInt
     //operator += all of them
@@ -79,8 +78,8 @@ struct MidiSignal
 	
 	//system events should lay simmiliar as meta ones
 
-	ul readStream(AFile &ifile);
-    ul writeStream(AFile &ofile, bool skip=false);
+	ul readStream(std::ifstream &ifile);
+    ul writeStream(std::ofstream &ofile, bool skip=false);
 
     bool skipThat();
 		
@@ -160,8 +159,8 @@ public:
     bool calculateHeader(bool skip=false);
 	void printToStream(std::ostream &stream);
 
-	//ul writeStream(AFile &ofile);
-	//ul readStream(AFile &ifile); //missing from refactoing
+	//ul writeStream(AF ile &ofile);
+	//ul readStream(AF ile &ifile); //missing from refactoing
 
     bool fromTrack(Track *track, byte channel=0, ul shiftCursorBar=0);
 
@@ -277,10 +276,10 @@ public:
     bool calculateHeader(bool skip=false);
     void printToStream(std::ostream &stream);
 
-    bool readStream(AFile &ifile);
-    ul writeStream(AFile &ofile);
+    bool readStream(std::ifstream &ifile);
+    ul writeStream(std::ofstream &ofile);
 
-    ul noMetricsTest(AFile &ofile);
+    ul noMetricsTest(std::ofstream &ofile);
 
     //set get
     void setBPM(int bpmNew) { bpm = bpmNew; }

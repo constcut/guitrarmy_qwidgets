@@ -1,5 +1,7 @@
-#include "afile.h"
+/*
 #include <memory.h>
+
+
 
 
 AFile::AFile(std::ifstream &inputStream):istream(&inputStream), ostream(0),wasOpened(false)
@@ -71,13 +73,13 @@ AFile::AFile(AFile &link):istream(link.istream)
 
 }
 
-/*
+/ *
 AFile::AFile(std::string &path)
 {
     //new //flag it!
 
 }
-*/
+* /
 
 void reverseEndian(void *p,int s)
 {
@@ -100,12 +102,12 @@ void reverseEndian(void *p,int s)
         bytes[0] = bytes[1];
         bytes[1] = b;
     }
-    /* - firstuse only for 2 bytes;
+    / * - firstuse only for 2 bytes;
     for (int i = 0; i < s; ++i)
     {
         char cur = bytes[i];
     }
-    */
+    * /
 }
 
 
@@ -259,7 +261,7 @@ bool AFile::readLE(int &v)
 //opened
 //open
 
-*/
+* /
 
 bool AFile::open(std::string fname, bool forRead)
 {
@@ -298,3 +300,4 @@ size_t AFile::fileSize()
 {
     return 0;
 }
+*/

@@ -4,8 +4,6 @@
 #include <QtGlobal>
 #include <string>
 
-#include <g0/afile.h>
-
 
 struct WaveHeader
 {
@@ -47,9 +45,8 @@ public:
 
     qint32 getSize() { return header.size; }
 
-    bool read(std::string fileName)
-    {
-        AFile file;
+    bool read(std::string fileName) {
+        std::ifstream file(fileName);
         bool result =file.open(fileName);
 
         if (result==false)
@@ -60,8 +57,7 @@ public:
         return result;
     }
 
-    bool read(AFile *file)
-    {
+    bool read(std::ifstream *file) {
         if (file->opened()==false)
             return false;
 

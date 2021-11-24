@@ -1,12 +1,8 @@
 #include "gmyfile.h"
 
-#include "astreaming.h"
-
-//temp action for bends
 
 #include "g0/gtpfiles.h"
-
-AStreaming logger("gmyfile");
+]
 
 GmyFile::GmyFile()
 {
@@ -14,7 +10,7 @@ GmyFile::GmyFile()
 
 //bends operation
 
-void writeBendGMY(AFile *file, BendPoints *bend)
+void writeBendGMY(std::ofstream *file, BendPoints *bend)
 {
     byte bendType = bend->getType();
     file->write(&bendType,1);
@@ -37,7 +33,7 @@ void writeBendGMY(AFile *file, BendPoints *bend)
 }
 
 
-void readBendGMY(AFile *file, BendPoints *bend)
+void readBendGMY(std::ifstream* file, BendPoints *bend)
 {
     byte bendType=0;
     file->read(&bendType,1);
@@ -74,7 +70,7 @@ void readBendGMY(AFile *file, BendPoints *bend)
 
 
     //from the tab gp originally
-bool GmyFile::saveToFile(AFile *file, Tab *tab)
+bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 {
     file->write("GA",2);
     char byteZero = 0;
@@ -427,7 +423,7 @@ bool GmyFile::saveToFile(AFile *file, Tab *tab)
 }
 
 
-bool GmyFile::saveString(AFile *file, std::string &strValue)
+bool GmyFile::saveString(std::ofstream *file, std::string &strValue)
 {
     ul stringLen = strValue.size();
 
@@ -438,7 +434,7 @@ bool GmyFile::saveString(AFile *file, std::string &strValue)
 }
 
 
-bool GmyFile::loadString(AFile *file, std::string &strValue)
+bool GmyFile::loadString(std::ifstream* file, std::string &strValue)
 {
     char bufer[2048];
 
@@ -452,7 +448,7 @@ bool GmyFile::loadString(AFile *file, std::string &strValue)
     return true;
 }
 
-bool GmyFile::loadFromFile(AFile *file, Tab *tab, bool skipVersion)
+bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 {
     //now reverse
 

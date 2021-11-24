@@ -7,9 +7,6 @@
 #include <cmath>
 
 
-#include "g0/astreaming.h"
-static AStreaming logger("wavean");
-
 AmplitudeAnalys::AmplitudeAnalys():isAnalysDone(false),middleLine(0)
 {
 
@@ -97,7 +94,7 @@ void AmplitudeAnalys::startAnalys(short *samples, long monoLength)
 
     for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
     {
-        //критерий подсчёта мидла
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         if (scaledWave[i].energy > 1000) middleLine = (middleLine+scaledWave[i].energy)/2;
         if(scaledWave[i].energy > maxValue)
         {

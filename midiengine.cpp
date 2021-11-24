@@ -1,6 +1,5 @@
 #include "midiengine.h"
 
-#include "g0/astreaming.h"
 
 #include <QMediaPlayer>
 
@@ -19,7 +18,6 @@ MidiEngine *MidiEngine::inst=0;
 
          bool MidiEngine::opened=false;
 
-static AStreaming logger("midi-eng");
 
 
 //Old functions

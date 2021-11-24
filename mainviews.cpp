@@ -5,12 +5,10 @@
 
 #include "g0/tab.h"
 #include "g0/gtpfiles.h"
-#include "g0/afile.h"
 #include "g0/amusic.h"
 #include "g0/midifile.h"
 
 #include "g0/aconfig.h"
-#include "g0/astreaming.h"
 #include "g0/gmyfile.h"
 #include "g0/aexpimp.h" //loader
 
@@ -45,7 +43,6 @@ void ChangesInput::setPtrBeat(Beat *beatPtr)
 }
 
 
-static AStreaming logger("mainviews");
 
 void MainView::setTabLoaded(Tab *tab)
 {
@@ -141,7 +138,7 @@ void MainView::keyevent(std::string press)
                 fileName += "g4/3.58cut.gp4";
 
 
-            AFile file;
+             file;
             file.open(fileName);
 
             Tab *forLoad=new Tab();
@@ -180,17 +177,16 @@ void MainView::keyevent(std::string press)
                 //load guitarmy file
                 GmyFile gmyFile; //fkldsjfkldsj
 
-                AFile file; //itfile);
+                
                 stringExtended gfileName;
                 gfileName <<  getTestsLocation() <<"first.gmy";
 
                 if (QFile::exists(gfileName.c_str()))
                 {
-                    file.open(gfileName.c_str());//first.gmy");
+                    std::ifstream file(gfileName.c_str());
 
-                    Tab *newTab = new Tab();
+                    Tab *newTab = new Tab(); //TODO unique function 
                     gmyFile.loadFromFile(&file,newTab);
-
 
                     newTab->connectTracks();
 
@@ -201,15 +197,10 @@ void MainView::keyevent(std::string press)
                 }
 
             }
-            //getMaster()->changeChild(tabsView);
-
-            //otfile.close();
         }
-        if (press == CONF_PARAM("Main.open"))
-        {
+        if (press == CONF_PARAM("Main.open")) {
 
-            if (tabsView->gotChanges()==false)
-            {
+            if (tabsView->gotChanges()==false) {
                 QFileDialog *fd = new QFileDialog;
 
 
@@ -237,7 +228,7 @@ void MainView::keyevent(std::string press)
                 if (fd->exec())
                 s = fd->selectedFiles().at(0);
 
-                        //fd->getOpenFileName(0, QString::fromLocal8Bit("Открыть"),
+                        //fd->getOpenFileName(0, QString::fromLocal8Bit("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ"),
                          //            getTestsLocation(),
                                   //   "Gx files (*.g*)");
 
@@ -639,7 +630,7 @@ void TestsView::fastTestAll()
         if (qFile.open(QIODevice::ReadOnly) == false)
             std::cout << "Failed to open";
 
-        AFile file(&qFile);
+        file(&qFile);// a f ile
 
         Tab *forLoad=new Tab();
         Gp4Import importer;
@@ -709,38 +700,20 @@ void TestsView::fastTestAll()
 }
 
 
-void TestsView::openTestNumber(int num)
-{
-    if (tabsView->gotChanges()==false)
-    {
+void TestsView::openTestNumber(int num) {
+    if (tabsView->gotChanges()==false) {
 
-         stringExtended sX;
-         //sX << getTestsLocation()<<"g4/"<<buttons[i].getText().c_str()<<".gp4";
-
-         sX << ":/own_tests/"<<buttons[num].getText().c_str()<<".gp4";
-
-         LOG( << "Opening test "<<buttons[num].getText().c_str());
-
-         QFile qFile; //(sX.c_str());
-         qFile.setFileName(sX.c_str());
-
-         if (qFile.open(QIODevice::ReadOnly) == false)
+        LOG( << "Opening test "<<buttons[num].getText().c_str());
+        std::string fn = ":/own_tests/" + buttons[num].getText().c_str() + ".gp4";
+        std::ifstream importFile(fn);
+         if (importFile.is_open()) == false)
              std::cout << "Failed to open";
-
-         AFile file(&qFile);
-
-
-         //AFile file;
-         //file.open(sX.c_str());
-
-
-         Tab *forLoad=new Tab();
-         Gp4Import importer;
-         importer.import(file,forLoad);
-
-         forLoad->postGTP();
-         forLoad->connectTracks();
-         LOG( << "file v 4 was opened"<<sX.c_str());
+        Tab *forLoad=new Tab();
+        Gp4Import importer;
+        importer.import(file,forLoad);
+        forLoad->postGTP();
+        forLoad->connectTracks();
+        LOG( << "file v 4 was opened"<<sX.c_str());
 
         MainView *mainView = (MainView*)getMaster()->getFirstChild();
         mainView->changeCurrentView(tabsView);

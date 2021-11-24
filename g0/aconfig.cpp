@@ -2,10 +2,6 @@
 
 #include <QImage>
 
-#include <g0/astreaming.h>
-
-static AStreaming logger("config");
-
 AConfig *AConfig::inst;
 
 AConfig::AConfig():topIndex(-1),scaleCoef(1.0),timeCoef(1)
@@ -28,7 +24,7 @@ void AConfig::connectLog(bool *ptrValue, int index,std::string logName)
 
 //log Name 1/0
 //v Name 1290391
-void AConfig::load(AFile &file)
+void AConfig::load(std::ifstream &file)
 {
     std::string lastLine = "firstOne";
 
@@ -99,7 +95,7 @@ void AConfig::addLine(std::string anotherLine)
 
 //should connect some values to be used
 //first
-void AConfig::save(AFile &file)
+void AConfig::save(std::ofstream &file)
 {
      //file.opened();
      for (std::map<std::string,std::string>::iterator it = values.begin();

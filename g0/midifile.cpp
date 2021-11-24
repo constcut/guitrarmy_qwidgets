@@ -13,13 +13,9 @@
 
 #include <iostream>
 
-//if (midiLog)  logging
-#include "g0/astreaming.h"
-static AStreaming  logger("midifile");
-
 bool midiLog = false;
 
-ul VariableInt::readStream(AFile & ifile)
+ul VariableInt::readStream(std::ifstream & ifile)
 {
 	ul totalBytesRead = 0;
 
@@ -66,7 +62,7 @@ ul VariableInt::getValue()
 	return responseValue;
 }
 
-ul MidiSignal::readStream(AFile & ifile)
+ul MidiSignal::readStream(std::ifstream & ifile)
 {
 	ul totalRead = 0;
 
@@ -159,7 +155,7 @@ ul MidiSignal::readStream(AFile & ifile)
 	return totalRead;
 }
 
-bool MidiFile::readStream(AFile & ifile)
+bool MidiFile::readStream(std::ifstream & ifile)
 {
     //char headerData[14] = { 0 };
 
@@ -266,7 +262,6 @@ void MidiSignal::printToStream(std::ostream &stream)
 }
 
 
-//ANOTHER VERSION FOR ASTREAMING
 void MidiTrack::printToStream(std::ostream &stream)
 {
 	stream << "Output MidiTrack.";
@@ -297,7 +292,7 @@ void MidiFile::printToStream(std::ostream &stream)
 
 //WRITE STREAMS
 
-ul VariableInt::writeStream(AFile &file)
+ul VariableInt::writeStream(std::ofstream &file)
 {
 	size_t amountOfBytes = len();
 	
@@ -321,7 +316,7 @@ ul VariableInt::writeStream(AFile &file)
 	return amountOfBytes;	
 }
 
-ul MidiSignal::writeStream(AFile &ofile,bool skip)
+ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
 {
     ul bytesWritten = 0;
 
@@ -370,7 +365,7 @@ ul MidiSignal::writeStream(AFile &ofile,bool skip)
 	return bytesWritten;	
 }
 
-ul MidiFile::writeStream(AFile &ofile)
+ul MidiFile::writeStream(std::ofstream &ofile)
 {
 	ul bytesWritten = 0;
 
@@ -407,7 +402,7 @@ ul MidiFile::writeStream(AFile &ofile)
 }
 
 
-ul MidiFile::noMetricsTest(AFile &ofile)
+ul MidiFile::noMetricsTest(std::ofstream &ofile)
 {
     ul bytesWritten = 0;
 

@@ -102,13 +102,6 @@ protected:
 };
 
 
-//NOT SURE IT IS POSSIBLE (THEN THERE MUST BE ATHREAD REALYSATION AS IT IS WITH AFILE)
-/// but if its ok - to create good thing and implement virtual functions
-/// just make
-//  class PlayAnimationThrQt : public ThreadLocalQt {};
-
-//another case class ThreadLocalAnimate: public QThread, public PlayAnimationThr
-//then thread local is platfor realisation - child is a logic - its ok
 
 class ThreadLocal : public QThread ,public PlayAnimationThr
 {

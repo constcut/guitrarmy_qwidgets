@@ -2,8 +2,6 @@
 #define ACONFIG_H
 
 #include <string>
-#include "g0/afile.h"
-
 #include <map>
 
 #define CONF_PARAM(z) AConfig::getInstance()->values[ z ]
@@ -29,10 +27,6 @@ public:
 };
 
 
-
-
-
-
 class AConfig
 {
 public:
@@ -55,8 +49,8 @@ public:
 
     void connectLog(bool *ptrValue, int index=-1,std::string logName="unknown");
 
-    void load(AFile &file);
-    void save(AFile &file);
+    void load(std::ifstream& file);
+    void save(std::ofstream& file);
 
     void addValue(std::string name, std::string val);
 

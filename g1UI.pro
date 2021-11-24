@@ -31,10 +31,8 @@ SOURCES += main.cpp\
     g0/abitarray.cpp \
     g0/aconfig.cpp \
     g0/aexpimp.cpp \
-    g0/afile.cpp \
     g0/ahistory.cpp \
     g0/amusic.cpp \
-    g0/astreaming.cpp \
     g0/frequlate.cpp \
     g0/gmyfile.cpp \
     g0/gtpfiles.cpp \
@@ -82,10 +80,8 @@ HEADERS  += mainwindow.h \
     g0/abitarray.h \
     g0/aconfig.h \
     g0/aexpimp.h \
-    g0/afile.h \
     g0/ahistory.h \
     g0/amusic.h \
-    g0/astreaming.h \
     g0/frequlate.h \
     g0/gmyfile.h \
     g0/gtpfiles.h \

@@ -1,16 +1,12 @@
 #include "gtpfiles.h"
 
-
-#include "g0/astreaming.h"
-static AStreaming   logger("gtpfiles");
-
 bool gtpLog = false;
 
 ////////////////////////////////////////////////////////////////////////////
 char miniBufer[20480];
 
 
-std::string readString(AFile &file, ul stringLen)
+std::string readString(std::ifstream &file, ul stringLen)
 {
    //for current max
    //refact dynamic
@@ -25,7 +21,7 @@ std::string readString(AFile &file, ul stringLen)
    return response;
 }
 
-std::string readString(AFile &file)
+std::string readString(AFistd::ifstreamle &file)
 {
     ul stringLen = 0;
     std::string response = "";
@@ -45,7 +41,7 @@ std::string readString(AFile &file)
     return response;
 }
 
-std::string readStringShiByte(AFile &file)
+std::string readStringShiByte(std::ifstream &file)
 {
     ul stringLen = 0;
     std::string response = "";
@@ -76,7 +72,7 @@ std::string readStringShiByte(AFile &file)
 }
 
 
-void writeBendGTPOLD(AFile *file, BendPointsGPOld *bend)
+void writeBendGTPOLD(std::ofstream *file, BendPointsGPOld *bend)
 {
     //saved to be somewhere in the code
     byte bendType=bend->getType();
@@ -102,7 +98,7 @@ void writeBendGTPOLD(AFile *file, BendPointsGPOld *bend)
     }
 }
 
-void writeBendGTP(AFile *file, BendPoints *bend)
+void writeBendGTP(std::ofstream *file, BendPoints *bend)
 {
     byte bendType=bend->getType();
     if (bendType>=1) bendType += 5;
@@ -131,7 +127,7 @@ void writeBendGTP(AFile *file, BendPoints *bend)
 }
 
 
-void readBendGTP(AFile *file, BendPoints *bend)
+void readBendGTP(std::ifstream *file, BendPoints *bend)
 {
     byte bendType=0;
     file->read(&bendType,1);
@@ -181,7 +177,7 @@ void readBendGTP(AFile *file, BendPoints *bend)
 
 
 
-void readChordDiagramGP3(AFile &file)
+void readChordDiagramGP3(std::ifstream &file)
 {
        if (gtpLog)  logger << "CHORD_";
 
@@ -225,7 +221,7 @@ void readChordDiagramGP3(AFile &file)
 }
 
 
-void readChordDiagramGP4(AFile &file)
+void readChordDiagramGP4(std::ifstream &file)
 {
    if (gtpLog)  logger << "CHORD";
 
@@ -296,7 +292,7 @@ void readChordDiagramGP4(AFile &file)
     }
 }
 
-void readChanges(AFile &file, Beat *cursorBeat)
+void readChanges(std::ifstream &file, Beat *cursorBeat)
 {
 
     Beat::ChangeTable changeStruct;// = {0};
@@ -418,7 +414,7 @@ void readChanges(AFile &file, Beat *cursorBeat)
 }
 
 
-void readTrack(AFile &file, Track *currentTrack, int gpVersion=4, int trackIndex=0, byte verInd=255)
+void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int trackIndex=0, byte verInd=255)
 {
     byte trackHeader = 0;
     file.read(&trackHeader,1);
@@ -532,7 +528,7 @@ void readTrack(AFile &file, Track *currentTrack, int gpVersion=4, int trackIndex
     }
 }
 
-void readBeatEffects(AFile &file, Beat *cursorBeat)
+void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatEffectsHead1;
     byte beatEffectsHead2;
@@ -608,7 +604,7 @@ void readBeatEffects(AFile &file, Beat *cursorBeat)
     }
 }
 
-void readNoteEffects(AFile &file, Note *newNote, int gpVersion=4)
+void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 {
     if (gtpLog)  logger <<"Bit 3 in header turned on";
     //NOT SET
@@ -792,7 +788,7 @@ void readNoteEffects(AFile &file, Note *newNote, int gpVersion=4)
     }
 }
 
-void readNote(AFile &file, Note *newNote, int gpVersion=4)
+void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 {
     //unused ul beatIndex, Bar *cursorBar,
 
@@ -1068,7 +1064,7 @@ void readNote(AFile &file, Note *newNote, int gpVersion=4)
     }
 }
 
-void readBeat(AFile &file, Beat *cursorBeat)
+void readBeat(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatHeader = 0;
     file.read(&beatHeader,1);
@@ -1165,7 +1161,7 @@ void readBeat(AFile &file, Beat *cursorBeat)
 
 //readGraceNote
 
-ul readStringsFlag(AFile &file, std::vector<int> &polyStrings)
+ul readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
 {
     byte stringsFlag = 0;
     file.read(&stringsFlag,1);
@@ -1190,7 +1186,7 @@ ul readStringsFlag(AFile &file, std::vector<int> &polyStrings)
 }
 
 
-void readBar(AFile &file, Tab *tab, ul tracksAmount, ul index)
+void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 {
     ul i = index;
 
@@ -1337,7 +1333,7 @@ void readBar(AFile &file, Tab *tab, ul tracksAmount, ul index)
 }
 
 
-bool Gp4Import::import(AFile &file, Tab *tab, byte knownVersion)
+bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
     if (gtpLog)  logger << "Starting GP4 import";
 
@@ -1549,7 +1545,7 @@ bool Gp4Import::import(AFile &file, Tab *tab, byte knownVersion)
 //  ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
 
-void writeString(AFile &file, std::string value, ul stringLen=0)
+void writeString(std::ofstream &file, std::string value, ul stringLen=0)
 {
     if (stringLen==0)
         stringLen = value.length();
@@ -1559,7 +1555,7 @@ void writeString(AFile &file, std::string value, ul stringLen=0)
 }
 
 
-void writeTrack(AFile &file, Track *currentTrack)
+void writeTrack(std::ofstream &file, Track *currentTrack)
 {
     //TEMPLATE
     byte trackHeader = 0;
@@ -1596,7 +1592,7 @@ void writeTrack(AFile &file, Track *currentTrack)
 
 }
 
-void writeBeatEffects(AFile &file, Beat *cursorBeat)
+void writeBeatEffects(std::ofstream &file, Beat *cursorBeat)
 {
     //TEMPLATE
     byte beatEffectsHead1; //prepare function!
@@ -1631,7 +1627,7 @@ void writeBeatEffects(AFile &file, Beat *cursorBeat)
     }
 }
 
-void writeBeat(AFile &file, Beat *cursorBeat)
+void writeBeat(std::ofstream &file, Beat *cursorBeat)
 {   //template
 
     byte beatHeader = 0; //prepare function
@@ -1682,7 +1678,7 @@ void writeBeat(AFile &file, Beat *cursorBeat)
 }
 
 
-void writeBar(AFile &file, Bar *cursorBar)
+void writeBar(std::ofstream &file, Bar *cursorBar)
 {   //TEMPLATE
 
     byte beatHeader = 0; //PREPARE
@@ -1737,7 +1733,7 @@ void writeBar(AFile &file, Bar *cursorBar)
 }
 
 
-void writeNoteEffects(AFile &file, Note *newNote)
+void writeNoteEffects(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
     byte noteEffectsHead1, noteEffectsHead2; //prepare
@@ -1790,12 +1786,12 @@ void writeNoteEffects(AFile &file, Note *newNote)
     }\
 }
 
-void writeStringsFlag(AFile &file, Beat *cursorBeat)
+void writeStringsFlag(std::ofstream &file, Beat *cursorBeat)
 { //TEMPLATE
 } //UNDONE
 
 
-void writeNote(AFile &file, Note *newNote)
+void writeNote(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
     byte noteHeader; //prepare
@@ -1856,7 +1852,7 @@ void writeNote(AFile &file, Note *newNote)
 //--////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void readChangesGP5(AFile &file, Beat *cursorBeat, byte verInd)
+void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 {
 
     Beat::ChangeTable changeStruct;// = {0};
@@ -2049,7 +2045,7 @@ void readChangesGP5(AFile &file, Beat *cursorBeat, byte verInd)
     }
 }
 
-void readChordDiagramGP5(AFile &file)
+void readChordDiagramGP5(std::ifstream &file)
 {
     //on version 4 it could be not always the same!!!
     //readChordDiagram(file);
@@ -2088,7 +2084,7 @@ void readChordDiagramGP5(AFile &file)
 }
 
 
-void readBeatGP5(AFile &file, Beat *cursorBeat, byte verInd=255)
+void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 {
     byte beatHeader = 0;
     file.read(&beatHeader,1);
@@ -2184,7 +2180,7 @@ void readBeatGP5(AFile &file, Beat *cursorBeat, byte verInd=255)
 
 }
 
-void readBarGP5(AFile &file, Tab *tab, ul tracksAmount, ul index)
+void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 {
     ul i = index;
 
@@ -2351,7 +2347,7 @@ void readBarGP5(AFile &file, Tab *tab, ul tracksAmount, ul index)
 }
 
 
-bool Gp5Import::import(AFile &file, Tab *tab, byte knownVersion)
+bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
     if (gtpLog)  logger << "Starting GP5 import";
 
@@ -2720,7 +2716,7 @@ bool Gp5Import::import(AFile &file, Tab *tab, byte knownVersion)
 
 /////////////////////   GP 3  /////////////////////////////////
 
-void readChangesGP3(AFile &file, Beat *cursorBeat)
+void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 {
 
     //gtpLog = true; //autolog!
@@ -2840,7 +2836,7 @@ void readChangesGP3(AFile &file, Beat *cursorBeat)
 
 }
 
-void readBeatEffectsGP3(AFile &file, Beat *cursorBeat)
+void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatEffectsHead;
     file.read(&beatEffectsHead,1);
@@ -2926,7 +2922,7 @@ void readBeatEffectsGP3(AFile &file, Beat *cursorBeat)
     }
 }
 
-void readNoteEffectsGP3(AFile &file, Note *newNote)
+void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
 {
     byte noteEffectsHead;
     file.read(&noteEffectsHead,1);
@@ -2994,7 +2990,7 @@ void readNoteEffectsGP3(AFile &file, Note *newNote)
 
 
 
-void readBeatGP3(AFile &file, Beat *cursorBeat)
+void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 {
     byte beatHeader = 0;
     file.read(&beatHeader,1);
@@ -3089,7 +3085,7 @@ void readBeatGP3(AFile &file, Beat *cursorBeat)
 
 }
 
-void readNoteGP3(AFile &file, Note *newNote, ul beatIndex, Bar *cursorBar)
+void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBar)
 {
     byte noteHeader;
     file.read(&noteHeader,1);
@@ -3340,7 +3336,7 @@ void readNoteGP3(AFile &file, Note *newNote, ul beatIndex, Bar *cursorBar)
 /////////////////////////////////////////////////////////////
 
 
-bool Gp3Import::import(AFile &file, Tab *tab, byte knownVersion)
+bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
     if (gtpLog)  logger << "Starting GP3 import";
 

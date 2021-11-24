@@ -44,7 +44,6 @@
 
 #include <QTextBlock>
 
-#include "g0/astreaming.h"
 
 #include <android_helper.h>
 
@@ -64,7 +63,6 @@
 #include "g0/fft.h"
 #include "g0/waveanalys.h"
 
-static AStreaming logger("qhelper");
 
 //-------------------------------
 
@@ -1195,86 +1193,72 @@ void MainWindow::actionNow(QAction *action)
     return;
   }
 
-  if (textOut == "save config")
-  {
-    AFile confFile;
+  if (textOut == "save config"){
     std::string confFileName = std::string(getTestsLocation()) + "g.config";
-    confFile.open(confFileName,false);
+    std::ofstream confFile(confFileName);
     AConfig::getInstance()->save(confFile);
     return;
   }
 
-  if (textOut == "recreateUI")
-  {
-      recreateUI();
-      return;
+  if (textOut == "recreateUI"){
+    recreateUI();
+    return;
   }
 
-  if (textOut=="openPannel")
-  {
-
-      if (dock5)
-      {
-          if (dock5->isVisible())
-          {
-              dock5->setVisible(false);
-              dock6->setVisible(false);
-              dock7->setVisible(false);
-              dock8->setVisible(false);
-              dock9->setVisible(false);
-          }
-          else
-          {
-              dock5->setVisible(true);
-              dock6->setVisible(true);
-              dock7->setVisible(true);
-              dock8->setVisible(true);
-              dock9->setVisible(true);
-          }
-      }
-      else
-      {
-
-          if (CONF_PARAM("pannels")=="tabbed")
-          {
-          GPannel *pan1 = new GTabPannel(1,2,3);
-          GPannel *pan2 = new GTrackPannel(1,2,3);//memory leak
-          GPannel *pan3 = new GEffectsPannel(1,2,3);
-          GPannel *pan4 = new GClipboardPannel(1,2,3);//memleak
+  if (textOut=="openPannel") {
+    if (dock5)
+    {
+        if (dock5->isVisible())
+        {
+            dock5->setVisible(false);
+            dock6->setVisible(false);
+            dock7->setVisible(false);
+            dock8->setVisible(false);
+            dock9->setVisible(false);
+        }
+        else
+        {
+            dock5->setVisible(true);
+            dock6->setVisible(true);
+            dock7->setVisible(true);
+            dock8->setVisible(true);
+            dock9->setVisible(true);
+        }
+    }
+    else
+    {
+        if (CONF_PARAM("pannels")=="tabbed"){
+            GPannel *pan1 = new GTabPannel(1,2,3);
+            GPannel *pan2 = new GTrackPannel(1,2,3);//memory leak
+            GPannel *pan3 = new GEffectsPannel(1,2,3);
+            GPannel *pan4 = new GClipboardPannel(1,2,3);//memleak
 
 
-          QDockWidget *tabDock = createToolDock("tab",pan1);
-          QDockWidget *trackDock = createToolDock("track",pan2);
-          QDockWidget *effectsDock = createToolDock("effects",pan3);
-          QDockWidget *clipDock = createToolDock("clipboard",pan4);
+            QDockWidget *tabDock = createToolDock("tab",pan1);
+            QDockWidget *trackDock = createToolDock("track",pan2);
+            QDockWidget *effectsDock = createToolDock("effects",pan3);
+            QDockWidget *clipDock = createToolDock("clipboard",pan4);
 
 
-           QDockWidget *userDock = createToolDock("user",new GUserPannel(1,2,3));
-          //Menu from pannel QMenu *tabMenu = createToolMenu("tab",pan1);
+            QDockWidget *userDock = createToolDock("user",new GUserPannel(1,2,3));
+            //Menu from pannel QMenu *tabMenu = createToolMenu("tab",pan1);
 
-          dock5 = tabDock;
-          dock6 = trackDock;
-          dock7 = effectsDock;
-          dock8 = clipDock;
-          dock9 = userDock;
+            dock5 = tabDock;
+            dock6 = trackDock;
+            dock7 = effectsDock;
+            dock8 = clipDock;
+            dock9 = userDock;
 
-          tabifyDockWidget(trackDock,tabDock);
-          tabifyDockWidget(trackDock,effectsDock);
-          tabifyDockWidget(trackDock,clipDock);
-          tabifyDockWidget(trackDock,userDock);
-          tabifyDockWidget(userDock,trackDock);
-          }
-
-
-
-      }
-
-
-
-
-      update();
-      if (CONF_PARAM("pannels")!="classic")
-      return; //think about this pair..update in some destructor
+            tabifyDockWidget(trackDock,tabDock);
+            tabifyDockWidget(trackDock,effectsDock);
+            tabifyDockWidget(trackDock,clipDock);
+            tabifyDockWidget(trackDock,userDock);
+            tabifyDockWidget(userDock,trackDock);
+        }
+    }
+    update();
+    if (CONF_PARAM("pannels")!="classic")
+    return; //think about this pair..update in some destructor
   }
 
   if (textOut=="only user")

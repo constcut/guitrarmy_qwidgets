@@ -2,9 +2,7 @@
 
 #include "aexpimp.h"
 
-//if (tabLog)  loging
-#include "g0/astreaming.h"
-static AStreaming   logger("tab");
+
 
 bool tabLog = false;
 

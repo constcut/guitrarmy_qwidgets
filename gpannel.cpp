@@ -1,9 +1,8 @@
 #include "gpannel.h"
 
-#include "g0/astreaming.h"
 
 
-static AStreaming logger("GPannel");
+
 
 void GPannel::onclick(int x1, int y1)
 {

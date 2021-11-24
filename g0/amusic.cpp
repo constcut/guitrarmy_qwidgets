@@ -1,13 +1,6 @@
 
-
-
-
 #include "g0/amusic.h"
 
-
-
-#include "g0/astreaming.h"
-static AStreaming logger("amusic");
 
 //#include <cmath>
 

@@ -3,15 +3,12 @@
 
 #include "mainviews.h"
 
-#include "g0/astreaming.h"
-
 #include "g0/aconfig.h"
 
 #include "g0/aclipboard.h"
 
 #include <QTextCodec>
 //#include <QSettings>
-
 #include "g0/frequlate.h"
 
 #include <QMediaPlayer>
@@ -20,7 +17,6 @@
 #include "g0/wavefile.h"
 
 #include <QStandardPaths>
-
 #include <QScreen>
 #include <QDir>
 
@@ -32,7 +28,6 @@
 #include "qthelper.h"
 
 #include <QNetworkInterface>
-
 #include <QDateTime>
 //DATE N TIME TO QT HELPER
 
@@ -41,20 +36,16 @@
 #endif
 
 #include "midiengine.h"
-
 #include "g0/aexpimp.h"
 
-AFile *mainLogFile;
-
-static AStreaming logger("0");
+std::ofstream *mainLogFile;
 
 
 //OMGC its a nightmare
 
-void posix_death_signal(int signum)
+void posix_death_signal(int signum) //TODO move whole init actions into another file
 {
-    AStreaming crashLogger("crash-report");
-    crashLogger << "Crash happend signal:"<<signum;
+    std::cerr << "Crash happend signal:"<<signum;
     signal(signum, SIG_DFL);
 
     mainLogFile->close();
@@ -71,7 +62,7 @@ void posix_death_signal(int signum)
     QByteArray logWhole = logF.readAll();
     QByteArray logCompressed = qCompress(logWhole,9);
 
-    std::cout << "Compressed log size "<<logCompressed.size();
+    std::cerr << "Compressed log size "<<logCompressed.size();
 
     QFile crashLog;
 
@@ -123,10 +114,8 @@ void posix_death_signal(int signum)
     exit(3);
 }
 
-QString getMacAddress()
-{
+QString getUserID(){
     QString text;
-
     /*
     for(NetworkInterface interface=QNetworkInterface::allInterfaces().first();
         interface != )
@@ -195,111 +184,66 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-
-    getTime(); //now i can change everything
-
+    getTime();
     initGlobals();
-    //checkTypes(); //!!!!
-
     Q_INIT_RESOURCE(icons);
     Q_INIT_RESOURCE(icons2);
     Q_INIT_RESOURCE(tests);
     Q_INIT_RESOURCE(info);
 
-
     //PREPARE USER ID
-    QString userId = getMacAddress();
-    userId.replace(":","");
-    userId = userId.mid(0,7);
-
+    //QString userId = getUserID();
+    //userId.replace(":","");
+    //userId = userId.mid(0,7);
 
     //KOI8-R
     //UTF-8
     //Windows-1251
     //ISO 8859-5
-
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("Windows-1251"));
 
     std::string currentPath;
-    //without this working from nowhere
-
     QString qPath = a.applicationDirPath();
     std::string appPath = qPath.toStdString();
     appPath += std::string("/tests/");
-
-
     QString pathStd = QStandardPaths::writableLocation(QStandardPaths::QStandardPaths::ApplicationsLocation); //AppDataLocation);
     currentPath =  pathStd.toStdString(); //"/sdcard/p";
-
     QDir dir;
     QString dirPath = currentPath.c_str();
     dir.mkdir(dirPath);
-
     currentPath += std::string("/");
-
-
     //SET PATH
     setTestLocation(currentPath);
 
 
     AConfig configuration;
     configuration.checkConfig();
-
-
-    AFile confFile; //currentPath
     std::string confFileName = currentPath + "g.config";
-
-
-    if (QFile::exists(confFileName.c_str()))
-    if (confFile.open(confFileName) == true)
-    {
-        configuration.load(confFile);
-        confFile.close();
+    if (QFile::exists(confFileName.c_str())) {
+        std::ofstream outFile(confFileName) {
+            configuration.load(confFile);
+        }
     }
 
-    //
     configuration.printValues();
-
     AConfig::setInstance(&configuration);
-
-    //if (configuration.values["colors.background"]=="black")
-    //    configuration.imageLoader.setInvert(true);
-
     configuration.imageLoader.loadImages();
 
 
-
-    //LOAD config
-
-    //AClipboard mainClipBoard;
-    //AClipboard::setCurrentClip(&mainClipBoard);
-
     MainWindow w;
-
     a.setApplicationVersion(getGuitarmyVersion());
     a.setOrganizationName("Guitarmy union");
 
+    if (globals.isMobile == false) //for Desktops
+        w.setGeometry(30,30,800,480);
 
-if (globals.isMobile == false) //for Desktops
-{
-    w.setGeometry(30,30,800,480);
-}
-
-
-if (globals.platform == "windows")
-{
-   MidiEngine midInit;
-}
-
-
-    //INIT VIEWS
+    if (globals.platform == "windows")
+        MidiEngine midInit;
 
     MainView *mw = new MainView();
     mw->setMaster(w.getCenterView());
     w.getCenterView()->changeChild(mw);
     w.getCenterView()->setStatusSetter(&w);
-
-    //w.getCenterView()->addButton("ffff",100,50);
 
     MainView *m2 = new MainView();
     m2->setSlave();
@@ -312,31 +256,20 @@ if (globals.platform == "windows")
     QIcon winIcon(winIconName.c_str());
     w.setWindowIcon(winIcon);
 
-
     std::string logName = getTestsLocation() + std::string("log.txt");
+    mainLogFile = std::ofstream(logName);
+
+    if (globals.platform == "android")
+        if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
+            logName = "/sdcard/Guitarmy.log";
 
 
-    AFile *logFile=new AFile;
-    mainLogFile = logFile;
-
-if (globals.platform == "android")
-{
-    if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
-        logName = "/sdcard/Guitarmy.log";
-}
-
-
+    //TODO replace with init logger form gtab3
     if (logFile->open(logName, false))
       std::cout << "Log file opened."<< logName.c_str()<<std::endl;
     else
-    {
       std::cout << "Failed to open log out file :( "<< logName.c_str()<<std::endl;
-      //return false;
-    }
-    AStreaming::setLogFile(logFile);
 
-
-    //SET GESTURES
     w.setAttribute(Qt::WA_AcceptTouchEvents);
     w.grabGesture(Qt::SwipeGesture);
     w.grabGesture(Qt::TapAndHoldGesture);
@@ -344,136 +277,77 @@ if (globals.platform == "android")
     w.grabGesture(Qt::PanGesture);
     w.grabGesture(Qt::PinchGesture);
 
-
-if (globals.platform == "android")
-{
-    w.show();
-
-    if (CONF_PARAM("fullscreen")=="1")
-        w.showFullScreen();
-}
-else
-{
-    w.show();
-}
-
-
-
+    if (globals.platform == "android") {
+        w.show();
+        if (CONF_PARAM("fullscreen")=="1")
+            w.showFullScreen();
+    }
+    else
+        w.show();
     ///checkBase(); //if param set - moved to center view
-
-
     //for the self chosen rotation
     //android_helper and_help;
     //and_help.setLandscape();
-
     w.setWindowTitle(getGuitarmyVersion());
-
-    //w.setStatusBarMessage(0,sXmsg.c_str(),7000);
-
-    int out = 0;
-
-    //SET SIGNALS
     signal(SIGSEGV, posix_death_signal);
     signal(SIGILL, posix_death_signal);
     signal(SIGFPE, posix_death_signal);
-
-
     //w.getCenterView()->addComboBox("ohhsome",50,50,70,30);
-
     w.getCenterView()->pushForceKey("newtab");
-
     //because now we debug recording
     ///w.getCenterView()->pushForceKey("rec");
-
-
     if (CONF_PARAM("skipTabView")=="1")
     w.getCenterView()->pushForceKey("opentrack");
-
-
-
     //INITIAL LOG PUSH
+    /*
     std::string sendData = "appstarted";
-
     QDateTime timeDate(QDateTime::currentDateTime());
     QString st = timeDate.toString(Qt::ISODate);
     st.replace(":","");
     std::string time = st.toStdString();
     std::string userIdStd = userId.toStdString();
-
     userIdStd = globals.platform.substr(0,1) + userIdStd;
-
     setUserId(userIdStd);
-
     stringExtended fullLine;
-
-    //CHECK UP WERE THERE ISSUES OR NOT if not send appstarted else - sections
-
-    if (CONF_PARAM("crashAutoSend")=="1")
-    {
-
+     //Function yet not ready because of old server long ago down
+    if (CONF_PARAM("crashAutoSend")=="1") {
         QString crashName = getTestsLocation() + QString("crashs.glog");
-        if (QFile::exists(crashName))
-        {
+        if (QFile::exists(crashName) {
             QFile logData;
             logData.setFileName(crashName);
             logData.open(QIODevice::ReadOnly);
             QByteArray allLogData = logData.readAll();
-
             QByteArray newSequence;
-
-            if (allLogData.size() > 1000)
-            {
+            if (allLogData.size() > 1000) {
                 //cycle
                 // 1:cut part
                 // 2:send part
                 //left last unsent
             }
-            else
-            {
+            else {
                 newSequence = alphaCut(allLogData);
                 //sendData = newSequence.toStdString();
             }
             logData.close();
            // QFile::remove(crashName); //move to on finished..
         }
-
-
         fullLine << "http://guitarmy.in/glogs/crash.php?log="<<sendData<<"&date="<<time<<"&user="<<userIdStd;
-
-
         HttpFileLoader *logUp= new HttpFileLoader;
         logUp->request(QUrl(fullLine.c_str()));
-
-        //logUp.fetch(QUrl(fullLine.c_str()),"crashlog");
-
-        //dont delete logUp;
     }
-
-    /*
-    QString style =  "QPushButton{ font-size: 10; }\
-            QPushButton{ background-color: green; }\
- QPushButton:focus:pressed{ background-color: darkgreen; }\
- QPushButton:focus{ background-color: white; }\
- QPushButton:hover{ background-color: dark blue; }";
-
-            w.setStyleSheet(style);
     */
-    try
-    {
+  
+    int out = 0;
+    try{
        out = a.exec();
        //__except (EXCEPTION_EXECUTE_HANDLER) // __try{}  __finally
     }
-
-    catch(...)
-    {
+    catch(...){
         LOG( << "Exception thrown");
         //crash log saver
     }
 
-
-    //DELETE ALL
     delete mw;
-
     LOG( << "Main function done");
     std::cout << "Main end reached"<<std::endl;
 

@@ -19,6 +19,8 @@
 
 #include "g0/rec.h"
 
+#include <fstream>
+
 
 
 //for record - clean later
@@ -32,9 +34,6 @@
 #include "mainwindow.h"
 
 #include "midiengine.h"
-
-#include "g0/astreaming.h"
-static AStreaming logger("inputs");
 
 
 
@@ -220,7 +219,6 @@ void PatternInput::playBar()
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-    AFile outFile;
     outFile.open(fullOutName,false);
     MidiFile outMidi;
 
@@ -725,7 +723,6 @@ void TapRyView::copyAndPlayBar()
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-    AFile outFile;
     outFile.open(fullOutName,false);
     MidiFile outMidi;
 
@@ -853,7 +850,7 @@ void TapRyView::keyevent(std::string press)
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-        AFile outFile;
+
         outFile.open(fullOutName,false);
         MidiFile outMidi;
 
@@ -1448,8 +1445,7 @@ void MorzeInput::playBar()
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-        AFile outFile;
-        outFile.open(fullOutName,false);
+        std::ofstream outFile(fullOutName);
         MidiFile outMidi;
 
         outMidi.fromTab(&morzeTab);
@@ -1549,7 +1545,7 @@ void MorzeInput::onclick(int x1, int y1)
                 ryBeat->add(rNote);
                 ryBeat2->add(rNote2);
 
-                bar->add(ryBeat); //рябит ё
+                bar->add(ryBeat); //пїЅпїЅпїЅпїЅпїЅ пїЅ
                 bar->add(ryBeat2);
 
                 LOG( << "Added "<<dur<<" "<<dur2<<" beat");

@@ -4,10 +4,6 @@
 #include "g0/fft.h"
 #include "g0/waveanalys.h"
 
-#include "g0/astreaming.h"
-static AStreaming logger("rec");
-
-
 Track *GWave::generateTrack()
 {
     int fullLen = origin.size()/2; //16 bit only? yep

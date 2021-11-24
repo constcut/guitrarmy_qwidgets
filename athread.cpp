@@ -2,9 +2,7 @@
 
 #include "g0/tab.h"
 
-#include "g0/astreaming.h"
 
-//static AStreaming logger("thread");
 
 AThread::AThread()
 {

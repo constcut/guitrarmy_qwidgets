@@ -14,8 +14,6 @@
 #include <QInputDialog>
 
 
-#include "g0/astreaming.h"
-
 #include <QMutex>
 #include <QFileDialog>
 #include <QApplication>
@@ -25,9 +23,6 @@
 
 #include "libtim/miditopcm.h"
 
-//REFACT CLEAN ALL QT FUNCTIONS IN ONE QTHELPER!!!
-
-static AStreaming logger("commands");
 
 
 void TrackView::reverseCommand(SingleCommand &command)
@@ -1190,75 +1185,48 @@ void TrackView::keyevent(std::string press)
             MidiEngine::closeDefaultFile();
             std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-            AFile outFile2;
+            std::ofstream outFile2(fullOutName);
 
-            if (!outFile2.open(fullOutName,false))
+            if (!outFile2.is_open())
                 logger << "Failed to open out file :(";
             else
-                LOG( <<"File opened "<<fullOutName.c_str());
-
+                LOG( <<"File opened " << fullOutName.c_str());
 
             generatedMidi.writeStream(outFile2);
             outFile2.close();
 
-            //check time line
-            //generatedMidi.getV(0)->printToStream(std::cout);
-
-            if (CONF_PARAM("midi.config").empty() == false)
-            {
+            if (CONF_PARAM("midi.config").empty() == false){
                 MidiToPcm generator(CONF_PARAM("midi.config"));
-
                 std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
-
                 generator.convert(fullOutName,outputSound);
-
             }
 
 
             //prepareThread();
-
             //IS BUG HERE:
             tabParrent->prepareAllThreads(shiftTheCursor);
-
             //connect current thread - not best
             //getMaster()->connectThread(localThr);
             //BYC TOO
             tabParrent->connectAllThreadsSignal(getMaster());
-
             std::string midiConfig = CONF_PARAM("midi.config");
 
-
-            if (CONF_PARAM("midi.config").empty() == false)
-            {
+            if (CONF_PARAM("midi.config").empty() == false) {
                 ///NEED TO SEND start_record_output waveOutput.wav
                 getMaster()->pushForceKey("start_record_output waveOutput.wav");
-
             }
-            else
-            {
+            else {
                 MidiEngine::openDefaultFile();
                 MidiEngine::startDefaultFile();
             }
-
-            //STARTS a little bit earlier then playback with pcm
-
-            ///STATE changed could be watched (SIGNAL OF QAUDIOINPUT)
-
             tabParrent->launchAllThreads();
-
             tabParrent->setPlaying(true);
-
-            //mute_x.unlock();
-
         }
-        else
-        {
+        else {
             if (CONF_PARAM("midi.config").empty() == false)
-            {
-                    getMaster()->pushForceKey("stop_record_output");
-            }
+                getMaster()->pushForceKey("stop_record_output");
             else
-            MidiEngine::stopDefaultFile();
+                MidiEngine::stopDefaultFile();
 
             tabParrent->stopAllThreads();
             tabParrent->setPlaying(false);
@@ -1266,68 +1234,52 @@ void TrackView::keyevent(std::string press)
         return;
     }
 
-    if (press == CONF_PARAM("TrackView.save")||(press == "quicksave"))
-    {
+    if (press == CONF_PARAM("TrackView.save")||(press == "quicksave")) {
         //save
-        GmyFile gmyFile; //fkldsjfkldsj
-
-        AFile file;
+        GmyFile gmyFile;
         stringExtended gfileName;
-        gfileName <<  getTestsLocation() <<"first.gmy";
+        std::string gfilename <<  getTestsLocation() <<"first.gmy";
+        std::ofstream file;
         file.open(gfileName.c_str(), false);
-
         gmyFile.saveToFile(&file,tabParrent->getTab());
-
         file.close();
         return;
-
     }
 
-    if (press == "save as")
-    {
+    if (press == "save as"){
+        QFileDialog *fd = new QFileDialog;
 
-            QFileDialog *fd = new QFileDialog;
+        fd->setStyleSheet("QScrollBar:horizontal {\
+                            border: 2px solid grey;\
+                            background: #32CC99;\
+                            height: 15px;\
+                            margin: 0px 20px 0 20px;\
+                        }\
+                        QLineEdit { height: 20px; \
+                        }");
 
-            fd->setStyleSheet("QScrollBar:horizontal {\
-                              border: 2px solid grey;\
-                              background: #32CC99;\
-                              height: 15px;\
-                              margin: 0px 20px 0 20px;\
-                          }\
-                          QLineEdit { height: 20px; \
-                          }");
+        fd->setViewMode(QFileDialog::List);
 
-            fd->setViewMode(QFileDialog::List);
+        std::string dir="";
+#ifdef __ANDROID_API__
+        dir="/sdcard/";
+        fd->setDirectory("/sdcard/");
+        QScreen *screen = QApplication::screens().at(0);
+        fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
+#endif
 
-            std::string dir="";
-    #ifdef __ANDROID_API__
-            dir="/sdcard/";
-            fd->setDirectory("/sdcard/");
-            QScreen *screen = QApplication::screens().at(0);
-            fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
-    #endif
-
-            QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
-
-            delete fd;
-
-            GmyFile gmyFile;
-
-            AFile file;
-            std::string  gfileName = saveFileName.toStdString();
-            file.open(gfileName.c_str(), false);
-
-            gmyFile.saveToFile(&file,tabParrent->getTab());
-
-            file.close();
-            return;
+        QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
+        delete fd;
+        GmyFile gmyFile;
+        std::string  gfileName = saveFileName.toStdString();
+        std::ofstream file(gfileName);
+        gmyFile.saveToFile(&file,tabParrent->getTab());
+        return;
     }
 
-    if (press == "newBar")
-    {
+    if (press == "newBar") {
         Bar *addition = new Bar();
         Bar *bOrigin = pTrack->getV(cursor);
-
         addition->flush();
         addition->setSignDenum(bOrigin->getSignDenum());
         addition->setSignNum(bOrigin->getSignNum());
@@ -1337,25 +1289,19 @@ void TrackView::keyevent(std::string press)
         addBeat->setDotted(0);
         addBeat->setDurationDetail(0);
         addBeat->setPause(true);
-
         addition->add(addBeat);
 
         SingleCommand command(16);
         command.setPosition(0,cursor,0);
         commandSequence.push_back(command);
-
         pTrack->insertBefore(addition,cursor);
         pTrack->connectAll();
-
         cursorBeat = 0;//poits to new
-
         return;
     }
 
-    if (press == "dot") //link
-    {
+    if (press == "dot") {
         byte dotted = pTrack->getV(cursor)->getV(cursorBeat)->getDotted();
-
         SingleCommand command(6,dotted);
         command.setPosition(0,cursor,cursorBeat);
         commandSequence.push_back(command);
@@ -1368,10 +1314,8 @@ void TrackView::keyevent(std::string press)
         return;
     }
 
-    if (press == "-3-")
-    {
+    if (press == "-3-") {
         byte curDetail = pTrack->getV(cursor)->getV(cursorBeat)->getDurationDetail();
-
         SingleCommand command(5,curDetail);
         command.setPosition(0,cursor,cursorBeat);
         commandSequence.push_back(command);
@@ -1981,23 +1925,16 @@ void TabView::keyevent(std::string press)
 
             delete fd;
 
-            GmyFile gmyFile;
-
-            AFile file;
             std::string  gfileName = saveFileName.toStdString();
-            file.open(gfileName.c_str(), false);
-
-            gmyFile.saveToFile(&file,getTab());
-
+            std::ofstream file(gfileName);
+            GmyFile gmyFile;
+            gmyFile.saveToFile(&file, getTab());
             file.close();
     }
 
-    if (press=="export_midi")
-    {
+    if (press=="export_midi") {
         Tab *tab = getTab();
-
-        if (tab)
-        {
+        if (tab) {
             tab->connectTracks();
 
             MidiFile generatedMidi;
@@ -2012,10 +1949,9 @@ void TabView::keyevent(std::string press)
     #endif
 
             std::string fullOutName = preFN + std::string("midiOutput.mid");
+            std::ofstream outFile(fullOutName);
 
-            AFile outFile;
-
-            if (!outFile.open(fullOutName,false))
+            if (!outFile.is_open())
                 logger << "Failed to open out file :(";
             else
                 LOG( <<"File opened "<<fullOutName.c_str(););
@@ -2516,9 +2452,9 @@ void TabView::keyevent(std::string press)
             MidiEngine::closeDefaultFile();
             std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-            AFile outFile2;
+            std::ofstream outFile2;
 
-            if (!outFile2.open(fullOutName,false))
+            if (!outFile2.is_open(fullOutName,false))
                 logger << "Failed to open out file :(";
             else
                 LOG( <<"File opened "<<fullOutName.c_str());
@@ -2589,13 +2525,10 @@ void TabView::keyevent(std::string press)
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-        AFile outFile2;
+        std::ofstream outFile2(fullOutName);
 
-        if (! outFile2.open(fullOutName,false))
-        {
-            //if (gViewLog)
+        if (! outFile2.is_open()) {
             logger << "Failed to open out file :(";
-
             statusLabel->setText("failed to open generated");
         }
         ul outFileSize2 = generatedMidi.writeStream(outFile2);
@@ -2605,100 +2538,63 @@ void TabView::keyevent(std::string press)
     }
 
 
-    if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc"))
-    {
+    if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc")) {
         //generate
-
         AMusic exporter;
-
-
         Tab *tab = pTab;
         MidiFile generatedMidi;
-
-        if (press == CONF_PARAM("TabView.genAMusic"))
-        {
+        if (press == CONF_PARAM("TabView.genAMusic")) {
             exporter.readFromTab(tab);
             generatedMidi.generateFromAMusic(exporter);
         }
-        else
-        {
+        else {
             generatedMidi.fromTab(pTab);
         }
 
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
+        std::ofstream outFile2(fullOutName);
 
-        AFile outFile2;
-
-        if (! outFile2.open(fullOutName,false))
-        {
-            //if (gViewLog)
+        if (! outFile2.is_open()){
             logger << "Failed to open out file :(";
-
             statusLabel->setText("failed to open generated");
         }
-
-
-        //ul outFileSize = midiFile.writeStream(outFile);
         ul outFileSize2 = generatedMidi.writeStream(outFile2);
-
         LOG( << "File wroten. " << outFileSize2 << " bytes. ");
-
         outFile2.close();
-
         generatedMidi.printToStream(std::cout);
-
         statusLabel->setText("generation done. p for play");
-
-        //press == "p";
     }
 
-
-    if (press=="p")
-    {
-        if (isPlaying == false)
-        {
+    if (press=="p") {
+        if (isPlaying == false) {
             MidiEngine::closeDefaultFile();
             MidiEngine::openDefaultFile();
             MidiEngine::startDefaultFile();
             isPlaying = true;
         }
-        else
-        {
+        else {
             MidiEngine::stopDefaultFile();
             isPlaying = false;
         }
     }
 
-    if (isdigit(*(press.c_str())))
-    {
+    if (isdigit(*(press.c_str()))) {
         ul digit = press.c_str()[0]-48;
-
         if (digit)
-        if (digit <= pTab->len())
-        {
+        if (digit <= pTab->len()) {
             TrackView *trackView = tracksView[digit-1];//new TrackView(&pTab->getV(digit-1));
-
             lastOpenedTrack = digit-1;
-
-
-
             MainView *mainView = (MainView*)getMaster()->getFirstChild();
             mainView->changeCurrentView(trackView);
         }
-        //store in pull
     }
 
-    if (press == "marker")
-    {
-        //GET text + - color
-
+    if (press == "marker"){
         bool ok=false;
         QString markerText= QInputDialog::getText(0,"Input",
                              "Marker:", QLineEdit::Normal,"untitled",&ok);
-
-        if (ok)
-        {
+        if (ok) {
             std::string stdMarkerText = markerText.toStdString();
             pTab->getV(0)->getV(currentBar)->setGPCOMPMarker(stdMarkerText,0);
         }

@@ -1,8 +1,5 @@
 #include "abitarray.h"
 
-//loging
-#include "g0/astreaming.h"
-static AStreaming logger("abitarray");
 
 
 

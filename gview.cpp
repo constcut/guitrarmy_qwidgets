@@ -4,13 +4,11 @@
 
 #include "g0/tab.h"
 #include "g0/gtpfiles.h"
-#include "g0/afile.h"
 #include "g0/amusic.h"
 #include "g0/midifile.h"
 
 #include "g0/aconfig.h"
 
-#include "g0/astreaming.h"
 
 #include "g0/gmyfile.h"
 
@@ -20,8 +18,6 @@
 
 
 
-
-static AStreaming logger("GView");
 
 bool gViewLog=false;
 

@@ -4,8 +4,8 @@
 #include "g0/types.h"
 #include "g0/tab.h"
 
-void readBend(AFile *file, BendPoints *bend);
-void writeBend(AFile *file, BendPoints *bend);
+void readBend(std::ifstream *file, BendPoints *bend);
+void writeBend(std::ofstream *file, BendPoints *bend);
 
 ///HE LIVED ALONE!
 ///
@@ -13,10 +13,10 @@ void writeBend(AFile *file, BendPoints *bend);
 class Gp4Import //: public AImport
 {
     public:
-    //from AFile to Tab
-    //Gp4Import(AFile &from, Tab &to) : AImport(&from,&to,128) {} //not our types goes from 128
+    //from A File to Tab
+    //Gp4Import(A File &from, Tab &to) : AImport(&from,&to,128) {} //not our types goes from 128
 
-    bool import(AFile &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
 
     //readString
     //readBend
@@ -35,10 +35,8 @@ class Gp4Import //: public AImport
 class Gp4Export //: public AExport
 {
     public:
-    //from AFile to Tab
-    //Gp4Import(AFile &from, Tab &to) : AImport(&from,&to,128) {} //not our types goes from 128
 
-    bool exPort(AFile &file, Tab &tab);
+    bool exPort(std::ofstream &file, Tab &tab);
 };
 
 
@@ -47,7 +45,7 @@ class Gp4Export //: public AExport
 class Gp5Import //: public AImport
 {
     public:
-    bool import(AFile &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
 
     //readString
     //readBend
@@ -68,7 +66,7 @@ class Gp3Import
 {
 
 public:
-    bool import(AFile &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
 };
 
 #endif // GTPFILES_H

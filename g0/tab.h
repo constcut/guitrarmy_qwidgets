@@ -5,7 +5,6 @@
 
 #include <memory.h>
 
-#include "g0/afile.h"
 //All definitions to Tablature abstraction
 
 //Most parts now covered under header definition, but refactoring should leave this and hold definitions only but not implementations
