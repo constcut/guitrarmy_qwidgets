@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     g0/midifile.cpp \
     g0/scenario.cpp \
     g0/tab.cpp \
-    g0/types.cpp \
     apainter.cpp \
     athread.cpp \
     gpannel.cpp \
@@ -72,6 +71,7 @@ SOURCES += main.cpp\
     libtim/timidity.c
 
 HEADERS  += mainwindow.h \
+    g0/types.h \
     gview.h \
     g0/abitarray.h \
     g0/aconfig.h \
@@ -80,7 +80,6 @@ HEADERS  += mainwindow.h \
     g0/gtpfiles.h \
     g0/midifile.h \
     g0/tab.h \
-    g0/types.h \
     apainter.h \
     athread.h \
     g0/buildheader.h \
