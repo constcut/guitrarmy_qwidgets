@@ -79,7 +79,7 @@ void MidiEngine::openDefaultFile()
     if (opened)
         freeInitials();
 
-    stringExtended command;
+    
 #ifdef WIN32
     mciSendStringA("close gMIDI",0,0,0);
 #else
@@ -88,17 +88,19 @@ void MidiEngine::openDefaultFile()
     if (midiPlayer==0)
         midiPlayer = new QMediaPlayer();
 
-    command <<getTestsLocation()<<"midiOutput.mid";
+    std::string command = std::string(getTestsLocation()) + "midiOutput.mid";
     QString playerPath = command.c_str(); // "/sdcard/p/tests/midiOutput.mid";
     midiPlayer->setMedia(QUrl::fromLocalFile(playerPath));
     return;
 
 #endif
     //char locationD[] = "C:\\Qt\\Qt5.3.1\\Tools\\QtCreator\\bin\\build-g1UI-Desktop_Qt_5_4_1_MinGW_32bit-Debug\\debug\\tests\\";
-    command<<"open \""<<getInvertedLocation()<<"midiOutput.mid\" type sequencer alias gMIDI";
 
  #ifdef WIN32
-    mciSendStringA(command.c_str(),0,0,0);
+ std::stringstream command;
+     command<<"open \""<<getInvertedLocation()<<"midiOutput.mid\" type sequencer alias gMIDI";
+
+    mciSendStringA(.str().c_str(),0,0,0);
 #endif
 }
 

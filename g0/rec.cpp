@@ -290,12 +290,12 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             fft.findPeaks(7.8125); // /2.0
             peaks=fft.getPeaks();
 
-            stringExtended sX;
+            //stri ngExtended sX;
             double peaksSumm = 0.0;
             for (int i = 0; i < peaks->size(); ++i)
             {
                 Peak peak= peaks->operator [](i);
-                sX<<"PB "<<peak.getFreq()<<":"<<peak.getPosition()<<":"<<peak.getAmplitude()*10<<"; ";
+                //sX<<"PB "<<peak.getFreq()<<":"<<peak.getPosition()<<":"<<peak.getAmplitude()*10<<"; ";
                 //getFreq
                 peaksSumm += peak.getAmplitude();
             }
@@ -311,19 +311,19 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             localFreq.voteNewWay();
 
             std::vector<LocalFreqTable::LFTvote> *votes = localFreq.getRezultVotes();
-            stringExtended sX3;
-            for (int i = 0; i < votes->size(); ++i)
-            {
-                  sX3 << (*votes)[i].rFreq<<" "<<(*votes)[i].value<<";";
-            }
+            //stringEx tended sX3;
+            //for (int i = 0; i < votes->size(); ++i)
+            //{
+                  //sX3 << (*votes)[i].rFreq<<" "<<(*votes)[i].value<<";";
+            //}
             //logger <<"!!"<<sX3.c_str(); //peaklog
 
-            sX.clear();
+            //sX.clear();
             peaks = localFreq.getPeaks();
             for (int i = 0; i < peaks->size(); ++i)
             {
                 Peak peak= peaks->operator [](i);
-                sX<<"PA "<<peak.getFreq()<<":"<<peak.getAmplitude()*10<<"; ";
+                //sX<<"PA "<<peak.getFreq()<<":"<<peak.getAmplitude()*10<<"; ";
                 //getFreq
             }
             //logger << "#" <<sX.c_str(); // peak log
@@ -331,15 +331,15 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
 
             double *ampSrc = fft.getAmplitude();
 
-            stringExtended sX2;
-            for (int i = 0; i < 128; ++i)
-            {
-                sX2<<(int)(ampSrc[i]*100)<<" ;";
-            }
+            //stringE xtended sX2;
+            //for (int i = 0; i < 128; ++i)
+            //{
+            //    sX2<<(int)(ampSrc[i]*100)<<" ;";
+            //}
             //logger << "#" << sX2.c_str();
 
-            stringExtended freqStr;
-            freqStr<<(*votes)[0].rFreq;
+            //stringE xtended freqStr;
+            //freqStr<<(*votes)[0].rFreq;
 
             (*notes)[i].freq = (*votes)[0].rFreq;
 

@@ -219,7 +219,7 @@ void MainWindow::createMenuTool()
 
 
 
-    stringExtended menuStyleStr;
+    std::stringstream menuStyleStr;
     int menuPlatformCoef = 1;
 
 if (globals.platform == "windows") //check
@@ -228,7 +228,7 @@ if (globals.platform == "windows") //check
 }
 
     menuStyleStr <<"QMenu { font-size:"<<(int)(autoCoef*30/menuPlatformCoef)<<"px;}QToolBar {border: 1px solid black;}";
-    menuToolBar->setStyleSheet(menuStyleStr.c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
+    menuToolBar->setStyleSheet(menuStyleStr.str().c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
 
     int iconSize=36*autoCoef;//36
 
@@ -1594,7 +1594,7 @@ void MainWindow::mousePressEvent( QMouseEvent * event )
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
 
-        //stringExtended sX;
+        //stringE xtended sX;
         //sX<<"x="<<xPress<<"; y="<<yPress;
 
         //this->setWindowTitle(sX.c_str());
@@ -1686,10 +1686,8 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
            if (CONF_PARAM("turnPinchZoomOn")=="1")
            {
                    //
-                   stringExtended line;
-                   line<< "Scale "<<dScale<<"; with conf "<<nowScale;
-                   setStatusBarMessage(0,line.c_str(),2000);
-                //update();
+            std::string line = "Scale " + std::to_string(dScale) + "; with conf ";
+                std::to_string(nowScale);
 
                    if (scale < 0.15)
                    {
@@ -2383,9 +2381,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     QAction *act = toolBar->addAction(iconNew,actionName);
 
-    stringExtended sX;
-    sX << button.c_str() <<" ["<<confValue<<"]";
-
+    std::string sX = button + " [" + confValue + "]";
     act->setToolTip(sX.c_str());
 
     if (actionName=="esc")
@@ -2568,7 +2564,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     return act;
 }
 
-void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string button, std::string confValue="", bool secondLines=false)
+void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string button, std::string confValue, bool secondLines)
 {
     static QWidget *wi = 0;
 
@@ -2671,19 +2667,11 @@ void MainWindow::createFloDocks()
     addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playAMusic"));
 
     for (int i = 0; i < 10; ++i)
-    {
-     stringExtended sX; sX <<i;
-     addToolButtonGrid(this,dock,sX.c_str(),sX.c_str());
-    }
-
-
+     addToolButtonGrid(this,dock,std::to_string(i),std::to_string(i));
 
     addToolButtonGrid(this,dock,"prevBar",CONF_PARAM("TrackView.prevBar"));
     addToolButtonGrid(this,dock,"upString",CONF_PARAM("TrackView.stringUp"));
     addToolButtonGrid(this,dock,"nextBar",CONF_PARAM("TrackView.nextBar"));
-
-
-
 
     addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playMidi"),true);
 

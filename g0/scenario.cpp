@@ -310,8 +310,7 @@ bool greatCheck()
     {
         try
         {
-            stringExtended newLine;
-            newLine << scen << "." << i;
+            std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
             std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //getTestsLocation();
 
@@ -352,8 +351,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
     {
         try
         {
-            stringExtended newLine;
-            newLine << scen << "." << i;
+            std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
             std::string testLocation = getTestsLocation();
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
