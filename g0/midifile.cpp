@@ -410,13 +410,13 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 	//write header
     ofile.write((const char*)midiHeader.chunkId,4);
     ofile.write((const char*)&midiHeader.chunkSize,4);
-    reverseEndian(&midiHeader.chunkSize, 4);
+    //reverseEndian(&midiHeader.chunkSize, 4); //TODO
     ofile.write((const char*)&midiHeader.formatType,2);
-    reverseEndian(&midiHeader.formatType, 2);
+    //reverseEndian(&midiHeader.formatType, 2);
     ofile.write((const char*)&midiHeader.nTracks,2);
-    reverseEndian(&midiHeader.nTracks, 2);
+    //reverseEndian(&midiHeader.nTracks, 2);
     ofile.write((const char*)&midiHeader.timeDevision,2);
-    reverseEndian(&midiHeader.timeDevision, 2);
+    //reverseEndian(&midiHeader.timeDevision, 2);
 		
 	bytesWritten += 14;
 		
@@ -425,7 +425,7 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 
         ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
         ofile.write((const char*)&getV(i)->trackHeader.trackSize,4);
-        reverseEndian(&midiHeader.timeDevision, 4);
+        //reverseEndian(&getV(i)->trackHeader.trackSize, 4);
 		
 		bytesWritten += 8;
 		
