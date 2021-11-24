@@ -1205,10 +1205,9 @@ void TrackView::keyevent(std::string press)
     if (press == CONF_PARAM("TrackView.save")||(press == "quicksave")) {
         //save
         GmyFile gmyFile;
-        stringExtended gfileName;
         std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
         std::cerr << "Test loc " << getTestsLocation() << std::endl;
-        std::ofstream file;(gfileName.c_str(), false);
+        std::ofstream file(gfilename.c_str());
         gmyFile.saveToFile(&file,tabParrent->getTab());
         file.close();
         return;
@@ -2123,11 +2122,9 @@ void TabView::keyevent(std::string press)
 
      bool ok=false;
         QStringList items;
-        for (int i = 0 ; i < 128; ++i)
-        {
-            stringExtended fullLine;
-            fullLine << i <<" - "<<instruments[i];
-            items.push_back(fullLine.c_str());
+        for (int i = 0 ; i < 128; ++i) {
+            auto s = (std::to_string(i) + " - " + instruments[i]);
+            items.push_back(s.c_str());
         }
 
         int curInstr = pTab->getV(displayTrack)->getInstrument();
@@ -2248,19 +2245,10 @@ void TabView::keyevent(std::string press)
         int newBpm = QInputDialog::getInt(0,"Input",
                              "New Bpm:", QLineEdit::Normal,
                              1,999,1,&ok);
-        if (ok)
-        {
+        if (ok) {
             pTab->setBPM(newBpm);
-
-            stringExtended sX;
-            sX<<"bpm="<<newBpm;
-            bpmLabel->setText(sX.c_str());
-
-            stringExtended statusBar2;
-
-            statusBar2 << "BPM = "<<pTab->getBPM();
-
-            getMaster()->setStatusBarMessage(2,statusBar2.c_str());
+            bpmLabel->setText("bpm=" + std::to_string(newBpm));
+            getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
         }
     }
 
@@ -2682,14 +2670,10 @@ void TabView::keyevent(std::string press)
                 coefOctave*=2;
 
             double theFreq = fTable[j]*coefOctave;
-            stringExtended freq;
-            freq<<theFreq;
-
             midiNote = 12+j + 12*i;
 
-
-            stringExtended fullLine;
-            fullLine << note <<octave << " - "<<midiNote<<" - "<<freq.c_str();
+            std::string fullLine = note + octave +" - " +
+                std::to_string(midiNote) +" - " + std::to_string(theFreq);
             items.push_back(fullLine.c_str());
         }
 
@@ -2699,35 +2683,21 @@ void TabView::keyevent(std::string press)
     //items.push_back("another thesr");
     //items.push_back("once_more");
 
-
-
-        for (int i = 0; i < pTab->getV(currentTrack)->tuning.getStringsAmount(); ++i)
-        {
-            stringExtended label;
-            label << "String #"<<(i+1);
-
-            int preValue = pTab->getV(currentTrack)->tuning.getTune(i)-12;
-
-            QString resp = QInputDialog::getItem(0,"Input tune",
-                                         label.c_str(),items,preValue,false,&ok);
-
-            int respIndex = -1;
-
-            for (int j = 0; j < items.size(); ++j)
-            {
-                if (items.at(j)==resp)
-                {
-                    respIndex = j;
-                    break;
-                }
+    for (int i = 0; i < pTab->getV(currentTrack)->tuning.getStringsAmount(); ++i) {
+        int preValue = pTab->getV(currentTrack)->tuning.getTune(i)-12;
+        QString resp = QInputDialog::getItem(0,"Input tune",
+                                        ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
+        int respIndex = -1;
+        for (int j = 0; j < items.size(); ++j)
+            if (items.at(j)==resp) {
+                respIndex = j;
+                break;
             }
 
-            if (ok)
-            {
-                if (respIndex>=0)
-                    pTab->getV(currentTrack)->tuning.setTune(i,respIndex+12);
-            }
-        }
+        if (ok)
+            if (respIndex>=0)
+                pTab->getV(currentTrack)->tuning.setTune(i,respIndex+12);
     }
+}
 
 }

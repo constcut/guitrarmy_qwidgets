@@ -1477,10 +1477,7 @@ void RecordView::onclick(int x1, int y1)
 
         #ifdef WIN32
             mciSendStringA("stop rec", 0, 0, 0);
-            //TODO
-            stringExtended command;
-            command<<"save recaudio \""<<getInvertedLocation()<<"rec.wav\"";
-
+            std::string command = "save recaudio \"" + getInvertedLocation() + "rec.wav\"";
             mciSendStringA(command.c_str(), 0, 0, 0);
             mciSendStringA("close rec", 0, 0, 0);
 
