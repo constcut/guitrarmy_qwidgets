@@ -33,7 +33,6 @@ SOURCES += main.cpp\
     g0/abitarray.cpp \
     g0/aconfig.cpp \
     g0/aexpimp.cpp \
-    g0/frequlate.cpp \
     g0/gmyfile.cpp \
     g0/gtpfiles.cpp \
     g0/midifile.cpp \
@@ -77,7 +76,6 @@ HEADERS  += mainwindow.h \
     g0/abitarray.h \
     g0/aconfig.h \
     g0/aexpimp.h \
-    g0/frequlate.h \
     g0/gmyfile.h \
     g0/gtpfiles.h \
     g0/midifile.h \

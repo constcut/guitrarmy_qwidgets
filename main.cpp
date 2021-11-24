@@ -331,7 +331,11 @@ int main(int argc, char *argv[])
     }
     */
 
-    testScenario();
+
+
+    //TODO окно для загрузки разных тестов
+    //testScenario();
+
   
     int out = 0;
     try{

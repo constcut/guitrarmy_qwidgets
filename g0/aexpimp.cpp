@@ -5,7 +5,7 @@
 
 #define logger qDebug()
 
-
+//TODO move to gtp files
 bool GTabLoader::open(std::string fileName)
 {
     std::ifstream file(fileName);

@@ -10,7 +10,23 @@ void writeBend(std::ofstream *file, BendPoints *bend);
 ///HE LIVED ALONE!
 ///
 /// //remind importers
-class Gp4Import //: public AImport
+
+class Gp4Export //: public AExport
+{
+    public:
+
+    bool exPort(std::ofstream &file, Tab &tab);
+};
+
+class Gp3Import
+{
+
+public:
+    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
+};
+
+
+class Gp4Import //:TODO public Gp3Import
 {
     public:
     //from A File to Tab
@@ -32,17 +48,10 @@ class Gp4Import //: public AImport
 
 };
 
-class Gp4Export //: public AExport
-{
-    public:
-
-    bool exPort(std::ofstream &file, Tab &tab);
-};
-
 
 //GP5
 
-class Gp5Import //: public AImport
+class Gp5Import //:TODO public Gp4Import
 {
     public:
     bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
@@ -61,12 +70,6 @@ class Gp5Import //: public AImport
 
 };
 
-
-class Gp3Import
-{
-
-public:
-    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
-};
+//TODO собрать в единый файл соединить с tabloader из aexpimp
 
 #endif // GTPFILES_H
