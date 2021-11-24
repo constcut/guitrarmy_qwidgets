@@ -330,6 +330,8 @@ int main(int argc, char *argv[])
         logUp->request(QUrl(fullLine.c_str()));
     }
     */
+
+    testScenario();
   
     int out = 0;
     try{

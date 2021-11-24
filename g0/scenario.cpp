@@ -214,6 +214,13 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
 
     std::cout << "All information about readin is in log"<<std::endl;
 
+    MidiFile f;
+    f.fromTab(&tab);
+    std::ofstream midiOut(outFileName);
+    ul bytesWritten = f.writeStream(midiOut);
+
+    std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
+
     return true;
 }
 
@@ -224,7 +231,7 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
 
     if (itfile.is_open())
-        log << "File opened" ;
+        ;//log << "File opened" ;
     else
     {
         log <<"Failed to open GP file" ;
@@ -241,6 +248,12 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     tab.postGTP();
     tab.connectTracks(); //new for chains refact
 
+    MidiFile f;
+    f.fromTab(&tab);
+    std::ofstream midiOut(outFileName);
+    ul bytesWritten = f.writeStream(midiOut);
+
+    std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
     return true;
 }
@@ -252,7 +265,7 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
 
     if (itfile.is_open())
-        log << "File opened" ;
+        ; //log << "File opened" ;
     else
     {
         log <<"Failed to open GP file" ;
@@ -263,13 +276,18 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
     Tab tab;
     Gp5Import importer; //(tabFile,tab);
 
-
     //swtich to different versions of importers 3\4\5
 
     importer.import(itfile,&tab);
     tab.postGTP();
     tab.connectTracks(); //new for chains
 
+    MidiFile f;
+    f.fromTab(&tab);
+    std::ofstream midiOut(outFileName);
+    ul bytesWritten = f.writeStream(midiOut);
+
+    std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
 
     return true;
@@ -280,11 +298,12 @@ bool greatCheck()
 
     //phase 1
     int from = 1; //1
-    int to = 109; //70
+    int to = 70; //70
 
-    int scen = 4;
+    int scen = 3;
 
 
+    std::cerr << "Starting big check" << std::endl;
     bool doTheLogs = false;
 
     for (int i = from; i <= to; ++i)
@@ -294,27 +313,23 @@ bool greatCheck()
             stringExtended newLine;
             newLine << scen << "." << i;
 
-            std::string testLocation = getTestsLocation();
+            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //getTestsLocation();
 
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
             std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
-            std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
-            std::string outGp4 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
-            std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
+            std::string outGp3 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
+            std::string outGp4 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
+            std::string outGp5 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
 
 
             std::string midiFile = testLocation + std::string("m/") +std::string(newLine.c_str()) + std::string(".mid");
             std::string outMid = std::string("all_out/") + std::string(newLine.c_str()) + std::string("_amid.mid");
 
             log<<"TestFile "<<gp3File.c_str();
-
             //if ( testMidi(midiFile,outMid,log) == false ) return 0;
-
-            //if ( testGP3 (gp3File,outGp3,log,doTheLogs)  == false ) return 0; //last true - no out
-
-            //DONT FORGET
-            //if ( testGP4 (gp4File,outGp4,log,doTheLogs)  == false ) return 0; //last true - no out
+            if ( testGP3 (gp3File,outGp3,doTheLogs)  == false ) return 0; //last true - no out
+            if ( testGP4 (gp4File,outGp4,doTheLogs)  == false ) return 0; //last true - no out
             if ( testGP5 (gp5File,outGp5,doTheLogs) == false ) return 0;
 
             std::cout << "done"<<std::endl;
@@ -409,14 +424,13 @@ void connectConfigs(void *ptr)
 
 bool testScenario()
 { 
-    /*
+
     std::string logName; //LOG file name
 #ifdef WIN32
     logName="D:/TestFiles/new/scene.txt";
 #else
     logName="scene.txt"; //android
 #endif
-
     checks(); //checks first
 
     std::ofstream lofile;
@@ -431,9 +445,6 @@ bool testScenario()
       return false;
     }
 
-    A F ile logFile(lofile);
-    A S treaming::setLogFile(&logFile);*/
-    //Log operation finished
 
     /////////////////////////////////////////////////////////////////
     //------------------------------------------------------------//
