@@ -21,7 +21,7 @@
 
 bool midiLog = false;
 
-void reverseEndian(void *p,int s) {
+void reverseEndian(void *p,int s) { //TODO remove
     char *bytes = (char*)p;
     if (s == 4){
         char b = bytes[0];
@@ -36,6 +36,21 @@ void reverseEndian(void *p,int s) {
         bytes[0] = bytes[1];
         bytes[1] = b;
     }
+}
+
+void writeReversedEndian(const char* in, size_t len, std::ofstream& file) {
+    char buf[4];
+    if (len == 2) {
+        buf[0] = in[1];
+        buf[1] = in[0];
+    }
+    else if (len == 4) {
+        buf[0] = in[3];
+        buf[1] = in[2];
+        buf[2] = in[1];
+        buf[3] = in[0];
+    }
+    file.write(buf, len);
 }
 
 
@@ -182,14 +197,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 
 bool MidiFile::readStream(std::ifstream & ifile)
 {
-    //char headerData[14] = { 0 };
-
-    //long long lldata;
-    ifile.read((char*)midiHeader.chunkId, 4);	// chunk header // aS Abstract String
-	midiHeader.chunkId[4] = 0;
-
-	// ifile >>
-    //TODO revese indian
+    ifile.read((char*)midiHeader.chunkId, 4);
     ifile.read((char*)&(midiHeader.chunkSize), 4);
     reverseEndian(&(midiHeader.chunkSize), 4);
     ifile.read((char*)&(midiHeader.formatType), 2);
@@ -407,16 +415,14 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 
     calculateHeader(); //also fills header of tracks
 		
-	//write header
+
     ofile.write((const char*)midiHeader.chunkId,4);
-    ofile.write((const char*)&midiHeader.chunkSize,4);
-    //reverseEndian(&midiHeader.chunkSize, 4); //TODO
-    ofile.write((const char*)&midiHeader.formatType,2);
-    //reverseEndian(&midiHeader.formatType, 2);
-    ofile.write((const char*)&midiHeader.nTracks,2);
-    //reverseEndian(&midiHeader.nTracks, 2);
-    ofile.write((const char*)&midiHeader.timeDevision,2);
-    //reverseEndian(&midiHeader.timeDevision, 2);
+    writeReversedEndian((const char*)&midiHeader.chunkSize, 4, ofile);
+    writeReversedEndian((const char*)&midiHeader.formatType,2, ofile);
+    writeReversedEndian((const char*)&midiHeader.nTracks,2, ofile);
+    writeReversedEndian((const char*)&midiHeader.timeDevision,2, ofile);
+
+
 		
 	bytesWritten += 14;
 		
@@ -424,7 +430,7 @@ ul MidiFile::writeStream(std::ofstream &ofile)
     {
 
         ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
-        ofile.write((const char*)&getV(i)->trackHeader.trackSize,4);
+        writeReversedEndian((const char*)&getV(i)->trackHeader.trackSize, 4, ofile);
         //reverseEndian(&getV(i)->trackHeader.trackSize, 4);
 		
 		bytesWritten += 8;
@@ -441,6 +447,8 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 }
 
 
+
+
 ul MidiFile::noMetricsTest(std::ofstream &ofile)
 {
     ul bytesWritten = 0;
@@ -449,14 +457,10 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
 
     //write header
     ofile.write((const char*)midiHeader.chunkId,4);
-    ofile.write((const char*)&midiHeader.chunkSize,4);
-    reverseEndian(&midiHeader.chunkSize,4);
-    ofile.write((const char*)&midiHeader.formatType,2);
-    reverseEndian(&midiHeader.formatType,2);
-    ofile.write((const char*)&tracks,2);
-    reverseEndian(&tracks,2);
-    ofile.write((const char*)&midiHeader.timeDevision,2);
-    reverseEndian(&midiHeader.timeDevision, 2);
+    writeReversedEndian((const char*)&midiHeader.chunkSize, 4, ofile);
+    writeReversedEndian((const char*)&midiHeader.formatType,2, ofile);
+    writeReversedEndian((const char*)&tracks,2, ofile);
+    writeReversedEndian((const char*)&midiHeader.timeDevision,2, ofile);
 
     bytesWritten += 14;
 
@@ -466,8 +470,7 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
     for (short int i = 1; i < 2; ++i) //shit condition
     {
         ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
-        ofile.write((const char*)&getV(i)->trackHeader.trackSize,4);
-        reverseEndian(&getV(i)->trackHeader.trackSize, 4);
+        writeReversedEndian((const char*)&getV(i)->trackHeader.trackSize, 2, ofile);
 
         bytesWritten += 8;
 

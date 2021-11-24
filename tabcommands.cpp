@@ -1118,68 +1118,39 @@ void TrackView::keyevent(std::string press)
 
         if (tabParrent->getPlaying() == false)
         {
-
             //to start not from begin always
             ul shiftTheCursor = 0;
-
-            if (cursor != 0)
-            {
+            if (cursor != 0){
                 Bar *barPtr = pTrack->getV(cursor);
 
-                for (ul i = 0; i < pTrack->timeLoop.len();++i)
-                {
-                     if (pTrack->timeLoop.getV(i) == barPtr)
-                     {
-                          shiftTheCursor = i;
+                for (ul i = 0; i < pTrack->timeLoop.len();++i){
+                     if (pTrack->timeLoop.getV(i) == barPtr){
+                         shiftTheCursor = i;
                          break;
                      }
                 }
             }
 
-            //CHECK GENERATION NEEDED?
-
-
-            //REPAIR CHAINS
             clock_t beforeT = getTime();
             pTrack->connectAll();
             clock_t afterT = getTime();
             int diffT = afterT - beforeT;
-
             LOG( <<"Repair chains "<<diffT);
-
-
-
             Tab *tab = tabParrent->getTab();
-
             tab->connectTracks();
-
             MidiFile generatedMidi;
 
-            if (press == CONF_PARAM("TrackView.playAMusic"))
-            {
-                //AMusic exporter;
-                //exporter.readFromTab(tab,shiftTheCursor);
-                //generatedMidi.generateFromAMusic(exporter);
-            }
-            else
-            {
+            if (press == CONF_PARAM("TrackView.playAMusic")) {}
+            else{
                 generatedMidi.fromTab(tabParrent->getTab(),shiftTheCursor);
             }
 
 
-            if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge"))
-            {
+            if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge")){
                 MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
                 generatedMidi.clear();
                 generatedMidi.add(newTrack);
-                //return; //MidiEngine::playTrack(newTrack);
             }
-
-//WHEN NEED TO DEBUGMIDI:
-            //good to add config value then
-            //generatedMidi.calculateHeader();
-            //generatedMidi.printToStream(std::cout);
-
 
             clock_t after2T = getTime();
             diffT = after2T - afterT;
@@ -1204,14 +1175,7 @@ void TrackView::keyevent(std::string press)
                 std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
                 generator.convert(fullOutName,outputSound);
             }
-
-
-            //prepareThread();
-            //IS BUG HERE:
             tabParrent->prepareAllThreads(shiftTheCursor);
-            //connect current thread - not best
-            //getMaster()->connectThread(localThr);
-            //BYC TOO
             tabParrent->connectAllThreadsSignal(getMaster());
             std::string midiConfig = CONF_PARAM("midi.config");
 
@@ -1243,6 +1207,7 @@ void TrackView::keyevent(std::string press)
         GmyFile gmyFile;
         stringExtended gfileName;
         std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
+        std::cerr << "Test loc " << getTestsLocation() << std::endl;
         std::ofstream file;(gfileName.c_str(), false);
         gmyFile.saveToFile(&file,tabParrent->getTab());
         file.close();
