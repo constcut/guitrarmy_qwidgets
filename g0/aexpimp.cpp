@@ -48,9 +48,10 @@ bool GTabLoader::open(std::string fileName)
        // std::cout <<"First byte of file - "<<firstBytes[0]<<";"<<(int)firstBytes[0];
 
         file.read(firstBytes,2);
+        firstBytes[2] = 0;
 
         std::string headBytes = firstBytes;
-        if (headBytes=="IF")
+        if (headBytes=="FI")
         {
             //""THEN" ;
             char version[2];

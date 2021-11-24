@@ -1359,6 +1359,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     std::string title,subtitle,interpret,albumn,author,copyright,tabAuthor,instructions;
 
     title = readString(file);
+    std::cerr << "title " << title << std::endl;
     subtitle = readString(file);
     interpret = readString(file);
     albumn = readString(file);
@@ -1456,7 +1457,8 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         readTrack(file,currentTrack);
     }
 
-    Bar *cursorBar = tab->getV(0)->getV(0);
+    auto t1 =  tab->getV(0);
+    Bar *cursorBar = t1->getV(0);
 
     Beat *cursorBeat = 0;
 
