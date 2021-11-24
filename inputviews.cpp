@@ -65,8 +65,7 @@ void TunerInstance::setFreq(double newFreq)
     MasterView *master = (MasterView*)masterRepainter;
     GLabel *lab = (GLabel*)label;
 
-    stringExtended freqStr; freqStr << freq;
-    lab->setText(freqStr.c_str());
+    lab->setText(std::to_string(freq));
 
     master->pleaseRepaint();
 }
@@ -301,11 +300,7 @@ void PatternInput::keyevent(std::string press)
                              40,255,1,&ok);
 
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newBpm;
-            bpmValue->setText(sX.c_str());
-        }
+            bpmValue->setText(std::to_string(newBpm));
     }
 
     if (press=="newNum")
@@ -898,9 +893,7 @@ void TapRyView::keyevent(std::string press)
                              40,255,1,&ok);
         if (ok)
         {
-            stringExtended sX;
-            sX<<newBpm;
-            bpmLabel->setText(sX.c_str());
+            bpmLabel->setText(std::to_string(newBpm));
             getMaster()->SetButton(4,bpmLabel,"newBpm");
         }
     }
@@ -1016,7 +1009,6 @@ void TapRyView::onclick(int x1, int y1)
 
 
         clock_t timez = getTime();
-        //stringExtended sX;
         //sX<<"Click time "<<timez;
         //labStat->setText(sX.c_str());
 
@@ -1032,8 +1024,8 @@ void TapRyView::onclick(int x1, int y1)
         presses.push_back(newPair);
 
         //add value to vector or poly
-        stringExtended info;
-        info << "Presses "<<(int)presses.size()<<"; last- "<<timeNow;
+        std::string info=
+        "Presses " + std::to_string( presses.size() ) + "; last- " + std::to_string(timeNow);
 
         logger << info.c_str();
 
@@ -1184,8 +1176,8 @@ void RecordView::draw(Painter *painter)
         {
             if ((i%1000) == 0)
             {
-                stringExtended sX; sX<<i;
-                painter->drawText(localPosition,200-55-20-scaleShiftUp*10+300,sX.c_str());
+                painter->drawText(localPosition,200-55-20-scaleShiftUp*10+300,
+                    std::to_string(i).c_str());
                 ++scaleShiftUp; if (scaleShiftUp > 3)
                     scaleShiftUp = 0;
             }
@@ -1233,8 +1225,9 @@ void RecordView::draw(Painter *painter)
         }
 
 
-        stringExtended eStr; eStr <<lastELevel; int vShift = (i%5)*20;
-        painter->drawText(bpmDependentWindow*pseudoI/zoomCoef,400+vShift,eStr.c_str());
+        int vShift = (i%5)*20;
+        painter->drawText(bpmDependentWindow*pseudoI/zoomCoef,400+vShift,
+            std::to_string(lastELevel).c_str());
 
 
         int defRad = 3;
@@ -1251,8 +1244,8 @@ void RecordView::draw(Painter *painter)
         int noteBegin = waveItself.notes[i].noteBegin - toShift;
         double freq = waveItself.notes[i].freq;
 
-        stringExtended freqStr; freqStr<<freq;
-        freqStr.inside = freqStr.inside.substr(0,5);
+        std::string freqStr = std::to_string(freq);
+        freqStr = freqStr.substr(0,5);
 
         int miniVShift = (i%3)*30;
 
@@ -1345,69 +1338,50 @@ void RecordView::onclick(int x1, int y1)
                              "New zoom:",1,
                              1,1000,1,&ok);
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newZoom;
-            zoom->setText(sX.c_str());
-        }
+            zoom->setText(std::to_string(newZoom));
     }
 
     if (bpm->hit(x1,y1))
     {
         bool ok=false;
-        int newZoom = QInputDialog::getInt(0,"Input",
+        int newBpm = QInputDialog::getInt(0,"Input",
                              "New bpm:",120,
                              1,1000,1,&ok);
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newZoom;
-            bpm->setText(sX.c_str());
-        }
+            bpm->setText(std::to_string(newBpm));
+
     }
 
     if (eLevel1->hit(x1,y1))
     {
         bool ok=false;
-        int newZoom = QInputDialog::getInt(0,"Input",
+        int eLvl = QInputDialog::getInt(0,"Input",
                              "New e-level1:",500,
                              1,2500,1,&ok);
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newZoom;
-            eLevel1->setText(sX.c_str());
-        }
+            eLevel1->setText(std::to_string(eLvl));
     }
 
 
     if (eLevel3->hit(x1,y1))
     {
         bool ok=false;
-        int newZoom = QInputDialog::getInt(0,"Input",
+        int eLvl = QInputDialog::getInt(0,"Input",
                              "New e-level3:",500,
                              1,3000,1,&ok);
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newZoom;
-            eLevel3->setText(sX.c_str());
-        }
+            eLevel3->setText(std::to_string(eLvl));
     }
 
 
     if (eLevel2->hit(x1,y1))
     {
         bool ok=false;
-        int newZoom = QInputDialog::getInt(0,"Input",
+        int eLvl = QInputDialog::getInt(0,"Input",
                              "New e-level2:",500,
                              1,5000,1,&ok);
         if (ok)
-        {
-            stringExtended sX;
-            sX<<newZoom;
-            eLevel2->setText(sX.c_str());
-        }
+            eLevel2->setText(std::to_string(eLvl));
     }
 
     //ATTENTION - other function buttons blocked
@@ -1474,7 +1448,7 @@ void RecordView::onclick(int x1, int y1)
                                        QMessageBox::Cancel |QMessageBox::Escape);
                     //dialog.set
                     if (dialog.exec() == QMessageBox::Yes)
-                        return false; //escape
+                        return; //escape
 
                     //QMessageBox:: << "Default format not supported - trying to use nearest";
 
@@ -1491,7 +1465,7 @@ void RecordView::onclick(int x1, int y1)
                                        QMessageBox::Cancel |QMessageBox::Escape);
                     //dialog.set
                     if (dialog.exec() == QMessageBox::Yes)
-                        return false; //escape
+                        return; //escape
                 }
             }
 
@@ -1503,7 +1477,7 @@ void RecordView::onclick(int x1, int y1)
 
         #ifdef WIN32
             mciSendStringA("stop rec", 0, 0, 0);
-
+            //TODO
             stringExtended command;
             command<<"save recaudio \""<<getInvertedLocation()<<"rec.wav\"";
 

@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
     std::string userIdStd = userId.toStdString();
     userIdStd = globals.platform.substr(0,1) + userIdStd;
     setUserId(userIdStd);
-    stringExtended fullLine;
+    string Extended fullLine;
      //Function yet not ready because of old server long ago down
     if (CONF_PARAM("crashAutoSend")=="1") {
         QString crashName = getTestsLocation() + QString("crashs.glog");
