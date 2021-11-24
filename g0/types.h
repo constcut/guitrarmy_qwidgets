@@ -303,60 +303,6 @@ template <typename CT> class PolyPtr
 
 
 
-//ours strings abstraction
-
-class stringExtended
-{
-    //dont forget about separators - now its useless but then could help
-public:
-    std::string inside;
-    const char *c_str() { return inside.c_str(); }
-    int size() { return inside.size(); }
-
-    stringExtended& operator+=(const char *charStr);
-    stringExtended& operator+=(char *charStr);
-    stringExtended& operator+=(stringExtended &strEx);
-    stringExtended& operator+=(ul &ulongValue);
-    stringExtended& operator+=(long &longValue);
-    stringExtended& operator+=(double &doubleValue);
-    stringExtended& operator+=(std::string value);
-    //stringExtended& operator+= em prime object?
-
-    stringExtended& operator<<(const char *charStr);
-    stringExtended& operator<<(char *charStr);
-    stringExtended& operator<<(stringExtended &strEx);
-    stringExtended& operator<<(ul &ulongValue);
-    stringExtended& operator<<(long &longValue);
-    stringExtended& operator<<(double &doubleValue);
-    stringExtended& operator<<(int iValue);
-    stringExtended& operator<<(std::string value);
-
-    stringExtended& operator=(const char *charStr);
-    stringExtended& operator=(char *charStr);
-    stringExtended& operator=(stringExtended &strEx);
-    stringExtended& operator=(ul &ulongValue);
-    stringExtended& operator=(long &longValue);
-    stringExtended& operator=(double &doubleValue);
-    stringExtended& operator=(int intValue);
-    stringExtended& operator=(std::string value);
-
-    void push_constCharStr(const char *charStr);
-    void push_charStr(char *charStr);
-    void push_ul(ul&ulongValue);
-    void push_long(long&longValue);
-    void push_int(int&iValue);
-    void push_double(double& doubleValue);
-    void push_strEx(stringExtended&strEx);
-
-
-    ul pop_ul() {return 0;}
-    long pop_long() {return 0;}
-    double pop_double() {return 0.0;}
-
-
-    void clear() { inside.clear(); }
-};
-
 
 class TimeCosts
 {
