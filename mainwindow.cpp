@@ -1411,18 +1411,17 @@ void MainWindow::paintEvent(QPaintEvent *event)
     //defaultFont.setWeight();
     painter.setFont(defaultFont);
 
-    Painter abstractedPainer(&painter);
-
-    if (getChild())
-        abstractedPainer.fillRect(0,0,width(),height(),CONF_PARAM("colors.background"));
-    else
-    {
+    if (getChild()) {
+        //,CONF_PARAM("colors.background")
+        //painter.fillRect(0,0,width(),height()); //TODO
+    }
+    else {
 
     }
 
-    abstractedPainer.drawImage(0,0,"bg");
 
-    abstractedPainer.changeColor(CONF_PARAM("colors.default"));
+    //painter.drawImage(0,0,"bg"); //TODO
+    //painter.changeColor(CONF_PARAM("colors.default"));//TODO
 
 
     double scaleCoef = AConfig::getInstance()->getScaleCoef();
@@ -1434,11 +1433,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 
     if (getChild())
-    getChild()->draw(&abstractedPainer);
-    else
-    {
-         //center->draw(&abstractedPainer);
-    }
+    getChild()->draw(&painter);
 
     ///////////////////////////////////////
 

@@ -130,12 +130,12 @@ public:
     }
 
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
 
         if (openned)
         {
-            painter->fillRect(x,y,w,h,CONF_PARAM("colors.panBG"));
+            painter->fillRect(x,y,w,h,QColor(CONF_PARAM("colors.panBG").c_str()));
             painter->drawRect(x,y,w,h);
 
              //buttons
@@ -424,7 +424,7 @@ class GTrackPannel : public GPannel
         setTexts("view","edit");
     }
 
-    virtual void draw(Painter *painter)
+    virtual void draw(QPainter *painter)
     {
         GPannel::draw(painter);
 

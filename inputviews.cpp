@@ -83,7 +83,7 @@ void TunerInstance::setViews(void *mast, void *lab)
 
 ///=========================
 
-void PatternInput::draw(Painter *painter)
+void PatternInput::draw(QPainter *painter)
 {
     repeatLabel->draw(painter);
 
@@ -511,7 +511,7 @@ void TapRyView::setUI()
 
 }
 
-void TapRyView::draw(Painter *painter)
+void TapRyView::draw(QPainter *painter)
 {
     static byte firstDraw = 1;
 
@@ -1139,7 +1139,7 @@ void RecordView::loadCurrentFile()
     }
 }
 
-void RecordView::draw(Painter *painter)
+void RecordView::draw(QPainter *painter)
 {
 
     zoom->draw(painter);
@@ -1497,7 +1497,7 @@ void RecordView::onclick(int x1, int y1)
 
 
 
-void MorzeInput::draw(Painter *painter)
+void MorzeInput::draw(QPainter *painter)
 {
     createBut->draw(painter);
 

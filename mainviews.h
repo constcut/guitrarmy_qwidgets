@@ -84,7 +84,7 @@ protected:
     GView *getCurrenView() { return currentView; }
 
     MainView();
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void onclick(int x1, int y1);
     void ondblclick(int x1, int y1);
 
@@ -120,7 +120,7 @@ public:
         bot = new GLabel(50,200,";)","",false);
     }
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
         top->draw(painter);
         mid->draw(painter);
@@ -147,7 +147,7 @@ protected:
 public:
     ConfigView();
     //~ConfigView(){}
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void onclick(int x1, int y1);
     virtual void keyevent(std::string press);
 
@@ -209,7 +209,7 @@ public:
 
     void onclick(int x1, int y1);
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
         labelA->draw(painter);
         labelA2->draw(painter);
@@ -420,7 +420,7 @@ public:
 
     }
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
         setAllButtons();
 
@@ -601,7 +601,7 @@ public:
     }
     virtual ~ChordInput() {}
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {top->draw(painter);
     }
     void keyevent(std::string press){}
@@ -654,7 +654,7 @@ public:
     void changeMainValue(int combo, int newValue);
     void changeSubValue(int combo, int newValue);
 
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void keyevent(std::string press);
 };
 
@@ -690,7 +690,7 @@ public:
      delButton = new GLabel(630,35,"Delete");
     }
     virtual ~BendInput() {}
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void keyevent(std::string press);
 
     void onclick(int x1, int y1);

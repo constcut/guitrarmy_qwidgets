@@ -212,7 +212,7 @@ public:
 
     void setStatusSetter(MasterView *statSett) {statusSetter = statSett;}
 
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void onclick(int x1, int y1);
     void ondblclick(int x1, int y1);
     void ongesture(int offset, bool horizontal) ;

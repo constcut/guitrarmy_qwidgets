@@ -7,8 +7,7 @@
 #include "g0/aconfig.h"
 
 
-//#include <QPainter>
-#include "apainter.h"
+#include <QPainter>
 #include "athread.h"
 
 #include "g0/aconfig.h"
@@ -54,7 +53,7 @@ public:
     void setX(int newX) { x = newX; }
     void setY(int newY) { y = newY; }
 
-    virtual void draw(Painter *painter){ not_used(painter);} //virt
+    virtual void draw(QPainter *painter){ not_used(painter);} //virt
 
     virtual bool hit(int hX, int hY)
     {
@@ -91,10 +90,11 @@ public:
     {
     }
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
-        painter->drawImage(x,y,imageName);
-        //preload operation on refactoring
+       QImage *img = (QImage*) AConfig::getInstance()->imageLoader.getImage(imageName);
+       if (img)
+           painter->drawImage(x,y,*img);
     }
 
 };
@@ -116,7 +116,7 @@ public:
             colorPress = 0;
     }
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
         painter->drawRect(x,y,w,h);
 
@@ -191,7 +191,7 @@ public:
 
     std::string getPressSyn(){return pressSynonim;}
 
-    void draw(Painter *painter){
+    void draw(QPainter *painter){
 
         if (visible==false)
             return;
@@ -313,10 +313,10 @@ public:
 
     bool isChecked() { return checked; }
 
-    void draw(Painter *painter)
+    void draw(QPainter *painter)
     {
         if (checked)
-            painter->fillRect(x,y,w,h,CONF_PARAM("colors.curBar")); //5 some color
+            painter->fillRect(x,y,w,h,Qt::darkGray);//painter->fillRect(x,y,w,h,CONF_PARAM("colors.curBar")); //5 some color TODO?
 
         painter->drawRect(x,y,w,h);
     }

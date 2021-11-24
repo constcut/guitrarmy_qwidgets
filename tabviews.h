@@ -55,7 +55,7 @@ public:
     void setTab(Tab* point2Tab);// {pTab = point2Tab;}
     Tab* getTab() { return pTab; }
 
-     void draw(Painter *painter);
+     void draw(QPainter *painter);
 
      virtual void keyevent(std::string press);
 
@@ -183,7 +183,7 @@ public:
     TabView *getPa() { return tabParrent; }
     void setPa(TabView* tv) { tabParrent = tv; }
 
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
 
     void prepareThread(ul shiftTheCursor);
     void launchThread();
@@ -257,16 +257,16 @@ public:
     int getClickString(int y1);
     int getClickBeat(int x1);
 
-    void drawNote(Painter *painter, byte noteDur, byte dotted, byte durDet,
+    void drawNote(QPainter *painter, byte noteDur, byte dotted, byte durDet,
                   int x1, int y1);
 
-    void drawMidiNote(Painter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
+    void drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
                       int x1, int y1);
 
-    void drawEffects(Painter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff);
+    void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff);
 
 
-    void draw(Painter *painter); //from beat to beat
+    void draw(QPainter *painter); //from beat to beat
 
     void setShifts(int x1, int y1)
     {

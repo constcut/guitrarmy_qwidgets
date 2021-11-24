@@ -1,6 +1,7 @@
-#include "apainter.h"
+/*#include "apainter.h"
 
 #include <QTextCodec>
+
 
 APainter::APainter()
 {
@@ -288,3 +289,4 @@ void Painter::drawImage(int x1, int y1, std::string imageName)
 
     //src->drawImage();
 }
+*/

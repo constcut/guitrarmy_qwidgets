@@ -1,3 +1,4 @@
+/*
 #ifndef APAINTER_H
 #define APAINTER_H
 
@@ -88,7 +89,7 @@ public:
     /*
     {
         src->drawText(x1,y1,text);
-    } */
+    } * /
 
     void drawRect(int x1, int y1, int w1, int h1)
     {
@@ -139,3 +140,4 @@ public:
 };
 
 #endif // APAINTER_H
+*/

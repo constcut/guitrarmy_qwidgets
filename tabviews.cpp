@@ -214,7 +214,7 @@ void TabView::ongesture(int offset, bool horizontal)
     }
 }
 
-void TabView::draw(Painter *painter)
+void TabView::draw(QPainter *painter)
 {
     //statusLabel->draw(painter);
     //bpmLabel->draw(painter);
@@ -868,7 +868,7 @@ void TrackView::setUI()
 
 }
 
-void TrackView::draw(Painter *painter)
+void TrackView::draw(QPainter *painter)
 {
     Track *track1 = pTrack;
     ul trackLen = track1->len();
@@ -1084,7 +1084,7 @@ void TrackView::prepareThread(ul shiftTheCursor)
 
 
 ///////////Bars------------------------------
-void BarView::drawMidiNote(Painter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
+void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
                   int x1, int y1)
 {
     int xPoint = x1;
@@ -1177,7 +1177,7 @@ void BarView::drawMidiNote(Painter *painter, byte noteDur, byte dotted, byte dur
     yNote -= radiusShift;
 
     if (CONF_PARAM("TrackView.largeNotes")=="1")
-        painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius,"black"); //default circle
+        painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius,QColor("black")); //default circle
     else
     {
         painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius);
@@ -1283,7 +1283,7 @@ void BarView::drawMidiNote(Painter *painter, byte noteDur, byte dotted, byte dur
 }
 
 
-void BarView::drawNote(Painter *painter, byte noteDur, byte dotted, byte durDet,
+void BarView::drawNote(QPainter *painter, byte noteDur, byte dotted, byte durDet,
                        int x1, int y1)
 {
     int xPoint = x1;
@@ -1333,7 +1333,7 @@ void BarView::drawNote(Painter *painter, byte noteDur, byte dotted, byte durDet,
     {
         //Must get filled - in another manner
         if (CONF_PARAM("TrackView.largeNotes")=="1")
-            painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius,"black"); //default circle
+            painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius,QColor("black")); //default circle
         else
         {
             painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius);
@@ -1413,7 +1413,7 @@ BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
     { repEnd = true; w += 15; }
 }
 
-void BarView::draw(Painter *painter)
+void BarView::draw(QPainter *painter)
 {
     Bar *bar1 = pBar;
 
@@ -1434,12 +1434,12 @@ void BarView::draw(Painter *painter)
         if (selectorEnd == -1)
         {
             painter->fillRect(getX()+skipFromStart,getY(),
-                              getW()-skipFromStart,getH(),CONF_PARAM("colors.selection"));
+                              getW()-skipFromStart,getH(),QColor(CONF_PARAM("colors.selection").c_str()));
         }   //to the end
         else
         {
             painter->fillRect(getX()+skipFromStart,getY(),
-                              getW()-skipFromStart-skipFromEnd,getH(),CONF_PARAM("colors.selection"));
+                              getW()-skipFromStart-skipFromEnd,getH(),QColor(CONF_PARAM("colors.selection").c_str()));
         }
         isSelected = true;
 
@@ -1880,7 +1880,7 @@ void BarView::draw(Painter *painter)
     //w = (barLen+2)*inbarWidth;
 }
 
-void BarView::drawEffects(Painter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff)
+void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff)
 {
     if (eff->get(27))
     {

@@ -97,7 +97,7 @@ public:
         }
     }
 
-    virtual void draw(Painter *painter);
+    virtual void draw(QPainter *painter);
     virtual void onclick(int x1, int y1);
 
     void createBar();
@@ -174,7 +174,7 @@ public:
         barView = 0;
     }
 
-    void draw(Painter *painter);
+    void draw(QPainter *painter);
     void onclick(int x1, int y1);
 
     void createBar();
@@ -208,7 +208,7 @@ public:
     }
 
     virtual void keyevent(std::string keypress);
-    virtual void draw(Painter *painter);
+    virtual void draw(QPainter *painter);
     virtual void onclick(int x1, int y1);
 
     void playBar();
@@ -277,7 +277,7 @@ public:
     void loadCurrentFile();
 
 
-    virtual void draw(Painter *painter);
+    virtual void draw(QPainter *painter);
     virtual void onclick(int x1, int y1);
 
     virtual void keyevent(std::string press);

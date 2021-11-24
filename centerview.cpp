@@ -5,6 +5,7 @@
 #include <QTextCodec>
 
 #include <QDebug>
+#include <QColor>
 #include <QFileDialog>
 #include "g0/aexpimp.h"
 
@@ -1362,25 +1363,16 @@ void CenterView::paintEvent(QPaintEvent *event)
     //defaultFont.setWeight();
     painter.setFont(defaultFont);
 
-    Painter abstractedPainer(&painter);
 
     if (getChild())
-        abstractedPainer.fillRect(0,0,width(),height(),CONF_PARAM("colors.background"));
+        painter.fillRect(0,0,width(),height(),QColor(CONF_PARAM("colors.background")));
 
-    abstractedPainer.drawImage(0,0,"bg");
-    abstractedPainer.changeColor(CONF_PARAM("colors.default"));
+    painter.drawImage(0,0,"bg");
+    painter.changeColor(CONF_PARAM("colors.default"));
 
     double scaleCoef = AConfig::getInstance()->getScaleCoef();
 
-    int VType = getCurrentViewType();
-
-    if ((VType==1))
-    {
-       //scaleCoef += 0.5;
-    }
-
-    if (ownChild==0)
-    {
+    if (ownChild==0) {
         scaleCoef /= 2;
         if (scaleCoef < 0.0)
             scaleCoef = 0.25;
@@ -1390,8 +1382,6 @@ void CenterView::paintEvent(QPaintEvent *event)
     qreal scaleY = scaleCoef;
 
     painter.scale(scaleX,scaleY);
-    //painter.drawRect(0,0,geometry().width(),geometry().height());
-
 
     if (getChild())
     {
@@ -1412,13 +1402,13 @@ void CenterView::paintEvent(QPaintEvent *event)
     }
 
     if (ownChild==0)
-        abstractedPainer.drawText(10,10,"DOUBLE CLICK TO OPEN TRACK (ON PREVIEW OR BAR NUMBER)");
+        painter.drawText(10,10,"DOUBLE CLICK TO OPEN TRACK (ON PREVIEW OR BAR NUMBER)");
 
 
     if (getChild())
-    getChild()->draw(&abstractedPainer);
+        getChild()->draw(&painter);
     else
-        abstractedPainer.fillRect(0,0,getWidth(),getHeight(),"red");
+        painter.fillRect(0,0,getWidth(),getHeight(),"red");
 
 
     if (ownChild) ownChild->setVisible(false);
@@ -1484,7 +1474,7 @@ void CenterView::paintEvent(QPaintEvent *event)
 
 }
 
-void CenterView::draw(Painter *painter)
+void CenterView::draw(QPainter *painter)
 {
     if (getChild())
     getChild()->draw(painter);

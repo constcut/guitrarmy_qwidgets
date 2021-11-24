@@ -361,7 +361,7 @@ void MainView::keyevent(std::string press)
         }
 }
 
-void MainView::draw(Painter *painter)
+void MainView::draw(QPainter *painter)
 {
     int wi = getMaster()->getWidth();
     int hi = getMaster()->getHeight();
@@ -561,7 +561,7 @@ void ConfigView::onclick(int x1, int y1)
 }
 
 
-void ConfigView::draw(Painter *painter)
+void ConfigView::draw(QPainter *painter)
 {
     //labA->draw(painter);
     //labB->draw(painter);
@@ -848,7 +848,7 @@ void InfoView::onclick(int x1, int y1)
 
 //Bend View
 
-void BendInput::draw(Painter *painter)
+void BendInput::draw(QPainter *painter)
 {
     if (ptrToBend)
         top->setText("Bend is set!");
@@ -886,7 +886,7 @@ void BendInput::draw(Painter *painter)
                 painter->drawLine(prevX,prevY,localX,localY);
 
             prevX = localX; prevY = localY;
-            painter->drawEllipse(localX-3,localY-3,6,6,"red");
+            painter->drawEllipse(localX-3,localY-3,6,6,QColor("red"));
         }
         //logger << "Bend outpited";
     }
@@ -1060,7 +1060,7 @@ void BendInput::fillBend(int type, int height)
 
 //CHANGES
 
-void ChangesInput::draw(Painter *painter)
+void ChangesInput::draw(QPainter *painter)
 {
     top->draw(painter);
 
