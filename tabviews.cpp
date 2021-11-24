@@ -85,23 +85,18 @@ void TabView::setTab(Tab* point2Tab)
         currentTrack = 0;
         currentBar = 0;
 
-        stringExtended sX;
-        sX<<"bpm="<<pTab->getBPM();
-        bpmLabel->setText(sX.c_str());
+        bpmLabel->setText("bpm=" + std::to_string(pTab->getBPM()));
 
 
         for (ul i = 0; i < pTab->len(); ++i)
             addSingleTrack(pTab->getV(i));
 
 
-        stringExtended statusBar1,statusBar2;
-
-        statusBar1 << "Tab Name";
-        statusBar2 << "BPM = "<<pTab->getBPM();
-
+        std::string statusBar1,statusBar2;
+        statusBar1 = "Tab Name";
+        statusBar2 = "BPM = " + std::to_string(pTab->getBPM());
         getMaster()->setStatusBarMessage(1,statusBar1.c_str());
         getMaster()->setStatusBarMessage(2,statusBar2.c_str());
-
         getMaster()->setStatusBarMessage(0,"Tab was loaded",500);
     }
 
@@ -158,10 +153,10 @@ void TabView::onclick(int x1, int y1)
                     MainView *mainView = (MainView*)getMaster()->getFirstChild();
                     mainView->changeCurrentView(trackView);
 
-                    stringExtended statusBar1,statusBar2;
+                    std::string statusBar1,statusBar2;
 
-                    statusBar1 << pTab->getV(awaitTrack)->getName();
-                    statusBar2 << "bar "<<currentBar;
+                    statusBar1 = pTab->getV(awaitTrack)->getName();
+                    statusBar2 = "bar " + std::to_string( currentBar );
 
                     getMaster()->setStatusBarMessage(1,statusBar1.c_str());
                     getMaster()->setStatusBarMessage(2,statusBar2.c_str());
@@ -238,30 +233,22 @@ void TabView::draw(Painter *painter)
         for (ul i = 0 ; i < pTab->len(); ++i)
         {
            ul trackIndex = i + displayTrack;
-           if (trackIndex >= pTab->len()) break;
-
-           stringExtended trackVal;
-           trackVal<<(trackIndex+1)<<" "<<pTab->getV(trackIndex)->getName();
-
+           if (trackIndex >= pTab->len()) 
+            break;
+           std::string trackVal = std::to_string(trackIndex+1) +" " + pTab->getV(trackIndex)->getName();
            int pannelShift = getMaster()->getToolBarHeight();
-
-
            int yPos = (i+1)*30; //pannelShift+(i+2)*30;
-
            if (yPos > (yLimit-100))
                break;
-
            if (trackIndex==currentTrack)
                 painter->changeColor(CONF_PARAM("colors.curTrack"));
 
            painter->drawText(20,yPos,trackVal.c_str());
-
            //painter->drawEllipse(10,yPos,5,5);
            painter->drawRect(7,yPos-10,10,10);
 
            if (trackIndex==currentTrack)
                 painter->changeColor(CONF_PARAM("colors.default"));
-
 
            byte trackStat = pTab->getV(trackIndex)->getStatus();
 
@@ -276,38 +263,30 @@ void TabView::draw(Painter *painter)
            for (ul j = 0 ; j < tr->len(); ++j)
            {
                ul barIndex = j + displayBar;
-               if (barIndex >= tr->len()) break;
+               if (barIndex >= tr->len()) 
+                    break;
 
-               stringExtended sX;
-               sX<<(barIndex+1);
-
+               std::string sX = std::to_string(barIndex+1);
                Bar *cB= tr->getV(barIndex);
                if (cB->len() == 1)
                {
                    Beat *beat = cB->getV(0);
                    Note *note = 0;
-
                    if (beat->len())
                     note = beat->getV(0);
-
                    if (note == 0)
-                      sX<<"*";
-
+                      sX+="*";
                }
 
                int reprize = cB->getRepeat();
-
                std::string markerText;
                ul markerColor;
-
                cB->getGPCOMPMarker(markerText,markerColor);
-
-               bool isMarkerHere = markerText.empty()==false;
+               bool isMarkerHere = markerText.empty() == false;
 
                 //hi light color bar
                if (barIndex == currentBar)
                    painter->fillRect(200+30*j,yPos,20,20,CONF_PARAM("colors.curBar"));
-
 
                painter->drawText(200+30*j,yPos+10,sX.c_str());
 
@@ -316,20 +295,20 @@ void TabView::draw(Painter *painter)
                {
                    if (reprize)
                    {
-                       stringExtended rep;
+                       std::string rep;
 
                        if (reprize == 1)
-                           rep<<"|:";
+                           rep = "|:";
                        if (reprize == 2)
                        {
                            byte repTimes = cB->getRepeatTimes();
                            if (repTimes != 2)
-                               rep <<repTimes;
+                               rep += std::to_string(repTimes);
 
-                           rep<<":|";
+                           rep += ":|";
                        }
                        if (reprize == 3)
-                           rep<<":|:";
+                           rep = ":|:";
 
                        painter->drawText(200+30*j,80-60,rep.c_str());
                    }
@@ -349,16 +328,13 @@ void TabView::draw(Painter *painter)
 
            }
 
-           stringExtended sX;
-           sX << tr->len();
-
+           std::string sX = std::to_string(tr->len());
            int border = getMaster()->getWidth()-20;
-
            painter->drawText(border,10+yPos,sX.c_str());
 
            sX.clear();
            byte vol =  tr->getVolume();//pTab->GpCompMidiChannels[port*chan].volume; //tr->getVolume();
-           sX<<"vol "<<vol;
+           sX = "vol " + std::to_string(vol);
 
 
            painter->drawText(70,10+yPos,sX.c_str());
@@ -366,16 +342,16 @@ void TabView::draw(Painter *painter)
            sX.clear();
            byte pan =  tr->getPan();//pTab->GpCompMidiChannels[port*chan].balance;//tr->getPan();
            int intPan = pan - 7;
-           sX <<"pan "<<intPan;
+           sX = "pan " + std::to_string(intPan);
            painter->drawText(110,10+yPos,sX.c_str());
 
            sX.clear();
            byte ins =  tr->getInstrument();//pTab->GpCompMidiChannels[port*chan].instrument;//tr->getPan();
 
            if (tr->isDrums() == false)
-            sX <<ins<<"i";
+            sX = std::to_string(ins) + "i";
            else
-               sX<<"d"<<ins;
+               sX ="d" + std::to_string(ins);
 
 
            painter->drawText(170,10+yPos,sX.c_str());
@@ -1248,11 +1224,7 @@ void BarView::drawMidiNote(Painter *painter, byte noteDur, byte dotted, byte dur
         painter->drawLine(xPoint+noteTail,yPoint-note32*nU+yNote,xPoint+noteTailEnd,yPoint-note32*nU+yNote-3); //flow 4 (6)
 
     if (durDet)
-    {
-        stringExtended sX;
-        sX << durDet;
-        painter->drawText(xPoint+6,yPoint+5,sX.c_str());
-    }
+        painter->drawText(xPoint+6,yPoint+5,std::to_string(durDet).c_str());
 
     //DRAW LINE AS ITERATION
 
@@ -1393,14 +1365,10 @@ void BarView::drawNote(Painter *painter, byte noteDur, byte dotted, byte durDet,
         painter->drawLine(xPoint+noteTail,yPoint-note32*nU,xPoint+noteTailEnd,yPoint-note32*nU); //flow 4 (6)
 
     if (durDet)
-    {
-        stringExtended sX;
-        sX << durDet;
-        painter->drawText(xPoint+6,yPoint+5,sX.c_str());
-    }
+        painter->drawText(xPoint+6,yPoint+5,std::to_string(durDet).c_str());
 }
 
-BarView::BarView(Bar *b,int nstr, int barNum=-1): //stringWidth(12),inbarWidth(20),
+BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
     pBar(b),xShift(0),yShift(0),nStrings(nstr),cursor(-1),stringCursor(-1)
   ,barNumber(barNum),sameSign(false)
 {
@@ -1484,9 +1452,9 @@ void BarView::draw(Painter *painter)
     if (sameSign == false)
     {
         //SKIP in another mode
-        stringExtended numVal,denVal;
-        numVal<<bar1->getSignNum();
-        denVal<<bar1->getSignDenum();
+        std::string numVal,denVal;
+        numVal = std::to_string( bar1->getSignNum() );
+        denVal = std::to_string( bar1->getSignDenum() );
 
         //Paint properly - not in signs!!!
         int repeat = pBar->getRepeat();
@@ -1517,8 +1485,7 @@ void BarView::draw(Painter *painter)
 
     if (barNumber!=-1)
     {
-        stringExtended numberLabel;
-        numberLabel<<(barNumber+1);
+        std::string numberLabel = std::to_string(barNumber + 1);
         int xMiniSHift = 0;
         if ((barNumber+1) >= 10)
             xMiniSHift -= 5;
@@ -1554,7 +1521,7 @@ void BarView::draw(Painter *painter)
         for (int l=0; l<2; ++l)
         painter->drawLine(toBegin+cX+l,cY+stringWidth/2,toBegin+cX+l,cY+amountStr*stringWidth-stringWidth/2);
 
-        stringExtended repCount; repCount << bar1->getRepeatTimes();
+        std::string repCount =  std::to_string(bar1->getRepeatTimes());
         painter->drawText(toBegin+cX-9,cY+stringWidth*2-3,repCount.c_str());
         painter->drawEllipse(toBegin+cX-9,cY+stringWidth*2,3,3); //default color fill refact?
         painter->drawEllipse(toBegin+cX-9,cY+stringWidth*5,3,3);
@@ -1649,7 +1616,7 @@ void BarView::draw(Painter *painter)
                 bool ghostNote = curNote->effPack.get(21);
                 bool harmonics = curNote->effPack.get(14);
 
-                stringExtended noteVal;
+                std::string noteVal;
 
                 byte noteState = curNote->getState();
 
@@ -1658,20 +1625,18 @@ void BarView::draw(Painter *painter)
                     if ((noteState==2))
 
                     {
-                        noteVal <<"_"<<curNote->getFret();
+                        noteVal = "_" + std::to_string( curNote->getFret() );
                     }
                     else
-                        noteVal<<curNote->getFret();
+                        noteVal = std::to_string( curNote->getFret() );
                 }
                 else
-                    noteVal<<"x"; //x note
+                    noteVal = "x"; //x note
 
-                if (ghostNote)
-                {
-                    stringExtended sX;
-                    sX << "("<<noteVal<<")";
+                if (ghostNote) {
+                    std::string sX ="(" +  noteVal + ")";
                     noteVal.clear();
-                    noteVal<<sX.c_str();
+                    noteVal = sX.c_str();
                 }
 
                 int miniShift = inbarWidth/2;
@@ -1766,15 +1731,14 @@ void BarView::draw(Painter *painter)
         }
 
 
-        stringExtended durVal;
-        durVal << curBeat->getDuration();
+        std::string durVal = std::to_string(curBeat->getDuration());
 
         if (curBeat->getDotted())
-            durVal << ".";
+            durVal += ".";
 
         byte trump = curBeat->getDurationDetail();
         if (trump)
-            durVal <<"["<<trump;
+            durVal += "[" + std::to_string( trump );
 
 
         //painter->drawText(cX+10+i*inbarWidth,cY+stringWidth*(amountStr+1), // downerdurVal.c_str());
