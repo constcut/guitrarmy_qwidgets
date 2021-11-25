@@ -14,7 +14,6 @@
 
 
 #define logger qDebug()
-#define LOG(m)
 //TODO
 
 void changeColor(const std::string& color, QPainter* src);
@@ -989,7 +988,7 @@ void CenterView::pushForceKey(std::string keyevent)
 {
     if (keyevent.empty()==false)
     {
-        LOG( << "Push force '"<<keyevent<<"' size="<<(int)keyevent.size());
+        qDebug() << "Push force '" << keyevent.c_str() << "' size="<<(int)keyevent.size();
         //for (int i = 0; i < keyevent.size(); ++i)
         //     audio_logger << ".[" << i << "] = " << (int)(keyevent[i]);
     }
@@ -1030,7 +1029,7 @@ void CenterView::pushForceKey(std::string keyevent)
             type = type.substr(0,type.size()-1);
             fileName = fileName.substr(0,fileName.find(" : "));
 
-            LOG( << "'"<<type.c_str()<<"' and '"<<fileName.c_str()<<"' = "<<lineCount);
+            qDebug() << "'"<<type.c_str()<<"' and '"<<fileName.c_str()<<"' = "<<lineCount;
 
             ++lineCount;
             GTabLoader tabLoader;
@@ -1041,7 +1040,7 @@ void CenterView::pushForceKey(std::string keyevent)
                 {
                     tabLoader.open(fileName);
                     Tab *tab = tabLoader.getTab();
-                    LOG( <<"OK!");
+                    qDebug() <<"OK!";
                     delete tab;
                     ++goodTest;
                 }
@@ -1053,7 +1052,7 @@ void CenterView::pushForceKey(std::string keyevent)
             }
         }
 
-        LOG( << "Good "<<goodTest<<"; bad "<<badTests);
+        qDebug() << "Good "<<goodTest<<"; bad "<<badTests;
 
 
         baseFile.close();
@@ -1123,7 +1122,7 @@ void CenterView::pushForceKey(std::string keyevent)
 
             if (i%100 == 0)
             {
-                LOG( <<"For "<<i<<" there was "<<fullCount);
+                qDebug() <<"For "<<i<<" there was "<<fullCount;
             }
 
             if (fileHead[1] == 'F' &&
@@ -1163,7 +1162,7 @@ void CenterView::pushForceKey(std::string keyevent)
         }
 
         baseFile.close();
-        LOG( << "Ended base file ");
+        qDebug() << "Ended base file ";
     }
 
     if (keyevent=="openPannel")

@@ -23,7 +23,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 #include <fstream>
@@ -190,7 +190,7 @@ void TrackView::reverseCommand(SingleCommand &command)
             if (addition == 0)
                 break;
 
-            LOG( << "Addition addr "<<(int)(addition));
+            qDebug() << "Addition addr "<<(addition);
 
             pTrack->insertBefore(addition,barN);
         }
@@ -1128,7 +1128,7 @@ void TrackView::keyevent(std::string press)
             pTrack->connectAll();
             clock_t afterT = getTime();
             int diffT = afterT - beforeT;
-            LOG( <<"Repair chains "<<diffT);
+            qDebug() <<"Repair chains "<<diffT;
             Tab *tab = tabParrent->getTab();
             tab->connectTracks();
             MidiFile generatedMidi;
@@ -1148,7 +1148,7 @@ void TrackView::keyevent(std::string press)
             clock_t after2T = getTime();
             diffT = after2T - afterT;
             diffT /= (CLOCKS_PER_SEC/1000);
-            LOG( <<"Generate midi "<<diffT);
+            qDebug() <<"Generate midi "<<diffT;
 
             MidiEngine::closeDefaultFile();
             std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
@@ -1158,7 +1158,7 @@ void TrackView::keyevent(std::string press)
             if (!outFile2.is_open())
                 logger << "Failed to open out file :(";
             else
-                LOG( <<"File opened " << fullOutName.c_str());
+                qDebug() <<"File opened " << fullOutName.c_str();
 
             generatedMidi.writeStream(outFile2);
             outFile2.close();
@@ -1911,7 +1911,7 @@ void TabView::keyevent(std::string press)
             if (!outFile.is_open())
                 logger << "Failed to open out file :(";
             else
-                LOG( <<"File opened "<<fullOutName.c_str(););
+                qDebug() <<"File opened "<<fullOutName.c_str();
 
             generatedMidi.writeStream(outFile);
             outFile.close();
@@ -2401,7 +2401,7 @@ void TabView::keyevent(std::string press)
             if (!outFile2.is_open())
                 logger << "Failed to open out file :(";
             else
-                LOG( <<"File opened "<<fullOutName.c_str());
+                qDebug() <<"File opened "<<fullOutName.c_str();
 
 
             generatedMidi.writeStream(outFile2);
@@ -2474,7 +2474,7 @@ void TabView::keyevent(std::string press)
             statusLabel->setText("failed to open generated");
         }
         ul outFileSize2 = generatedMidi.writeStream(outFile2);
-        LOG( << "File wroten. " << outFileSize2 << " bytes. ");
+        qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
         outFile2.close();
         press = "p"; //autoplay
     }
@@ -2495,7 +2495,7 @@ void TabView::keyevent(std::string press)
             statusLabel->setText("failed to open generated");
         }
         ul outFileSize2 = generatedMidi.writeStream(outFile2);
-        LOG( << "File wroten. " << outFileSize2 << " bytes. ");
+        qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
         outFile2.close();
         generatedMidi.printToStream(std::cout);
         statusLabel->setText("generation done. p for play");

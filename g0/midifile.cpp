@@ -15,7 +15,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO logs turned off yet
 
 
@@ -67,7 +67,7 @@ ul VariableInt::readStream(std::ifstream & ifile)
 		byte valueByte = lastByte & 127;
 		this->add(valueByte);
 
-        if (midiLog)  LOG( << "V[" << totalBytesRead << "] value = " << valueByte);
+        if (midiLog)  qDebug() << "V[" << totalBytesRead << "] value = " << valueByte;
 
 		if (lastByte & 128)
         {
@@ -145,7 +145,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 
 		this->metaStore.metaLen = metaLength;
 
-        if (midiLog)  LOG( << "Meta type = " << metaEvType << " to skip - " << bytesToSkip);
+        if (midiLog)  qDebug() << "Meta type = " << metaEvType << " to skip - " << bytesToSkip;
 
 		byte bBufer;
 
@@ -162,7 +162,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 	{
 
 		int evValue = p00;
-        if (midiLog)  LOG( << "Not meta event. value = " << evValue);
+        if (midiLog)  qDebug() << "Not meta event. value = " << evValue;
 
         ifile.read((char*)&p1, 1);
 		totalRead += 1;
@@ -186,7 +186,8 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 		int param1 = p1;
 		int param2 = p2;
 
-        if (midiLog)  LOG( << " Event# " << eventType << "; midiChan# " << midiChannel << "; p1 = " << param1 << "; p2 = " << param2);
+        if (midiLog)  qDebug() << " Event# " << eventType << "; midiChan# "
+            << midiChannel << "; p1 = " << param1 << "; p2 = " << param2;
 
         //if (eventType == 0) ; //just a reminder of system events
 
@@ -215,11 +216,11 @@ bool MidiFile::readStream(std::ifstream & ifile)
 	}
 	// debug output header
 	// init number of trackds ???
-    if (midiLog)  LOG( << "MidiHeader filled : " << midiHeader.chunkId);
-    if (midiLog)  LOG( << " ch size: " << midiHeader.
-        chunkSize << "; tracks n:" << midiHeader.nTracks);
-    if (midiLog)  LOG( << " time devision: " << midiHeader.
-        timeDevision << "; ftype:" << midiHeader.formatType);
+    if (midiLog)  qDebug() << "MidiHeader filled : " << midiHeader.chunkId;
+    if (midiLog)  qDebug() << " ch size: " << midiHeader.
+        chunkSize << "; tracks n:" << midiHeader.nTracks;
+    if (midiLog)  qDebug() << " time devision: " << midiHeader.
+        timeDevision << "; ftype:" << midiHeader.formatType;
 	// some special check like size == 0;
     // end of debug, cover under the if (midiLog)  log operations
 
@@ -229,20 +230,20 @@ bool MidiFile::readStream(std::ifstream & ifile)
 			//REFACTORING-NOTICE: move to MidiTrack class
 			
             // to if (midiLog)  logging
-            if (midiLog)  LOG( << "Reading track " << i);
+            if (midiLog)  qDebug() << "Reading track " << i;
 
             ifile.read((char*)getV(i)->trackHeader.chunkId, 4);
             getV(i)->trackHeader.chunkId[4] = 0;
 
             // to if (midiLog)  logging
-            if (midiLog)  LOG( << "Track " << i << " header " << getV(i)->trackHeader.chunkId);
+            if (midiLog)  qDebug() << "Track " << i << " header " << getV(i)->trackHeader.chunkId;
 
 			ul trackSize = 0;
             ifile.read((char*)&trackSize, 4);
             reverseEndian(&trackSize, 4);
 
             // to if (midiLog)  logging
-            if (midiLog)  LOG( << "Size of track " << trackSize);
+            if (midiLog)  qDebug() << "Size of track " << trackSize;
 
             getV(i)->trackHeader.trackSize = trackSize;
 			//memcpy for header chunkie
@@ -256,10 +257,10 @@ bool MidiFile::readStream(std::ifstream & ifile)
                 ul signalBytesRead = singleSignal->readStream(ifile);
 				totalRead += signalBytesRead;
                 getV(i)->add(singleSignal);
-                if (midiLog)  LOG( << "Cycle of events. Read " << totalRead << " of " << trackSize);
+                if (midiLog)  qDebug() << "Cycle of events. Read " << totalRead << " of " << trackSize;
 			}
 
-            if (midiLog)  LOG( <<"Track reading finished. "<<totalRead<<" from "<<trackSize);
+            if (midiLog)  qDebug() <<"Track reading finished. "<<totalRead<<" from "<<trackSize;
 
 		}//cycle  for of tracks
 
@@ -493,7 +494,7 @@ bool MidiFile::calculateHeader(bool skip)
 {
      ul calculatedTracks = this->len();
      //NOTE this will work only with previusly loaded file
-     if (midiLog)  LOG( << "Calculating headers "<<calculatedTracks<<"-tracks.");
+     if (midiLog)  qDebug() << "Calculating headers "<<calculatedTracks<<"-tracks.";
      midiHeader.nTracks = calculatedTracks; //NOW PUSED
 
      //and here we fill header
@@ -524,8 +525,8 @@ bool MidiTrack::calculateHeader(bool skip)
         calculatedSize += getV(i)->calcSize(skip);
     }
 
-    if (midiLog)  LOG( <<"Calculating track size : "<<calculatedSize);
-    if (midiLog)  LOG( <<"Previously stored : "<<trackHeader.trackSize);
+    if (midiLog)  qDebug() <<"Calculating track size : "<<calculatedSize;
+    if (midiLog)  qDebug() <<"Previously stored : "<<trackHeader.trackSize;
 
     trackHeader.trackSize=calculatedSize;//NOW PUSED
 
@@ -653,7 +654,7 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, ul timeShift):byte0(b0),param1
 
 void MidiTrack::pushChangeInstrument(byte newInstr, byte channel, ul timeShift)
 {
-    if (midiLog)  LOG( << "Change instrument "<<newInstr<<" on CH "<<channel);
+    if (midiLog)  qDebug() << "Change instrument "<<newInstr<<" on CH "<<channel;
 
     MidiSignal *instrumentChange=new MidiSignal(0xC0|channel,newInstr,0,timeShift);
 
@@ -692,7 +693,7 @@ void MidiTrack::pushMetrSignature(byte num, byte den,ul timeShift=0, byte metr, 
 
 void MidiTrack::pushChangeBPM(int bpm, ul timeShift)
 {
-    if (midiLog)  LOG( << "We change midi temp to "<<bpm); //attention
+    if (midiLog)  qDebug() << "We change midi temp to "<<bpm; //attention
 
     MidiSignal *changeTempEvent=new MidiSignal(0xff,81,0,timeShift);
 
@@ -801,7 +802,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
     short rAccum = 0;
 
     if (midiLog)
-    LOG( << "Bend rOffset="<<rOffset);
+    qDebug() << "Bend rOffset="<<rOffset;
 
     //something did changed after moving to more own format of bends
 
@@ -814,7 +815,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
         ul shiftH = curH - lastH;
 
         if (midiLog)
-        LOG( << "AbsShift="<<shiftAbs<<"; HShift="<<shiftH);
+        qDebug() << "AbsShift="<<shiftAbs<<"; HShift="<<shiftH;
 
         if (shiftH != 0)
         {
@@ -822,13 +823,13 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
             byte curShift = 64+(curH*32)/4; //next
 
             if (midiLog)
-            LOG( <<"lastShiftPitch="<<lastShift<<"; curShiftPitch="<<curShift);
+            qDebug() <<"lastShiftPitch="<<lastShift<<"; curShiftPitch="<<curShift;
 
             double rhyStep = (shiftAbs*rOffset)/600.0; //10 steps
             double pitchStep = (curShift-lastShift)/10.0;
 
             if (midiLog)
-            LOG( <<"rStep="<<rhyStep<<"; rAccum="<<rAccum<<"; pSh="<<pitchStep);
+            qDebug() <<"rStep="<<rhyStep<<"; rAccum="<<rAccum<<"; pSh="<<pitchStep;
 
             MidiSignal *mSignalBendOpen=new MidiSignal(0xE0 |channel,0,lastShift, rAccum);
             this->add(mSignalBendOpen);
@@ -854,9 +855,9 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
                 this->add(mSignalBend);
 
                 if (midiLog)
-                LOG( <<"rD="<<thisStep<<"; sD="<<thisShift<<" shiftDone="<<shiftDone);
+                qDebug() <<"rD="<<thisStep<<"; sD="<<thisShift<<" shiftDone="<<shiftDone;
                 if (midiLog)
-                LOG( <<"rOff="<<thisROffset<<"; midiSh="<<thisMidiShift);
+                qDebug() <<"rOff="<<thisROffset<<"; midiSh="<<thisMidiShift;
 
             }
 
@@ -879,7 +880,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
     this->add(mSignalBendClose);
 
     if (midiLog)
-    LOG( << "done");
+    qDebug() << "done";
 }
 
 void MidiTrack::pushTremolo(short int rOffset)
@@ -981,14 +982,14 @@ short int MidiTrack::calcRhythmDetail(byte RDValue, short int rhythmOffset)
 
 byte MidiTrack::calcMidiPanoramGP(byte pan)
 {
-    if (midiLog)  LOG( << "Panoram value = "<<pan);
+    if (midiLog)  qDebug() << "Panoram value = "<<pan;
     byte midiPanoram = pan*8;
     if (midiPanoram>=128) midiPanoram=128;
     return midiPanoram;
 }
 byte MidiTrack::calcMidiVolumeGP(byte vol)
 {
-    if (midiLog)  LOG( <<"Volume is "<<vol);
+    if (midiLog)  qDebug() <<"Volume is "<<vol;
     byte midiVolume = vol*8;
     if (midiVolume >= 128) midiVolume=128;
     return midiVolume;
@@ -1520,7 +1521,7 @@ void MidiTrack::closeLetRing(byte stringN, byte channel)
 {
     if (stringN > 8)
     {
-        LOG( <<"String issue "<<stringN);
+        qDebug() <<"String issue "<<stringN;
         return;
     }
 
@@ -1538,7 +1539,7 @@ void MidiTrack::openLetRing(byte stringN, byte midiNote, byte velocity, byte cha
 {
     if (stringN > 8)
     {
-        LOG( <<"String issue "<<stringN);
+        qDebug() <<"String issue "<<stringN;
         return;
     }
 
@@ -1766,7 +1767,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
 
     clock_t after2T = getTime();
     int diffT = after2T - afterT;
-    LOG( <<"File pre-generation "<<diffT);
+    qDebug() <<"File pre-generation "<<diffT;
 
     //Main generation
 

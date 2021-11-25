@@ -8,7 +8,7 @@ bool tabLog = false;
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 #include <algorithm>
@@ -143,7 +143,7 @@ EffectsPack Note::getEffects()
              case 1: addition=16; break;
              case 0: addition=32; break;
              default:
-             if (tabLog)  LOG(<<"Shit in duration "<<duration);
+             if (tabLog)  qDebug()<<"Shit in duration "<<duration;
          }
 
          addition *=2; //dots on 32
@@ -163,8 +163,8 @@ EffectsPack Note::getEffects()
 
          //recalculations for addition
           num+=addition;
-         if (tabLog)  LOG(<<"Addition is "<<addition<<"; det= "<<detail
-              <<" dur= "<<duration<<" full "<<num<<"; dot "<<byteDote);
+         if (tabLog)  qDebug()<<"Addition is "<<addition<<"; det= "<<detail
+              <<" dur= "<<duration<<" full "<<num<<"; dot "<<byteDote;
      }
 
      //decre
@@ -313,12 +313,12 @@ EffectsPack Note::getEffects()
             int exceedAbs = usedAbs - barAbs;
 
             if (tabLog)
-            LOG( << "EXCEED abs "<<exceedAbs <<" localAbs "<<localAbs<<" Ind "<<completeIndex);
+            qDebug() << "EXCEED abs "<<exceedAbs <<" localAbs "<<localAbs<<" Ind "<<completeIndex;
 
             short newNoteAbs = localAbs - exceedAbs;
 
             if (tabLog)
-            LOG( << "New note "<<newNoteAbs);
+            qDebug() << "New note "<<newNoteAbs;
 
             if (newNoteAbs > 10)
                 lastAbs = newNoteAbs;
@@ -394,7 +394,7 @@ EffectsPack Note::getEffects()
           ,++localInd)
      {
         if (tabLog)
-         LOG( << "ALTRAY Bar ptr "<<(int)barI);
+         qDebug() << "ALTRAY Bar ptr "<<(int)barI;
         if (barI->getAltRepeat() != 0)
             currentAlt = barI->getAltRepeat();
 
@@ -534,7 +534,7 @@ EffectsPack Note::getEffects()
                     timeLoopIndexStore.push_back(endIndex);
                     //POSSIBLE THERE would be ISSUE - hard test it
                     if (tabLog)
-                    LOG( << "Tail begin=0, pre tail=1?; attention");
+                    qDebug() << "Tail begin=0, pre tail=1?; attention";
                 }
             }
      }
@@ -576,7 +576,7 @@ EffectsPack Note::getEffects()
     ul tailBeginIndex=0;
 
     if (tabLog)
-        LOG( << "Start connecting time-loop ");
+        qDebug() << "Start connecting time-loop ";
 
     //THERE IS AUTO SET - to check new way of setting tails:
     /*
@@ -734,7 +734,7 @@ EffectsPack Note::getEffects()
     }
 
     if (tabLog)
-    LOG( << "TIME LOOP size is "<<(int)timeLoop.len());
+    qDebug() << "TIME LOOP size is "<<(int)timeLoop.len();
 
     return timeLoop.len();
  }
@@ -745,7 +745,7 @@ EffectsPack Note::getEffects()
  ul Track::connectBars()
  {
      if (tabLog)
-         LOG( <<"ConnectingBars "<<(int)len()) ;
+         qDebug() <<"ConnectingBars "<<(int)len() ;
 
      if (len() == 0)
          return 0;
@@ -792,7 +792,7 @@ EffectsPack Note::getEffects()
     ul fullCount=0;
 
     if (tabLog)
-        LOG( <<"ConnectingBeats");
+        qDebug() <<"ConnectingBeats";
 
 
     for (ul barI = 0; barI < trackLen; ++barI)
@@ -812,7 +812,7 @@ EffectsPack Note::getEffects()
                 ++fullCount;
             }
             else
-                LOG( <<"Issue connecting beats");
+                qDebug() <<"Issue connecting beats";
         }
 
         if (barI+1 != trackLen)
@@ -824,7 +824,7 @@ EffectsPack Note::getEffects()
 
             /*
 
-            LOG( << "Next len "<<(int)nextBar->len()<<
+            qDebug() << "Next len "<<(int)nextBar->len()<<
                       "Cur len "<<(int)curBar->len()<<" i "<<barI)
 
             logger << "-";
@@ -987,8 +987,8 @@ EffectsPack Note::getEffects()
                 {
                     byte prevFret = prevNote->getFret();
                     if (tabLog)
-                    LOG( << "Prev found "<<prevNote->getStringNumber()<<
-                           " "<<prevFret);
+                    qDebug() << "Prev found "<<prevNote->getStringNumber()<<
+                           " "<<prevFret;
 
                     //curBeat
 
@@ -1019,7 +1019,7 @@ EffectsPack Note::getEffects()
 
 
             if (tabLog)
-                LOG( <<stringN<<"ZFret "<<nowFret<<"; newState= "<<newNoteState<<"; oldS= "<<noteState);
+                qDebug() <<stringN<<"ZFret "<<nowFret<<"; newState= "<<newNoteState<<"; oldS= "<<noteState;
 
 
             //if (curNote != 0)
@@ -1041,9 +1041,9 @@ EffectsPack Note::getEffects()
     }
 
     if (tabLog)
-    LOG( << "Connect notes done "<<count<<"; S1="<<notesCount[1]<<
+    qDebug() << "Connect notes done "<<count<<"; S1="<<notesCount[1]<<
            "; S2="<<notesCount[2]<<"; S3="<<notesCount[3]<<"; S4="<<notesCount[4]<<
-           "; S5="<<notesCount[5]<<"; S6="<<notesCount[6]);
+           "; S5="<<notesCount[5]<<"; S6="<<notesCount[6];
 
    return count;
  }
@@ -1051,7 +1051,7 @@ EffectsPack Note::getEffects()
  void Track::connectAll()
  {
      if (tabLog)
-     LOG( <<"Connection initiated for track "<<name.c_str());
+     qDebug() <<"Connection initiated for track "<<name.c_str();
 
      connectBars();
      connectBeats(); //uncomment for
@@ -1059,7 +1059,7 @@ EffectsPack Note::getEffects()
      connectTimeLoop();
 
      if (tabLog)
-     LOG( <<"Connection finished for track "<<name.c_str());
+     qDebug() <<"Connection finished for track "<<name.c_str();
 
      return;
  }
