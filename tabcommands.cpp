@@ -34,7 +34,7 @@ void TrackView::reverseCommand(SingleCommand &command)
     byte value = command.getValue();
     byte value2 = command.getValue2();
 
-    byte trackN = command.getTrackNum();
+    //byte trackN = command.getTrackNum();
 
     int barN = command.getBarNum();
     int beatN = command.getBeatNum();
@@ -84,7 +84,7 @@ void TrackView::reverseCommand(SingleCommand &command)
     {
         if (command.storedNotes)
         {
-            for (int i = 0; i < command.storedNotes->size(); ++i)
+            for (size_t i = 0; i < command.storedNotes->size(); ++i)
             {
                 Note *note = command.storedNotes->operator [](i);
                 pTrack->getV(barN)->getV(beatN)->add(note);
@@ -239,7 +239,7 @@ void TrackView::reverseCommand(SingleCommand &command)
             }
             else
             {
-                int indexInBar = -1;
+                //int indexInBar = -1;
 
                 while(curBeat->getParent() == lastPa)
                 {
@@ -701,13 +701,9 @@ void TrackView::keyevent(std::string press)
             if (cursor)
             {
                 --cursor;
-
                 if (cursor < displayIndex)
                     displayIndex = cursor;
-
-                    cursorBeat = pTrack->getV(cursor)->len()-1;
-
-
+                   cursorBeat = pTrack->getV(cursor)->len()-1;
             }
         }
         else
@@ -1434,7 +1430,7 @@ return;
 
         if (getMaster())
             getMaster()->pushForceKey("chord_view");
-            return;
+        return;
     }
     if (press == "text")
     {
@@ -1457,12 +1453,9 @@ return;
     if (press == "changes")
     {
         Beat *beat = pTrack->getV(cursor)->getV(cursorBeat);
-
         ChangesInput::setPtrBeat(beat);
-
-
-    if (getMaster())
-        getMaster()->pushForceKey("change_view");
+        if (getMaster())
+            getMaster()->pushForceKey("change_view");
         return;
     }
     if (press == "fing")
@@ -1731,7 +1724,7 @@ return;
                     else if (bars == AClipboard::current()->getBarIndex())
                     {
                         //first
-                        for (int beats = AClipboard::current()->getBeatIndex();
+                        for (size_t beats = AClipboard::current()->getBeatIndex();
                              beats < origin->len(); ++beats)
                         {
                             Beat *additionBeat=new Beat();
@@ -1851,7 +1844,7 @@ void TabView::keyevent(std::string press)
         if (ok)
         {
             //how to make undo? list of index old num old denum?
-            for (int i = currentBar; i < pTab->getV(0)->len(); ++i)
+            for (size_t i = currentBar; i < pTab->getV(0)->len(); ++i)
             {
                 pTab->getV(0)->getV(i)->setSignDenum(newDen);
                 pTab->getV(0)->getV(i)->setSignNum(newNum);
