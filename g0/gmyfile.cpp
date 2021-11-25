@@ -96,9 +96,9 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     //must not exceed the value!!
     //IDEA REFACT ATTENTION
     //make poly as double template
-    //Poly<ul, Bar>
-    //Poly<byte, Track>
-    //Poly<int, Beat>
+    //ChainContainer<ul, Bar>
+    //ChainContainer<byte, Track>
+    //ChainContainer<int, Beat>
     ul tracksCount = tab->len();//attention please
     ul barsCount = tab->getV(0)->len(); //search largerst or not do such thing? refact
 
@@ -150,9 +150,9 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
         LOG( << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet);
 
 
-        int portIndex = track->getGPCOMPInts(0);
-        int channelIndex = track->getGPCOMPInts(1);
-        int midiChanPortIndex = (portIndex-1)*16 + (channelIndex-1);
+        //int portIndex = track->getGPCOMPInts(0);
+        //int channelIndex = track->getGPCOMPInts(1);
+        //int midiChanPortIndex = (portIndex-1)*16 + (channelIndex-1);
 
         //extract from midi table -
             /// instrument
@@ -827,7 +827,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                     byte effectState = 1&(noteSpec >> 7);
                     //file->read((char*)&effectState,1);
 
-                    byte state = (noteSpec >>4) &7;
+                    //byte state = (noteSpec >>4) &7;
 
                     note->setVolume(vol);
                     //note.setState(state);

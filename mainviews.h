@@ -127,7 +127,7 @@ public:
         bot->draw(painter);
     }
 
-    void onclick(int x1, int y1)
+    void onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
     {
         //MainWindow
     }
@@ -255,7 +255,7 @@ public:
     virtual void setUI()
     {
 
-        for (int i = 0; i < buttons.size(); ++i)
+        for (size_t i = 0; i < buttons.size(); ++i)
         {
             //autocoef
 
@@ -462,7 +462,7 @@ public:
         {
             //Start the playlist
 
-            for (int i = 51; i < buttons.size(); ++i)
+            for (size_t i = 51; i < buttons.size(); ++i)
             {
                 std::string onText = "on:" + std::to_string(i);
                 std::vector<std::string> playlistElement;
@@ -479,7 +479,7 @@ public:
 
         if (press=="playlist2")
         {
-            for (int i = 51; i < buttons.size(); ++i)
+            for (size_t i = 51; i < buttons.size(); ++i)
             {
                 std::string onText = "on:" + std::to_string(i);
                 std::vector<std::string> playlistElement;
@@ -604,7 +604,7 @@ public:
     void draw(QPainter *painter)
     {top->draw(painter);
     }
-    void keyevent(std::string press){}
+    void keyevent([[maybe_unused]]std::string press){}
 };
 
 class ChangesInput : public GView

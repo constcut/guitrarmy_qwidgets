@@ -2,8 +2,6 @@
 
 
 
-        1) apainter и множество других избавиться от всех их следов
-
         2) tab.h \ poly template review
 
         3) tests midi\tab->midi : greatCheck() : scenario.cpp

@@ -15,7 +15,7 @@ class Note;
 
 
 //protected looks great but should be designed for manual use
-class VariableInt : public Poly<byte> //or public, or fullfit
+class VariableInt : public ChainContainer<byte> //or public, or fullfit
 {
 protected:
 
@@ -63,7 +63,7 @@ struct MidiSignal
 	byte param1; //and for meta event(b0==0xff) here will lay type 
     byte param2;
 
-	class ByteBufer : public Poly<byte> 
+	class ByteBufer : public ChainContainer<byte> 
 	{
 	};
 
@@ -142,7 +142,7 @@ struct midiTrackHeader
     ul trackSize;
 };
 
-class MidiTrack : public Poly<MidiSignal*>
+class MidiTrack : public ChainContainer<MidiSignal*>
 {
 protected:
 
@@ -244,7 +244,7 @@ public:
 
 };
 
-class MidiFile : public Poly<MidiTrack*>
+class MidiFile : public ChainContainer<MidiTrack*>
 {
 protected:
     struct midiHeader midiHeader;

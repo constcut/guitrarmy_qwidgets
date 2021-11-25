@@ -491,10 +491,6 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
 
 bool MidiFile::calculateHeader(bool skip)
 {
-     //this function used to be called each time we try to write midi file
-     //its responsible for headers fill
-
-     //but as a very first option - most values peace - just set amount of tracks
      ul calculatedTracks = this->len();
      //NOTE this will work only with previusly loaded file
      if (midiLog)  LOG( << "Calculating headers "<<calculatedTracks<<"-tracks.");
@@ -1013,15 +1009,12 @@ byte MidiTrack::calcLeggatoVelocy(byte vel)
 /*
 void MidiTrack::add(MidiSignal &val)
 {
-    Poly::add(val);
+    ChainContainer::add(val);
   //  std::cout<<std::endl;
   //  val.printToStream(std::cout);
    // if (midiLog)  logger <<"lo";
 }
 */
-
-/////////NEW WAY OF GENERATION FOR NOW BUT MOST SIMPLE EVER\\\\\\\
-//(((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))
 
 
 bool MidiTrack::addSignalsFromNoteOn(Note *note, byte channel)

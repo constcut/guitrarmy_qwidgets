@@ -57,43 +57,41 @@ struct is_pointer { static const bool value = false; };
 template<typename T>
 struct is_pointer<T*> { static const bool value = true; };
 
-template <typename CT> class Poly
+template <typename CT> class ChainContainer
 {
-    protected:
-    std::vector<CT> sequence;
-
-    Poly<CT> *nextOne;
-    Poly<CT> *prevOne;
-
-    void *parent;
+protected:
+    std::vector<CT> sequence; //Эксперименты и замеры TODO
+    ChainContainer<CT> *nextOne;
+    ChainContainer<CT> *prevOne;
+    void *parent; //TODO ChainContainer too
 
     public:
 
     void setParent(void *newPa) { parent = newPa;}
     void *getParent() { return parent; }
 
-    void setPrev(Poly<CT> *prev)
+    void setPrev(ChainContainer<CT> *prev)
     { prevOne=prev;}
 
-    void setNext(Poly<CT> *next)
+    void setNext(ChainContainer<CT> *next)
     { nextOne=next;}
 
-    Poly<CT> * getPrev()
+    ChainContainer<CT> * getPrev()
     { return prevOne;}
 
-    Poly<CT> * getNext()
+    ChainContainer<CT> * getNext()
     { return nextOne;}
 
-    virtual ~Poly() {}
+    virtual ~ChainContainer() {}
 
-    Poly<CT>& operator=(Poly<CT> &copy)
+    ChainContainer<CT>& operator=(ChainContainer<CT> &copy)
     {
         sequence.clear();
         sequence.insert(sequence.begin(),copy.sequence.begin(),copy.sequence.end());
         return *this;
     }
 
-    Poly<CT>& operator+=(Poly<CT> &copy)
+    ChainContainer<CT>& operator+=(ChainContainer<CT> &copy)
     {
         //check for end
         //sequence.clear();
@@ -101,11 +99,11 @@ template <typename CT> class Poly
         return *this;
     }
 
-    Poly():nextOne(0),prevOne(0),parent(0)
+    ChainContainer():nextOne(0),prevOne(0),parent(0)
     {
     }
 
-    Poly(int predefinedSize):nextOne(0),prevOne(0),parent(0)
+    ChainContainer(int predefinedSize):nextOne(0),prevOne(0),parent(0)
     {
         sequence.reserve(predefinedSize); // *=sizeof(CT); //?
     }
@@ -119,20 +117,20 @@ template <typename CT> class Poly
     virtual void add(CT &val)
     {
 
-        Poly *is_poly = 0;
+        ChainContainer *is_poly = 0;
 
 
 
         if (is_pointer<CT>::value == true)
         {
-           // is_poly = dynamic_cast<Poly*>(val);
+           // is_poly = dynamic_cast<ChainContainer*>(val);
         }
         else
         {
             is_poly = 0;
         }
 
-        //dynamic_cast<Poly*>(val);
+        //dynamic_cast<ChainContainer*>(val);
         if (is_poly)
             is_poly->setParent(this);
 

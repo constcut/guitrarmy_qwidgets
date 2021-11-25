@@ -61,7 +61,7 @@ public:
        lastWasSound = -1;
     }
 
-    void pushToSound(long pst, int frameNumber)
+    void pushToSound([[maybe_unused]]long pst, int frameNumber)
     {
         if ((lastWasSound==-1)||(lastWasSound == 0))
         {
@@ -76,7 +76,7 @@ public:
          lastWasSound = 1;
     }
 
-    void pushToSilent(long pst, int frameNumber)
+    void pushToSilent([[maybe_unused]]long pst, int frameNumber)
     {
         if ((lastWasSound==-1)||(lastWasSound == 1))
         {

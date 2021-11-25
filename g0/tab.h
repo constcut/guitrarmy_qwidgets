@@ -22,7 +22,7 @@ struct BendPointGPOld
     byte vibratoFlag;
 };
 
-class BendPointsGPOld : public Poly<BendPointGPOld>
+class BendPointsGPOld : public ChainContainer<BendPointGPOld>
 {
 protected:
     ul bendHeight;
@@ -44,7 +44,7 @@ struct BendPoint
     byte vFlag; //:2
 };
 
-class BendPoints : public Poly<BendPoint>
+class BendPoints : public ChainContainer<BendPoint>
 {
 protected:
     byte bendType;
@@ -186,11 +186,13 @@ class Note
 
 //STARTING LARGE REFACTORING OVER THE TAB
 
-class Beat : public Poly<Note*>
+class Beat : public ChainContainer<Note*>
 {
 		
 public:
-    Beat():effects(0),duration(0),dotted(0),durationDetail(0) {}
+    Beat()
+    {}
+
     virtual ~Beat()
     {
         for (ul i=0; i < len(); ++i)
@@ -208,7 +210,7 @@ public:
 	};
 
 	//need inner functions for analtics of packing	
-	class ChangesList : public Poly<SingleChange>
+	class ChangesList : public ChainContainer<SingleChange>
 	{
     public:
         //search functions
@@ -289,15 +291,15 @@ public:
 
 protected:
 
-	byte duration; // 2 1 . 2 4 8 16 32 64 [8 values] - 3 bits 
-	byte durationDetail; // none, dot, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 [4 bits] //one of 2-15 means empty(together with pause only!)
+    byte duration = 0; // 2 1 . 2 4 8 16 32 64 [8 values] - 3 bits
+    byte durationDetail = 0; // none, dot, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 [4 bits] //one of 2-15 means empty(together with pause only!)
 	//1 bit determines pause
     bool isPaused;
 
-    byte dotted; //0 1 2
+    byte dotted = 0; //0 1 2
 
 
-	byte effects; //tremolo precene - 1bit, (upstrings, downstrings+x) - 2 bits, bookmark - 1 bit, notice (text or elst) - 1 bit, 
+    byte effects = 0; //tremolo precene - 1bit, (upstrings, downstrings+x) - 2 bits, bookmark - 1 bit, notice (text or elst) - 1 bit,
 	//then 3 left for change - first bit of those 3 shows that there is change
 	//+1 chord diagram
 	//+1 reserved
@@ -467,7 +469,7 @@ protected:
     void clone(Beat *from);
 };
 
-class Bar : public Poly<Beat*>
+class Bar : public ChainContainer<Beat*>
 {
 	
 public:
@@ -501,7 +503,7 @@ public:
         if (val)
         {
             val->setParent(this);
-            Poly<Beat*>::add(val);
+            ChainContainer<Beat*>::add(val);
         }
     }
 
@@ -510,7 +512,7 @@ public:
         if (val)
         {
             val->setParent(this);
-            Poly<Beat*>::insertBefore(val,index);
+            ChainContainer<Beat*>::insertBefore(val,index);
         }
     }
 
@@ -571,17 +573,6 @@ protected:
      void clone(Bar *from);
 };
 
-class Aplicature : public Poly<std::string> //then pack nice to ul
-{
-public:
-    //interpritation as text 1:0;2:3; [:effect:]string:scale[:effect];
-    //digits and signs of effects
-
-    void setFromString(std::string str);
-    //to Melody
-
-    std::string to_s();
-};
 
 class GuitarTuning
 {
@@ -598,7 +589,7 @@ class GuitarTuning
 };
 
 
-class PolyBar : public Poly<Bar*>
+class PolyBar : public ChainContainer<Bar*>
 {
   public:
     PolyBar()
@@ -609,7 +600,7 @@ class PolyBar : public Poly<Bar*>
     }
 };
 
-class Track : public Poly<Bar*>
+class Track : public ChainContainer<Bar*>
 {
 protected:
     //Aplicature applic;
@@ -626,22 +617,20 @@ public:
 
     void printToStream(std::ostream &stream);
 
-    Poly<Bar*> timeLoop; //PolyBar //REFACT access
+    ChainContainer<Bar*> timeLoop; //PolyBar //REFACT access
     std::vector<ul> timeLoopIndexStore;
 
-    Track &operator=(Track another)
+    Track &operator=([[maybe_unused]]Track another)
     {
-        //clone(another);
+        //clone(another); //TODO
         return *this;
     }
 
-    virtual void add(Bar *&val)
+    virtual void add(Bar*& val)
     {
-        if (val)
-        {
+        if (val){
             val->setParent(this);
-
-            Poly<Bar*>::add(val);
+            ChainContainer<Bar*>::add(val);
         }
     }
 
@@ -650,7 +639,7 @@ public:
         if (val)
         {
             val->setParent(this);
-        Poly<Bar*>::insertBefore(val,index);
+        ChainContainer<Bar*>::insertBefore(val,index);
         }
     }
 
@@ -749,7 +738,7 @@ struct VariableString
 	VariableString(std::string stringName, std::list<std::string> stringsValues) : lineType(1), name(stringName) { v = stringsValues; }
 };
 
-class VariableStrings : public Poly<VariableString>
+class VariableStrings : public ChainContainer<VariableString>
 {
 	//search options
 };
@@ -764,7 +753,7 @@ struct TimeLineKnot
 };
 
 
-class Tab : public Poly<Track*>
+class Tab : public ChainContainer<Track*>
 {
 public:
     //cover it later
@@ -812,9 +801,9 @@ public:
          }
     }
 
-    Tab &operator=(Tab another)
+    Tab &operator=([[maybe_unused]]Tab another)
     {
-        //lone(another);
+        //lone(another); //TODO
         return *this;
     }
 

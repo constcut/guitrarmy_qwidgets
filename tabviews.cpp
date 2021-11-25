@@ -285,10 +285,8 @@ void TabView::draw(QPainter *painter)
 
    if (pTab != 0)
     {
-
-
-    if (isPlaying)
-        displayBar=currentBar;
+        if (isPlaying)
+            displayBar=currentBar;
 
         int yLimit = getMaster()->getHeight();
         int xLimit = getMaster()->getWidth();
@@ -300,7 +298,7 @@ void TabView::draw(QPainter *painter)
            if (trackIndex >= pTab->len()) 
             break;
            std::string trackVal = std::to_string(trackIndex+1) +" " + pTab->getV(trackIndex)->getName();
-           int pannelShift = getMaster()->getToolBarHeight();
+           //int pannelShift = getMaster()->getToolBarHeight();
            int yPos = (i+1)*30; //pannelShift+(i+2)*30;
            if (yPos > (yLimit-100))
                break;
@@ -909,7 +907,7 @@ void TrackView::setUI()
 
         std::string trackNames="";
 
-        for (int i = 0; i < tabParrent->getTab()->len(); ++i)
+        for (size_t i = 0; i < tabParrent->getTab()->len(); ++i)
         {
           trackNames += tabParrent->getTab()->getV(i)->getName();
           trackNames += std::string(";");
@@ -1177,7 +1175,7 @@ void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte du
 
 
     bool needSignSharp =false;
-    for (int i = 0; i < sizeof(position)/sizeof(int); ++i)
+    for (size_t i = 0; i < sizeof(position)/sizeof(int); ++i)
     {
         if (position[i]==lineToStand)
             needSignSharp = true;
@@ -1186,7 +1184,7 @@ void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte du
 
     int diezCount = 0;
 
-    for (int i = 0; i < sizeof(position)/sizeof(int); ++i)
+    for (size_t i = 0; i < sizeof(position)/sizeof(int); ++i)
     {
         int index = sizeof(position)/sizeof(int) - 1 -i;
         //from the end

@@ -72,7 +72,7 @@ std::string repairString(std::string str)
     if (response[0]=='"')
     {
         int clIndex = 0;
-        for (int i = 1; i < response.size(); ++i)
+        for (size_t i = 1; i < response.size(); ++i)
             if (response[i]=='"')
             {
                 clIndex = i;
@@ -272,7 +272,7 @@ void AConfig::checkConfig()
     imageFile.setFileName(fullImageName.c_str());
 
     if (imageFile.open(QIODevice::ReadOnly) == false)
-        std::cout << "Failed to open";
+        std::cerr << "Failed to open image file: " << imageName << std::endl;
 
 
     QImage *img = new QImage(); //(fullImageName.c_str());

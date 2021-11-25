@@ -254,43 +254,34 @@ public:
       virtual int getWidth() { return 0; }
       virtual int getHeight() { return 0; }
 
-      virtual void requestHeight(int newH) {}
-      virtual void requestWidth(int newW) {}
+      virtual void requestHeight([[maybe_unused]]int newH) {}
+      virtual void requestWidth([[maybe_unused]]int newW) {}
 
       virtual int getToolBarHeight() { return 0;}
       virtual int getStatusBarHeight() { return 0;}
 
-      virtual void SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
-      {
-          x1=y1;
-      }
+      virtual void SetButton([[maybe_unused]]int index, [[maybe_unused]]std::string text, [[maybe_unused]]int x1, [[maybe_unused]]int y1, [[maybe_unused]]int w1, [[maybe_unused]]int h1, [[maybe_unused]]std::string pressSyn)
+      {}
 
       virtual void SetButton(int index, GLabel *w, std::string pressSyn)
       {
           SetButton(index,w->getText(),w->getX(),w->getY(),w->getW(),w->getH(),pressSyn);
       }
 
-      virtual void setComboBox(int index, std::string,int x1, int y1, int w1, int h1, int forceValue)
-      {
-          w1=h1;
-      }
+      virtual void setComboBox([[maybe_unused]]int index, [[maybe_unused]]std::string, [[maybe_unused]]int x1, [[maybe_unused]]int y1, [[maybe_unused]]int w1, [[maybe_unused]]int h1, [[maybe_unused]]int forceValue)
+      {}
 
-      virtual void renewComboParams(int index, std::string params)
+      virtual void renewComboParams([[maybe_unused]]int index, [[maybe_unused]]std::string params)
       {
 
       }
 
-      virtual void setViewPannel(int val) {}
-
-      virtual int getComboBoxValue(int index) { return -1; }
-
+      virtual void setViewPannel([[maybe_unused]]int val) {}
+      virtual int getComboBoxValue([[maybe_unused]]int index) { return -1; }
       virtual void showHelp() {}
-
-      virtual void setStatusBarMessage(int index, std::string text, int timeOut=0) {}
-
-      virtual void pushForceKey(std::string keyevent) {}
+      virtual void setStatusBarMessage([[maybe_unused]]int index, [[maybe_unused]]std::string text, [[maybe_unused]]int timeOut=0) {}
+      virtual void pushForceKey([[maybe_unused]]std::string keyevent) {}
       virtual bool isPlaying() { return false; }
-
       virtual void addToPlaylist(std::vector<std::string> playElement) { Q_UNUSED(playElement); }
       virtual bool isPlaylistHere() { return false; }
       virtual void goOnPlaylist() {}
@@ -321,7 +312,7 @@ public:
         painter->drawRect(x,y,w,h);
     }
 
-    virtual void onclick(int x1, int y1)
+    virtual void onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
     {
         if (checked)
             checked = false;

@@ -295,9 +295,8 @@ public:
 
     virtual void resetButtons()
     {
-        int hi =  pressView->getMaster()->getHeight();
-        int wi = pressView->getMaster()->getWidth();
-
+        //int hi =  pressView->getMaster()->getHeight();
+        //int wi = pressView->getMaster()->getWidth();
         setButtons();
     }
 
@@ -338,9 +337,8 @@ public:
 
     virtual void resetButtons()
     {
-        int hi =  pressView->getMaster()->getHeight();
-        int wi = pressView->getMaster()->getWidth();
-
+        //int hi =  pressView->getMaster()->getHeight();
+        //int wi = pressView->getMaster()->getWidth();
         setButtons();
     }
 
@@ -401,8 +399,8 @@ public:
 
     virtual void resetButtons()
     {
-        int hi =  pressView->getMaster()->getHeight();
-        int wi = pressView->getMaster()->getWidth();
+        //int hi =  pressView->getMaster()->getHeight();
+        //int wi = pressView->getMaster()->getWidth();
 
         setButtons();
     }

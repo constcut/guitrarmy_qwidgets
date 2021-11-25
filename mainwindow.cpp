@@ -758,7 +758,7 @@ void MainWindow::recreateUI()
 
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *e)
+bool MainWindow::eventFilter([[maybe_unused]]QObject *object, QEvent *e)
 {
     if (e->type() == QEvent::KeyPress)
       {
@@ -783,7 +783,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     MasterView(),
-    center(0),centerScroll(0)
+    centerScroll(0), center(0)
 {
     dock5=0;
     dock6=0;
@@ -803,7 +803,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-void MainWindow::resizeEvent(QResizeEvent* event)
+void MainWindow::resizeEvent([[maybe_unused]]QResizeEvent* event)
 {
 
     if (geometry().width() < geometry().height())
@@ -1085,7 +1085,7 @@ void MainWindow::actionNow(QAction *action)
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
-          int initHeightMax = 500 * currentScale;
+          //int initHeightMax = 500 * currentScale;
 
           center->setMinimumHeight(initHeightMin);
           //center->setMaximumHeight(initHeightMax);
@@ -1105,7 +1105,7 @@ void MainWindow::actionNow(QAction *action)
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
-          int initHeightMax = 500 * currentScale;
+          //int initHeightMax = 500 * currentScale;
 
           center->setMinimumHeight(initHeightMin);
          // center->setMaximumHeight(initHeightMax);
@@ -1748,7 +1748,7 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
     if(QGesture *tap = event->gesture(Qt::TapGesture))
     {
         //sX <<"Tap ";
-        QTapGesture *tapGesture = static_cast<QTapGesture*>(tap);
+        //QTapGesture *tapGesture = static_cast<QTapGesture*>(tap);
         //sX<<tapGesture->position().x()<<" "<<tapGesture->position().y();
 
     }
@@ -2020,7 +2020,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
 /// AUDIO INPUT FINISHED
 // NOW OUTPUT
 
-AudioSpeaker::AudioSpeaker(const QAudioFormat &format,
+AudioSpeaker::AudioSpeaker([[maybe_unused]]const QAudioFormat &format,
                      QObject *parent)
     :   QIODevice(parent)
     ,   m_pos(0)
@@ -2495,10 +2495,9 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
         QAction *act1 = menu->addAction(icon1,"tap"); //tap
         act1->setText("tap");
-        //act1->set
 
-        QAction *act2 = menu->addAction(icon2,"rec"); //recording
-        QAction *act3 = menu->addAction(icon3,"morze"); //morze input
+        menu->addAction(icon2,"rec"); //recording
+        menu->addAction(icon3,"morze"); //morze input
         menu->addAction(icon,"pattern"); //and itself
 
         act->setMenu(menu);
@@ -2527,8 +2526,8 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
         QIcon icon2(icon2Place.c_str());
 
         QMenu *menu = new QMenu(toolBar);
-        QAction *act1 = menu->addAction(icon1,"info");
-        QAction *act2 = menu->addAction(icon2,"tests");
+        menu->addAction(icon1,"info");
+        menu->addAction(icon2,"tests");
 
         menu->addAction(icon,"config");
         menu->addAction("save config");
@@ -2653,8 +2652,8 @@ void MainWindow::createFloDocks()
     //this->tabifyDockWidget(dock,dockWidget2);
 
 
-     QToolBar *navigation2=0;
-     QToolBar *navigation=0;
+     //QToolBar *navigation2=0;
+     //QToolBar *navigation=0;
 
 
     addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playAMusic"));

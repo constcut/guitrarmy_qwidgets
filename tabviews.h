@@ -92,7 +92,7 @@ public:
 
 class BarView;
 
-class ViewPull : public Poly<BarView>
+class ViewPull : public ChainContainer<BarView>
 {
     //add len getV delete etc chould be here
 };
@@ -144,9 +144,9 @@ public:
     virtual bool isMovableY() { return true; }
 
     TrackView(Track *from):pTrack(from),cursor(0),cursorBeat(0),
-      stringCursor(0),digitPress(-1),localThr(0),displayIndex(0),lastSeen(0),
+      stringCursor(0),digitPress(-1),localThr(0),displayIndex(0),lastSeen(0), pan(0),
       selectCursor(-1)
-    ,pan(0) //,copyIndex(-1)
+     //,copyIndex(-1)
     {
         selectionBarFirst=-1;
         selectionBarLast=-1;

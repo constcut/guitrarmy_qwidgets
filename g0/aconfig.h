@@ -83,10 +83,8 @@ public:
 
     void setIntoConfig(AConfig *conf)
     {
-        for (int i=0; i < configLines.size(); ++i)
-        {
+        for (size_t i=0; i < configLines.size(); ++i)
             conf->addLine(configLines[i]);
-        }
     }
 };
 

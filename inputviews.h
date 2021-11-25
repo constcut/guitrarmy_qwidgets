@@ -183,7 +183,7 @@ public:
 
     void keyevent(std::string press);
 
-    void ondblclick(int x1, int y1)
+    void ondblclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
     {
         //onclick(x1,y1);
     }
@@ -233,7 +233,7 @@ protected:
     int wavePosition;
 
     int waveLimit;
-    void *recorderPtr;
+    void *recorderPtr = nullptr;
 
     bool recording;
     bool playing;
@@ -251,7 +251,7 @@ protected:
     GWave waveItself; //move inside
 
 public:
-    RecordView():bar(0),barView(0),wavePosition(0),recorderPtr(0),waveLimit(0)
+    RecordView():bar(0),barView(0),wavePosition(0),waveLimit(0),recorderPtr(0)
     {
         //status = new GLabel(60,100-55-20,"Record not started");
 

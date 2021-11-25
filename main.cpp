@@ -149,8 +149,7 @@ int sayType(QByteArray &file)
             if (file[3]=='C')
             {
                 char v = file[21];
-                char subV = file[23];
-
+                //char subV = file[23];
                 if (v==51) return 3;
                 if (v==52) return 4;
                 if (v==53) return 5;

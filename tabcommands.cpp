@@ -788,7 +788,7 @@ void TrackView::keyevent(std::string press)
                         command.setPosition(0,cursor+1,0);
                         commandSequence.push_back(command);
 
-                        ul trackLen = pTrack->len();
+                        //ul trackLen = pTrack->len();
                         //++cursor;
                         /*
                         if (cursor > (lastSeen-1))
@@ -841,11 +841,9 @@ void TrackView::keyevent(std::string press)
 
         if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
             stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
-
             //need acces
-
-            digitPress=-1; // flush input after movement
-            return;
+        digitPress=-1; // flush input after movement
+        return;
     }
 
     //commands
@@ -2453,7 +2451,7 @@ void TabView::keyevent(std::string press)
         }
 
 
-        Tab *tab = pTab;
+        //Tab *tab = pTab;
         MidiFile generatedMidi;
 
         if (press == CONF_PARAM("TrackView.playAMusic"))

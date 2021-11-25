@@ -246,8 +246,8 @@ void MainView::keyevent(std::string press)
 
                     //getMaster()->changeChild(tabsView);
 
-                    clock_t after2T = getTime();
-                    clock_t diffT = after2T - afterT;
+                    //clock_t after2T = getTime();
+                    //clock_t diffT = after2T - afterT;
 
                     LOG( <<"Opening gtp "<<diffT);
                 }
@@ -530,7 +530,7 @@ void ConfigView::keyevent(std::string press)
     }
 }
 
-void ConfigView::onclick(int x1, int y1)
+void ConfigView::onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
 {
     //if (labA->hit(x1,y1)) keyevent("1");
     //if (labB->hit(x1,y1)) keyevent("2");
@@ -563,7 +563,7 @@ void ConfigView::onclick(int x1, int y1)
 }
 
 
-void ConfigView::draw(QPainter *painter)
+void ConfigView::draw([[maybe_unused]]QPainter *painter)
 {
     //labA->draw(painter);
     //labB->draw(painter);
@@ -573,12 +573,10 @@ void ConfigView::draw(QPainter *painter)
     //labScaleMinus->draw(painter);
     //labScalePlus->draw(painter);
 
-    int i = 0;
-
-    int limitY = getMaster()->getHeight();
-
-    int curX = 200;
-    int curY = 75;
+    //int i = 0;
+    //int limitY = getMaster()->getHeight();
+    //int curX = 200;
+    //int curY = 75;
 
     /*
     for (std::map<std::string,std::string>::iterator itV=AConfig::getInstance()->values.begin();
@@ -954,7 +952,7 @@ void BendInput::onclick(int x1, int y1)
     {
         if (ptrToNote)
         {
-            bool whatIsThere = ptrToNote->effPack.get(17);
+            //bool whatIsThere = ptrToNote->effPack.get(17);
             LOG( << "Deleting bend that is "<<(int)whatIsThere);
 
             ptrToNote->effPack.addPack(17,2,0);

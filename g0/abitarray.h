@@ -37,7 +37,7 @@ public:
 
 };
 
-class ABitArray
+class ABitArray // Vector bool?
 {
 protected:
     ul bits;

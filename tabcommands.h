@@ -68,7 +68,7 @@ public:
 
     //REFACT to variable amount and types
     void *outerPtr;
-    void *outerPtrEnd;
+    void *outerPtrEnd; //TODO убрать эту проблему
 
     //could be refacted
     Bar *startBar;

@@ -428,7 +428,7 @@ EffectsPack Note::getEffects()
                   Bar *preTail, Bar *tailBegin, Bar *tailEnd, ul beginIndex, ul endIndex,
                          ul preTailIndex, ul tailBeginIndex, ul tailEndIndex)
  {
-     //Poly<Bar*> timeLoop;
+     //ChainContainer<Bar*> timeLoop;
 
      //if (tabLog)
      //logger << "Push reprise called; "<<(int)beginRepeat<<"; "<<(int)endRepeat; //exend with values
