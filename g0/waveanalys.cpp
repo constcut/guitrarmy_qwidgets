@@ -546,7 +546,7 @@ int signMF(long mass)
             nextElement = tableElements[i+1].getPosition();
 
          double diffPos = nextElement - tableElements[i].getPosition();
-         //logger << "List norm i "<<i<<"; pos "<<tableElements[i].getPosition()<<"; dp "<<diffPos;
+         //qDebug() << "List norm i "<<i<<"; pos "<<tableElements[i].getPosition()<<"; dp "<<diffPos;
 
          if (diffPos < 1.1)
          {
@@ -554,12 +554,12 @@ int signMF(long mass)
             if (chainBegin==-1)
             {
                 chainBegin = i;
-                //logger << "Set as chain begin";
+                //qDebug() << "Set as chain begin";
             }
          }
          else
          {
-             //logger << "Chain ends - processing then";
+             //qDebug() << "Chain ends - processing then";
              if (chainBegin!=-1)
              {
                  chainEnd = i; //this was a crapp errroooorrr
@@ -575,7 +575,7 @@ int signMF(long mass)
                          maxAmp = tableElements[j].getAmplitude();
                      }
 
-                    //logger << tableElements[j].getPosition() <<";";
+                    //qDebug() << tableElements[j].getPosition() <<";";
                  }
 
                  //shouldn't change many things

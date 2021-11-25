@@ -13,21 +13,14 @@
 #include <sstream>
 
 
-#define logger qDebug()
-//TODO
-
 void changeColor(const std::string& color, QPainter* src);
 void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 
 void drawImage(QPainter* src, int x, int y, std::string imageName)
 {
-    //QImage img;
-    //std::string name = std::string(getTestsLocation())+ std::string("Icons/") + imageName + std::string(".png");
-    //img.load(name.c_str());
     QImage *img = (QImage*) AConfig::getInstance()->imageLoader.getImage(imageName);
     if (img)
         src->drawImage(x,y,*img);
-    //src->drawImage();
 }
 
 GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
@@ -69,7 +62,7 @@ void GQButton::buttonWasClicked() {
         else
             if (keyPress) {
                 keyPress->pushForceKey("b:" + std::to_string(buttonNumber));
-                //audio_logger<<"log from button"<<genPress.c_str();
+                //audio_qDebug()<<"log from button"<<genPress.c_str();
             }
     }
 
@@ -937,7 +930,7 @@ void checkBase()
 
                 if (mdCheckList.find(md5Std)!=mdCheckList.end())
                 {
-                    logger << "ATTENTION MD5 is same !!!";
+                    qDebug() << "ATTENTION MD5 is same !!!";
                 }
                 else
                 {
@@ -950,8 +943,8 @@ void checkBase()
                 sX<<(i+1)<<" "<<fileName.toStdString()<<" "<<fileSize<<" "<<mdsum.toStdString()<<" "<<fileType<<"\n";
                 //missing file type gtp gmy ptb etc
 
-                logger<<sX.c_str();
-                logger<<"+";
+                qDebug()<<sX.c_str();
+                qDebug()<<"+";
                 QString newLine = sX.c_str();
                 outputList.push_back(newLine);
 
@@ -965,7 +958,7 @@ void checkBase()
                     if (tabLoader.open(fnStd) == true)
                     {
                         Tab *tab = tabLoader.getTab();
-                        logger << "Tab bpm "<<tab->getBPM();
+                        qDebug() << "Tab bpm "<<tab->getBPM();
                         delete tab;
                     }
 
@@ -976,7 +969,7 @@ void checkBase()
             }
             else
             {
-                logger <<"ERROR oppening file "<<fileName.toStdString().c_str();;
+                qDebug() <<"ERROR oppening file "<<fileName.toStdString().c_str();;
             }
 
         }
@@ -990,7 +983,7 @@ void CenterView::pushForceKey(std::string keyevent)
     {
         qDebug() << "Push force '" << keyevent.c_str() << "' size="<<(int)keyevent.size();
         //for (int i = 0; i < keyevent.size(); ++i)
-        //     audio_logger << ".[" << i << "] = " << (int)(keyevent[i]);
+        //     audio_qDebug() << ".[" << i << "] = " << (int)(keyevent[i]);
     }
 
     if (keyevent=="ctrl+b")
@@ -1046,7 +1039,7 @@ void CenterView::pushForceKey(std::string keyevent)
                 }
                 catch(...)
                 {
-                    logger <<"Failed!";
+                    qDebug() <<"Failed!";
                     ++badTests;
                 }
             }
@@ -1082,7 +1075,7 @@ void CenterView::pushForceKey(std::string keyevent)
         if (fd->exec())
         directoryName = fd->selectedFiles().at(0);
 
-        audio_logger << s.toStdString().c_str() << " -chosen folder";
+        audio_qDebug() << s.toStdString().c_str() << " -chosen folder";
 
         delete fd;
         */
@@ -1104,7 +1097,7 @@ void CenterView::pushForceKey(std::string keyevent)
         baseFile.open(QIODevice::WriteOnly);
 
 
-        logger << "Starting base file ";
+        qDebug() << "Starting base file ";
         int fullCount = 0;
 
         for (int i = 0; i < files.size(); ++ i)
@@ -1329,7 +1322,7 @@ int CenterView::getCurrentViewType()
 
 void CenterView::startAudioInput()
 {
-    logger<<"Audio input started";
+    qDebug()<<"Audio input started";
     audioInfo->start();
     audioInput->start(audioInfo);
 
@@ -1337,7 +1330,7 @@ void CenterView::startAudioInput()
 
 void CenterView::stopAudioInput()
 {
-    logger<<"Audio input stopped";
+    qDebug()<<"Audio input stopped";
     audioInfo->stop();
     audioInput->stop();
 }
@@ -1354,7 +1347,7 @@ void CenterView::initAudioInput() //refact - hide audio f()
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
     if (!info.isFormatSupported(format)) {
-        logger << "Default format not supported - trying to use nearest";
+        qDebug() << "Default format not supported - trying to use nearest";
         format = info.nearestFormat(format);
     }
 

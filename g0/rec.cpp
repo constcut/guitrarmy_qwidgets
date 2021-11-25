@@ -299,8 +299,8 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
                 //getFreq
                 peaksSumm += peak.getAmplitude();
             }
-            //logger << "#" <<sX.c_str(); // peaklog
-            //logger << "Peaks amp "<<peaksSumm;
+            //qDebug() << "#" <<sX.c_str(); // peaklog
+            //qDebug() << "Peaks amp "<<peaksSumm;
 
             LocalFreqTable localFreq;
             localFreq.addPeaks(peaks);
@@ -316,7 +316,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             //{
                   //sX3 << (*votes)[i].rFreq<<" "<<(*votes)[i].value<<";";
             //}
-            //logger <<"!!"<<sX3.c_str(); //peaklog
+            //qDebug() <<"!!"<<sX3.c_str(); //peaklog
 
             //sX.clear();
             peaks = localFreq.getPeaks();
@@ -326,7 +326,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
                 //sX<<"PA "<<peak.getFreq()<<":"<<peak.getAmplitude()*10<<"; ";
                 //getFreq
             }
-            //logger << "#" <<sX.c_str(); // peak log
+            //qDebug() << "#" <<sX.c_str(); // peak log
 
 
             double *ampSrc = fft.getAmplitude();
@@ -336,7 +336,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             //{
             //    sX2<<(int)(ampSrc[i]*100)<<" ;";
             //}
-            //logger << "#" << sX2.c_str();
+            //qDebug() << "#" << sX2.c_str();
 
             //stringE xtended freqStr;
             //freqStr<<(*votes)[0].rFreq;

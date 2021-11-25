@@ -7,7 +7,6 @@
 bool tabLog = false;
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO
 
@@ -294,7 +293,7 @@ EffectsPack Note::getEffects()
 
         usedAbs += localAbs;
 
-        //logger << "On "<<i<<" used = "<<usedAbs;
+        //qDebug() << "On "<<i<<" used = "<<usedAbs;
 
         if ((i+1) != barSize) //without case of last
         if (usedAbs == barAbs)
@@ -325,7 +324,7 @@ EffectsPack Note::getEffects()
             else
             {
                --completeIndex; //to small for new note
-                logger <<"SHIFTBACK";
+                qDebug() <<"SHIFTBACK";
             }
 
             completeAbs = lastAbs;
@@ -355,8 +354,8 @@ EffectsPack Note::getEffects()
         completeStatus = 0;
     }
 
-    //logger << "Bar abs len "<< barAbs<<"; used "<<usedAbs;
-    //logger <<"Complete status="<<completeStatus<<"; lastAbs="<<lastAbs<<"; cInd="<<completeIndex;
+    //qDebug() << "Bar abs len "<< barAbs<<"; used "<<usedAbs;
+    //qDebug() <<"Complete status="<<completeStatus<<"; lastAbs="<<lastAbs<<"; cInd="<<completeIndex;
 
      return completeStatus;
  }
@@ -386,8 +385,8 @@ EffectsPack Note::getEffects()
 
      //int normalW = (int)b - (int)a;
      //int backW = (int)a - (int)b;
-     //logger << "Creating alt ray NORM: "<<normalW<<"; BACK: "<<backW;
-     //logger << "Alt a : "<<(int)a<< " alt b :"<<(int)b;
+     //qDebug() << "Creating alt ray NORM: "<<normalW<<"; BACK: "<<backW;
+     //qDebug() << "Alt a : "<<(int)a<< " alt b :"<<(int)b;
 
      ul localInd = 0;
      for (Bar *barI=a; barI!=b; barI=(Bar*)barI->getNext()
@@ -431,8 +430,8 @@ EffectsPack Note::getEffects()
      //ChainContainer<Bar*> timeLoop;
 
      //if (tabLog)
-     //logger << "Push reprise called; "<<(int)beginRepeat<<"; "<<(int)endRepeat; //exend with values
-     //logger << "Pre: "<<(int)preTail<<"; tailBegin: "<<(int)tailBegin<<"; tE: "<<(int)tailEnd;
+     //qDebug() << "Push reprise called; "<<(int)beginRepeat<<"; "<<(int)endRepeat; //exend with values
+     //qDebug() << "Pre: "<<(int)preTail<<"; tailBegin: "<<(int)tailBegin<<"; tE: "<<(int)tailEnd;
 
      AltRay altRay;
      AltRayInd altRayInd;
@@ -643,7 +642,7 @@ EffectsPack Note::getEffects()
                 if (curBar->getAltRepeat() != 0)
                 {
                         tailBegin = curBar;
-                        //logger <<"Tail begin set to "<<(int)tailBegin;
+                        //qDebug() <<"Tail begin set to "<<(int)tailBegin;
                         tailEnd = curBar;
                         tailBeginIndex = curIndex;
                 }
@@ -661,7 +660,7 @@ EffectsPack Note::getEffects()
                         if (curIndex>=lastIndex)
                             break;
 
-                       // logger <<"Tail END reset to "<<(int)tailEnd;
+                       // qDebug() <<"Tail END reset to "<<(int)tailEnd;
                     }
                 }
                 else
@@ -679,18 +678,18 @@ EffectsPack Note::getEffects()
             Bar *preTail = 0;
             ul preTailIndex = 0;
 
-            //logger <<"RUN PRE TAIL SEARCH "<<(int)beginRepeat<<" to "<<(int)endRepeat;
+            //qDebug() <<"RUN PRE TAIL SEARCH "<<(int)beginRepeat<<" to "<<(int)endRepeat;
 
             int indX=0;
             for (Bar *barI=endRepeat; barI != beginRepeat; barI=(Bar*)barI->getPrev()
                  ,++indX)//--barI
             {
-                //logger <<"pre-tail search "<<(int)barI;
+                //qDebug() <<"pre-tail search "<<(int)barI;
                 if (barI->getAltRepeat() != 0)
                 {
                     preTail = barI;
                     preTailIndex = endIndex-indX;
-                    //logger <<" got alt ";
+                    //qDebug() <<" got alt ";
                 }
             }
 
@@ -827,7 +826,7 @@ EffectsPack Note::getEffects()
             qDebug() << "Next len "<<(int)nextBar->len()<<
                       "Cur len "<<(int)curBar->len()<<" i "<<barI)
 
-            logger << "-";
+            qDebug() << "-";
             */
 
 
@@ -843,7 +842,7 @@ EffectsPack Note::getEffects()
                 {
                     if (prevBar == 0)
                     {
-                        logger<<"Exited extrimly! ";
+                        qDebug()<<"Exited extrimly! ";
                         return; ///ehh
                     }
 
@@ -874,12 +873,12 @@ EffectsPack Note::getEffects()
                 ++fullCount;
             }
             else
-                logger <<"Issue connecting beatz";
+                qDebug() <<"Issue connecting beatz";
         }
     }
 
     if (tabLog)
-    logger << "Full count of the beats is "<<fullCount;
+    qDebug() << "Full count of the beats is "<<fullCount;
     beatsAmount = fullCount;
 
     return fullCount;
@@ -961,12 +960,12 @@ EffectsPack Note::getEffects()
 
                 if (prevFret == 64)
                 {
-                    logger <<"Prev Note "<<(int)prevNote<<" sN= "<<stringN;
-                        logger <<"Is Pause "<<(int)curBeat->getPause();
-                        logger <<"Count="<<count<<"; notesCount="<<notesCount[stringN];
+                    qDebug() <<"Prev Note "<<(int)prevNote<<" sN= "<<stringN;
+                        qDebug() <<"Is Pause "<<(int)curBeat->getPause();
+                        qDebug() <<"Count="<<count<<"; notesCount="<<notesCount[stringN];
                 }
 
-                logger <<"Fret was 63 now "<<prevFret;
+                qDebug() <<"Fret was 63 now "<<prevFret;
             }
 
             */

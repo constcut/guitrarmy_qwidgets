@@ -22,7 +22,6 @@
 #include "libtim/miditopcm.h"
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO
 
@@ -1156,7 +1155,7 @@ void TrackView::keyevent(std::string press)
             std::ofstream outFile2(fullOutName);
 
             if (!outFile2.is_open())
-                logger << "Failed to open out file :(";
+                qDebug() << "Failed to open out file :(";
             else
                 qDebug() <<"File opened " << fullOutName.c_str();
 
@@ -1909,7 +1908,7 @@ void TabView::keyevent(std::string press)
             std::ofstream outFile(fullOutName);
 
             if (!outFile.is_open())
-                logger << "Failed to open out file :(";
+                qDebug() << "Failed to open out file :(";
             else
                 qDebug() <<"File opened "<<fullOutName.c_str();
 
@@ -2371,7 +2370,7 @@ void TabView::keyevent(std::string press)
             //clock_t afterT = getTime();
             //int diffT = afterT - beforeT;
 
-            //logger <<"Repair chains "<<diffT;
+            //qDebug() <<"Repair chains "<<diffT;
 
 
 
@@ -2391,7 +2390,7 @@ void TabView::keyevent(std::string press)
 
             //clock_t after2T = getTime();
             //diffT = after2T - afterT;
-            //logger <<"Generate midi "<<diffT;
+            //qDebug() <<"Generate midi "<<diffT;
 
             MidiEngine::closeDefaultFile();
             std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
@@ -2399,7 +2398,7 @@ void TabView::keyevent(std::string press)
             std::ofstream outFile2;
 
             if (!outFile2.is_open())
-                logger << "Failed to open out file :(";
+                qDebug() << "Failed to open out file :(";
             else
                 qDebug() <<"File opened "<<fullOutName.c_str();
 
@@ -2470,7 +2469,7 @@ void TabView::keyevent(std::string press)
         std::ofstream outFile2(fullOutName);
 
         if (! outFile2.is_open()) {
-            logger << "Failed to open out file :(";
+            qDebug() << "Failed to open out file :(";
             statusLabel->setText("failed to open generated");
         }
         ul outFileSize2 = generatedMidi.writeStream(outFile2);
@@ -2491,7 +2490,7 @@ void TabView::keyevent(std::string press)
         std::ofstream outFile2(fullOutName);
 
         if (! outFile2.is_open()){
-            logger << "Failed to open out file :(";
+            qDebug() << "Failed to open out file :(";
             statusLabel->setText("failed to open generated");
         }
         ul outFileSize2 = generatedMidi.writeStream(outFile2);

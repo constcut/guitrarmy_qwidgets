@@ -186,7 +186,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
     ++changeIndex;
 
     int toTheNextWait = bpmChangeList[changeIndex].waitTime;
-    //logger << "Waiting for next: "<<toTheNextWait;
+    //qDebug() << "Waiting for next: "<<toTheNextWait;
 
     std::vector<int> barMoments;
 
@@ -224,17 +224,17 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
             {
                 if (changeIndex < bpmChangeList.size())
                 {
-                    //logger << "Next wait arhived "<<toTheNextWait<<"; switch to "<<bpmChangeList[changeIndex].newBpm;
+                    //qDebug() << "Next wait arhived "<<toTheNextWait<<"; switch to "<<bpmChangeList[changeIndex].newBpm;
 
                     //all bpm switch position
                     bpm =  bpmChangeList[changeIndex].newBpm;
-                    //logger << "Changed bpm to "<<bpm;
+                    //qDebug() << "Changed bpm to "<<bpm;
 
                     {
                         ++changeIndex;
                         toTheNextWait = bpmChangeList[changeIndex].waitTime;
 
-                        //logger << "Waiting for next: "<<toTheNextWait;
+                        //qDebug() << "Waiting for next: "<<toTheNextWait;
                     }
                 }
             }
@@ -272,7 +272,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
 
     setLimit(track->timeLoop.len());
 
-    //logger << "prepare thread done";
+    //qDebug() << "prepare thread done";
 }
 
 void PlayAnimationThr::addNumDenum(byte nu, byte de, ul nextIndex)

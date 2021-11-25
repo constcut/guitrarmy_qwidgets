@@ -7,7 +7,7 @@
 #include <QDebug>
 
 //TODO log turned off
-#define logger qDebug()
+
 
 GmyFile::GmyFile()
 {
@@ -465,7 +465,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
         if ((firstBytes[0]!='G') ||
             (firstBytes[1]!='A'))
         {
-            logger << "Attempt to open not guitarmy file";
+            qDebug() << "Attempt to open not guitarmy file";
             return false;
         }
     }
@@ -474,7 +474,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     file->read((char*)&byteZero,1);
     if (byteZero != 0)
     {
-        logger << "Not a base format version";
+        qDebug() << "Not a base format version";
         return false;
     }
 
@@ -677,7 +677,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
 
             if (barLen == 0)
             {
-                logger << "Bars len";
+                qDebug() << "Bars len";
                 Beat *emptyBeat = new Beat();
                 emptyBeat->setPause(true);
                 emptyBeat->setDuration(3);
@@ -726,7 +726,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                 loadString(file,beatText);
                 if (beatText.empty())
                 {
-                    logger <<"beatText "<< beatText.c_str()
+                    qDebug() <<"beatText "<< beatText.c_str()
                 }
                 */
                 //EffectsPack effPackBeat = beat->getEffects();

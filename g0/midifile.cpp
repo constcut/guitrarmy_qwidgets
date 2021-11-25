@@ -14,7 +14,6 @@
 #include <fstream>
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO logs turned off yet
 
@@ -71,10 +70,10 @@ ul VariableInt::readStream(std::ifstream & ifile)
 
 		if (lastByte & 128)
         {
-            if (midiLog)  logger << " not last! " ;
+            if (midiLog)  qDebug() << " not last! " ;
         }
 		else
-            if (midiLog)  logger << " last one!" ;
+            if (midiLog)  qDebug() << " last one!" ;
 
 		// end of debugging
 
@@ -128,7 +127,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 
 	if (p00 == 0xff)
 	{
-        if (midiLog)  logger << "This is a meta event! " ;
+        if (midiLog)  qDebug() << "This is a meta event! " ;
 
 		byte metaType;
         ifile.read((char*)&metaType, 1);
@@ -343,14 +342,14 @@ ul VariableInt::writeStream(std::ofstream &file)
 	{
 		byteToWrite = getV(i);
 
-    //    if (midiLog)  logger <<"PRE WrOtE"<<byteToWrite;
+    //    if (midiLog)  qDebug() <<"PRE WrOtE"<<byteToWrite;
 		
         if (i != (amountOfBytes - 1))
 				byteToWrite |= 128;	
 		
         file.write((const char*)&byteToWrite,1);
 
-      // if (midiLog)  logger <<"V WROTE "<<byteToWrite;
+      // if (midiLog)  qDebug() <<"V WROTE "<<byteToWrite;
     }
 						
 	return amountOfBytes;	
@@ -368,19 +367,19 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
 	
     bytesWritten += time.writeStream(ofile); //CHECK 0
     ofile.write((const char*)&byte0,1);
-    //if (midiLog)  logger <<"WROTE "<<byte0;
+    //if (midiLog)  qDebug() <<"WROTE "<<byte0;
 
     //int zFuck = 00; //check???? OUPS
     //ofile.write((const char*)&zFuck,1);
     ofile.write((const char*)&param1,1);
-    //if (midiLog)  logger <<"WROTE "<<param1;
+    //if (midiLog)  qDebug() <<"WROTE "<<param1;
 
 	bytesWritten += 2;
 	//ATTENTION finish bytes written
 
 	if (isMetaEvent())
     {
-        //if (midiLog)  logger << "META EVENT WROTEN!";
+        //if (midiLog)  qDebug() << "META EVENT WROTEN!";
 
         //ofile.write((const char*)&metaStore.metaType,1);
 		bytesWritten += metaStore.metaLen.writeStream(ofile);
@@ -397,7 +396,7 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
         if ((eventType != 0xC) && (eventType != 0xD))
 		{
               ofile.write((const char*)&param2,1);
-              //if (midiLog)  logger <<"WROTE "<<param2;
+              //if (midiLog)  qDebug() <<"WROTE "<<param2;
               bytesWritten += 1;
         }
 	}
@@ -1013,7 +1012,7 @@ void MidiTrack::add(MidiSignal &val)
     ChainContainer::add(val);
   //  std::cout<<std::endl;
   //  val.printToStream(std::cout);
-   // if (midiLog)  logger <<"lo";
+   // if (midiLog)  qDebug() <<"lo";
 }
 */
 
@@ -1501,7 +1500,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, ul shiftCursorBar)
  clock_t after2T = getTime();
  int diffT = after2T - afterT;
 
- //logger <<"Generate track "<<diffT;
+ //qDebug() <<"Generate track "<<diffT;
 
 }
 
@@ -1773,8 +1772,8 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
 
     for (ul i=0; i < tabLen; ++i)
     {
-        //logger << "0 Tab is "<<(int)tab;
-        //logger <<"pushed "<<tabLen;
+        //qDebug() << "0 Tab is "<<(int)tab;
+        //qDebug() <<"pushed "<<tabLen;
 
         Track *track = tab->getV(i);
 
@@ -1815,8 +1814,8 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
         else
             mTrack->fromTrack(track,i,startCursorBar); //1 chan per track
 
-        //logger << "1 Tab is "<<(int)tab;
-        //logger <<"pushed";
+        //qDebug() << "1 Tab is "<<(int)tab;
+        //qDebug() <<"pushed";
 
         clock_t afterT3 = getTime();
 
@@ -1824,9 +1823,9 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
         clock_t afterT4 = getTime();
 
         int addDiff = afterT4-afterT3;
-        //logger << "Difference on add to poly "<<addDiff;
+        //qDebug() << "Difference on add to poly "<<addDiff;
 
-        //logger << "2 Tab is "<<(int)tab;
-        //logger <<"pushed";
+        //qDebug() << "2 Tab is "<<(int)tab;
+        //qDebug() <<"pushed";
     }
 }

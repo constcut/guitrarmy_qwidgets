@@ -66,7 +66,6 @@
 #include <sstream>
 
 
-#define logger qDebug()
 
 
 //-------------------------------
@@ -1006,7 +1005,7 @@ void MainWindow::actionNow(QAction *action)
      if (lastClick)
          if (diff < 1000)
          {
-             logger << "Too short";
+             qDebug() << "Too short";
          }
 
      //if (CONF_PARAM("crashOnPlayHotFix")=="1")
@@ -1386,7 +1385,7 @@ void MainWindow::setStatusBarMessage(int index, std::string text, int timeOut)
    if (index==3)
    {
        //missing third one
-       logger<<"No 3rd status label now!!";
+       qDebug()<<"No 3rd status label now!!";
     //   statusLabelThird->setText(uniText);
    }
 
@@ -1999,7 +1998,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
                 f.close();
             }
             else
-                logger << "Open file for raw record error;";
+                qDebug() << "Open file for raw record error;";
 
 
             collector.clear();
@@ -2137,7 +2136,7 @@ void MainWindow::initAudioInput()
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
     if (!info.isFormatSupported(format)) {
-        logger << "Default format not supported - trying to use nearest";
+        qDebug() << "Default format not supported - trying to use nearest";
         format = info.nearestFormat(format);
     }
 
@@ -2183,7 +2182,7 @@ void MainWindow::initAudioOutput()
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
     if (!info.isFormatSupported(format)) {
-        logger << "Default format not supported - trying to use nearest";
+        qDebug() << "Default format not supported - trying to use nearest";
         format = info.nearestFormat(format);
     }
 
@@ -2201,7 +2200,7 @@ void MainWindow::startAudioOutput(std::string localName)
     audioFile.setFileName(defaultRecFile);
 
     if (audioFile.open(QIODevice::ReadOnly) == false)
-        logger << "Failed to open audio for output";
+        qDebug() << "Failed to open audio for output";
 
     QByteArray allBytes = audioFile.readAll();
     audioFile.close();
@@ -2229,7 +2228,7 @@ void MainWindow::startAudioInput()
     audioInfo->collector.clear();
 
 
-    //audio_logger<<"Audio input started";
+    //audio_qDebug()<<"Audio input started";
     audioInfo->start();
     audioInput->start(audioInfo);
 
@@ -2237,7 +2236,7 @@ void MainWindow::startAudioInput()
 
 void MainWindow::stopAudioInput()
 {
-    //audio_logger<<"Audio input stopped";
+    //audio_qDebug()<<"Audio input stopped";
     audioInfo->stop();
     audioInput->stop();
 
@@ -2292,7 +2291,7 @@ void MainWindow::stopAudioInput()
         f.write(compress);
         */
 
-        ////logger << "Compressed wroten: "<<compressedSize;
+        ////qDebug() << "Compressed wroten: "<<compressedSize;
         ///
 
         qDebug() << "Collector size was "<<audioInfo->collector.size();
@@ -2302,7 +2301,7 @@ void MainWindow::stopAudioInput()
         f.close();
     }
     else
-        logger << "Open file for raw record error;";
+        qDebug() << "Open file for raw record error;";
 
 
     audioInfo->collector.clear();
@@ -2341,7 +2340,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (imageIcon.isNull())
     {
-        logger << "Image empty";
+        qDebug() << "Image empty";
     }
     else
     {

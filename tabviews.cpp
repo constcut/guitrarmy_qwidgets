@@ -19,9 +19,7 @@
 #include "midiengine.h"
 
 #include <QDebug>
-#define logger qDebug()
 
-//TODO
 
 
 
@@ -465,7 +463,7 @@ void TabView::prepareAllThreads(ul shiftTheCursor)
     }
     localThr->setLimit(pTrack->timeLoop.len());
 
-    logger << "All threads prepared";
+    qDebug() << "All threads prepared";
 }
 
 void TabView::launchAllThreads()

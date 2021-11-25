@@ -3,7 +3,7 @@
 #include <fstream>
 #include <QDebug>
 
-#define logger qDebug()
+
 
 //TODO move to gtp files
 bool GTabLoader::open(std::string fileName)
@@ -11,7 +11,7 @@ bool GTabLoader::open(std::string fileName)
     std::ifstream file(fileName);
 
     if (file.is_open() == false) {
-        logger << "Failed to open file from loader";
+        qDebug() << "Failed to open file from loader";
         return false;
     }
 
@@ -44,7 +44,7 @@ bool GTabLoader::open(std::string fileName)
     }
     else
     {
-       //logger << "Not gmy format "<<firstBytes;
+       //qDebug() << "Not gmy format "<<firstBytes;
        // std::cout <<"First byte of file - "<<firstBytes[0]<<";"<<(int)firstBytes[0];
 
         file.read(firstBytes,2);
@@ -112,7 +112,7 @@ bool GTabLoader::open(std::string fileName)
         }
         else
         {
-            logger << "unknown format";
+            qDebug() << "unknown format";
             file.close();
             return false;
         }

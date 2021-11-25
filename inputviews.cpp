@@ -23,7 +23,6 @@
 
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO
 
@@ -456,7 +455,7 @@ void TapRyView::measureTime()
     if (firstDraw)
     {
         //CUT TO Tap
-        logger << "Tap first draw";
+        qDebug() << "Tap first draw";
         clock_t beforMes = getTime(); //over here? /(CLOCKS_PER_SEC/1000)
         QThread::msleep(100); //away from usleep 1000*
         clock_t afterMes = getTime();
@@ -715,7 +714,7 @@ void TapRyView::createBar()
 
         if (step < 0)
         {
-            logger << "hmm";
+            qDebug() << "hmm";
         }
 
         Beat *ryBeat=new Beat();
@@ -787,7 +786,7 @@ void TapRyView::createBar()
 
 
 
-    logger << "tap ry done";
+    qDebug() << "tap ry done";
 
     //getMaster()->setStatusBarMessage(0,sX.c_str(),3000);
     //labStat->setText(sX.c_str());
@@ -1023,7 +1022,7 @@ void TapRyView::onclick(int x1, int y1)
 
         if (timeNow < 0)
         {
-            logger <<"Y";
+            qDebug() <<"Y";
         }
         presses.push_back(newPair);
 
@@ -1031,7 +1030,7 @@ void TapRyView::onclick(int x1, int y1)
         std::string info=
         "Presses " + std::to_string( presses.size() ) + "; last- " + std::to_string(timeNow);
 
-        logger << info.c_str();
+        qDebug() << info.c_str();
 
         labStat->setText(info.c_str());
 

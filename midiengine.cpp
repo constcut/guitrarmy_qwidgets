@@ -6,7 +6,6 @@
 
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO
 
@@ -124,7 +123,7 @@ void MidiEngine::init()
           qDebug()<<"error opening default MIDI device: "<<(int)err;
        }
        else
-           logger<<"successfully opened default MIDI device";
+           qDebug()<<"successfully opened default MIDI device";
 
 
 #define TimerResolution 1
@@ -135,7 +134,7 @@ void MidiEngine::init()
        if (timeGetDevCaps(&tc,sizeof(TIMECAPS)) != TIMERR_NOERROR)
        {
            //can't continue
-           logger << "MM timer critical error";
+           qDebug() << "MM timer critical error";
        }
 
        UINT timeRes = max_DEF(tc.wPeriodMin,TimerResolution);
@@ -153,7 +152,7 @@ void MidiEngine::freeInitials()
 {
 #ifdef WIN32
     midiOutClose(winMidi);
-    //logger<<"closed default MIDI device";
+    //qDebug()<<"closed default MIDI device";
 #endif
     opened = false;
 }
@@ -282,10 +281,10 @@ void MidiEngine::sendSignalShortDelay( int msdelay, byte status, int byte1, int 
 
     if (timeSetEvent(msdelay, wTimerRes, Midi_Callback_Win,signal,TIME_ONESHOT) ==  0)
     {
-        logger <<"failed to start mmtimer";
+        qDebug() <<"failed to start mmtimer";
     }
     else
-        logger << "Timer was set for midi event";
+        qDebug() << "Timer was set for midi event";
 
 
 #endif

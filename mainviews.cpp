@@ -17,7 +17,6 @@
 
 
 #include <QDebug>
-#define logger qDebug()
 
 //TODO
 
@@ -629,7 +628,7 @@ void TestsView::fastTestAll()
 
         forLoad->postGTP();
         forLoad->connectTracks();
-        logger << "file v 4 was opened"<<sX.c_str();
+        qDebug() << "file v 4 was opened"<<sX.c_str();
 
         MidiFile midiCheck;
         midiCheck.fromTab(forLoad);
@@ -638,7 +637,7 @@ void TestsView::fastTestAll()
         MidiFile amMidiCheck;
         amMidiCheck.generateFromAMusic(amCheck); //to ptr later
 
-        logger<<"full scen done";
+        qDebug()<<"full scen done";
         delete forLoad;
     }
     */
@@ -879,7 +878,7 @@ void BendInput::draw(QPainter *painter)
         {
             byte vertical = ptrToBend->getV(i).vertical;
             byte horizontal = ptrToBend->getV(i).horizontal;
-            //logger << i << ") v= "<<vertical<<"; hor = "<<horizontal;
+            //qDebug() << i << ") v= "<<vertical<<"; hor = "<<horizontal;
 
             int localY = vertical*-20; localY += 80+240;
             int localX = horizontal*8; localX += 20; //second op - shift in rect
@@ -890,7 +889,7 @@ void BendInput::draw(QPainter *painter)
             prevX = localX; prevY = localY;
             drawEllipse(QColor("red"), painter, localX-3,localY-3,6,6);
         }
-        //logger << "Bend outpited";
+        //qDebug() << "Bend outpited";
     }
 }
 
@@ -926,7 +925,7 @@ void BendInput::keyevent(std::string press)
             qDebug() << "Bend c type "<<bendType<<"; h "<<bendHeight;
             fillBend(bendType,bendHeight);
         }
-        logger << "comBend";
+        qDebug() << "comBend";
     }
 
     //also must have back button that will set bend value into note (instaed of just escape it)
@@ -988,7 +987,7 @@ void BendInput::onclick(int x1, int y1)
 
                 if ((pointV==vertical) && (pointH==horizontal))
                 {
-                    logger << "point really hitten";
+                    qDebug() << "point really hitten";
                     ptrToBend->remove(i);
                     return;
                 }
