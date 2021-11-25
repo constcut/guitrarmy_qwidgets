@@ -65,7 +65,7 @@
 #include <fstream>
 #include <sstream>
 
-#define LOG(msg) qDebug() msg
+
 #define logger qDebug()
 
 
@@ -1000,7 +1000,7 @@ void MainWindow::actionNow(QAction *action)
 
 
 
-     LOG(<<"Press on play last dif"<<diff);
+     qDebug()<<"Press on play last dif"<<diff);
      //hotfix:
 
      if (lastClick)
@@ -1766,8 +1766,8 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
             if (CONF_PARAM("tapAndHoldCopy")=="1")
             {
 
-            LOG(<<"Tap and hold x="<<tapGest->position().x()<<"; y="
-                 <<tapGest->position().y());
+            qDebug()<<"Tap and hold x="<<tapGest->position().x()<<"; y="
+                 <<tapGest->position().y();
 
             //QTapAndHoldGesture *tap2 = static_cast<QTapAndHoldGesture *>(tapNhold);
             //sX<<tap2->position.x()<<" "<<tap2->position.y();
@@ -1991,7 +1991,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
                 f.write(fromInt);
                 f.write(compress);
 
-                LOG( << "Compressed wroten: "<<compressedSize);
+                qDebug() << "Compressed wroten: "<<compressedSize);
 
                 //*/
                 f.write(collector);
@@ -2013,7 +2013,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
 
     //exceed log
     //if (0)
-    LOG( << "Wroten audio data "<<cutLen<<"; in bufer "<<fullLen);
+    qDebug() << "Wroten audio data "<<cutLen<<"; in bufer "<<fullLen;
     //emit update();
     return len;
 }
@@ -2295,7 +2295,7 @@ void MainWindow::stopAudioInput()
         ////logger << "Compressed wroten: "<<compressedSize;
         ///
 
-        LOG( << "Collector size was "<<audioInfo->collector.size());
+        qDebug() << "Collector size was "<<audioInfo->collector.size();
 
         f.write(audioInfo->collector);
         f.flush();

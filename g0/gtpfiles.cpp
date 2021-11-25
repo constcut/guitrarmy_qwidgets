@@ -8,9 +8,9 @@ bool gtpLog = false;
 ////////////////////////////////////////////////////////////////////////////
 char miniBufer[20480];
 
-#define logger qDebug()
 
-#define LOG(m)
+
+
 //Some of the logs disabled yet
 
 
@@ -44,7 +44,7 @@ std::string readString(std::ifstream &file)
     }
     else
     {
-        if (gtpLog)  logger << "String is empty!";
+        if (gtpLog)  qDebug() << "String is empty!";
     }
     return response;
 }
@@ -74,7 +74,7 @@ std::string readStringShiByte(std::ifstream &file)
     }
     else
     {
-        if (gtpLog)  logger << "String is empty!";
+        if (gtpLog)  qDebug() << "String is empty!";
     }
     return response;
 }
@@ -188,7 +188,7 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
 
 void readChordDiagramGP3(std::ifstream &file)
 {
-       if (gtpLog)  logger << "CHORD_";
+       if (gtpLog)  qDebug() << "CHORD_";
 
     int header=0;
     file.read((char*)&header,1);
@@ -232,7 +232,7 @@ void readChordDiagramGP3(std::ifstream &file)
 
 void readChordDiagramGP4(std::ifstream &file)
 {
-   if (gtpLog)  logger << "CHORD";
+   if (gtpLog)  qDebug() << "CHORD";
 
    int header=0;
    file.read((char*)&header,1);
@@ -432,7 +432,7 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
     if (trackHeader & 1)
     {
         currentTrack->setDrums(true);
-        if (gtpLog)  logger <<"This is drums track!";
+        if (gtpLog)  qDebug() <<"This is drums track!";
     }
 
     if (gpVersion == 5)
@@ -573,7 +573,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 
     if (beatEffectsHead2 & 4)
     {   //tremolo
-       if (gtpLog)  logger << " read bend tremolo";
+       if (gtpLog)  qDebug() << " read bend tremolo";
        BendPoints *tremoloBend = new BendPoints;
        readBendGTP(&file,tremoloBend);
        cursorBeat->setEffects(19); //would be tremolo
@@ -602,7 +602,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     {   //pick stoke
         byte pickStoke;
         file.read((char*)&pickStoke,1);
-        if (gtpLog)  logger << "Pick stoke ";
+        if (gtpLog)  qDebug() << "Pick stoke ";
 
         if (pickStoke)
         {
@@ -615,7 +615,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 
 void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 {
-    if (gtpLog)  logger <<"Bit 3 in header turned on";
+    if (gtpLog)  qDebug() <<"Bit 3 in header turned on";
     //NOT SET
     byte noteEffectsHead1, noteEffectsHead2;
     file.read((char*)&noteEffectsHead1,1);
@@ -627,7 +627,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteEffectsHead1&1)
     {//bend
-        if (gtpLog)  logger << "Bend found.";
+        if (gtpLog)  qDebug() << "Bend found.";
 
 
         BendPoints *bend = new BendPoints;
@@ -643,7 +643,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteEffectsHead1&16)
     {   //grace note
-        if (gtpLog)  logger << "Grace note follows";
+        if (gtpLog)  qDebug() << "Grace note follows";
 
         byte graceFret = 0;
         byte graceDynamic = 0;
@@ -661,7 +661,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         {
             byte flags =0;
             file.read((char*)&flags,1);
-            if (gtpLog)  logger<<"Gp5 grace flags "<<flags;
+            if (gtpLog)  qDebug()<<"Gp5 grace flags "<<flags;
         }
 
         newNote->graceNote[0] = graceFret;
@@ -676,7 +676,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteEffectsHead2&1)
     {
-        if (gtpLog)  logger << "Staccato appear";
+        if (gtpLog)  qDebug() << "Staccato appear";
 
         newNote->setEffect(23); //staccato
     }
@@ -684,7 +684,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&2)
     {//palm muting
 
-        if (gtpLog)  logger << "Palm mute appear";
+        if (gtpLog)  qDebug() << "Palm mute appear";
 
         newNote->setEffect(2);
     }
@@ -692,21 +692,21 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead1&2)
     {//legato
        newNote->setEffect(10);
-       if (gtpLog)  logger << "legatto turned on";
+       if (gtpLog)  qDebug() << "legatto turned on";
     }
 
     if (noteEffectsHead1&8)
     {//let ring
        newNote->setEffect(18);
-       if (gtpLog)  logger <<" Let ring turned on";
-       if (gtpLog)  logger <<" if (gtpLog)  log";
+       if (gtpLog)  qDebug() <<" Let ring turned on";
+       if (gtpLog)  qDebug() <<" if (gtpLog)  log";
     }
 
     if (noteEffectsHead2&4)
     {//Tremolo picking : b
         byte tremoloPicking;
         file.read((char*)&tremoloPicking,1);
-        if (gtpLog)  logger << "Tremolo byte "<<tremoloPicking;
+        if (gtpLog)  qDebug() << "Tremolo byte "<<tremoloPicking;
         newNote->setEffect(24); //tremolo picking
     }
 
@@ -714,7 +714,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     {//Slide : b
         byte slide;
         file.read((char*)&slide,1);
-        if (gtpLog)  logger << "Slide byte " <<slide;
+        if (gtpLog)  qDebug() << "Slide byte " <<slide;
         byte effect = 3;
         if (slide < 5)
         {
@@ -736,7 +736,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     {//Harmonics : b
         byte harmonics;
         file.read((char*)&harmonics,1);
-        if (gtpLog)  logger << "Harmonics byte "<<harmonics;
+        if (gtpLog)  qDebug() << "Harmonics byte "<<harmonics;
 
         if (gpVersion==5)
         {
@@ -786,14 +786,14 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         byte trill1, trill2;
         file.read((char*)&trill1,1);
         file.read((char*)&trill2,1);
-        if (gtpLog)  logger << "Trill b1="<<trill1<<" trill b2="<<trill2;
+        if (gtpLog)  qDebug() << "Trill b1="<<trill1<<" trill b2="<<trill2;
     }\
 
     if (noteEffectsHead2&64)
     {
         //vibrato
         newNote->setEffect(1);//1 is vibrato
-        if (gtpLog)  logger << "Vibratto turned on";
+        if (gtpLog)  qDebug() << "Vibratto turned on";
     }
 }
 
@@ -832,7 +832,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
             /*
 
             Note *prevNote=0;
-            if (gtpLog)  logger << "Prev note for sNum="<<sNum;
+            if (gtpLog)  qDebug() << "Prev note for sNum="<<sNum;
 
             byte beatShiftBack = 1;
             byte wasInBlock = 0;
@@ -852,7 +852,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
                         Note *prevNoteSearch = &prevBeat->getV(strInd);
                         byte prevSNum = prevNoteSearch->getStringNumber();
                         byte fretPrevValue = prevNoteSearch->getFret();
-                           if (gtpLog)  logger<< strInd <<"PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
+                           if (gtpLog)  qDebug()<< strInd <<"PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
                         if (sNum==prevSNum)
                         {
                             notFoundInPrev = false;
@@ -905,7 +905,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
                              Note *prevNoteSearch = &prevBeat->getV(strInd);
                              byte prevSNum = prevNoteSearch->getStringNumber();
                              byte fretPrevValue = prevNoteSearch->getFret();
-                             if (gtpLog)  logger << strInd <<" PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
+                             if (gtpLog)  qDebug() << strInd <<" PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
                              if (sNum==prevSNum)
                              {
                                  notFoundInPrev = false;
@@ -953,7 +953,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
             if (prevNote)
             {
                 byte prevFret = prevNote->getFret();
-                if (gtpLog)  logger << "Prev found "<<prevNote->getStringNumber()<<
+                if (gtpLog)  qDebug() << "Prev found "<<prevNote->getStringNumber()<<
                        " "<<prevFret ;
 
 
@@ -968,11 +968,11 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
                 newNote->setFret(prevFret);
 
 
-                if (gtpLog)  logger << "After leeg sign state "<<prevNote->getState()<<" wib "<<wasInBlock;
+                if (gtpLog)  qDebug() << "After leeg sign state "<<prevNote->getState()<<" wib "<<wasInBlock;
 
 
                 if (prevFret==63)
-                if (gtpLog)  logger<<"if (gtpLog)  log";
+                if (gtpLog)  qDebug()<<"if (gtpLog)  log";
             }
             //*/
         }
@@ -984,7 +984,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
         if (gpVersion==4)
         {
         //another duration
-        if (gtpLog)  logger  <<"Time independent ";
+        if (gtpLog)  qDebug()  <<"Time independent ";
         byte t1,t2;
         file.read((char*)&t1,1);
         file.read((char*)&t2,1);
@@ -995,7 +995,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteHeader & 16)
     {
-        if (gtpLog)  logger <<"Bit 4 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 4 in header turned on";
         byte bByte=0;
         file.read((char*)&bByte,1);
         if (gtpLog)  qDebug()<<"velocity byte(forte) "<<bByte;
@@ -1004,34 +1004,34 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteHeader & 32)
     {
-        if (gtpLog)  logger <<"Bit 5 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 5 in header turned on";
         byte bByte=0;
         file.read((char*)&bByte,1);
         if (gtpLog)  qDebug()<<"some byte fret "<<bByte;
         if (noteType != 2)
         {
-            if (gtpLog)  logger<<"not leeg setting prev fret";
+            if (gtpLog)  qDebug()<<"not leeg setting prev fret";
             newNote->setFret(bByte);
         }
         else
-            if (gtpLog)  logger <<"leeg escape prev fret";
+            if (gtpLog)  qDebug() <<"leeg escape prev fret";
     }
 
 
 
     if (noteHeader & 2)
-       if (gtpLog)  logger <<"Bit 1 in header turned on"; //DOT NOTE //wow - where is it turned then?
+       if (gtpLog)  qDebug() <<"Bit 1 in header turned on"; //DOT NOTE //wow - where is it turned then?
 
     if (noteHeader & 4)
     {
-        if (gtpLog)  logger <<"Bit 2 in header turned on"; //GHOST NOTE
+        if (gtpLog)  qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
         //ghost not here
         newNote->setEffect(21); //ghost note
     }
 
     if (noteHeader & 64)
     {
-        if (gtpLog)  logger <<"Bit 6 in header turned on"; //ACCENTED
+        if (gtpLog)  qDebug() <<"Bit 6 in header turned on"; //ACCENTED
         newNote->setEffect(27); //there is no heavy accented note anymore (
         //in gp4
 
@@ -1039,7 +1039,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
     if (noteHeader & 128)
     {
-        if (gtpLog)  logger <<"Bit 7 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 7 in header turned on";
 
         byte bByte=0;
         byte bByte2=0;
@@ -1135,7 +1135,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 
     if (precText)
     {
-        if (gtpLog)  logger << "Text";
+        if (gtpLog)  qDebug() << "Text";
 
         ul textLen = 0;
         file.read((char*)&textLen,4);
@@ -1162,7 +1162,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 
     if (precChanges)
     {
-        if (gtpLog)  logger << "Changes table found";
+        if (gtpLog)  qDebug() << "Changes table found";
         readChanges(file,cursorBeat);
     }
 
@@ -1344,7 +1344,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
 bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
-    if (gtpLog)  logger << "Starting GP4 import";
+    if (gtpLog)  qDebug() << "Starting GP4 import";
 
 
     if (knownVersion==0)
@@ -1375,7 +1375,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     if (noticeLen > 0)
     {
-        if (gtpLog)  logger << "Read notices ";
+        if (gtpLog)  qDebug() << "Read notices ";
         for (ul i =0 ; i < noticeLen; ++i)
             std::string noticeOne = readString(file);
     }
@@ -1417,9 +1417,9 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     //debug
     if (gtpLog)
-        LOG( << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
+        qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64)
-               <<" and ul "<<(int)(sizeof(unsigned int)) );
+               <<" and ul "<<(int)(sizeof(unsigned int));
 
     memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
 
@@ -1430,7 +1430,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     file.read((char*)&beatsAmount,4);
     file.read((char*)&tracksAmount,4);
 
-    if (gtpLog)  LOG( << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount );
+    if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount;
 
 
     for (ul i = 0;i < tracksAmount; ++i)
@@ -1465,7 +1465,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (cursorBar->len())
      cursorBeat =cursorBar->getV(0);
 
-    if (gtpLog)  LOG( <<"Begining beats amounts "<<beatsAmount );
+    if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount;
 
 
     ul globalBeatsAmount = beatsAmount*tracksAmount;
@@ -1475,24 +1475,24 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         ul beatsInPair = 0;
         file.read((char*)&beatsInPair,4);
 
-        if (gtpLog)  LOG( <<i <<" Beats in pair " <<beatsInPair );
+        if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair;
 
         //refact - over here was critical error its not usefull code
         if (beatsInPair > 1000)
         {
             if (i != 0)
             {
-                if (gtpLog)  logger << "DEBUG OUT";
+                if (gtpLog)  qDebug() << "DEBUG OUT";
                 for (int iii = 0; iii < 10; ++iii)
                 {
                     byte singleB;
                     file.read((char*)&singleB,1);
-                    if (gtpLog)  LOG( << "[" << iii << "] = " << singleB);
+                    if (gtpLog)  qDebug() << "[" << iii << "] = " << singleB;
                 }
-                if (gtpLog)  logger << "DEBUG OUT";
+                if (gtpLog)  qDebug() << "DEBUG OUT";
             }
 
-            if (gtpLog)  logger << "Seams to be critical error";
+            if (gtpLog)  qDebug() << "Seams to be critical error";
         }
 
         ul indexOfTrack = i % tracksAmount;
@@ -1541,8 +1541,8 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         }
     }
 
-    if (gtpLog)  logger << "Importing finished!";
-    if (gtpLog)  logger << "fine.";
+    if (gtpLog)  qDebug() << "Importing finished!";
+    if (gtpLog)  qDebug() << "fine.";
 
     return true;
 }
@@ -1673,7 +1673,7 @@ void writeBeat(std::ofstream &file, Beat *cursorBeat)
 
     if (precText)
     {
-        if (gtpLog)  logger << "ATTENTION missing TEXT"; //!!!
+        if (gtpLog)  qDebug() << "ATTENTION missing TEXT"; //!!!
     }
 
     if (precEffects)
@@ -1816,7 +1816,7 @@ void writeNote(std::ofstream &file, Note *newNote)
 
     if (noteHeader & 1)
     {
-        if (gtpLog)  logger  <<"Time independent ";
+        if (gtpLog)  qDebug()  <<"Time independent ";
         byte t1,t2;
         file.write((const char*)&t1,1);
         file.write((const char*)&t2,1);
@@ -1824,14 +1824,14 @@ void writeNote(std::ofstream &file, Note *newNote)
 
     if (noteHeader & 16)
     {
-        if (gtpLog)  logger <<"Bit 4 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 4 in header turned on";
         byte bByte=0;
         file.write((const char*)&bByte,1);
     }
 
     if (noteHeader & 32)
     {
-        if (gtpLog)  logger <<"Bit 5 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 5 in header turned on";
         byte bByte=0;
         file.write((const char*)&bByte,1);
     }
@@ -1893,11 +1893,11 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
         std::string tempoName = readString(file,strLen); //not -1
         if (gtpLog)
-            LOG(<<"tempo name "<<tempoName.c_str());
+            qDebug()<<"tempo name "<<tempoName.c_str();
     }
     else
     {
-        if (gtpLog) logger<<"tempo name is empty";
+        if (gtpLog) qDebug()<<"tempo name is empty";
         byte readByte;
         file.read((char*)&readByte,1);
     }
@@ -1905,9 +1905,9 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
     file.read((char*)&changeStruct.newTempo,4); //8
 
-    if (gtpLog)  LOG( <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
+    if (gtpLog)  qDebug() <<  "I "<<changeStruct.newInstr<<"; V "<<changeStruct.newVolume<<"; P "<<changeStruct.newPan<<
           "; C "<<changeStruct.newChorus<<"; R "<<changeStruct.newReverb<<"; Ph "<<changeStruct.newPhaser<<
-          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo);
+          "; Tr "<<changeStruct.newTremolo<<"; T="<<changeStruct.newTempo;
 
 
     //NO INSTR IN DOCS
@@ -2004,7 +2004,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
             if (someSkip)
             {
-                LOG(<<"Skip byte = "<<someSkip);
+                qDebug()<<"Skip byte = "<<someSkip;
             }
          }
 
@@ -2036,7 +2036,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
             {
                 byte readOne = 0;
                 file.read((char*)&readOne,1);
-                logger <<"R n# "<<z<<" "<<readOne;
+                qDebug() <<"R n# "<<z<<" "<<readOne;
             }
             */
 
@@ -2048,8 +2048,8 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
 
             if (gtpLog)
             {
-                LOG( <<"R1 "<<rS1.c_str()<<" : R1");
-                LOG( <<"R2 "<<rS2.c_str()<<" : R2");
+                qDebug() <<"R1 "<<rS1.c_str()<<" : R1";
+                qDebug() <<"R2 "<<rS2.c_str()<<" : R2";
             }
 
         }
@@ -2065,7 +2065,7 @@ void readChordDiagramGP5(std::ifstream &file)
 
     //return;
     char chordBufer[64];
-    if (gtpLog)  logger << "Chord";
+    if (gtpLog)  qDebug() << "Chord";
     file.read((char*)chordBufer,17);
 
 
@@ -2076,7 +2076,7 @@ void readChordDiagramGP5(std::ifstream &file)
     std::string chStr = readString(file,21);
 
     if (gtpLog)
-        LOG( <<fByte<< " Ch str "<<chStr.c_str());
+        qDebug() <<fByte<< " Ch str "<<chStr.c_str();
 
 
     file.read((char*)chordBufer,4);
@@ -2109,14 +2109,14 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     bool precStatus = beatHeader & 0x40;
 
 
-    if (gtpLog)  LOG( << "Beat header " << (int)beatHeader);
+    if (gtpLog)  qDebug() << "Beat header " << (int)beatHeader;
 
     cursorBeat->setPause(false);
     if (precStatus)
     {
         byte beatStatus;
         file.read((char*)&beatStatus,1);
-        if (gtpLog)  LOG( <<"Beat status "<<(int)beatStatus);
+        if (gtpLog)  qDebug() <<"Beat status "<<(int)beatStatus;
         if ((beatStatus == 2) || (beatStatus == 0))
          cursorBeat->setPause(true);
     }
@@ -2126,7 +2126,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     byte durationGP =0;
     file.read((char*)&durationGP,1);
 
-    if (gtpLog)  LOG( <<"Beat duration "<<(int)durationGP);
+    if (gtpLog)  qDebug() <<"Beat duration "<<(int)durationGP;
 
     byte duration=durationGP+2; //moved from -2 double to 1
     //x - double //0 - full //1 - half
@@ -2142,7 +2142,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     {
         ul trumpletN = 0;
         file.read((char*)&trumpletN,4);
-        if (gtpLog)  LOG( <<"Beat tump "<<trumpletN);
+        if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
     }
     else
@@ -2157,7 +2157,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 
     if (precText)
     {
-        if (gtpLog)  logger << "TEXT";
+        if (gtpLog)  qDebug() << "TEXT";
 
         ul textLen = 0;
         file.read((char*)&textLen,4);
@@ -2171,7 +2171,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
         //len+1
         textBufer[byteLen]=0;
 
-        if (gtpLog)  LOG( <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen);
+        if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
         cursorBeat->setGPCOMPText(foundText);
@@ -2184,7 +2184,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 
     if (precChanges)
     {
-        if (gtpLog)  logger << "Changes table found";
+        if (gtpLog)  qDebug() << "Changes table found";
         readChangesGP5(file,cursorBeat,verInd);
     }
 
@@ -2207,9 +2207,10 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     byte precTonality = beatHeader & 0x40;
     byte precDoubleBar = beatHeader & 0x80;
 
-    if (gtpLog)  LOG(<< i << " beat h= " << (int)beatHeader);
-    if (gtpLog)  LOG( << "[" << precNum << "][" << precDenum << "][" << precBegRepeat << "][" << precEndRepeat << "][" << precNumAltEnding <<
-    "][" << precMarker << "][" << precTonality << "][" << precDoubleBar << "]");
+    if (gtpLog)  qDebug()<< i << " beat h= " << (int)beatHeader;
+    if (gtpLog)  qDebug() << "[" << precNum << "][" << precDenum << "]["
+        << precBegRepeat << "][" << precEndRepeat << "][" << precNumAltEnding <<
+        "][" << precMarker << "][" << precTonality << "][" << precDoubleBar << "]";
 
 
 
@@ -2233,7 +2234,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     {
         byte signNumeration = 0;
         file.read((char*)&signNumeration,1);
-        if (gtpLog)  LOG( << "Set num to " <<(int)signNumeration );
+        if (gtpLog)  qDebug() << "Set num to " <<(int)signNumeration;
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -2254,7 +2255,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     {
         byte signDenumeration = 0;
         file.read((char*)&signDenumeration,1);
-        if (gtpLog)  LOG( << "Set denum to "	<<(int)signDenumeration);
+        if (gtpLog)  qDebug() << "Set denum to "	<<(int)signDenumeration;
 
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
@@ -2275,7 +2276,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     {
         byte repeatTimes = 0;
         file.read((char*)&repeatTimes,1);
-        if (gtpLog)  LOG( << "Repeat times " <<(int)repeatTimes);
+        if (gtpLog)  qDebug() << "Repeat times " <<(int)repeatTimes;
         //i'm not sure, but repeat flag appear on next bar
         //maybe its bug or how it used to be on gtp
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
@@ -2302,7 +2303,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         ul markerColor;
         file.read((char*)&markerColor,4);
 
-        if (gtpLog)  LOG( << "Marker size "<<markerSize<<" buf "<<markerBufer);
+        if (gtpLog)  qDebug() << "Marker size "<<markerSize<<" buf "<<markerBufer;
 
         std::string markerBuferStr(markerBufer);
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
@@ -2316,7 +2317,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     {
         byte altEnding = 0;
         file.read((char*)&altEnding,1);
-        if (gtpLog)  LOG( << "AltEnding " << (int)altEnding);
+        if (gtpLog)  qDebug() << "AltEnding " << (int)altEnding;
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->getV(iTrack)->getV(i);
@@ -2329,7 +2330,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         byte tonality = 0;
         file.read((char*)&tonality,1); //skip 1!!
         file.read((char*)&tonality,1);
-        if (gtpLog)  LOG( << "Tonality " <<(int)tonality);
+        if (gtpLog)  qDebug() << "Tonality " <<(int)tonality;
         for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->getV(iTrack)->getV(i);
@@ -2360,7 +2361,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
 bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
-    if (gtpLog)  logger << "Starting GP5 import";
+    if (gtpLog)  qDebug() << "Starting GP5 import";
 
     char placeToSkip[255];
     byte versionIndex = 255;
@@ -2409,11 +2410,11 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     //notice
     ul noticeLen = 0;
     file.read((char*)&noticeLen,4);
-    if (gtpLog)  LOG( << "Notice len is " << (int)noticeLen);
+    if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
-        if (gtpLog)  logger << "Read notices ";
+        if (gtpLog)  qDebug() << "Read notices ";
         for (ul i =0 ; i < noticeLen; ++i)
         {
             /*
@@ -2421,10 +2422,10 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             file.read((char*)&intLen,4);
             byte noteLen = 0;
             file.read((char*)&noteLen,1);
-            logger <<"Note strlens "<<noteLen<<" "<<intLen;
+            qDebug() <<"Note strlens "<<noteLen<<" "<<intLen;
             */
             std::string noticeOne = readStringShiByte(file); //,noteLen
-            LOG(<<"Notice#"<<i<<" "<<noticeOne.c_str());
+            qDebug()<<"Notice#"<<i<<" "<<noticeOne.c_str();
         }
     }
 
@@ -2434,7 +2435,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     ul lyTrack = 0;
     file.read((char*)&lyTrack,4);
-    if (gtpLog)  LOG( << "Lyrics track " <<(int)lyTrack) ;
+    if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack ;
 
     for (int i = 0; i < 5; ++i)
     {
@@ -2541,10 +2542,10 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
     /*
-    logger <<"Tracks "<<(int)tab->len();
-    logger <<"-";
-    logger<<" in cur "<<(int)tab->getV(0)->len();
-    logger <<"+";
+    qDebug() <<"Tracks "<<(int)tab->len();
+    qDebug() <<"-";
+    qDebug()<<" in cur "<<(int)tab->getV(0)->len();
+    qDebug() <<"+";
     */
 
     Bar *cursorBar = tab->getV(0)->getV(0);
@@ -2584,17 +2585,17 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             {
                 if (i != 0)
                 {
-                    if (gtpLog)  logger << "DEBUG OUT";
+                    if (gtpLog)  qDebug() << "DEBUG OUT";
                     for (int iii = 0; iii < 10; ++iii)
                     {
                         byte singleB;
                         file.read((char*)&singleB,1);
                         if (gtpLog)  qDebug() << "[" << iii << "] = " << singleB;
                     }
-                    if (gtpLog)  logger << "DEBUG OUT";
+                    if (gtpLog)  qDebug() << "DEBUG OUT";
                 }
 
-                if (gtpLog)  logger << "Seams to be critical error";
+                if (gtpLog)  qDebug() << "Seams to be critical error";
             }
 
             ul indexOfTrack = i % tracksAmount;
@@ -2711,16 +2712,16 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
           file.read((char*)&reader,1);
 
           if (gtpLog)
-            logger<<" Reader "<<reader;
+            qDebug()<<" Reader "<<reader;
       } //*/
 
       if (gtpLog)
-        logger<<"reaad";
+        qDebug()<<"reaad";
 
     }
 
-    if (gtpLog)  logger << "Importing finished!";
-    if (gtpLog)  logger << "fine.";
+    if (gtpLog)  qDebug() << "Importing finished!";
+    if (gtpLog)  qDebug() << "fine.";
 
     return true;
 }
@@ -2852,7 +2853,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     byte beatEffectsHead;
     file.read((char*)&beatEffectsHead,1);
 
-    if (gtpLog)  LOG( << "Beat effects flag present. H1=" << beatEffectsHead);
+    if (gtpLog)  qDebug() << "Beat effects flag present. H1=" << beatEffectsHead;
 
     if ((beatEffectsHead&1)||(beatEffectsHead&2))
     {
@@ -2872,7 +2873,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
         byte tapPopSlap;
         file.read((char*)&tapPopSlap,1);
 
-        if (gtpLog)  LOG( << "TapPopSlap byte = "<<tapPopSlap );
+        if (gtpLog)  qDebug() << "TapPopSlap byte = "<<tapPopSlap;
 
         if (tapPopSlap)
         {
@@ -2883,7 +2884,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
         }
         else
         {
-            if (gtpLog)  logger << " read bend tremolo";
+            if (gtpLog)  qDebug() << " read bend tremolo";
             BendPoints tremoloBend;
             int tremoloValue = 0;
             file.read((char*)&tremoloValue,4);
@@ -2897,7 +2898,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
         byte upStroke, downStroke;
         file.read((char*)&upStroke,1);
         file.read((char*)&downStroke,1);
-        if (gtpLog)  LOG( << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke );
+        if (gtpLog)  qDebug() << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke;
 
         if (upStroke)
         cursorBeat->setEffects(25); //upstroke
@@ -2905,7 +2906,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
         if (downStroke)
             cursorBeat->setEffects(26);
 
-        if (gtpLog)  LOG( << "if (gtpLog)  log");
+        if (gtpLog)  qDebug() << "if (gtpLog)  log";
         //NOTSET
     }
 
@@ -2938,12 +2939,12 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     byte noteEffectsHead;
     file.read((char*)&noteEffectsHead,1);
 
-    if (gtpLog)  LOG( << "Note effects heads. H1=" <<noteEffectsHead);
+    if (gtpLog)  qDebug() << "Note effects heads. H1=" <<noteEffectsHead;
 
 
     if (noteEffectsHead&1)
     {//bend
-        if (gtpLog)  logger << "Bend found.";
+        if (gtpLog)  qDebug() << "Bend found.";
         readBendGTP(&file,&(newNote->bend));
         newNote->setEffect(17);//first common pattern
     }
@@ -2951,7 +2952,7 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
 
     if (noteEffectsHead&16)
     {   //grace note
-        if (gtpLog)  logger << "Grace note follows";
+        if (gtpLog)  qDebug() << "Grace note follows";
 
         byte graceFret = 0;
         byte graceDynamic = 0;
@@ -2963,7 +2964,8 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
         file.read((char*)&graceTransition,1);
         file.read((char*)&graceDuration,1);
 
-        if (gtpLog)  LOG(<<"Fret "<<graceFret<<" Dyn "<<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration);
+        if (gtpLog)  qDebug()<<"Fret "<<graceFret<<" Dyn "
+            <<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration;
 
         newNote->graceNote[0] = graceFret;
         newNote->graceNote[1] = graceDynamic;
@@ -2979,13 +2981,13 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     if (noteEffectsHead&2)
     {//legato
        newNote->setEffect(10);
-       if (gtpLog)  logger << "legatto turned on";
+       if (gtpLog)  qDebug() << "legatto turned on";
     }
 
     if (noteEffectsHead&4)
     {//Slide : b
 
-        if (gtpLog)  logger << "Slide ";
+        if (gtpLog)  qDebug() << "Slide ";
         byte effect = 3;
         newNote->setEffect(effect);
     }
@@ -2993,8 +2995,8 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     if (noteEffectsHead&8)
     {//let ring
        newNote->setEffect(18);
-       if (gtpLog)  logger <<" Let ring turned on";
-       if (gtpLog)  logger <<" if (gtpLog)  log";
+       if (gtpLog)  qDebug() <<" Let ring turned on";
+       if (gtpLog)  qDebug() <<" if (gtpLog)  log";
     }
 
 }
@@ -3015,14 +3017,14 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     bool precStatus = beatHeader & 0x40;
 
 
-    if (gtpLog)  LOG( << "Beat header " << (int)beatHeader);
+    if (gtpLog)  qDebug() << "Beat header " << (int)beatHeader;
 
     cursorBeat->setPause(false);
     if (precStatus)
     {
         byte beatStatus;
         file.read((char*)&beatStatus,1);
-        if (gtpLog)  LOG( <<"Beat status "<<(int)beatStatus);
+        if (gtpLog)  qDebug() <<"Beat status "<<(int)beatStatus;
         if ((beatStatus == 2) || (beatStatus == 0))
          cursorBeat->setPause(true);
     }
@@ -3032,7 +3034,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     byte durationGP =0;
     file.read((char*)&durationGP,1);
 
-    if (gtpLog)  LOG( <<"Beat duration "<<(int)durationGP);
+    if (gtpLog)  qDebug() <<"Beat duration "<<(int)durationGP;
 
     byte duration=durationGP+2; //moved from -2 double to 1
     //x - double //0 - full //1 - half
@@ -3048,7 +3050,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     {
         ul trumpletN = 0;
         file.read((char*)&trumpletN,4);
-        if (gtpLog)  LOG( <<"Beat tump "<<trumpletN);
+        if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
     }
     else
@@ -3063,7 +3065,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (precText)
     {
-        if (gtpLog)  logger << "TEXT";
+        if (gtpLog)  qDebug() << "TEXT";
 
         ul textLen = 0;
         file.read((char*)&textLen,4);
@@ -3077,7 +3079,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
         //len+1
         textBufer[byteLen]=0;
 
-        if (gtpLog)  LOG( <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen);
+        if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
         cursorBeat->setGPCOMPText(foundText);
@@ -3090,7 +3092,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (precChanges)
     {
-        if (gtpLog)  logger << "Changes table found";
+        if (gtpLog)  qDebug() << "Changes table found";
         readChangesGP3(file,cursorBeat);
     }
 
@@ -3102,7 +3104,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
     file.read((char*)&noteHeader,1);
 
     byte noteType=0;
-    if (gtpLog)  LOG( << "Note header "<<(int)noteHeader);
+    if (gtpLog)  qDebug() << "Note header "<<(int)noteHeader;
 
     newNote->setEffect(0); //flush first
 
@@ -3111,7 +3113,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
         file.read((char*)&noteType,1);
         byte bby=0; //^IN DOCS WE HAVE SHORT INT HERE
         //file.read((char*)&bby,1);
-        if (gtpLog)  LOG( << "Note type = "<<(int)noteType<<" : "<<bby);
+        if (gtpLog)  qDebug() << "Note type = "<<(int)noteType<<" : "<<bby;
 
         //could be leag on 2
         //dead on 3 is ghost
@@ -3128,7 +3130,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
             //2:update status for last note
 
             Note *prevNote=0;
-            if (gtpLog)  logger << "Prev note for sNum="<<sNum;
+            if (gtpLog)  qDebug() << "Prev note for sNum="<<sNum;
 
             byte beatShiftBack = 1;
             byte wasInBlock = 0;
@@ -3145,7 +3147,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
                         Note *prevNoteSearch = &prevBeat->getV(strInd);
                         byte prevSNum = prevNoteSearch->getStringNumber();
                         byte fretPrevValue = prevNoteSearch->getFret();
-                           if (gtpLog)  logger<< strInd <<"PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
+                           if (gtpLog)  qDebug()<< strInd <<"PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
                         if (sNum==prevSNum)
                         {
                             notFoundInPrev = false;
@@ -3200,7 +3202,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
                              Note *prevNoteSearch = &prevBeat->getV(strInd);
                              byte prevSNum = prevNoteSearch->getStringNumber();
                              byte fretPrevValue = prevNoteSearch->getFret();
-                             if (gtpLog)  logger << strInd <<" PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
+                             if (gtpLog)  qDebug() << strInd <<" PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
                              if (sNum==prevSNum)
                              {
                                  notFoundInPrev = false;
@@ -3244,7 +3246,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
             if (prevNote)
             {
                 byte prevFret = prevNote->getFret();
-                if (gtpLog)  logger << "Prev found "<<prevNote->getStringNumber()<<
+                if (gtpLog)  qDebug() << "Prev found "<<prevNote->getStringNumber()<<
                        " "<<prevFret ;
 
 
@@ -3259,11 +3261,11 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
                 newNote->setFret(prevFret);
 
 
-                if (gtpLog)  logger << "After leeg sign state "<<prevNote->getState()<<" wib "<<wasInBlock;
+                if (gtpLog)  qDebug() << "After leeg sign state "<<prevNote->getState()<<" wib "<<wasInBlock;
 
 
                 if (prevFret==63)
-                if (gtpLog)  logger<<"if (gtpLog)  log";
+                if (gtpLog)  qDebug()<<"if (gtpLog)  log";
             }
         } */
     }
@@ -3273,54 +3275,54 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
     {
 
         //another duration
-        if (gtpLog)  logger  <<"Time independent ";
+        if (gtpLog)  qDebug()  <<"Time independent ";
         byte t1,t2;
         file.read((char*)&t1,1);
         file.read((char*)&t2,1);
-        if (gtpLog)  LOG(<<"T: "<<t1<<";"<<t2);
+        if (gtpLog)  qDebug()<<"T: "<<t1<<";"<<t2;
         //attention?
 
     }
 
     if (noteHeader & 16)
     {
-        if (gtpLog)  logger <<"Bit 4 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 4 in header turned on";
         byte bByte=0;
         file.read((char*)&bByte,1);
-        if (gtpLog)  LOG(<<"velocity byte(forte) "<<bByte);
+        if (gtpLog)  qDebug()<<"velocity byte(forte) "<<bByte;
         newNote->setVolume(bByte);
     }
 
     if (noteHeader & 32)
     {
-        if (gtpLog)  logger <<"Bit 5 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 5 in header turned on";
         byte bByte=0;
         file.read((char*)&bByte,1);
-        if (gtpLog)  LOG(<<"some byte fret "<<bByte);
+        if (gtpLog)  qDebug()<<"some byte fret "<<bByte;
         if (noteType != 2)
         {
-            if (gtpLog)  logger<<"not leeg setting prev fret";
+            if (gtpLog)  qDebug()<<"not leeg setting prev fret";
             newNote->setFret(bByte);
         }
         else
-            if (gtpLog)  logger <<"leeg escape prev fret";
+            if (gtpLog)  qDebug() <<"leeg escape prev fret";
     }
 
 
 
     if (noteHeader & 2)
-       if (gtpLog)  logger <<"Bit 1 in header turned on"; //DOT NOTE //wow - where is it turned then?
+       if (gtpLog)  qDebug() <<"Bit 1 in header turned on"; //DOT NOTE //wow - where is it turned then?
 
     if (noteHeader & 4)
     {
-        if (gtpLog)  logger <<"Bit 2 in header turned on"; //GHOST NOTE
+        if (gtpLog)  qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
         //ghost not here
         newNote->setEffect(21); //ghost note
     }
 
     if (noteHeader & 64)
     {
-        if (gtpLog)  logger <<"Bit 6 in header turned on"; //ACCENTED
+        if (gtpLog)  qDebug() <<"Bit 6 in header turned on"; //ACCENTED
         newNote->setEffect(27); //there is no heavy accented note anymore (
         //in gp4
 
@@ -3328,14 +3330,14 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
 
     if (noteHeader & 128)
     {
-        if (gtpLog)  logger <<"Bit 7 in header turned on";
+        if (gtpLog)  qDebug() <<"Bit 7 in header turned on";
 
         byte bByte=0;
         byte bByte2=0;
         file.read((char*)&bByte,1);
         file.read((char*)&bByte2,1);
 
-        if (gtpLog)  LOG(<<"fingering byte "<<bByte<<":"<<bByte2);
+        if (gtpLog)  qDebug()<<"fingering byte "<<bByte<<":"<<bByte2;
     }
 
     if (noteHeader & 8)
@@ -3349,7 +3351,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
 
 bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 {
-    if (gtpLog)  logger << "Starting GP3 import";
+    if (gtpLog)  qDebug() << "Starting GP3 import";
 
     if (knownVersion==0)
     {
@@ -3374,11 +3376,11 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     //notice
     ul noticeLen = 0;
     file.read((char*)&noticeLen,4);
-    if (gtpLog)  LOG( << "Notice len is " << (int)noticeLen);
+    if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
-        if (gtpLog)  logger << "Read notices ";
+        if (gtpLog)  qDebug() << "Read notices ";
         for (ul i =0 ; i < noticeLen; ++i)
             std::string noticeOne = readString(file);
     }
@@ -3387,7 +3389,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     file.read((char*)&tripletFeel,1);
 
     int tripletFeelInt = (int)tripletFeel; //hate this - if (gtpLog)  log should fix it
-    if (gtpLog)  LOG( << "Triplet feel = " << tripletFeelInt) ;
+    if (gtpLog)  qDebug() << "Triplet feel = " << tripletFeelInt ;
 
 
 
@@ -3401,15 +3403,15 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     tab->setBPM(bpm);
 
-    if (gtpLog)  LOG( <<"Bpm rate is " << bpm );
-    if (gtpLog)  LOG( <<"Sign Key = " <<signKey ); // << " ; octave " <<octave ;
+    if (gtpLog)  qDebug() <<"Bpm rate is " << bpm ;
+    if (gtpLog)  qDebug() <<"Sign Key = " <<signKey ; // << " ; octave " <<octave ;
 
     //4 8 - 12
     char midiChannelsData[768];
     file.read((char*)midiChannelsData,768);
 
-    if (gtpLog)  LOG( << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
-           "; full size = "<<(int)(sizeof(MidiChannelInfo)*64 ));
+    if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
+           "; full size = "<<(int)(sizeof(MidiChannelInfo)*64 );
 
     memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
 
@@ -3420,7 +3422,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     file.read((char*)&beatsAmount,4);
     file.read((char*)&tracksAmount,4);
 
-    if (gtpLog)  LOG( << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount );
+    if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount ;
 
 
     for (ul i = 0;i < tracksAmount; ++i)
@@ -3454,7 +3456,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
      cursorBeat =cursorBar->getV(0);
 
 
-    if (gtpLog)  LOG( <<"Begining beats amounts "<<beatsAmount);
+    if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount;
 
 
     ul globalBeatsAmount = beatsAmount*tracksAmount;
@@ -3464,24 +3466,24 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         ul beatsInPair = 0;
         file.read((char*)&beatsInPair,4);
 
-        if (gtpLog)  LOG( <<i <<" Beats in pair " <<beatsInPair );
+        if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair;
 
         //refact - over here was critical error its not usefull code
         if (beatsInPair > 1000)
         {
             if (i != 0)
             {
-                if (gtpLog)  logger << "DEBUG OUT";
+                if (gtpLog)  qDebug() << "DEBUG OUT";
                 for (int iii = 0; iii < 10; ++iii)
                 {
                     byte singleB;
                     file.read((char*)&singleB,1);
-                    if (gtpLog)  LOG( << "[" << iii << "] = " << singleB);
+                    if (gtpLog)  qDebug() << "[" << iii << "] = " << singleB;
                 }
-                if (gtpLog)  logger << "DEBUG OUT";
+                if (gtpLog)  qDebug() << "DEBUG OUT";
             }
 
-            if (gtpLog)  logger << "Seams to be critical error";
+            if (gtpLog)  qDebug() << "Seams to be critical error";
         }
 
         ul indexOfTrack = i % tracksAmount;
@@ -3536,8 +3538,8 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         }
     }
 
-    if (gtpLog)  logger << "Importing finished!";
-    if (gtpLog)  logger << "fine.";
+    if (gtpLog)  qDebug() << "Importing finished!";
+    if (gtpLog)  qDebug() << "fine.";
 
     return true;
 }
