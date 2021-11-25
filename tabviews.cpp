@@ -25,6 +25,69 @@
 
 
 
+int translateDefaulColor(const std::string& confParam){
+    int numColor = -1;
+    if (confParam == "black") numColor = 0;
+    if (confParam == "red") numColor = 1;
+    if (confParam == "yellow") numColor = 2;
+    if (confParam == "orange") numColor = 3;
+    if (confParam == "green") numColor = 4;
+    if (confParam == "blue") numColor = 5;
+    if (confParam == "darkblue") numColor = 6;
+    if (confParam == "violet") numColor = 7;
+    if (confParam == "white") numColor = 8;
+    if (confParam == "gray") numColor = 9;
+    if (confParam == "lightgray") numColor = 10;
+    if (confParam == "darkgray") numColor = 11;
+    if (confParam == "cyan") numColor = 12;
+    if (confParam == "mageta") numColor = 13;
+    if (confParam == "darkgreen") numColor = 14;
+    if (confParam == "darkcyan") numColor = 15;
+    if (confParam == "darkred") numColor = 16;
+    return numColor;
+}
+
+void changeColor(const std::string& color, QPainter* src)
+{
+    //saveColor();
+    int colorS = translateDefaulColor(color);
+    switch (colorS)
+    {
+        case 0: src->setPen(Qt::black); break;
+        case 1: src->setPen(Qt::red); break;
+        case 2: src->setPen(Qt::yellow); break; //orange
+        case 3: src->setPen(Qt::darkYellow); break;
+        case 4: src->setPen(Qt::green); break;
+        case 5: src->setPen(Qt::blue); break;
+        case 6: src->setPen(Qt::darkBlue); break;
+        case 7: src->setPen(Qt::magenta); break; //violet
+        case 8: src->setPen(Qt::white); break;
+        case 9: src->setPen(Qt::gray); break;
+        case 10: src->setPen(Qt::lightGray); break;
+        case 11: src->setPen(Qt::darkGray); break;
+        case 12: src->setPen(Qt::cyan); break;
+        case 13: src->setPen(Qt::darkMagenta); break;
+        case 14: src->setPen(Qt::darkGreen); break;
+        case 15: src->setPen(Qt::darkCyan); break;
+        case 16: src->setPen(Qt::darkRed); break;
+
+    }
+    //storeValue = colorS;
+}
+
+void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h) {
+    QBrush startBra = painter->brush();
+    painter->setBrush(c);
+    painter->drawEllipse(x,y,w,h);
+    painter->setBrush(startBra); //return brach back
+}
+
+void drawEllipse(QPainter *painter, int x, int y, int w, int h) {
+    painter->drawEllipse(x,y,w,h);
+}
+
+
+
 int scaleCoef = 1;
 
 
@@ -214,6 +277,7 @@ void TabView::ongesture(int offset, bool horizontal)
     }
 }
 
+
 void TabView::draw(QPainter *painter)
 {
     //statusLabel->draw(painter);
@@ -241,14 +305,15 @@ void TabView::draw(QPainter *painter)
            if (yPos > (yLimit-100))
                break;
            if (trackIndex==currentTrack)
-                painter->changeColor(CONF_PARAM("colors.curTrack"));
+                changeColor(CONF_PARAM("colors.curTrack"), painter);
 
            painter->drawText(20,yPos,trackVal.c_str());
            //painter->drawEllipse(10,yPos,5,5);
            painter->drawRect(7,yPos-10,10,10);
 
            if (trackIndex==currentTrack)
-                painter->changeColor(CONF_PARAM("colors.default"));
+               changeColor(CONF_PARAM("colors.default"), painter);
+
 
            byte trackStat = pTab->getV(trackIndex)->getStatus();
 
@@ -286,7 +351,7 @@ void TabView::draw(QPainter *painter)
 
                 //hi light color bar
                if (barIndex == currentBar)
-                   painter->fillRect(200+30*j,yPos,20,20,CONF_PARAM("colors.curBar"));
+                   painter->fillRect(200+30*j,yPos,20,20,QColor(CONF_PARAM("colors.curBar").c_str()));
 
                painter->drawText(200+30*j,yPos+10,sX.c_str());
 
@@ -992,7 +1057,8 @@ void TrackView::draw(QPainter *painter)
 
         if (( i == cursor ))
         {
-            painter->changeColor(CONF_PARAM("colors.curBar"));
+            changeColor(CONF_PARAM("colors.curBar"), painter);
+
 
             if (i==cursor)
                 bView.setCursor(cursorBeat,stringCursor+1);
@@ -1001,16 +1067,14 @@ void TrackView::draw(QPainter *painter)
         {
             //refact add another color
             if ((barCompleteStatus==2)||(barCompleteStatus==1))
-                painter->changeColor(CONF_PARAM("colors.exceed"));
+                changeColor(CONF_PARAM("colors.exceed"), painter);
         }
 
 
         bView.draw(painter);
 
         if (( i == cursor ) || (barCompleteStatus==2)||(barCompleteStatus==1))
-        {
-             painter->changeColor(CONF_PARAM("colors.default"));
-        }
+             changeColor(CONF_PARAM("colors.default"), painter);
 
 
         xSh += bView.getW();
@@ -1176,14 +1240,15 @@ void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte du
 
     yNote -= radiusShift;
 
+
+
     if (CONF_PARAM("TrackView.largeNotes")=="1")
-        painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius,QColor("black")); //default circle
+        drawEllipse(QColor("black"), painter, xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius);
     else
     {
-        painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius);
-
-        painter->drawEllipse(xPoint+1,yPoint+1+yNote,3,3); //inner circle ( 2+)
-        painter->drawEllipse(xPoint+2,yPoint+2+yNote,2,2); //inner circle ( 2+)
+        drawEllipse(painter, xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius); //TODO тут вообще можно даже без функции
+        drawEllipse(painter, xPoint+1,yPoint+1+yNote,3,3);
+        drawEllipse(painter, xPoint+2,yPoint+2+yNote,2,2);
     }
 
     if (needSignSharp)
@@ -1332,8 +1397,9 @@ void BarView::drawNote(QPainter *painter, byte noteDur, byte dotted, byte durDet
     if (noteDur >= 2)
     {
         //Must get filled - in another manner
+
         if (CONF_PARAM("TrackView.largeNotes")=="1")
-            painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius,QColor("black")); //default circle
+            drawEllipse(QColor("black"), painter, xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius);
         else
         {
             painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius);
@@ -1469,11 +1535,14 @@ void BarView::draw(QPainter *painter)
             */
 
 
-        int fontSize = painter->getFontSize();
-        painter->setFontSize(18);
+        auto f = painter->font();
+        auto fontSize = f.pixelSize();
+        f.setPixelSize(18);
+        painter->setFont(f);
         painter->drawText(cX-15,cY-15+50+3,numVal.c_str());
         painter->drawText(cX-15,cY+15+50+3,denVal.c_str());
-        painter->setFontSize(fontSize);
+        f.setPixelSize(fontSize);
+        painter->setFont(f);
     }
 
     if (repBegin)
@@ -1537,15 +1606,16 @@ void BarView::draw(QPainter *painter)
         if (i == stringCursor)
         {
             //painter->changeColor(APainter::colorRed);
-            painter->changeColor(CONF_PARAM("colors.curString"));
+            changeColor(CONF_PARAM("colors.curString"), painter);
         }
 
         painter->drawLine(cX+10,cY+i*stringWidth-stringWidth/2,cX+10+barLen*inbarWidth,cY+i*stringWidth-stringWidth/2);
 
+
         if (i == stringCursor)
         {
-            painter->changeColor(APainter::colorGreen);
-             painter->changeColor(CONF_PARAM("colors.curBar"));
+            //painter->changeColor(APainter::colorGreen);
+            changeColor(CONF_PARAM("colors.curBar"), painter);
         }
     }
 
@@ -1567,7 +1637,7 @@ void BarView::draw(QPainter *painter)
         if (i==cursor)
         {
             //painter->changeColor(APainter::colorBlue);
-            painter->changeColor(CONF_PARAM("colors.curBeat"));
+             changeColor(CONF_PARAM("colors.curBeat"), painter);
         }
 
 
@@ -1674,7 +1744,7 @@ void BarView::draw(QPainter *painter)
 
                 painter->fillRect(cX+10+i*inbarWidth + inbarWidth/4,
                                   cY+stringWidth*currentString-stringWidth,
-                                  inbarWidth - inbarWidth/4, stringWidth, thatBack); //BG color
+                                  inbarWidth - inbarWidth/4, stringWidth, QColor(thatBack.c_str())); //BG color
                 //DRAW effects
 
                 if (palmMute)
@@ -1803,11 +1873,14 @@ void BarView::draw(QPainter *painter)
 
         if (textPrec)
         {
-            //must make font smaller!!
-            int fontSize = painter->getFontSize();
-            painter->setFontSize(9);
+            auto f = painter->font();
+            auto fontSize = f.pixelSize();
+            f.setPixelSize(9);
+            painter->setFont(f);
             painter->drawText(cX+10+i*inbarWidth + inbarWidth/2,cY+stringWidth*(amountStr+1),textBeat.c_str());
-            painter->setFontSize(fontSize);
+            f.setPixelSize(fontSize);
+            painter->setFont(f);
+
         }
 
 
@@ -1824,7 +1897,7 @@ void BarView::draw(QPainter *painter)
         if (i==cursor)
         {
              //painter->changeColor(APainter::colorGreen);
-             painter->changeColor(CONF_PARAM("colors.curBar"));
+             changeColor(CONF_PARAM("colors.curBar"), painter);
         }
     }
 

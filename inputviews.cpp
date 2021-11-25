@@ -47,6 +47,10 @@
 
 TunerInstance* TunerInstance::mainInst = 0;
 
+//
+void changeColor(const std::string& color, QPainter* src);
+//
+
 TunerInstance *TunerInstance::getInst()
 {
     return mainInst;
@@ -1166,8 +1170,7 @@ void RecordView::draw(QPainter *painter)
     int localPosition = 0;
     int scaleShiftUp = 0;
     int liftDown = 0;
-
-    painter->changeColor("white");
+    changeColor("white", painter);
     //draw main wave scaled, shifted
     for (int i = wavePosition; i < waveLimit; )
     {
@@ -1210,18 +1213,18 @@ void RecordView::draw(QPainter *painter)
     {
         int lastELevel = waveItself.energyLevels[i-1];
         int currentLevel = waveItself.energyLevels[i];
-        painter->changeColor("green");
+        changeColor("green", painter);
 
         int pseudoI = i - toShift;
         painter->drawLine(bpmDependentWindow*pseudoI/zoomCoef,200+lastELevel/20,bpmDependentWindow*(pseudoI+1)/zoomCoef, 200 + currentLevel/20);
 
         switch (waveItself.energyTypes[i-1])
         {
-            case 0: painter->changeColor("gray"); break;
-            case 1: painter->changeColor("red"); break;
-            case 2: painter->changeColor("yellow"); break;
-            case 3: painter->changeColor("green"); break;
-            case 4: painter->changeColor("blue"); break;
+            case 0:  changeColor("gray", painter); break;
+            case 1:  changeColor("red", painter); break;
+            case 2: changeColor("yellow", painter); break;
+            case 3: changeColor("green", painter); break;
+            case 4: changeColor("blue",painter); break;
         }
 
 
@@ -1236,7 +1239,8 @@ void RecordView::draw(QPainter *painter)
     }
 
     //draw notes
-    painter->changeColor("white");
+
+    changeColor("white", painter);
     for (int i = 0; i < waveItself.notes.size(); ++i)
     {
         int notePeak = waveItself.notes[i].notePeak - toShift;

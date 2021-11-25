@@ -27,6 +27,8 @@
 //MUST NOT BE HERE
 #include "mainwindow.h"
 
+void changeColor(const std::string& color, QPainter* src);
+void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 BendPoints* BendInput::ptrToBend = 0;
 Note *BendInput::ptrToNote = 0;
 
@@ -848,6 +850,9 @@ void InfoView::onclick(int x1, int y1)
 
 //Bend View
 
+
+
+
 void BendInput::draw(QPainter *painter)
 {
     if (ptrToBend)
@@ -872,7 +877,7 @@ void BendInput::draw(QPainter *painter)
         //8 px for horizon step, 20 for vertical
         int prevX = 0; int prevY = 0;
 
-        painter->changeColor("red");
+        changeColor("red", painter);
         for (ul i = 0; i < ptrToBend->len(); ++i)
         {
             byte vertical = ptrToBend->getV(i).vertical;
@@ -886,7 +891,7 @@ void BendInput::draw(QPainter *painter)
                 painter->drawLine(prevX,prevY,localX,localY);
 
             prevX = localX; prevY = localY;
-            painter->drawEllipse(localX-3,localY-3,6,6,QColor("red"));
+            drawEllipse(QColor("red"), painter, localX-3,localY-3,6,6);
         }
         //logger << "Bend outpited";
     }

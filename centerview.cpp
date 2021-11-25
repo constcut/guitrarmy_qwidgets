@@ -17,6 +17,19 @@
 #define LOG(m)
 //TODO
 
+void changeColor(const std::string& color, QPainter* src);
+void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
+
+void drawImage(QPainter* src, int x, int y, std::string imageName)
+{
+    //QImage img;
+    //std::string name = std::string(getTestsLocation())+ std::string("Icons/") + imageName + std::string(".png");
+    //img.load(name.c_str());
+    QImage *img = (QImage*) AConfig::getInstance()->imageLoader.getImage(imageName);
+    if (img)
+        src->drawImage(x,y,*img);
+    //src->drawImage();
+}
 
 GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
 {
@@ -1365,10 +1378,10 @@ void CenterView::paintEvent(QPaintEvent *event)
 
 
     if (getChild())
-        painter.fillRect(0,0,width(),height(),QColor(CONF_PARAM("colors.background")));
+        painter.fillRect(0,0,width(),height(),QColor(CONF_PARAM("colors.background").c_str()));
 
-    painter.drawImage(0,0,"bg");
-    painter.changeColor(CONF_PARAM("colors.default"));
+    drawImage(&painter, 0,0, "bg");
+    changeColor(CONF_PARAM("colors.default"), &painter);
 
     double scaleCoef = AConfig::getInstance()->getScaleCoef();
 
