@@ -7,9 +7,6 @@
 void readBend(std::ifstream *file, BendPoints *bend);
 void writeBend(std::ofstream *file, BendPoints *bend);
 
-///HE LIVED ALONE!
-///
-/// //remind importers
 
 class Gp4Export //: public AExport
 {
@@ -28,10 +25,7 @@ public:
 
 class Gp4Import //:TODO public Gp3Import
 {
-    public:
-    //from A File to Tab
-    //Gp4Import(A File &from, Tab &to) : AImport(&from,&to,128) {} //not our types goes from 128
-
+public:
     bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
 
     //readString
@@ -53,7 +47,7 @@ class Gp4Import //:TODO public Gp3Import
 
 class Gp5Import //:TODO public Gp4Import
 {
-    public:
+public:
     bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
 
     //readString
