@@ -805,21 +805,15 @@ void InfoView::onclick(int x1, int y1)
             logData.close();
         }
 
+        /*
         std::string userIdStd = getUserId();
         QDateTime timeDate(QDateTime::currentDateTime());
         QString st = timeDate.toString(Qt::ISODate);
         st.replace(":","");
         std::string time = st.toStdString();
-
-
         requestLine = "http://guitarmy.in/glogs/crash.php?log="
                      + sendData + "&date=" + time + "&user=" + userIdStd;
-
-
-        HttpFileLoader *logUp= new HttpFileLoader;
-        logUp->request(QUrl(requestLine.c_str()));
-
-
+        */ //TODO новая отправка логов
 
          std::cout << requestLine.c_str() << std::endl;
          std::cout << "String full size "<<requestLine.size()<<std::endl;

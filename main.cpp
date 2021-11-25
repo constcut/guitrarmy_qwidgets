@@ -290,47 +290,8 @@ int main(int argc, char *argv[])
     ///w.getCenterView()->pushForceKey("rec");
     if (CONF_PARAM("skipTabView")=="1")
     w.getCenterView()->pushForceKey("opentrack");
-    //INITIAL LOG PUSH
-    /*
-    std::string sendData = "appstarted";
-    QDateTime timeDate(QDateTime::currentDateTime());
-    QString st = timeDate.toString(Qt::ISODate);
-    st.replace(":","");
-    std::string time = st.toStdString();
-    std::string userIdStd = userId.toStdString();
-    userIdStd = globals.platform.substr(0,1) + userIdStd;
-    setUserId(userIdStd);
-    string Extended fullLine;
-     //Function yet not ready because of old server long ago down
-    if (CONF_PARAM("crashAutoSend")=="1") {
-        QString crashName = getTestsLocation() + QString("crashs.glog");
-        if (QFile::exists(crashName) {
-            QFile logData;
-            logData.setFileName(crashName);
-            logData.open(QIODevice::ReadOnly);
-            QByteArray allLogData = logData.readAll();
-            QByteArray newSequence;
-            if (allLogData.size() > 1000) {
-                //cycle
-                // 1:cut part
-                // 2:send part
-                //left last unsent
-            }
-            else {
-                newSequence = alphaCut(allLogData);
-                //sendData = newSequence.toStdString();
-            }
-            logData.close();
-           // QFile::remove(crashName); //move to on finished..
-        }
-        fullLine << "http://guitarmy.in/glogs/crash.php?log="<<sendData<<"&date="<<time<<"&user="<<userIdStd;
-        HttpFileLoader *logUp= new HttpFileLoader;
-        logUp->request(QUrl(fullLine.c_str()));
-    }
-    */
-
-
-
+    //TODO  отправка краш логов?       QString crashName = getTestsLocation() + QString("crashs.glog");
+                //if (QFile::exists(crashName) {
     //TODO окно для загрузки разных тестов
     //testScenario();
 
