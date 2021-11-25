@@ -20,7 +20,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 
@@ -199,7 +199,7 @@ void TabView::onclick(int x1, int y1)
 
         if (awaitBar==currentBar)
         {
-            LOG( << "Track pressed "<<awaitTrack<<"; Bar "<<awaitBar);
+            qDebug() << "Track pressed "<<awaitTrack<<"; Bar "<<awaitBar;
 
             if (awaitTrack >= 0)
             {
@@ -432,7 +432,7 @@ void TabView::prepareAllThreads(ul shiftTheCursor)
     {
         tracksView[i]->prepareThread(shiftTheCursor);
         int thrLenSeconds = tracksView[i]->threadSeconds();
-        LOG( << "Thread "<<i<<" seconds "<<thrLenSeconds);
+        qDebug() << "Thread "<<i<<" seconds "<<thrLenSeconds;
     }
 
     Track *pTrack = pTab->getV(0);
@@ -646,7 +646,7 @@ void TrackView::ongesture(int offset, bool horizontal)
 
 
 
-            LOG(<<"Shifting to "<<shiftTo);
+            qDebug()<<"Shifting to "<<shiftTo;
 
 
         }
@@ -797,7 +797,7 @@ void TrackView::ondblclick(int x1, int y1)
             if (fullBar <= beatClick)
                 continue;
 
-            LOG( << "Bar hits "<<beatClick<<" of "<<fullBar);
+            qDebug() << "Bar hits "<<beatClick<<" of "<<fullBar;
 
 
 

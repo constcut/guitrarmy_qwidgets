@@ -7,7 +7,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 
@@ -121,7 +121,7 @@ void MidiEngine::init()
      unsigned int err = midiOutOpen(&winMidi, 0, 0, 0, CALLBACK_NULL);
        if (err != MMSYSERR_NOERROR)
        {
-          LOG(<<"error opening default MIDI device: "<<(int)err);
+          qDebug()<<"error opening default MIDI device: "<<(int)err;
        }
        else
            logger<<"successfully opened default MIDI device";
@@ -246,9 +246,9 @@ void MidiEngine::sendSignalLong(MidiSignal *signal)
 
 void Midi_Callback_Win(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 {
-    LOG( << "Midi cb begin "<<(ul)dwUser);
+    qDebug() << "Midi cb begin "<<(ul)dwUser;
     MidiEngine::sendSignalShortWin(dwUser);
-    LOG( << "Midi cb end "<<(ul)dwUser);
+    qDebug() << "Midi cb end "<<(ul)dwUser;
 }
 
 
@@ -277,8 +277,8 @@ void MidiEngine::sendSignalShortDelay( int msdelay, byte status, int byte1, int 
         signal +=byte2<<16;
 
 
-    LOG(<<"Pushing signal "<<(ul)signal<<"for ms delay "<<msdelay);
-    LOG(<<"Sinal parts "<<byte1<<" "<<byte2<<"; "<<status);
+    qDebug()<<"Pushing signal "<<(ul)signal<<"for ms delay "<<msdelay;
+    qDebug()<<"Sinal parts "<<byte1<<" "<<byte2<<"; "<<status;
 
     if (timeSetEvent(msdelay, wTimerRes, Midi_Callback_Win,signal,TIME_ONESHOT) ==  0)
     {
@@ -382,7 +382,7 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     }
 
-    LOG( << "Produced midi track with "<<(int)result->len()<<" elements");
+    qDebug() << "Produced midi track with "<<(int)result->len()<<" elements";
 
     return result;
 }

@@ -24,7 +24,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 
@@ -461,7 +461,7 @@ void TapRyView::measureTime()
         QThread::msleep(100); //away from usleep 1000*
         clock_t afterMes = getTime();
         int waited = (afterMes-beforMes);
-        LOG( <<"Waited calculation: "<<waited);
+        qDebug() <<"Waited calculation: "<<waited;
         if (waited >= 100)
         {
             //ok
@@ -469,7 +469,7 @@ void TapRyView::measureTime()
             //AConfig::getInstance()->setTimeCoef(1);
             AConfig::getInstance()->setTimeCoef(theScale);
 
-            LOG( <<"itsays time coef to "<<theScale);
+            qDebug() <<"itsays time coef to "<<theScale;
         }
         else
         {
@@ -478,7 +478,7 @@ void TapRyView::measureTime()
            //int scale = theScale;
            AConfig::getInstance()->setTimeCoef(theScale);
 
-           LOG( <<"itsays time coef to "<<theScale);
+           qDebug() <<"itsays time coef to "<<theScale;
         }
         //CUT TO Tap
         firstDraw = false;
@@ -711,7 +711,7 @@ void TapRyView::createBar()
         //find closest
         //on 120 bpm 2000, 1000, 500 etc from whole
 
-        LOG( << "Step "<<i <<" = "<<step<<"; dur - "<<dur);
+        qDebug() << "Step "<<i <<" = "<<step<<"; dur - "<<dur;
 
         if (step < 0)
         {
@@ -1640,7 +1640,7 @@ void MorzeInput::onclick(int x1, int y1)
                 bar->add(ryBeat); //����� �
                 bar->add(ryBeat2);
 
-                LOG( << "Added "<<dur<<" "<<dur2<<" beat");
+                qDebug() << "Added "<<dur<<" "<<dur2<<" beat";
             }
 
 

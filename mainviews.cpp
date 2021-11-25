@@ -18,7 +18,7 @@
 
 #include <QDebug>
 #define logger qDebug()
-#define LOG(m)
+
 //TODO
 
 
@@ -246,10 +246,9 @@ void MainView::keyevent(std::string press)
 
                     //getMaster()->changeChild(tabsView);
 
-                    //clock_t after2T = getTime();
-                    //clock_t diffT = after2T - afterT;
-
-                    LOG( <<"Opening gtp "<<diffT);
+                    clock_t after2T = getTime();
+                    clock_t diffT = after2T - afterT;
+                    qDebug() <<"Opening gtp "<<diffT;
                 }
             }
         }
@@ -656,7 +655,7 @@ void TestsView::fastTestAll()
 void TestsView::openTestNumber(int num) {
     if (tabsView->gotChanges()==false) {
 
-        LOG( << "Opening test "<<buttons[num].getText().c_str()); //std::string(":/own_tests/")
+        qDebug() << "Opening test "<<buttons[num].getText().c_str(); //std::string(":/own_tests/")
         std::string fn = std::string("/home/punnalyse/dev/g/_wgtab/gtab/own_tests/") + buttons[num].getText().c_str() + ".gp4";
         std::ifstream importFile(fn);
          if (importFile.is_open() == false)
@@ -666,7 +665,7 @@ void TestsView::openTestNumber(int num) {
         importer.import(importFile,forLoad);
         forLoad->postGTP();
         forLoad->connectTracks();
-        LOG( << "file v 4 was opened"<<sX.c_str());
+        qDebug() << "file v 4 was opened: "<<fn.c_str();
 
         MainView *mainView = (MainView*)getMaster()->getFirstChild();
         mainView->changeCurrentView(tabsView);
@@ -924,7 +923,7 @@ void BendInput::keyevent(std::string press)
 
         if (bendType!=-1 && bendHeight!=-1)
         {
-            LOG( << "Bend c type "<<bendType<<"; h "<<bendHeight);
+            qDebug() << "Bend c type "<<bendType<<"; h "<<bendHeight;
             fillBend(bendType,bendHeight);
         }
         logger << "comBend";
@@ -952,8 +951,8 @@ void BendInput::onclick(int x1, int y1)
     {
         if (ptrToNote)
         {
-            //bool whatIsThere = ptrToNote->effPack.get(17);
-            LOG( << "Deleting bend that is "<<(int)whatIsThere);
+            bool whatIsThere = ptrToNote->effPack.get(17);
+            qDebug() << "Deleting bend that is "<<(int)whatIsThere;
 
             ptrToNote->effPack.addPack(17,2,0);
             ptrToNote->effPack.set(17,false);
@@ -968,7 +967,7 @@ void BendInput::onclick(int x1, int y1)
     int localX = x1-20;
     int localY = y1-80; localY = 240 - localY;
 
-    LOG( << "Locals "<<localX<<"; "<<localY);
+    qDebug() << "Locals "<<localX<<"; "<<localY;
 
     //ATTENTION please note that there are yen no chanes
 
@@ -976,7 +975,7 @@ void BendInput::onclick(int x1, int y1)
     {
         byte vertical = localY/20;
         byte horizontal = localX/8;
-        LOG( << "hit "<<vertical<<"; "<<horizontal);
+        qDebug() << "hit "<<vertical<<"; "<<horizontal;
 
         if (ptrToBend)
         {
