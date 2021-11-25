@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     g0/midifile.cpp \
     g0/scenario.cpp \
     g0/tab.cpp \
-    apainter.cpp \
     athread.cpp \
     gpannel.cpp \
     mainviews.cpp \
@@ -80,7 +79,6 @@ HEADERS  += mainwindow.h \
     g0/gtpfiles.h \
     g0/midifile.h \
     g0/tab.h \
-    apainter.h \
     athread.h \
     g0/buildheader.h \
     gpannel.h \
