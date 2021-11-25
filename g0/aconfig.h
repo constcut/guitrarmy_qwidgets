@@ -132,7 +132,7 @@ public:
     ClassicSkin(){init();}
     virtual void init()
     {
-        configLines.push_back("colors.background = 449966");
+        configLines.push_back("colors.background = 449966"); //TODO ? кажется сломались цвета
         configLines.push_back("colors.curBar = darkblue");
         configLines.push_back("colors.curBeat = yellow");
         configLines.push_back("colors.curString = 7799FF");

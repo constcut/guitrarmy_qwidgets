@@ -13,8 +13,6 @@
 
 #include "gview.h"
 
-#include "apainter.h"
-
 //ONLY FOR GESTURES
 //and recog
 #include "mainviews.h"

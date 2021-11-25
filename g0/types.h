@@ -7,11 +7,8 @@
 #include <string>
 
 #include <list> 
-//for variable strings
-
-//WHILE DEBUGGING
 #include <iostream>
-//
+
 
 typedef unsigned int uint;
 typedef unsigned char byte; //old definition
@@ -50,9 +47,6 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v);
 #define MASK_NOTE_STATE 0x0
 #define SHIFT_VOLUME 0x0
 #define MASK_VOLUME 0x0
-
-
-
 
 
 //Poly template: =====================================================================
@@ -300,37 +294,5 @@ template <typename CT> class PolyPtr
     }
 
 };
-
-
-
-
-class TimeCosts
-{
-    //small timer for scenes time calculations - use for better way of
-    //scene tester to check summ time and tab time
-public:
-    void start() {}
-    void stop() {}
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // TYPES_H

@@ -22,7 +22,6 @@
 #include <QPushButton>
 #include <QComboBox>
 
-#include "apainter.h"
 
 #include <QScrollArea>
 
