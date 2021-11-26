@@ -2386,6 +2386,55 @@ void setTune(Track* pTrack) {
     }
 }
 
+
+void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView *tabView) {
+    //pre action for repeat
+    if (tabView->getPlaying()==true)
+        if (localThr)
+            if (localThr->getStatus())
+                tabView->setPlaying(false);
+
+    if (tabView->getPlaying() == false) {
+        size_t shiftTheCursor = 0;
+        if (currentBar != 0) {
+            Bar *barPtr = pTab->getV(0)->getV(currentBar);
+            for (ul i = 0; i < pTab->getV(0)->timeLoop.len();++i)
+                 if (pTab->getV(0)->timeLoop.getV(i) == barPtr) {
+                     shiftTheCursor = i;
+                     break;
+                 }
+        }
+        //Разделить все этапы с интерфейсом TODO
+        pTab->connectTracks();
+        MidiFile generatedMidi;
+        generatedMidi.fromTab(pTab,shiftTheCursor);
+        MidiEngine::closeDefaultFile();
+        std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
+        std::ofstream outFile2;
+        if (!outFile2.is_open())
+            qDebug() << "Failed to open out file :(";
+        else
+            qDebug() <<"File opened "<<fullOutName.c_str();
+
+        generatedMidi.writeStream(outFile2);
+        outFile2.close();
+
+        tabView->prepareAllThreads(shiftTheCursor);
+        tabView->connectAllThreadsSignal(tabView->getMaster());
+        MidiEngine::openDefaultFile();
+        MidiEngine::startDefaultFile();
+        tabView->launchAllThreads();
+        tabView->setPlaying(true);
+    }
+    else
+    {
+        MidiEngine::stopDefaultFile();
+        tabView->stopAllThreads();
+        tabView->setPlaying(false);
+    }
+}
+
+
 void TabView::keyevent(std::string press)
 {
     if (press == "set till the end")  //TODO хэндлеры для более простого вызова
@@ -2434,112 +2483,8 @@ void TabView::keyevent(std::string press)
         deleteTrack(pTab, displayTrack);
 
 
-    if ((press == CONF_PARAM("TrackView.playAMusic")) || (press == CONF_PARAM("TrackView.playMidi")))
-    {
-        //pre action for repeat
-        if (getPlaying()==true)
-        {
-            if (localThr)
-            {
-                if (localThr->getStatus())
-                {
-                    //animation stopped
-                    setPlaying(false);
-                    //cursor = displayIndex; //auto repeat from page
-                    //cursorBeat = 0;
-                }
-            }
-        }
-
-
-        if (getPlaying() == false)
-        {
-
-            //to start not from begin always
-            ul shiftTheCursor = 0;
-
-
-            if (currentBar != 0)
-            {
-                Bar *barPtr = pTab->getV(0)->getV(currentBar);
-
-                for (ul i = 0; i < pTab->getV(0)->timeLoop.len();++i)
-                {
-                     if (pTab->getV(0)->timeLoop.getV(i) == barPtr)
-                     {
-                          shiftTheCursor = i;
-                         break;
-                     }
-                }
-            }
-
-            //CHECK GENERATION NEEDED?
-
-
-            //REPAIR CHAINS
-            //clock_t beforeT = getTime();
-            //pTrack->connectAll();
-            //clock_t afterT = getTime();
-            //int diffT = afterT - beforeT;
-
-            //qDebug() <<"Repair chains "<<diffT;
-
-
-
-            Tab *tab = getTab();
-            tab->connectTracks();
-
-            MidiFile generatedMidi;
-
-            if (press == CONF_PARAM("TrackView.playAMusic"))
-            {
-
-            }
-            else
-            {
-                generatedMidi.fromTab(getTab(),shiftTheCursor);
-            }
-
-            //clock_t after2T = getTime();
-            //diffT = after2T - afterT;
-            //qDebug() <<"Generate midi "<<diffT;
-
-            MidiEngine::closeDefaultFile();
-            std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-
-            std::ofstream outFile2;
-
-            if (!outFile2.is_open())
-                qDebug() << "Failed to open out file :(";
-            else
-                qDebug() <<"File opened "<<fullOutName.c_str();
-
-
-            generatedMidi.writeStream(outFile2);
-            outFile2.close();
-
-            //prepareThread();
-            prepareAllThreads(shiftTheCursor);
-
-            //connect current thread - not best
-            //getMaster()->connectThread(localThr);
-            connectAllThreadsSignal(getMaster());
-
-            MidiEngine::openDefaultFile();
-            MidiEngine::startDefaultFile();
-
-            launchAllThreads();
-
-            setPlaying(true);
-
-        }
-        else
-        {
-            MidiEngine::stopDefaultFile();
-
-            stopAllThreads();
-            setPlaying(false);
-        }
+    if ( press == CONF_PARAM("TrackView.playMidi")) {
+        playPressedQt(pTab, localThr, currentBar, this);
     }
 
     if ((press == CONF_PARAM("TrackView.playAMusic"))
