@@ -25,10 +25,10 @@ public:
 class PlayAnimationThr: public AThread
 {
 protected:
-    ul *incrementA;
-    ul *incrementB;
+    size_t *incrementA;
+    size_t *incrementB;
 
-    ul limit;
+    size_t limit;
     //MasterView *mv;
 
     int bpm;
@@ -51,8 +51,8 @@ public:
    int getStatus() { return status; }
 
    void setBPM(int newBPM) { bpm = newBPM; waitTimes.clear(); }
-   void setLimit(ul max) { limit = max; }
-   void setInc(ul *ptrA, ul *ptrB) { incrementA = ptrA; incrementB = ptrB; }
+   void setLimit(size_t max) { limit = max; }
+   void setInc(size_t *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
    //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
 
    void setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCursor);

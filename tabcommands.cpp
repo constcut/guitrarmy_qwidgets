@@ -2454,8 +2454,17 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
 }
 
 
-void TabView::keyevent(std::string press)
-{
+void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, ul digit) {
+    if (digit && digit <= tracksLen) {
+        TrackView *trackView = tabView->tracksView[digit-1]; //А обновление интерфейса в модуль Qt TODO выше
+        lastOpenedTrack = digit-1;
+        MainView *mainView = (MainView*)tabView->getMaster()->getFirstChild();
+        mainView->changeCurrentView(trackView);
+    }
+}
+
+
+void TabView::keyevent(std::string press) {
     if (press == "set till the end")  //TODO хэндлеры для более простого вызова
         setSignTillEnd(pTab, currentBar);
     if (press == "save as")
@@ -2487,36 +2496,20 @@ void TabView::keyevent(std::string press)
         bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
     }         
-    if (press=="opentrack") {
-        ul digit = displayTrack + 1; //TODO эту часть внутрь движка
-        if (digit && digit <= pTab->len()){
-            TrackView *trackView = tracksView[digit-1]; //А обновление интерфейса в модуль Qt TODO выше
-            lastOpenedTrack = digit-1;
-            MainView *mainView = (MainView*)getMaster()->getFirstChild();
-            mainView->changeCurrentView(trackView);
-        }
-    }
+    if (press=="opentrack")
+        openTrackQt(pTab->len(),lastOpenedTrack, this, displayTrack + 1); //TODO эту часть внутрь движка - разделяя с QT);
+    if (isdigit(*(press.c_str())))
+        openTrackQt(pTab->len(),lastOpenedTrack, this, press.c_str()[0]-48);
     if (press=="newTrack") {
        createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
     if (press=="deleteTrack")
         deleteTrack(pTab, displayTrack);
     if ( press == CONF_PARAM("TrackView.playMidi")) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, currentBar, this);
-
     if (press==CONF_PARAM("TabView.genMidi")) //|| (press == "spc"))
         generateMidiQt(pTab, statusLabel);
     if (press=="p")
         midiPause(isPlaying);
-
-    if (isdigit(*(press.c_str()))) { //TODO объединить с OpenTrack сделать с пометкой QT
-        ul digit = press.c_str()[0]-48;
-        if (digit && digit <= pTab->len()) {
-            TrackView *trackView = tracksView[digit-1];//new TrackView(&pTab->getV(digit-1));
-            lastOpenedTrack = digit-1;
-            MainView *mainView = (MainView*)getMaster()->getFirstChild();
-            mainView->changeCurrentView(trackView);
-        }
-    }
     if (press == "marker")
         setMarker(pTab->getV(0)->getV(currentBar));
     if (press == "|:")
