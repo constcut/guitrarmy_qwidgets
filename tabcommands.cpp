@@ -769,7 +769,7 @@ void TrackView::keyevent(std::string press)
     if (press == CONF_PARAM("TrackView.prevBeat"))
         moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
     if (press == CONF_PARAM("TrackView.nextBeat"))
-        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack, astSeen, commandSequence);
+        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
 
     if (press == CONF_PARAM("TrackView.setPause")) {
         SingleCommand command(7);
