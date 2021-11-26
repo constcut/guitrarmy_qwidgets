@@ -2434,6 +2434,25 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
     }
 }
 
+void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
+    MidiFile generatedMidi;
+    generatedMidi.fromTab(pTab);
+
+    MidiEngine::closeDefaultFile();
+    std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
+    std::ofstream outFile2(fullOutName);
+
+    if (! outFile2.is_open()){
+        qDebug() << "Failed to open out file :(";
+        statusLabel->setText("failed to open generated");
+    }
+    ul outFileSize2 = generatedMidi.writeStream(outFile2);
+    qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
+    outFile2.close();
+    generatedMidi.printToStream(std::cout);
+    statusLabel->setText("generation done. p for play");
+}
+
 
 void TabView::keyevent(std::string press)
 {
@@ -2481,81 +2500,11 @@ void TabView::keyevent(std::string press)
        createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
     if (press=="deleteTrack")
         deleteTrack(pTab, displayTrack);
-
-
-    if ( press == CONF_PARAM("TrackView.playMidi")) {
+    if ( press == CONF_PARAM("TrackView.playMidi")) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, currentBar, this);
-    }
 
-    if ((press == CONF_PARAM("TrackView.playAMusic"))
-        || (press == CONF_PARAM("TrackView.playMidi"))
-        || (press=="playMerge"))
-            {
-                return;
-                if (isPlaying)
-                {
-                    MidiEngine::stopDefaultFile();
-                    isPlaying = false;
-                    return;
-                }
-
-
-                //Tab *tab = pTab;
-                MidiFile generatedMidi;
-
-                if (press == CONF_PARAM("TrackView.playAMusic"))
-                {
-
-                }
-                else
-                {
-                    generatedMidi.fromTab(pTab);
-                }
-
-                if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge"))
-                {
-                    MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
-                    generatedMidi.clear();
-                    generatedMidi.add(newTrack);
-                    //return; //MidiEngine::playTrack(newTrack);
-                }
-
-                MidiEngine::closeDefaultFile();
-                std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-
-                std::ofstream outFile2(fullOutName);
-
-                if (! outFile2.is_open()) {
-                    qDebug() << "Failed to open out file :(";
-                    statusLabel->setText("failed to open generated");
-                }
-                ul outFileSize2 = generatedMidi.writeStream(outFile2);
-                qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
-                outFile2.close();
-                press = "p"; //autoplay
-            }
-
-    if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc"))
-    {
-
-        MidiFile generatedMidi;
-        generatedMidi.fromTab(pTab);
-
-        MidiEngine::closeDefaultFile();
-        std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-        std::ofstream outFile2(fullOutName);
-
-        if (! outFile2.is_open()){
-            qDebug() << "Failed to open out file :(";
-            statusLabel->setText("failed to open generated");
-        }
-        ul outFileSize2 = generatedMidi.writeStream(outFile2);
-        qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
-        outFile2.close();
-        generatedMidi.printToStream(std::cout);
-        statusLabel->setText("generation done. p for play");
-    }
-
+    if (press==CONF_PARAM("TabView.genMidi")) //|| (press == "spc"))
+        generateMidiQt(pTab, statusLabel);
     if (press=="p")
         midiPause(isPlaying);
 
@@ -2576,7 +2525,7 @@ void TabView::keyevent(std::string press)
         closeReprise(pTab->getV(0)->getV(currentBar));
     if (press == "goToN")
         goToBar(pTab->getV(0)->len(), currentBar, displayBar);
-    if (press == "alt");//TODO
+    //if (press == "alt");//TODO
     if (press == "tune")
         setTune(pTab->getV(currentTrack));
 }

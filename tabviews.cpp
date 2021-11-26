@@ -438,16 +438,10 @@ void TabView::prepareAllThreads(ul shiftTheCursor)
     if (localThr)
     {
         localThr->requestStop();
-
-
-
         localThr->terminate();
-
         if (CONF_PARAM("crashOnPlayHotFix") != "1")
         localThr->deleteLater();
         //delete localThr;
-
-
     }
 
     localThr = new ThreadLocal;
