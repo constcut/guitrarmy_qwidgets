@@ -729,7 +729,377 @@ void moveToNextBeat(size_t& cursorBeat, size_t& cursor, size_t& displayIndex, si
 }
 
 
-void TrackView::keyevent(std::string press)
+void setTrackPause(size_t cursor, size_t cursorBeat, int& digitPress, Track* pTrack, std::vector<SingleCommand>& commandSequence) {
+    SingleCommand command(7);
+    command.setPosition(0,cursor,cursorBeat);
+    command.requestStoredNotes();
+    for (ul i = 0; i < pTrack->getV(cursor)->getV(cursorBeat)->len(); ++i) {
+        Note *note = pTrack->getV(cursor)->getV(cursorBeat)->getV(i);
+        command.storedNotes->push_back(note);
+    }
+    commandSequence.push_back(command);
+    pTrack->getV(cursor)->getV(cursorBeat)->setPause(true);
+    pTrack->getV(cursor)->getV(cursorBeat)->clear();
+    digitPress = -1;
+}
+
+
+void deleteBar(size_t& cursor, Track* pTrack, std::vector<SingleCommand>& commandSequence) {
+    SingleCommand command(24);
+    command.setPosition(0,cursor,0);
+    command.outerPtr = pTrack->getV(cursor);
+    commandSequence.push_back(command);
+
+    //attention question for memoryleaks
+    pTrack->remove(cursor);
+    pTrack->connectAll(); //should go to auto state later
+
+    if (cursor > 0)
+       --cursor;
+    return;
+}
+
+
+void deleteSelectedBars(size_t& cursor, Track* pTrack, std::vector<SingleCommand>& commandSequence,
+                        int& selectionBarFirst, int& selectionBarLast, int& selectionBeatFirst, int& selectionBeatLast) {
+    //yet no commands
+    //so - no undo
+    if (selectionBarFirst != -1)
+    {
+        if (selectionBarFirst > 0)
+            --cursor; //attention
+
+        SingleCommand command(25);
+        command.setPosition(0,selectionBarFirst,0);
+        command.outerPtr = pTrack->getV(selectionBarFirst);
+        command.outerPtrEnd = pTrack->getV(selectionBarLast);
+        commandSequence.push_back(command);
+
+        for (int i = selectionBarLast; i >= selectionBarFirst; --i)
+            pTrack->remove(i);
+
+        pTrack->connectAll();
+    }
+    selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
+}
+
+
+void deleteSelectedBeats(size_t& cursor, Track* pTrack, std::vector<SingleCommand>& commandSequence,
+                         int& selectionBarFirst, int& selectionBarLast, int& selectionBeatFirst, int& selectionBeatLast) {
+    if (selectionBarFirst != -1) {
+
+        pTrack->connectAll();
+        Beat *firstBeat = nullptr, *lastBeat = nullptr;
+        SingleCommand command(26);
+        command.setPosition(0,selectionBarFirst,selectionBeatFirst);
+        command.outerPtr = firstBeat = pTrack->getV(selectionBarFirst)->getV(selectionBeatFirst);
+        command.outerPtrEnd = lastBeat = pTrack->getV(selectionBarLast)->getV(selectionBeatLast);
+        pTrack->getV(selectionBarFirst)->getV(selectionBeatFirst)->setParent(pTrack->getV(selectionBarFirst));
+        pTrack->getV(selectionBarLast)->getV(selectionBeatLast)->setParent(pTrack->getV(selectionBarLast));
+
+        //chick chick pointers - line between should stay - and here the way
+        //to do undo
+
+        bool wholeFirst = false;
+        bool wholeLast = false;
+
+        if (selectionBeatFirst==0)
+            wholeFirst = true;
+
+        if (selectionBeatLast == pTrack->getV(selectionBarLast)->len()-1)
+            wholeLast = true;
+
+        command.setValue(wholeFirst);
+        command.setValue2(wholeLast);
+
+        if (selectionBarFirst == selectionBarLast)
+        {
+            //remove from single bar
+            if (wholeFirst && wholeLast)
+                pTrack->remove(selectionBarFirst);
+            else
+                for (int bI = selectionBeatLast; bI >= selectionBeatFirst; --bI)
+                    pTrack->getV(selectionBarFirst)->remove(bI);
+
+        }
+        else
+        { //first and last remove depending on condition
+            if (wholeLast)
+            {
+                pTrack->remove(selectionBarLast);
+            }
+            else
+            {
+                for (int bI = selectionBeatLast; bI >= 0; --bI)
+                    pTrack->getV(selectionBarLast)->remove(bI);
+            }
+
+            ///GET range of bars
+            Bar *lastBarInMiddle = pTrack->getV(selectionBarLast-1);
+            Bar *firstBarInMiddle = pTrack->getV(selectionBarFirst+1);
+
+            command.startBar = firstBarInMiddle;
+            command.endBar = lastBarInMiddle;
+
+            for (int bI = selectionBarLast-1; bI > selectionBarFirst; --bI)
+                pTrack->remove(bI);
+
+            if (wholeFirst)
+            {
+                pTrack->remove(selectionBarFirst);
+            }
+            else
+            {
+                for (int bI = pTrack->getV(selectionBarFirst)->len()-1; bI >= selectionBeatFirst; --bI)
+                    pTrack->getV(selectionBarFirst)->remove(bI);
+            }
+        }
+
+        commandSequence.push_back(command);
+        pTrack->connectAll();
+    }
+    selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
+}
+
+
+void deleteNote(Track* pTrack, size_t cursor, size_t& cursorBeat, size_t stringCursor, int& digitPress, std::vector<SingleCommand>& commandSequence) {
+    if (pTrack->getV(cursor)->getV(cursorBeat)->len())
+    {
+        SingleCommand command(8);
+        command.setPosition(0,cursor,cursorBeat);
+        command.requestStoredNotes();
+        Note *note = pTrack->getV(cursor)->getV(cursorBeat)->getNoteInstance(stringCursor+1);
+        command.storedNotes->push_back(note);
+
+        if (note->getFret()!=255) {
+            //delete one note
+            pTrack->getV(cursor)->getV(cursorBeat)->deleteNote(stringCursor+1);//shift from 0 to 1
+            commandSequence.push_back(command);
+        }
+        else
+            delete note;
+    }
+    else
+    {
+        if (pTrack->getV(cursor)->len() > 1) {
+            byte packedValue = 0;
+            byte dur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
+            byte det =  pTrack->getV(cursor)->getV(cursorBeat)->getDurationDetail();
+            byte dot =  pTrack->getV(cursor)->getV(cursorBeat)->getDotted();
+            packedValue = dur;
+            packedValue |= det<<3;
+            Beat *beat = pTrack->getV(cursor)->getV(cursorBeat);
+            pTrack->getV(cursor)->remove(cursorBeat);
+            pTrack->connectAll(); //oups?
+            delete beat;//cleanup
+
+            SingleCommand command(8,packedValue);
+            command.setPosition(0,cursor,cursorBeat,dot); //wow wow know it
+            commandSequence.push_back(command);
+
+            if (cursorBeat)
+                --cursorBeat;
+        }
+    }
+
+    digitPress = -1;
+    return;
+}
+
+
+void incDuration(Track* pTrack, size_t cursor, size_t cursorBeat, std::vector<SingleCommand>& commandSequence) {
+    byte beatDur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
+
+    SingleCommand command(4,beatDur);
+    command.setPosition(0,cursor,cursorBeat);
+    commandSequence.push_back(command);
+
+    if (beatDur)
+     --beatDur;
+    //block not go out
+    pTrack->getV(cursor)->getV(cursorBeat)->setDuration(beatDur);
+    return;
+}
+
+
+void decDuration(Track* pTrack, size_t cursor, size_t cursorBeat, std::vector<SingleCommand>& commandSequence) {
+    byte beatDur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
+
+    SingleCommand command(4,beatDur);
+    command.setPosition(0,cursor,cursorBeat);
+    commandSequence.push_back(command);
+
+    if (beatDur < 6)
+    ++beatDur;
+    //block not go out
+    pTrack->getV(cursor)->getV(cursorBeat)->setDuration(beatDur);
+    return;
+}
+
+
+void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
+
+    if (tabParrent->getPlaying()==true)
+    {
+        if (localThr)
+           if (localThr->getStatus())
+            {
+                //animation stopped
+                tabParrent->setPlaying(false);
+                //cursor = displayIndex; //auto repeat from page
+                cursorBeat = 0;
+            }
+    }
+
+    if (tabParrent->getPlaying() == false)
+    {
+        //to start not from begin always
+        ul shiftTheCursor = 0;
+        if (cursor != 0){
+            Bar *barPtr = pTrack->getV(cursor);
+
+            for (ul i = 0; i < pTrack->timeLoop.len();++i){
+                 if (pTrack->timeLoop.getV(i) == barPtr){
+                     shiftTheCursor = i;
+                     break;
+                 }
+            }
+        }
+
+        clock_t beforeT = getTime();
+        pTrack->connectAll();
+        clock_t afterT = getTime();
+        int diffT = afterT - beforeT;
+        qDebug() <<"Repair chains "<<diffT;
+        Tab *tab = tabParrent->getTab();
+        tab->connectTracks();
+        MidiFile generatedMidi;
+        generatedMidi.fromTab(tabParrent->getTab(),shiftTheCursor);
+
+        /*
+        if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge")){
+            MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
+            generatedMidi.clear();
+            generatedMidi.add(newTrack);
+        }*/
+
+        clock_t after2T = getTime();
+        diffT = after2T - afterT;
+        diffT /= (CLOCKS_PER_SEC/1000);
+        qDebug() <<"Generate midi "<<diffT;
+
+        MidiEngine::closeDefaultFile();
+        std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
+
+        std::ofstream outFile2(fullOutName);
+
+        if (!outFile2.is_open())
+            qDebug() << "Failed to open out file :(";
+        else
+            qDebug() <<"File opened " << fullOutName.c_str();
+
+        generatedMidi.writeStream(outFile2);
+        outFile2.close();
+
+        if (CONF_PARAM("midi.config").empty() == false){
+            MidiToPcm generator(CONF_PARAM("midi.config"));
+            std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
+            generator.convert(fullOutName,outputSound);
+        }
+        tabParrent->prepareAllThreads(shiftTheCursor);
+        tabParrent->connectAllThreadsSignal(mw);
+        std::string midiConfig = CONF_PARAM("midi.config");
+
+        if (CONF_PARAM("midi.config").empty() == false) {
+            ///NEED TO SEND start_record_output waveOutput.wav
+            mw->pushForceKey("start_record_output waveOutput.wav");
+        }
+        else {
+            MidiEngine::openDefaultFile();
+            MidiEngine::startDefaultFile();
+        }
+        tabParrent->launchAllThreads();
+        tabParrent->setPlaying(true);
+    }
+    else {
+        if (CONF_PARAM("midi.config").empty() == false)
+            mw->pushForceKey("stop_record_output");
+        else
+            MidiEngine::stopDefaultFile();
+
+        tabParrent->stopAllThreads();
+        tabParrent->setPlaying(false);
+    }
+}
+
+
+void saveFromTrack(TabView* tabParent) { //TODO единая точка сохранения, так же как и воспроизведения
+    GmyFile gmyFile;
+    std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
+    std::cerr << "Test loc " << getTestsLocation() << std::endl;
+    std::ofstream file(gfilename.c_str());
+    gmyFile.saveToFile(&file, tabParent->getTab());
+    file.close();
+    return;
+}
+
+void saveAsFromTrack(TabView* tabParent) {
+    QFileDialog *fd = new QFileDialog;
+
+    fd->setStyleSheet("QScrollBar:horizontal {\
+                        border: 2px solid grey;\
+                        background: #32CC99;\
+                        height: 15px;\
+                        margin: 0px 20px 0 20px;\
+                    }\
+                    QLineEdit { height: 20px; \
+                    }");
+
+    fd->setViewMode(QFileDialog::List);
+
+    std::string dir="";
+#ifdef __ANDROID_API__
+    dir="/sdcard/";
+    fd->setDirectory("/sdcard/");
+    QScreen *screen = QApplication::screens().at(0);
+    fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
+#endif
+
+    QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
+    delete fd;
+    GmyFile gmyFile;
+    std::string  gfileName = saveFileName.toStdString();
+    std::ofstream file(gfileName);
+    gmyFile.saveToFile(&file,tabParent->getTab());
+    return;
+}
+
+
+void newBar(Track* pTrack, size_t cursor, size_t& cursorBeat, std::vector<SingleCommand>& commandSequence) {
+    Bar *addition = new Bar();
+    Bar *bOrigin = pTrack->getV(cursor);
+    addition->flush();
+    addition->setSignDenum(bOrigin->getSignDenum());
+    addition->setSignNum(bOrigin->getSignNum());
+
+    Beat *addBeat=new Beat();
+    addBeat->setDuration(3);
+    addBeat->setDotted(0);
+    addBeat->setDurationDetail(0);
+    addBeat->setPause(true);
+    addition->add(addBeat);
+
+    SingleCommand command(16);
+    command.setPosition(0,cursor,0);
+    commandSequence.push_back(command);
+    pTrack->insertBefore(addition,cursor);
+    pTrack->connectAll();
+    cursorBeat = 0;//poits to new
+    return;
+}
+
+
+void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
 {
     if (press.substr(0,4)=="com:")
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
@@ -770,423 +1140,28 @@ void TrackView::keyevent(std::string press)
         moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
     if (press == CONF_PARAM("TrackView.nextBeat"))
         moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
-
-    if (press == CONF_PARAM("TrackView.setPause")) {
-        SingleCommand command(7);
-        command.setPosition(0,cursor,cursorBeat);
-        command.requestStoredNotes();
-
-        for (ul i = 0; i < pTrack->getV(cursor)->getV(cursorBeat)->len(); ++i)
-        {
-            Note *note = pTrack->getV(cursor)->getV(cursorBeat)->getV(i);
-            command.storedNotes->push_back(note);
-        }
-
-        commandSequence.push_back(command);
-
-        pTrack->getV(cursor)->getV(cursorBeat)->setPause(true);
-        pTrack->getV(cursor)->getV(cursorBeat)->clear();
-
-        digitPress = -1;
-        return;
-    }
-
+    if (press == CONF_PARAM("TrackView.setPause"))
+        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
     if (press == "delete bar")
-    {
-        SingleCommand command(24);
-        command.setPosition(0,cursor,0);
-        command.outerPtr = pTrack->getV(cursor);
-        commandSequence.push_back(command);
-
-        //attention question for memoryleaks
-        pTrack->remove(cursor);
-        pTrack->connectAll(); //should go to auto state later
-
-        if (cursor > 0)
-           --cursor;
-        return;
-    }
-
+        deleteBar(cursor, pTrack, commandSequence);
     if (press == "delete selected bars")
-    {
-        //yet no commands
-        //so - no undo
-        if (selectionBarFirst != -1)
-        {
-            if (selectionBarFirst > 0)
-                --cursor; //attention
-
-            SingleCommand command(25);
-            command.setPosition(0,selectionBarFirst,0);
-            command.outerPtr = pTrack->getV(selectionBarFirst);
-            command.outerPtrEnd = pTrack->getV(selectionBarLast);
-            commandSequence.push_back(command);
-
-            for (int i = selectionBarLast; i >= selectionBarFirst; --i)
-                pTrack->remove(i);
-
-            pTrack->connectAll();
-        }
-        selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
-    }
-
+        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     if (press == "delete selected beats")
-    {
-        if (selectionBarFirst != -1)
-        {
-            pTrack->connectAll();
-
-            Beat *firstBeat,*lastBeat;
-
-            SingleCommand command(26);
-            command.setPosition(0,selectionBarFirst,selectionBeatFirst);
-            command.outerPtr = firstBeat = pTrack->getV(selectionBarFirst)->getV(selectionBeatFirst);
-            command.outerPtrEnd = lastBeat = pTrack->getV(selectionBarLast)->getV(selectionBeatLast);
-
-            pTrack->getV(selectionBarFirst)->getV(selectionBeatFirst)->setParent(pTrack->getV(selectionBarFirst));
-            pTrack->getV(selectionBarLast)->getV(selectionBeatLast)->setParent(pTrack->getV(selectionBarLast));
-
-            //chick chick pointers - line between should stay - and here the way
-            //to do undo
-
-            bool wholeFirst = false;
-            bool wholeLast = false;
-
-            if (selectionBeatFirst==0)
-                wholeFirst = true;
-
-            if (selectionBeatLast == pTrack->getV(selectionBarLast)->len()-1)
-                wholeLast = true;
-
-            command.setValue(wholeFirst);
-            command.setValue2(wholeLast);
-
-            if (selectionBarFirst == selectionBarLast)
-            {
-                //remove from single bar
-                if (wholeFirst && wholeLast)
-                    pTrack->remove(selectionBarFirst);
-                else
-                    for (int bI = selectionBeatLast; bI >= selectionBeatFirst; --bI)
-                        pTrack->getV(selectionBarFirst)->remove(bI);
-
-            }
-            else
-            { //first and last remove depending on condition
-                if (wholeLast)
-                {
-                    pTrack->remove(selectionBarLast);
-                }
-                else
-                {
-                    for (int bI = selectionBeatLast; bI >= 0; --bI)
-                        pTrack->getV(selectionBarLast)->remove(bI);
-                }
-
-                ///GET range of bars
-                Bar *lastBarInMiddle = pTrack->getV(selectionBarLast-1);
-                Bar *firstBarInMiddle = pTrack->getV(selectionBarFirst+1);
-
-                command.startBar = firstBarInMiddle;
-                command.endBar = lastBarInMiddle;
-
-                for (int bI = selectionBarLast-1; bI > selectionBarFirst; --bI)
-                    pTrack->remove(bI);
-
-                if (wholeFirst)
-                {
-                    pTrack->remove(selectionBarFirst);
-                }
-                else
-                {
-                    for (int bI = pTrack->getV(selectionBarFirst)->len()-1; bI >= selectionBeatFirst; --bI)
-                        pTrack->getV(selectionBarFirst)->remove(bI);
-                }
-            }
-
-            commandSequence.push_back(command);
-            pTrack->connectAll();
-        }
-        selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
-    }
-
+        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     if (press == CONF_PARAM("TrackView.deleteNote"))
-    {
-        if (pTrack->getV(cursor)->getV(cursorBeat)->len())
-        {
-
-            SingleCommand command(8);
-            command.setPosition(0,cursor,cursorBeat);
-            command.requestStoredNotes();
-
-            Note *note = pTrack->getV(cursor)->getV(cursorBeat)->getNoteInstance(stringCursor+1);
-            command.storedNotes->push_back(note);
-
-            if (note->getFret()!=255)
-            {
-                //delete one note
-                pTrack->getV(cursor)->getV(cursorBeat)->deleteNote(stringCursor+1);//shift from 0 to 1
-
-                commandSequence.push_back(command);
-            }
-            else
-                delete note;
-
-        }
-        else
-        {
-            //delete pause
-            if (pTrack->getV(cursor)->len() > 1)
-            {
-                byte packedValue = 0;
-
-                byte dur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
-                byte det =  pTrack->getV(cursor)->getV(cursorBeat)->getDurationDetail();
-                byte dot =  pTrack->getV(cursor)->getV(cursorBeat)->getDotted();
-
-                packedValue = dur;
-                packedValue |= det<<3;
-
-                Beat *beat = pTrack->getV(cursor)->getV(cursorBeat);
-                pTrack->getV(cursor)->remove(cursorBeat);
-
-                pTrack->connectAll(); //oups?
-
-                delete beat;//cleanup
-
-                SingleCommand command(8,packedValue);
-                command.setPosition(0,cursor,cursorBeat,dot); //wow wow know it
-
-                commandSequence.push_back(command);
-
-                if (cursorBeat)
-                    --cursorBeat;
-            }
-        }
-
-        digitPress = -1;
-        return;
-    }
-
+        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
     if (press == CONF_PARAM("TrackView.increaceDuration"))
-    {
-       byte beatDur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
-
-       SingleCommand command(4,beatDur);
-       command.setPosition(0,cursor,cursorBeat);
-       commandSequence.push_back(command);
-
-       if (beatDur)
-        --beatDur;
-       //block not go out
-       pTrack->getV(cursor)->getV(cursorBeat)->setDuration(beatDur);
-       return;
-    }
-
+        incDuration(pTrack, cursor, cursorBeat, commandSequence);
     if (press == CONF_PARAM("TrackView.decreaceDuration"))
-    {
-        byte beatDur = pTrack->getV(cursor)->getV(cursorBeat)->getDuration();
-
-        SingleCommand command(4,beatDur);
-        command.setPosition(0,cursor,cursorBeat);
-        commandSequence.push_back(command);
-
-        if (beatDur < 6)
-        ++beatDur;
-        //block not go out
-        pTrack->getV(cursor)->getV(cursorBeat)->setDuration(beatDur);
-        return;
-    }
-
-    /*
-    if (press == "i")
-    {
-        //insert pause in the end (later cover under navigation)
-        //attention
-        //refact
-        byte dur = pTrack->getV(cursor).getV(0).getDuration();
-        Beat areat;
-        newBeat.setDuration(dur);
-        newBeat.setPause(true);
-        pTrack->getV(cursor).add(newBeat);
-    }
-    */
-
-    if ((press == CONF_PARAM("TrackView.playAMusic")) || (press == CONF_PARAM("TrackView.playMidi"))
-            || (press=="playMerge"))
-    {
-
-
-
-
-        //pre action for repeat
-        //AUTO END WHEN ANIMATION STOPED
-
-        if (tabParrent->getPlaying()==true)
-        {
-            if (localThr)
-               if (localThr->getStatus())
-                {
-                    //animation stopped
-                    tabParrent->setPlaying(false);
-                    //cursor = displayIndex; //auto repeat from page
-                    cursorBeat = 0;
-                }
-        }
-
-
-
-        if (tabParrent->getPlaying() == false)
-        {
-            //to start not from begin always
-            ul shiftTheCursor = 0;
-            if (cursor != 0){
-                Bar *barPtr = pTrack->getV(cursor);
-
-                for (ul i = 0; i < pTrack->timeLoop.len();++i){
-                     if (pTrack->timeLoop.getV(i) == barPtr){
-                         shiftTheCursor = i;
-                         break;
-                     }
-                }
-            }
-
-            clock_t beforeT = getTime();
-            pTrack->connectAll();
-            clock_t afterT = getTime();
-            int diffT = afterT - beforeT;
-            qDebug() <<"Repair chains "<<diffT;
-            Tab *tab = tabParrent->getTab();
-            tab->connectTracks();
-            MidiFile generatedMidi;
-
-            if (press == CONF_PARAM("TrackView.playAMusic")) {}
-            else{
-                generatedMidi.fromTab(tabParrent->getTab(),shiftTheCursor);
-            }
-
-
-            if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge")){
-                MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
-                generatedMidi.clear();
-                generatedMidi.add(newTrack);
-            }
-
-            clock_t after2T = getTime();
-            diffT = after2T - afterT;
-            diffT /= (CLOCKS_PER_SEC/1000);
-            qDebug() <<"Generate midi "<<diffT;
-
-            MidiEngine::closeDefaultFile();
-            std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-
-            std::ofstream outFile2(fullOutName);
-
-            if (!outFile2.is_open())
-                qDebug() << "Failed to open out file :(";
-            else
-                qDebug() <<"File opened " << fullOutName.c_str();
-
-            generatedMidi.writeStream(outFile2);
-            outFile2.close();
-
-            if (CONF_PARAM("midi.config").empty() == false){
-                MidiToPcm generator(CONF_PARAM("midi.config"));
-                std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
-                generator.convert(fullOutName,outputSound);
-            }
-            tabParrent->prepareAllThreads(shiftTheCursor);
-            tabParrent->connectAllThreadsSignal(getMaster());
-            std::string midiConfig = CONF_PARAM("midi.config");
-
-            if (CONF_PARAM("midi.config").empty() == false) {
-                ///NEED TO SEND start_record_output waveOutput.wav
-                getMaster()->pushForceKey("start_record_output waveOutput.wav");
-            }
-            else {
-                MidiEngine::openDefaultFile();
-                MidiEngine::startDefaultFile();
-            }
-            tabParrent->launchAllThreads();
-            tabParrent->setPlaying(true);
-        }
-        else {
-            if (CONF_PARAM("midi.config").empty() == false)
-                getMaster()->pushForceKey("stop_record_output");
-            else
-                MidiEngine::stopDefaultFile();
-
-            tabParrent->stopAllThreads();
-            tabParrent->setPlaying(false);
-        }
-        return;
-    }
-
-    if (press == CONF_PARAM("TrackView.save")||(press == "quicksave")) {
-        //save
-        GmyFile gmyFile;
-        std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
-        std::cerr << "Test loc " << getTestsLocation() << std::endl;
-        std::ofstream file(gfilename.c_str());
-        gmyFile.saveToFile(&file,tabParrent->getTab());
-        file.close();
-        return;
-    }
-
-    if (press == "save as"){
-        QFileDialog *fd = new QFileDialog;
-
-        fd->setStyleSheet("QScrollBar:horizontal {\
-                            border: 2px solid grey;\
-                            background: #32CC99;\
-                            height: 15px;\
-                            margin: 0px 20px 0 20px;\
-                        }\
-                        QLineEdit { height: 20px; \
-                        }");
-
-        fd->setViewMode(QFileDialog::List);
-
-        std::string dir="";
-#ifdef __ANDROID_API__
-        dir="/sdcard/";
-        fd->setDirectory("/sdcard/");
-        QScreen *screen = QApplication::screens().at(0);
-        fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
-#endif
-
-        QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
-        delete fd;
-        GmyFile gmyFile;
-        std::string  gfileName = saveFileName.toStdString();
-        std::ofstream file(gfileName);
-        gmyFile.saveToFile(&file,tabParrent->getTab());
-        return;
-    }
-
-    if (press == "newBar") {
-        Bar *addition = new Bar();
-        Bar *bOrigin = pTrack->getV(cursor);
-        addition->flush();
-        addition->setSignDenum(bOrigin->getSignDenum());
-        addition->setSignNum(bOrigin->getSignNum());
-
-        Beat *addBeat=new Beat();
-        addBeat->setDuration(3);
-        addBeat->setDotted(0);
-        addBeat->setDurationDetail(0);
-        addBeat->setPause(true);
-        addition->add(addBeat);
-
-        SingleCommand command(16);
-        command.setPosition(0,cursor,0);
-        commandSequence.push_back(command);
-        pTrack->insertBefore(addition,cursor);
-        pTrack->connectAll();
-        cursorBeat = 0;//poits to new
-        return;
-    }
-
+        decDuration(pTrack, cursor, cursorBeat, commandSequence);
+    if  (press == CONF_PARAM("TrackView.playMidi"))  //|| (press=="playMerge")
+        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
+    if (press == CONF_PARAM("TrackView.save")||(press == "quicksave"))
+        saveFromTrack(tabParrent);
+    if (press == "save as")
+        saveAsFromTrack(tabParrent);
+    if (press == "newBar")
+        newBar(pTrack, cursor, cursorBeat, commandSequence);
     if (press == "dot") {
         byte dotted = pTrack->getV(cursor)->getV(cursorBeat)->getDotted();
         SingleCommand command(6,dotted);
