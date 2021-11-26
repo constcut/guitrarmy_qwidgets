@@ -19,21 +19,19 @@ protected:
     GLabel *statusLabel;
     GLabel *bpmLabel;
 
-
     bool isPlaying;
 
     GTabPannel *pan;
 
-    ul displayTrack;
-    ul currentTrack;
+    size_t displayTrack;
+    size_t currentTrack;
 
-    ul currentBar;
-    ul displayBar;
+    size_t currentBar;
+    size_t displayBar;
 
     int lastOpenedTrack;
 
     ThreadLocal *localThr;
-
 
 public:
 

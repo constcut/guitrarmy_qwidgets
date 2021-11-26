@@ -23,9 +23,9 @@
 
 #include <QDebug>
 
-//TODO
 
 #include <fstream>
+
 
 void TrackView::reverseCommand(SingleCommand &command)
 {
@@ -1822,505 +1822,475 @@ return;
     tabParrent->keyevent(press);
 }
 
-void TabView::keyevent(std::string press)
-{
-    if (press == "set till the end")
+
+
+void setSignTillEnd(Tab* pTab, size_t currentBar) {
+    bool ok=false;
+    int newNum = QInputDialog::getInt(0,"Input",
+                         "New Num:", QLineEdit::Normal,
+                         1,128,1,&ok);
+    if (!ok)
+        return;
+
+    ok=false;
+
+    //GET ITEM
+    int newDen = QInputDialog::getInt(0,"Input",
+                         "New Denum(1,2,4,8,16):", QLineEdit::Normal,
+                         1,128,1,&ok);
+    if (ok)
     {
-
-        bool ok=false;
-        int newNum = QInputDialog::getInt(0,"Input",
-                             "New Num:", QLineEdit::Normal,
-                             1,128,1,&ok);
-        if (!ok)
-            return;
-
-        ok=false;
-
-        //GET ITEM
-        int newDen = QInputDialog::getInt(0,"Input",
-                             "New Denum(1,2,4,8,16):", QLineEdit::Normal,
-                             1,128,1,&ok);
-        if (ok)
+        //how to make undo? list of index old num old denum?
+        for (size_t i = currentBar; i < pTab->getV(0)->len(); ++i)
         {
-            //how to make undo? list of index old num old denum?
-            for (size_t i = currentBar; i < pTab->getV(0)->len(); ++i)
-            {
-                pTab->getV(0)->getV(i)->setSignDenum(newDen);
-                pTab->getV(0)->getV(i)->setSignNum(newNum);
-            }
+            pTab->getV(0)->getV(i)->setSignDenum(newDen); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
+            pTab->getV(0)->getV(i)->setSignNum(newNum);
         }
     }
+}
+
+void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получения имени файла)
+
+    QFileDialog *fd = new QFileDialog;
+    fd->setStyleSheet("QScrollBar:horizontal {\
+                      border: 2px solid grey;\
+                      background: #32CC99;\
+                      height: 15px;\
+                      margin: 0px 20px 0 20px;\
+                  }\
+                  QLineEdit { height: 20px; \
+                  }");
+
+    fd->setViewMode(QFileDialog::List);
+
+    std::string dir="";
+#ifdef __ANDROID_API__
+    dir="/sdcard/";
+    fd->setDirectory("/sdcard/");
+    QScreen *screen = QApplication::screens().at(0);
+    fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
+#endif
+
+    QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
+    delete fd; //TODO изучить возможность переиспользования
+
+    std::string  gfileName = saveFileName.toStdString();
+    std::ofstream file(gfileName);
+    GmyFile gmyFile;
+    gmyFile.saveToFile(&file, pTab);
+    file.close();
+}
 
 
+void muteTrack(Tab* pTab, size_t displayTrack) { //Move into Tab
+    byte curStat = pTab->getV(displayTrack)->getStatus();
+    if (curStat==1)
+        pTab->getV(displayTrack)->setStatus(0);
+    else
+        pTab->getV(displayTrack)->setStatus(1);
+}
 
-    if (press == "save as")
-    {
+void soloTrack(Tab* pTab, size_t displayTrack) { //Move into Tab
+    byte curStat = pTab->getV(displayTrack)->getStatus();
+    if (curStat==2)
+        pTab->getV(displayTrack)->setStatus(0);
+    else
+        pTab->getV(displayTrack)->setStatus(2);
+}
 
-            QFileDialog *fd = new QFileDialog;
 
-            fd->setStyleSheet("QScrollBar:horizontal {\
-                              border: 2px solid grey;\
-                              background: #32CC99;\
-                              height: 15px;\
-                              margin: 0px 20px 0 20px;\
-                          }\
-                          QLineEdit { height: 20px; \
-                          }");
+enum MoveDirections {
+    none = 0,
+    left = 1,
+    right = 2,
+    up = 3,
+    down = 4
+};
 
-            fd->setViewMode(QFileDialog::List);
 
-            std::string dir="";
-    #ifdef __ANDROID_API__
-            dir="/sdcard/";
-            fd->setDirectory("/sdcard/");
-            QScreen *screen = QApplication::screens().at(0);
-            fd->setGeometry(0,0,screen->geometry().width(),screen->geometry().height());
-    #endif
-
-            QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
-
-            delete fd;
-
-            std::string  gfileName = saveFileName.toStdString();
-            std::ofstream file(gfileName);
-            GmyFile gmyFile;
-            gmyFile.saveToFile(&file, getTab());
-            file.close();
+void moveCursorInTrack(MoveDirections dir, size_t& displayBar, size_t barsCount = 0) {
+    switch(dir) { //Move into Tab
+        case MoveDirections::left:
+            if (displayBar < barsCount)
+                ++displayBar;
+        break;
+        case MoveDirections::right:
+            if (displayBar > 0)
+                --displayBar;
+        break;
+        case none:
+        case MoveDirections::up:
+        case MoveDirections::down:
+            qDebug() << "ERROR: Empty move direction!";
     }
+}
 
-    if (press=="export_midi") {
-        Tab *tab = getTab();
-        if (tab) {
-            tab->connectTracks();
 
-            MidiFile generatedMidi;
-            generatedMidi.fromTab(tab,0);
-
-            std::string preFN;
-
-    #ifdef __ANDROID_API__
-            preFN = "/sdcard/" ;
-    #else
-            preFN = getTestsLocation();
-    #endif
-
-            std::string fullOutName = preFN + std::string("midiOutput.mid");
-            std::ofstream outFile(fullOutName);
-
-            if (!outFile.is_open())
-                qDebug() << "Failed to open out file :(";
-            else
-                qDebug() <<"File opened "<<fullOutName.c_str();
-
-            generatedMidi.writeStream(outFile);
-            outFile.close();
-        }
-    }
-
-    if (press=="mute")
-    {
-        byte curStat = pTab->getV(displayTrack)->getStatus();
-
-        if (curStat==1)
-            pTab->getV(displayTrack)->setStatus(0);
-        else
-            pTab->getV(displayTrack)->setStatus(1);
-    }
-
-    if (press =="solo")
-    {
-        byte curStat = pTab->getV(displayTrack)->getStatus();
-
-        if (curStat==2)
-            pTab->getV(displayTrack)->setStatus(0);
-        else
-            pTab->getV(displayTrack)->setStatus(2);
-    }
-
-    if (press==">>>")
-    {
-        if (displayBar < (pTab->getV(0)->len()-1))
-            ++displayBar;
-    }
-    if (press=="<<<")
-    {
-        if (displayBar > 0)
-            --displayBar;
-    }
-    if (press=="^^^")
-    {
-        if (displayTrack > 0)
-        {
+void MoveCursorOfTrack(MoveDirections dir, size_t& displayTrack, size_t& currentTrack, size_t trackLen=0) {
+    switch(dir) { //Move into Tab
+        case MoveDirections::up:
+        if (displayTrack > 0) {
             --displayTrack;
-            //if not seen
-            currentTrack = displayTrack; //escape fine condition
-            //still no errors
+            currentTrack = displayTrack;
         }
-    }
-    if (press=="vvv")
-    {
-        if (displayTrack < (pTab->len()-1))
-        {
+        break;
+        case MoveDirections::down:
+        if (displayTrack < trackLen){
             ++displayTrack;
-
             if (currentTrack < displayTrack)
                 currentTrack = displayTrack;
         }
+        break;
+    case none:
+    case MoveDirections::right:
+    case MoveDirections::left:
+        qDebug() << "ERROR: Empty move direction!";
     }
+}
 
-    if (press=="drums")
-    {
-        bool drums = pTab->getV(displayTrack)->isDrums();
-        drums = !drums;
-        pTab->getV(displayTrack)->setDrums(drums);
-    }
 
-    if (press=="instr")
-    {
-    std::string instruments[]=
-            {
-                "Acoustic Grand Piano",
-                "Bright Acoustic Piano",
-                "Electric Grand Piano",
-                "Honky-tonk Piano",
-                "Rhodes Piano",
-                "Chorused Piano",
-                "Harpsichord",
-                "Clavinet",
-                "Celesta",
-                "Glockenspiel",
-                "Music Box",
-                "Vibraphone",
-                "Marimba",
-                "Xylophone",
-                "Tubular Bells",
-                "Dulcimer",
-                "Hammond Organ",
-                "Percussive Organ",
-                "Rock Organ",
-                "Church Organ",
-                "Reed Organ",
-                "Accodion",
-                "Hrmonica",
-                "Tango Accodion",
-                "Acoustic Guitar (nylon)",
-                "Acoustic Guitar (steel)",
-                "Electric Guitar (jazz)",
-                "Electric Guitar (clean)",
-                "Electric Guitar (muted)",
-                "Overdriven Guitar",
-                "Distortion Guitar",
-                "Guitar Harmonics",
-                "Acoustic Bass",
-                "Electric Bass (finger)",
-                "Electric Bass (pick)",
-                "Fretless Bass",
-                "Slap Bass 1",
-                "Slap Bass 2",
-                "Synth Bass 1",
-                "Synth Bass 2",
-                "Violin",
-                "Viola",
-                "Cello",
-                "Contrabass",
-                "Tremolo Strings",
-                "Pizzicato Strings",
-                "Orchestral Harp",
-                "Timpani",
-                "String Ensemble 1",
-                "String Ensemble 2",
-                "SynthStrings 1",
-                "SynthStrings 2",
-                "Choir Aahs",
-                "Voice Oohs",
-                "Synth Voice",
-                "Orchetra Hit",
-                "Trumpet",
-                "Trombone",
-                "Tuba",
-                "Muted Trumpet",
-                "French Horn",
-                "Brass Section",
-                "Synth Brass 1",
-                "Synth Brass 2",
-                "Soprano Sax",
-                "Alto Sax",
-                "Tenor Sax",
-                "Baritone Sax",
-                "Oboe",
-                "English Horn",
-                "Bassoon",
-                "Clarinet",
-                "Piccolo",
-                "Flute",
-                "Recorder",
-                "Pan Flute",
-                "Bottle Blow",
-                "Shakuhachi",
-                "Wistle",
-                "Ocarina",
-                "Lead 1 (square)",
-                "Lead 2 (sawtooth)",
-                "Lead 3 (caliope lead)",
-                "Lead 4 (chiff lead)",
-                "Lead 5 (charang)",
-                "Lead 6 (voice)",
-                "Lead 7 (hiths)",
-                "Lead 8 (bass + lead)",
-                "Pad 1 (new age)",
-                "Pad 2 (warm)",
-                "Pad 3 (polysynth)",
-                "Pad 4 (choir)",
-                "Pad 5 (bowed)",
-                "Pad 6 (metalic)",
-                "Pad 7 (halo)",
-                "Pad 8 (sweep)",
-                "FX 1 (rain)",
-                "FX 2 (soundrack)",
-                "FX 3 (crystl)",
-                "FX 4 (atmosphere)",
-                "FX 5 (brightness)",
-                "FX 6 (goblins)",
-                "FX 7 (echoes)",
-                "FX 8 (sci-fi)",
-                "Sitar",
-                "Banjo",
-                "Shamisen",
-                "Koto",
-                "Kalimba",
-                "Bigpipe",
-                "Fiddle",
-                "Shanai",
-                "Tinkle Bell",
-                "Agogo",
-                "Steel Drums",
-                "Woodblock",
-                "Taiko Drum",
-                "Melodic Tom",
-                "Synth Drum",
-                "Reverce Cymbal",
-                "Guitar Fret Noise",
-                "Breath Noise",
-                "Seashore",
-                "Bird Tweet",
-                "Telephone ring",
-                "Helicopter",
-                "Applause",
-                "Gunshot"
-            };
+void changeDrumsFlag(Track* pTrack) {
+    bool drums = pTrack->isDrums();
+    drums = !drums;
+    pTrack->setDrums(drums);
+}
+
+
+int changeTrackInstrument(Track* pTrack) {
+    std::string instruments[]= { //Move to sepparated file TODO
+    "Acoustic Grand Piano",
+    "Bright Acoustic Piano",
+    "Electric Grand Piano",
+    "Honky-tonk Piano",
+    "Rhodes Piano",
+    "Chorused Piano",
+    "Harpsichord",
+    "Clavinet",
+    "Celesta",
+    "Glockenspiel",
+    "Music Box",
+    "Vibraphone",
+    "Marimba",
+    "Xylophone",
+    "Tubular Bells",
+    "Dulcimer",
+    "Hammond Organ",
+    "Percussive Organ",
+    "Rock Organ",
+    "Church Organ",
+    "Reed Organ",
+    "Accodion",
+    "Hrmonica",
+    "Tango Accodion",
+    "Acoustic Guitar (nylon)",
+    "Acoustic Guitar (steel)",
+    "Electric Guitar (jazz)",
+    "Electric Guitar (clean)",
+    "Electric Guitar (muted)",
+    "Overdriven Guitar",
+    "Distortion Guitar",
+    "Guitar Harmonics",
+    "Acoustic Bass",
+    "Electric Bass (finger)",
+    "Electric Bass (pick)",
+    "Fretless Bass",
+    "Slap Bass 1",
+    "Slap Bass 2",
+    "Synth Bass 1",
+    "Synth Bass 2",
+    "Violin",
+    "Viola",
+    "Cello",
+    "Contrabass",
+    "Tremolo Strings",
+    "Pizzicato Strings",
+    "Orchestral Harp",
+    "Timpani",
+    "String Ensemble 1",
+    "String Ensemble 2",
+    "SynthStrings 1",
+    "SynthStrings 2",
+    "Choir Aahs",
+    "Voice Oohs",
+    "Synth Voice",
+    "Orchetra Hit",
+    "Trumpet",
+    "Trombone",
+    "Tuba",
+    "Muted Trumpet",
+    "French Horn",
+    "Brass Section",
+    "Synth Brass 1",
+    "Synth Brass 2",
+    "Soprano Sax",
+    "Alto Sax",
+    "Tenor Sax",
+    "Baritone Sax",
+    "Oboe",
+    "English Horn",
+    "Bassoon",
+    "Clarinet",
+    "Piccolo",
+    "Flute",
+    "Recorder",
+    "Pan Flute",
+    "Bottle Blow",
+    "Shakuhachi",
+    "Wistle",
+    "Ocarina",
+    "Lead 1 (square)",
+    "Lead 2 (sawtooth)",
+    "Lead 3 (caliope lead)",
+    "Lead 4 (chiff lead)",
+    "Lead 5 (charang)",
+    "Lead 6 (voice)",
+    "Lead 7 (hiths)",
+    "Lead 8 (bass + lead)",
+    "Pad 1 (new age)",
+    "Pad 2 (warm)",
+    "Pad 3 (polysynth)",
+    "Pad 4 (choir)",
+    "Pad 5 (bowed)",
+    "Pad 6 (metalic)",
+    "Pad 7 (halo)",
+    "Pad 8 (sweep)",
+    "FX 1 (rain)",
+    "FX 2 (soundrack)",
+    "FX 3 (crystl)",
+    "FX 4 (atmosphere)",
+    "FX 5 (brightness)",
+    "FX 6 (goblins)",
+    "FX 7 (echoes)",
+    "FX 8 (sci-fi)",
+    "Sitar",
+    "Banjo",
+    "Shamisen",
+    "Koto",
+    "Kalimba",
+    "Bigpipe",
+    "Fiddle",
+    "Shanai",
+    "Tinkle Bell",
+    "Agogo",
+    "Steel Drums",
+    "Woodblock",
+    "Taiko Drum",
+    "Melodic Tom",
+    "Synth Drum",
+    "Reverce Cymbal",
+    "Guitar Fret Noise",
+    "Breath Noise",
+    "Seashore",
+    "Bird Tweet",
+    "Telephone ring",
+    "Helicopter",
+    "Applause",
+    "Gunshot"};
 
      bool ok=false;
-        QStringList items;
-        for (int i = 0 ; i < 128; ++i) {
-            auto s = (std::to_string(i) + " - " + instruments[i]);
-            items.push_back(s.c_str());
-        }
-
-        int curInstr = pTab->getV(displayTrack)->getInstrument();
-
-        QString result = QInputDialog::getItem(0,"Input",
-                                     "New Instrument:",items, curInstr,false,&ok);
-        if (ok)
-        {
-            int backToNumber = -1;
-            for (int i = 0 ; i < 128; ++i)
-            {
-                if (result == items[i])
-                {
-                    backToNumber = i;
-                    break;
-                }
-            }
-
-            if (backToNumber>=0)
-            pTab->getV(displayTrack)->setInstrument(backToNumber);
-
-            //shh
-            int centerX = 0;
-            getMaster()->setComboBox(1,"instruments",240+centerX,5,200,30,backToNumber);
-
-            ///NEED UPDATE HERE combobox
-        }
-          //
+    QStringList items;
+    for (int i = 0 ; i < 128; ++i) {
+        auto s = (std::to_string(i) + " - " + instruments[i]);
+        items.push_back(s.c_str());
     }
 
+    int curInstr = pTrack->getInstrument();
+
+    QString result = QInputDialog::getItem(0,"Input",
+                                 "New Instrument:",items, curInstr,false,&ok);
+    int backToNumber = -1;
+    if (ok)
+        for (int i = 0 ; i < 128; ++i)
+            if (result == items[i]) {
+                backToNumber = i;
+                break;
+            }
+
+    if (backToNumber>=0)
+        pTrack->setInstrument(backToNumber);
+
+    return backToNumber;
+}
+
+
+int changeTrackPanoram(Track *pTrack) {
+    bool ok=false;
+    QStringList items;
+    items.push_back("L 8 - 100%");
+    items.push_back("L 7");
+    items.push_back("L 6");
+    items.push_back("L 5");
+    items.push_back("L 4");
+    items.push_back("L 3");
+    items.push_back("L 2");
+    items.push_back( "L 1");
+    items.push_back("C 0 - 0%");
+    items.push_back("R 1");
+    items.push_back("R 2");
+    items.push_back("R 3");
+    items.push_back("R 4");
+    items.push_back("R 5");
+    items.push_back("R 6");
+    items.push_back("R 7 ");
+    items.push_back("R 8 - 100%");
+    /*
+    int newPan = QInputDialog::getInt(0,"Input",
+                        "Instrument Panoram:", QLineEdit::Normal,
+                        0,16,1,&ok);*/
+    int curPan = pTrack->getPan();
+    QString result = QInputDialog::getItem(0,"Input",
+                                "New Panoram:",items, curPan,false,&ok);
+
+    int backToNumber = -1;
+    if (ok) {
+       for (int i = 0 ; i < 128; ++i)
+           if (result == items[i]) {
+               backToNumber = i;
+               break;
+           }
+      if (backToNumber >= 0)
+        pTrack->setPan(backToNumber);
+    }
+    return backToNumber;
+}
+
+
+void changeTrackVolume(Track* pTrack)   {
+    bool ok=false;
+    int newVol = QInputDialog::getInt(0,"Input",
+                         "Vol Instrument:", QLineEdit::Normal,
+                         0,16,1, &ok);
+    if (ok)
+       pTrack->setVolume(newVol);
+}
+
+
+void changeTrackName(Track* pTrack) {
+    bool ok=false;
+    //refact inputs to gview
+    QString newName = QInputDialog::getText(0,"Input",
+                         "New Instrument name:", QLineEdit::Normal,"untitled",&ok);
+
+    std::string stdName = newName.toStdString();
+    if (ok)
+       pTrack->setName(stdName);
+}
+
+
+int changeTrackBpm(Tab* pTab) {
+    bool ok=false;
+
+    int newBpm = QInputDialog::getInt(0,"Input",
+                         "New Bpm:", QLineEdit::Normal,
+                         1,999,1,&ok);
+    if (ok) {
+        pTab->setBPM(newBpm);
+        return newBpm;
+    }
+    else
+        return pTab->getBPM();
+}
+
+
+Track* createNewTrack(Tab* pTab) { //Move into Tab
+    Track *track=new Track();
+    std::string iName("NewInstrument");
+    track->setName(iName);
+    track->setInstrument(25);
+    track->setVolume(15);
+    track->setDrums(false);
+    track->setPan(8); //center now
+    track->tuning.setStringsAmount(6);
+
+    track->tuning.setTune(0,64);
+    track->tuning.setTune(1,59);
+    track->tuning.setTune(2,55);
+    track->tuning.setTune(3,50);
+    track->tuning.setTune(4,45);
+    track->tuning.setTune(5,40);
+
+    for (ul barI=0; barI < pTab->getV(0)->len(); ++barI) {
+        Bar *bar=new Bar();
+        bar->flush();
+        bar->setSignDenum(4); bar->setSignNum(4);
+        bar->setRepeat(0);
+
+
+        Beat *beat=new Beat();
+        beat->setPause(true);
+        beat->setDotted(0);
+        beat->setDuration(3);
+        beat->setDurationDetail(0);
+
+        bar->add(beat);
+        track->add(bar);
+    }
+    pTab->add(track);
+    pTab->connectTracks();
+    return track;
+}
+
+
+void deleteTrack(Tab* pTab, size_t& displayTrack) {
+    bool ok=false;
+    int inp = QInputDialog::getInt(0,"Delete track","Delete track",0,0,1,1,&ok);
+
+    if ((ok) && (inp))
+    {
+        pTab->remove(displayTrack);
+
+        if (displayTrack)
+            --displayTrack;
+    }
+}
+
+
+void TabView::keyevent(std::string press)
+{
+    if (press == "set till the end")  //TODO хэндлеры для более простого вызова
+        setSignTillEnd(pTab, currentBar);
+    if (press == "save as")
+        saveAs(pTab);
+    if (press=="mute")
+        muteTrack(pTab, displayTrack);
+    if (press =="solo")
+        soloTrack(pTab, displayTrack);
+    if (press==">>>")
+        moveCursorInTrack(MoveDirections::left, displayBar, pTab->getV(0)->len() - 1);
+    if (press== "<<<")
+        moveCursorInTrack(MoveDirections::right, displayBar);
+    if (press=="^^^")
+        MoveCursorOfTrack(MoveDirections::right, displayTrack, currentTrack);
+    if (press=="vvv")
+        MoveCursorOfTrack(MoveDirections::right, displayTrack, currentTrack, pTab->getV(0)->len());
+    if (press=="drums")
+        changeDrumsFlag(pTab->getV(displayTrack));
+    if (press=="instr")
+        getMaster()->setComboBox(1,"instruments",240,5,200,30,changeTrackInstrument(pTab->getV(displayTrack))); //Only UI feature
     if (press=="pan")
-    {
-        bool ok=false;
-
-
-        QStringList items;
-
-                    items.push_back("L 8 - 100%");
-                    items.push_back("L 7");
-                    items.push_back("L 6");
-                    items.push_back("L 5");
-                    items.push_back("L 4");
-                    items.push_back("L 3");
-                    items.push_back("L 2");
-                    items.push_back( "L 1");
-                    items.push_back("C 0 - 0%");
-                    items.push_back("R 1");
-                    items.push_back("R 2");
-                    items.push_back("R 3");
-                    items.push_back("R 4");
-                    items.push_back("R 5");
-                    items.push_back("R 6");
-                    items.push_back("R 7 ");
-                    items.push_back("R 8 - 100%");
-
-
-
-        /*
-        int newPan = QInputDialog::getInt(0,"Input",
-                             "Instrument Panoram:", QLineEdit::Normal,
-                             0,16,1,&ok);*/
-
-        int curPan = pTab->getV(displayTrack)->getPan();
-        QString result = QInputDialog::getItem(0,"Input",
-                                     "New Panoram:",items, curPan,false,&ok);
-
-        if (ok)
-        {
-            int backToNumber = -1;
-            for (int i = 0 ; i < 128; ++i)
-            {
-                if (result == items[i])
-                {
-                    backToNumber = i;
-                    break;
-                }
-            }
-
-           if (backToNumber >= 0)
-            pTab->getV(displayTrack)->setPan(backToNumber);
-
-           int centerX = 0;
-           getMaster()->setComboBox(6,"pan",570+centerX,5,50,30,backToNumber);
-
-        }
-    }
-
+        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab->getV(displayTrack))); //Как и выше сбивает UI при отмене ввода
     if (press=="volume")
-    {
-        bool ok=false;
-
-        int newVol = QInputDialog::getInt(0,"Input",
-                             "Vol Instrument:", QLineEdit::Normal,
-                             0,16,1,&ok);
-        if (ok)
-           pTab->getV(displayTrack)->setVolume(newVol);
-    }
-
+        changeTrackVolume(pTab->getV(displayTrack));
     if (press=="name")
-    {
-        bool ok=false;
-
-        //refact inputs to gview
-        QString newName = QInputDialog::getText(0,"Input",
-                             "New Instrument name:", QLineEdit::Normal,"untitled",&ok);
-
-
-        std::string stdName = newName.toStdString();
-
-        if (ok)
-           pTab->getV(displayTrack)->setName(stdName);
-    }
-
-    if (press=="bpm")
-    {
-        bool ok=false;
-
-        int newBpm = QInputDialog::getInt(0,"Input",
-                             "New Bpm:", QLineEdit::Normal,
-                             1,999,1,&ok);
-        if (ok) {
-            pTab->setBPM(newBpm);
-            bpmLabel->setText("bpm=" + std::to_string(newBpm));
-            getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
-        }
-    }
-
-    if (press=="opentrack")
-    {
-        ul digit = displayTrack + 1;
-
-        if (digit)
-        if (digit <= pTab->len())
-        {
-            TrackView *trackView = tracksView[digit-1];
-
+        changeTrackName(pTab->getV(displayTrack));
+    if (press=="bpm") {
+        auto newBpm = changeTrackBpm(pTab);
+        bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
+        getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
+    }         
+    if (press=="opentrack") {
+        ul digit = displayTrack + 1; //TODO эту часть внутрь движка
+        if (digit && digit <= pTab->len()){
+            TrackView *trackView = tracksView[digit-1]; //А обновление интерфейса в модуль Qt TODO выше
             lastOpenedTrack = digit-1;
-
             MainView *mainView = (MainView*)getMaster()->getFirstChild();
             mainView->changeCurrentView(trackView);
         }
     }
-
-    if (press=="newTrack")
-    {
-        //hmmm ;)
-        Track *track=new Track();
-        std::string iName("NewInstrument");
-        track->setName(iName);
-        track->setInstrument(25);
-        track->setVolume(15);
-        track->setDrums(false);
-        track->setPan(8); //center now
-        track->tuning.setStringsAmount(6);
-
-        track->tuning.setTune(0,64);
-        track->tuning.setTune(1,59);
-        track->tuning.setTune(2,55);
-        track->tuning.setTune(3,50);
-        track->tuning.setTune(4,45);
-        track->tuning.setTune(5,40);
-
-
-        for (ul barI=0; barI < pTab->getV(0)->len(); ++barI)
-        {
-            Bar *bar=new Bar();
-            bar->flush();
-            bar->setSignDenum(4); bar->setSignNum(4);
-            bar->setRepeat(0);
-
-
-            Beat *beat=new Beat();
-            beat->setPause(true);
-            beat->setDotted(0);
-            beat->setDuration(3);
-            beat->setDurationDetail(0);
-
-            bar->add(beat);
-            track->add(bar);
-        }
-
-        //track.connectAll();
-
-        pTab->add(track);
-
-        pTab->connectTracks();
-
-        //addSingleTrack( &(pTab->getV(pTab->len()-1)));
-
-
-        this->setTab(pTab);
-    }
-
+    if (press=="newTrack") {
+       createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
     if (press=="deleteTrack")
-    {
-        bool ok=false;
-        int inp = QInputDialog::getInt(0,"Delete track","Delete track",0,0,1,1,&ok);
-
-        if ((ok) && (inp))
-        {
-            pTab->remove(displayTrack);
-
-            if (displayTrack)
-                --displayTrack;
-        }
-    }
-
+        deleteTrack(pTab, displayTrack);
 
     if ((press == CONF_PARAM("TrackView.playAMusic")) || (press == CONF_PARAM("TrackView.playMidi")))
     {
@@ -2584,7 +2554,8 @@ void TabView::keyevent(std::string press)
         int newTimes = QInputDialog::getInt(0,"Input",
                              "Bar to jump:", QLineEdit::Normal,
                              1,pTab->getV(0)->len(),1,&ok);
-
+        //TODOMAX тут и везде создать отдельные функции с параметрами, вызов функций из команд
+        //Qt обвес можно сделать отдельной частью сверху
         if (ok)
         {
             --newTimes;

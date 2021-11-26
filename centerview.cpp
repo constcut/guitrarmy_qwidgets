@@ -599,6 +599,8 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
 
 void CenterView::setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue)
 {
+
+
     int VType = getCurrentViewType();
 
     double scaleCoef = AConfig::getInstance()->getScaleCoef();

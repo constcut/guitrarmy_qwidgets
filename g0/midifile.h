@@ -5,8 +5,6 @@
 
 #include <iostream>
 
-
-class AMusic;
 class Tab;
 class Track;
 class Bar;
@@ -17,11 +15,7 @@ class Note;
 //protected looks great but should be designed for manual use
 class VariableInt : public ChainContainer<byte> //or public, or fullfit
 {
-protected:
-
-
 public:
-
     VariableInt &operator =(VariableInt &v) 
     {
     	//clear - to POLY ! ATTENTION !
@@ -34,14 +28,11 @@ public:
 
     ul readStream(std::ifstream &file); //reads from file and returns amount of bytes stored inside
     ul writeStream(std::ofstream &file);
-
 	ul getValue();
-	
     ul getLen() { return this->len(); } //cover
+
 	//for future - get extended values for many many parts
-
 	//for future - ul writeStream(AF ile &file);
-
     //operator = int, char, long long, VariableInt
     //operator += all of them
     //operator -= same
@@ -53,12 +44,9 @@ struct MidiSignal
     VariableInt time;
     ul absValue;
     //for each of type
-	
 	//byte type; //replace with getEventType()
-    // byte channel; //replace with getChannel()
-
+    //byte channel; //replace with getChannel()
 	byte byte0;
-    
 	//for the normal events
 	byte param1; //and for meta event(b0==0xff) here will lay type 
     byte param2;
@@ -80,7 +68,6 @@ struct MidiSignal
 
 	ul readStream(std::ifstream &ifile);
     ul writeStream(std::ofstream &ofile, bool skip=false);
-
     bool skipThat();
 		
 	byte getEventType()
@@ -96,25 +83,20 @@ struct MidiSignal
 		return midiChannel;
 	}
 	
-	bool isMetaEvent()
-	{
+	bool isMetaEvent(){
 		return (byte0 == 0xff);
 	}
 	
-	bool isNormalEvent()
-	{
+	bool isNormalEvent(){
 		return !isMetaEvent();
 	}
 	
-	bool isSystemEvent()
-	{
+    bool isSystemEvent() {
 		return false; //yet unknown
 	}
 	
 	void printToStream(std::ostream &stream);
-
     ul calcSize(bool skip=false);
-
 
     MidiSignal(byte b0, byte b1, byte b2, ul timeShift);
     MidiSignal(){absValue=0;}
@@ -265,7 +247,7 @@ public:
             delete getV(i);
     }
 
-    bool generateFromAMusic(AMusic &music);
+    //bool generateFromAMusic(AMusic &music);
     bool fromTab(Tab *tab, ul shiftTheCursor=0);
 
     //calculation helpers

@@ -289,7 +289,7 @@ int main(int argc, char *argv[])
     //because now we debug recording
     ///w.getCenterView()->pushForceKey("rec");
     if (CONF_PARAM("skipTabView")=="1")
-    w.getCenterView()->pushForceKey("opentrack");
+        w.getCenterView()->pushForceKey("opentrack");
     //TODO  отправка краш логов?       QString crashName = getTestsLocation() + QString("crashs.glog");
                 //if (QFile::exists(crashName) {
     //TODO окно для загрузки разных тестов

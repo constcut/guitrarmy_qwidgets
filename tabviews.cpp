@@ -452,7 +452,7 @@ void TabView::prepareAllThreads(ul shiftTheCursor)
 
     localThr = new ThreadLocal;
 
-    localThr->setInc(&currentBar,(ul*)0); //oh shhhi 2nd arg
+    localThr->setInc(&currentBar, nullptr); //oh shhhi 2nd arg
     localThr->setBPM(pTab->getBPM());
 
     ul timeLoopLen = pTrack->timeLoop.len();
