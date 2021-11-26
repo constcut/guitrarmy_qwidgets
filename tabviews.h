@@ -169,6 +169,8 @@ public:
     virtual ~TrackView(){}
 
     virtual void keyevent(std::string press);
+    virtual void onTabCommand(TabCommands command);
+
     void onclick(int x1, int y1);
     void ondblclick(int x1, int y1); //{ onclick(x1,y1);}
 

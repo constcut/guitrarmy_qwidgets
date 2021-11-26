@@ -3,6 +3,7 @@
 
 
         2) tab.h \ poly template review
+            (Сохранение и загрузка макросов, юнит тесты на движение стрелок, изменение итд)
 
         3) tests midi\tab->midi : greatCheck() : scenario.cpp
 

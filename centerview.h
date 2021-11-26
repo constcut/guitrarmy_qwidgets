@@ -6,6 +6,10 @@
 #include "mainviews.h"
 #include "tabviews.h"
 
+#include <unordered_map>
+#include "tabcommands.h"
+
+
 #include <QWidget>
 #include <QMutex>
 
@@ -158,7 +162,11 @@ protected:
     MasterView *statusSetter;
     QScrollArea *fatherScroll;
 
+
     std::map < int , std::vector<QWidget*> > uiWidgets;
+
+    //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
+    std::unordered_map<std::string, TabCommands> tabCommands;
 
     //std::vector<QPushButton*> testButtons;
     //std::vector<QComboBox*> patternInstruments;

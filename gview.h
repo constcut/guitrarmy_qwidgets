@@ -14,6 +14,7 @@
 #include "g0/aconfig.h"
 
 #include <time.h>
+#include <QDebug>
 
 void not_used(void *p);
 
@@ -78,7 +79,10 @@ public:
     virtual void keyevent([[maybe_unused]] std::string press){} //virt
     virtual void ongesture([[maybe_unused]] int offset, [[maybe_unused]] bool horizontal) {}
 
-    virtual void onTabCommand(TabCommands command) {}
+    virtual void onTabCommand(TabCommands command) {
+
+        qDebug() << "Tab command on GView called ";
+    }
 
     virtual void *getPannel() { return 0; }
 };

@@ -121,7 +121,7 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
 void CenterView::ViewWasChanged()
 {
 
-    lastCheckedView; //is prev
+    //lastCheckedView; //is prev
     //could be used to set invisible old
 
     //SCROLL UP
@@ -802,6 +802,35 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
 
     for (int i = 0; i < 16; ++i)
     uiWidgets[i] = std::vector<QWidget*>();
+
+    tabCommands = {
+        {"set till the end", TabCommands::SetSignTillEnd},
+        {"save as",TabCommands::SaveAs},
+        {"mute", TabCommands::Mute},
+        {"solo", TabCommands::Solo},
+        {">>>", TabCommands::MoveRight},
+        {"<<<", TabCommands::MoveLeft},
+        {"^^^", TabCommands::MoveUp},
+        {"vvv", TabCommands::MoveDown},
+        {"drums", TabCommands::Drums},
+        {"instr", TabCommands::Instument},
+        {"pan", TabCommands::Panoram},
+        {"volume",TabCommands::Volume },
+        {"name", TabCommands::Name},
+        {"bpm", TabCommands::BPM},
+        {"opentrack", TabCommands::OpenTrack},
+        {"newTrack", TabCommands::NewTrack},
+        {"deleteTrack", TabCommands::DeleteTrack},
+        {CONF_PARAM("TrackView.playMidi"), TabCommands::PlayMidi}, //TODO перепроверить что они уже заданы
+        {CONF_PARAM("TabView.genMidi"), TabCommands::GenerateMidi},
+        {"spc",TabCommands::PlayMidi},
+        {"p", TabCommands::PauseMidi},
+        {"marker", TabCommands::AddMarker},
+        {"|:", TabCommands::OpenReprise},
+        {":|", TabCommands::CloseReprise},
+        {"goToN", TabCommands::GotoBar},
+        {"tune",  TabCommands::Tune}
+    };
 }
 
 void CenterView::connectThread(void *localThr)
@@ -1228,9 +1257,18 @@ void CenterView::pushForceKey(std::string keyevent)
         confEdit = 0;
     }
 
+
     checkView();
-    if (getFirstChild()) {
-        getFirstChild()->keyevent(keyevent);
+    if (auto child = getFirstChild()) {
+
+        if (tabCommands.count(keyevent)) { //Расчесать помере замены комманд на Enum
+            qDebug() << "Pushed as a command";
+            child->onTabCommand(tabCommands.at(keyevent)); //TODO мы будем терять навигацию пока что
+        }
+        else  {
+            qDebug() << "Pushed as a keyevent";
+            child->keyevent(keyevent);
+        }
     }
 
     checkView();

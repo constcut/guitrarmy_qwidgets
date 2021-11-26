@@ -82,6 +82,11 @@ void MainView::ondblclick(int x1, int y1)
         currentView->ondblclick(x1,y1);
 }
 
+void MainView::onTabCommand(TabCommands command) {
+    if (currentView)
+        currentView->onTabCommand(command);
+}
+
 void MainView::keyevent(std::string press)
 {
     if (press=="welcome")
@@ -192,7 +197,7 @@ void MainView::keyevent(std::string press)
                     changeCurrentView(tabsView);
                     tabsView->setTab(newTab);
                     if (CONF_PARAM("skipTabView")=="1")
-                    tabsView->keyevent("opentrack");
+                    tabsView->onTabCommand(TabCommands::OpenTrack);
                 }
 
             }
@@ -241,7 +246,7 @@ void MainView::keyevent(std::string press)
                     changeCurrentView(tabsView);
                     tabsView->setTab(tabLoader.getTab());
                     if (CONF_PARAM("skipTabView")=="1")
-                    tabsView->keyevent("opentrack");
+                    tabsView->onTabCommand(TabCommands::OpenTrack);
 
                     //getMaster()->changeChild(tabsView);
 
@@ -353,7 +358,7 @@ void MainView::keyevent(std::string press)
                 changeCurrentView(tabsView);
                 tabsView->setTab(newTab);
                 if (CONF_PARAM("skipTabView")=="1")
-                tabsView->keyevent("opentrack");
+                tabsView->onTabCommand(TabCommands::OpenTrack); // keyevent("opentrack");
                 //getMaster()->changeChild(tabsView);
 
             }
@@ -670,7 +675,7 @@ void TestsView::openTestNumber(int num) {
         mainView->changeCurrentView(tabsView);
         tabsView->setTab(forLoad);
         if (CONF_PARAM("skipTabView")=="1")
-        tabsView->keyevent("opentrack");
+        tabsView->onTabCommand(TabCommands::OpenTrack);
     }
 
 }

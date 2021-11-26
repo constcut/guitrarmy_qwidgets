@@ -10,12 +10,12 @@
 #include "g0/gtpfiles.h"
 
 #include <QInputDialog>
-
-
 #include <QMutex>
 #include <QFileDialog>
 #include <QApplication>
 #include <QScreen>
+
+#include <unordered_map>
 
 #include "midiengine.h"
 
@@ -1823,6 +1823,10 @@ return;
 }
 
 
+void TrackView::onTabCommand(TabCommands command) {
+    tabParrent->onTabCommand(command);
+}
+
 
 void setSignTillEnd(Tab* pTab, size_t currentBar) {
     bool ok=false;
@@ -1910,11 +1914,11 @@ enum MoveDirections {
 
 void moveCursorInTrack(MoveDirections dir, size_t& displayBar, size_t barsCount = 0) {
     switch(dir) { //Move into Tab
-        case MoveDirections::left:
+        case MoveDirections::right:
             if (displayBar < barsCount)
                 ++displayBar;
         break;
-        case MoveDirections::right:
+        case MoveDirections::left:
             if (displayBar > 0)
                 --displayBar;
         break;
@@ -2464,63 +2468,11 @@ void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, ul di
 }
 
 
+
+
 void TabView::keyevent(std::string press) {
-    if (press == "set till the end")  //TODO хэндлеры для более простого вызова
-        setSignTillEnd(pTab, currentBar);
-    if (press == "save as")
-        saveAs(pTab);
-    if (press=="mute")
-        muteTrack(pTab, displayTrack);
-    if (press =="solo")
-        soloTrack(pTab, displayTrack);
-    if (press==">>>")
-        moveCursorInTrack(MoveDirections::left, displayBar, pTab->getV(0)->len() - 1);
-    if (press== "<<<")
-        moveCursorInTrack(MoveDirections::right, displayBar);
-    if (press=="^^^")
-        MoveCursorOfTrack(MoveDirections::right, displayTrack, currentTrack);
-    if (press=="vvv")
-        MoveCursorOfTrack(MoveDirections::right, displayTrack, currentTrack, pTab->getV(0)->len());
-    if (press=="drums")
-        changeDrumsFlag(pTab->getV(displayTrack));
-    if (press=="instr")
-        getMaster()->setComboBox(1,"instruments",240,5,200,30,changeTrackInstrument(pTab->getV(displayTrack))); //Only UI feature
-    if (press=="pan")
-        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab->getV(displayTrack))); //Как и выше сбивает UI при отмене ввода
-    if (press=="volume")
-        changeTrackVolume(pTab->getV(displayTrack));
-    if (press=="name")
-        changeTrackName(pTab->getV(displayTrack));
-    if (press=="bpm") {
-        auto newBpm = changeTrackBpm(pTab);
-        bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
-        getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
-    }         
-    if (press=="opentrack")
-        openTrackQt(pTab->len(),lastOpenedTrack, this, displayTrack + 1); //TODO эту часть внутрь движка - разделяя с QT);
     if (isdigit(*(press.c_str()))) //The only one left here
         openTrackQt(pTab->len(),lastOpenedTrack, this, press.c_str()[0]-48);
-    if (press=="newTrack") {
-       createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
-    if (press=="deleteTrack")
-        deleteTrack(pTab, displayTrack);
-    if ( press == CONF_PARAM("TrackView.playMidi")) //Если нам понадобится playMerge оно осталось только в git истории
-        playPressedQt(pTab, localThr, currentBar, this);
-    if (press==CONF_PARAM("TabView.genMidi")) //|| (press == "spc"))
-        generateMidiQt(pTab, statusLabel);
-    if (press=="p")
-        midiPause(isPlaying);
-    if (press == "marker")
-        setMarker(pTab->getV(0)->getV(currentBar));
-    if (press == "|:")
-        openReprise(pTab->getV(0)->getV(currentBar));
-    if (press == ":|")
-        closeReprise(pTab->getV(0)->getV(currentBar));
-    if (press == "goToN")
-        goToBar(pTab->getV(0)->len(), currentBar, displayBar);
-    //if (press == "alt");//TODO
-    if (press == "tune")
-        setTune(pTab->getV(currentTrack));
 }
 
 
@@ -2577,6 +2529,6 @@ void TabView::onTabCommand(TabCommands command) {
     else if (command == TabCommands::GotoBar)
         goToBar(pTab->getV(0)->len(), currentBar, displayBar);
     //if (press == "alt");//TODO
-    else if (command = TabCommands::Tune)
+    else if (command == TabCommands::Tune)
         setTune(pTab->getV(currentTrack));
 }
