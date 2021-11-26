@@ -2244,6 +2244,147 @@ void deleteTrack(Tab* pTab, size_t& displayTrack) {
     }
 }
 
+void midiPause(bool& isPlaying) {
+    if (isPlaying == false) {
+        MidiEngine::closeDefaultFile();
+        MidiEngine::openDefaultFile();
+        MidiEngine::startDefaultFile();
+        isPlaying = true;
+    }
+    else {
+        MidiEngine::stopDefaultFile();
+        isPlaying = false;
+    }
+}
+
+void setMarker(Bar* fromFirstTrack) {
+    bool ok=false;
+    QString markerText= QInputDialog::getText(0,"Input",
+                         "Marker:", QLineEdit::Normal,"untitled",&ok);
+    if (ok) {
+        std::string stdMarkerText = markerText.toStdString();
+        fromFirstTrack->setGPCOMPMarker(stdMarkerText,0);
+    }
+}
+
+
+void openReprise(Bar *firstTrackBar) {
+    byte repeat = firstTrackBar->getRepeat();
+    byte repeatOpens = repeat & 1;
+    byte repeatCloses = repeat & 2;
+    if (repeatOpens){
+        firstTrackBar->setRepeat(0); //flush
+        firstTrackBar->setRepeat(repeatCloses);
+    }
+    else
+        firstTrackBar->setRepeat(1);
+}
+
+void closeReprise(Bar *firstTrackBar) {
+    byte repeat = firstTrackBar->getRepeat();
+    byte repeatOpens = repeat & 1;
+    byte repeatCloses = repeat & 2;
+    if (repeatCloses) {
+        firstTrackBar->setRepeat(0); //flush
+        firstTrackBar->setRepeat(repeatOpens);
+    }
+    else {
+        bool ok=false;
+        int newTimes = QInputDialog::getInt(0,"Input", "Repeat times:",
+                            QLineEdit::Normal,2,99,1,&ok);
+        if ((ok)&&(newTimes))
+            firstTrackBar->setRepeat(2,newTimes);
+    }
+}
+
+void goToBar(size_t trackLen, size_t& currentBar, size_t& displayBar) {
+    bool ok=false; //TODO позже разделить Qt запросы и установку параметров
+    int newTimes = QInputDialog::getInt(0,"Input",
+                         "Bar to jump:", QLineEdit::Normal, 1, trackLen, 1, &ok);
+    if (ok) {
+        --newTimes;
+        currentBar = newTimes;
+        displayBar = newTimes;
+    }
+}
+
+
+void setTune(Track* pTrack) {
+
+    bool ok=false;
+    QStringList items;
+    char iBuf[10];
+
+    double fTable []=
+    {16.3515978313,
+     17.3239144361,
+     18.3540479948,
+     19.4454364826,
+     20.6017223071,
+     21.8267644646,
+     23.1246514195,
+     24.4997147489,
+     25.9565435987,
+     27.5000000000,
+     29.1352350949,
+     30.8677063285
+    };
+
+    for (int i = 0; i < 8; ++i) {
+        //octaves
+        iBuf[0] = i +49;
+        iBuf[1] = 0;
+        std::string octave = iBuf;
+        std::string note;
+        int midiNote = 0;
+        for (int j = 0; j < 12; ++j) {
+            //Notes
+            switch (j) {
+                case 0: note = "C";  break;
+                case 1: note = "C#"; break;
+                case 2: note = "D"; break;
+                case 3: note = "D#"; break;
+                case 4: note = "E"; break;
+                case 5: note = "F"; break;
+                case 6: note = "F#"; break;
+                case 7: note = "G"; break;
+                case 8: note = "G#"; break;
+                case 9: note = "A"; break;
+                case 10: note = "A#"; break;
+                case 11: note = "B"; break;
+                default: note="noteX";
+            }
+
+            int coefOctave = 1;
+            for (int z=0; z <i; ++z)
+                coefOctave*=2;
+            double theFreq = fTable[j]*coefOctave;
+            midiNote = 12+j + 12*i;
+            std::string fullLine = note + octave +" - " +
+                std::to_string(midiNote) +" - " + std::to_string(theFreq);
+            items.push_back(fullLine.c_str());
+        }
+    }
+
+    //items.push_back("another thesr");
+    //items.push_back("once_more");
+
+    for (int i = 0; i < pTrack->tuning.getStringsAmount(); ++i) {
+        int preValue = pTrack->tuning.getTune(i)-12;
+        QString resp = QInputDialog::getItem(0,"Input tune",
+                                        ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
+        int respIndex = -1;
+        for (int j = 0; j < items.size(); ++j)
+            if (items.at(j)==resp) {
+                respIndex = j;
+                break;
+            }
+
+        if (ok)
+            if (respIndex>=0)
+                pTrack->tuning.setTune(i,respIndex+12);
+    }
+}
 
 void TabView::keyevent(std::string press)
 {
@@ -2291,6 +2432,7 @@ void TabView::keyevent(std::string press)
        createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
     if (press=="deleteTrack")
         deleteTrack(pTab, displayTrack);
+
 
     if ((press == CONF_PARAM("TrackView.playAMusic")) || (press == CONF_PARAM("TrackView.playMidi")))
     {
@@ -2401,53 +2543,52 @@ void TabView::keyevent(std::string press)
     }
 
     if ((press == CONF_PARAM("TrackView.playAMusic"))
-|| (press == CONF_PARAM("TrackView.playMidi"))
-|| (press=="playMerge"))
-    {
-        return;
-        if (isPlaying)
-        {
-            MidiEngine::stopDefaultFile();
-            isPlaying = false;
-            return;
-        }
+        || (press == CONF_PARAM("TrackView.playMidi"))
+        || (press=="playMerge"))
+            {
+                return;
+                if (isPlaying)
+                {
+                    MidiEngine::stopDefaultFile();
+                    isPlaying = false;
+                    return;
+                }
 
 
-        //Tab *tab = pTab;
-        MidiFile generatedMidi;
+                //Tab *tab = pTab;
+                MidiFile generatedMidi;
 
-        if (press == CONF_PARAM("TrackView.playAMusic"))
-        {
+                if (press == CONF_PARAM("TrackView.playAMusic"))
+                {
 
-        }
-        else
-        {
-            generatedMidi.fromTab(pTab);
-        }
+                }
+                else
+                {
+                    generatedMidi.fromTab(pTab);
+                }
 
-        if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge"))
-        {
-            MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
-            generatedMidi.clear();
-            generatedMidi.add(newTrack);
-            //return; //MidiEngine::playTrack(newTrack);
-        }
+                if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge"))
+                {
+                    MidiTrack *newTrack = MidiEngine::uniteFileToTrack(&generatedMidi);
+                    generatedMidi.clear();
+                    generatedMidi.add(newTrack);
+                    //return; //MidiEngine::playTrack(newTrack);
+                }
 
-        MidiEngine::closeDefaultFile();
-        std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
+                MidiEngine::closeDefaultFile();
+                std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-        std::ofstream outFile2(fullOutName);
+                std::ofstream outFile2(fullOutName);
 
-        if (! outFile2.is_open()) {
-            qDebug() << "Failed to open out file :(";
-            statusLabel->setText("failed to open generated");
-        }
-        ul outFileSize2 = generatedMidi.writeStream(outFile2);
-        qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
-        outFile2.close();
-        press = "p"; //autoplay
-    }
-
+                if (! outFile2.is_open()) {
+                    qDebug() << "Failed to open out file :(";
+                    statusLabel->setText("failed to open generated");
+                }
+                ul outFileSize2 = generatedMidi.writeStream(outFile2);
+                qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
+                outFile2.close();
+                press = "p"; //autoplay
+            }
 
     if ((press==CONF_PARAM("TabView.genAMusic"))||(press==CONF_PARAM("TabView.genMidi")) ) //|| (press == "spc"))
     {
@@ -2470,194 +2611,27 @@ void TabView::keyevent(std::string press)
         statusLabel->setText("generation done. p for play");
     }
 
-    if (press=="p") {
-        if (isPlaying == false) {
-            MidiEngine::closeDefaultFile();
-            MidiEngine::openDefaultFile();
-            MidiEngine::startDefaultFile();
-            isPlaying = true;
-        }
-        else {
-            MidiEngine::stopDefaultFile();
-            isPlaying = false;
-        }
-    }
+    if (press=="p")
+        midiPause(isPlaying);
 
-    if (isdigit(*(press.c_str()))) {
+    if (isdigit(*(press.c_str()))) { //TODO объединить с OpenTrack сделать с пометкой QT
         ul digit = press.c_str()[0]-48;
-        if (digit)
-        if (digit <= pTab->len()) {
+        if (digit && digit <= pTab->len()) {
             TrackView *trackView = tracksView[digit-1];//new TrackView(&pTab->getV(digit-1));
             lastOpenedTrack = digit-1;
             MainView *mainView = (MainView*)getMaster()->getFirstChild();
             mainView->changeCurrentView(trackView);
         }
     }
-
-    if (press == "marker"){
-        bool ok=false;
-        QString markerText= QInputDialog::getText(0,"Input",
-                             "Marker:", QLineEdit::Normal,"untitled",&ok);
-        if (ok) {
-            std::string stdMarkerText = markerText.toStdString();
-            pTab->getV(0)->getV(currentBar)->setGPCOMPMarker(stdMarkerText,0);
-        }
-    }
-
-    //MUST MOVE OUT FOR UNDO
-
+    if (press == "marker")
+        setMarker(pTab->getV(0)->getV(currentBar));
     if (press == "|:")
-    {
-       byte repeat = pTab->getV(0)->getV(currentBar)->getRepeat();
-
-       byte repeatOpens = repeat & 1;
-       byte repeatCloses = repeat & 2;
-
-       if (repeatOpens)
-       {
-        pTab->getV(0)->getV(currentBar)->setRepeat(0); //flush
-        pTab->getV(0)->getV(currentBar)->setRepeat(repeatCloses);
-       }
-       else
-        pTab->getV(0)->getV(currentBar)->setRepeat(1);
-    }
-
+        openReprise(pTab->getV(0)->getV(currentBar));
     if (press == ":|")
-    {
-        byte repeat = pTab->getV(0)->getV(currentBar)->getRepeat();
-
-        byte repeatOpens = repeat & 1;
-        byte repeatCloses = repeat & 2;
-
-        if (repeatCloses)
-        {
-            pTab->getV(0)->getV(currentBar)->setRepeat(0); //flush
-            pTab->getV(0)->getV(currentBar)->setRepeat(repeatOpens);
-          //must refact
-        }
-        else
-        {
-            bool ok=false;
-            int newTimes = QInputDialog::getInt(0,"Input",
-                                 "Repeat times:", QLineEdit::Normal,
-                                 2,99,1,&ok);
-
-            if ((ok)&&(newTimes))
-                pTab->getV(0)->getV(currentBar)->setRepeat(2,newTimes);
-
-        }
-    }
-
+        closeReprise(pTab->getV(0)->getV(currentBar));
     if (press == "goToN")
-    {
-        bool ok=false;
-        int newTimes = QInputDialog::getInt(0,"Input",
-                             "Bar to jump:", QLineEdit::Normal,
-                             1,pTab->getV(0)->len(),1,&ok);
-        //TODOMAX тут и везде создать отдельные функции с параметрами, вызов функций из команд
-        //Qt обвес можно сделать отдельной частью сверху
-        if (ok)
-        {
-            --newTimes;
-            currentBar = newTimes;
-            displayBar = newTimes;
-
-        }
-    }
-
-    if (press == "alt")
-    {
-        //GET ITEMS?
-    }
-
+        goToBar(pTab->getV(0)->len(), currentBar, displayBar);
+    if (press == "alt");//TODO
     if (press == "tune")
-    {
-        //GET ITEM
-    bool ok=false;
-    QStringList items;
-    char iBuf[10];
-
-    double fTable []=
-    {16.3515978313,
-     17.3239144361,
-     18.3540479948,
-     19.4454364826,
-     20.6017223071,
-     21.8267644646,
-     23.1246514195,
-     24.4997147489,
-     25.9565435987,
-     27.5000000000,
-     29.1352350949,
-     30.8677063285
-    };
-
-
-    for (int i = 0; i < 8; ++i)
-    {
-        //octaves
-
-        iBuf[0] = i +49;
-        iBuf[1] = 0;
-        std::string octave = iBuf;
-        std::string note;
-
-
-        int midiNote = 0;
-
-        for (int j = 0; j < 12; ++j)
-        {
-            //Notes
-            switch (j)
-            {
-                case 0: note = "C";  break;
-                case 1: note = "C#"; break;
-                case 2: note = "D"; break;
-                case 3: note = "D#"; break;
-                case 4: note = "E"; break;
-                case 5: note = "F"; break;
-                case 6: note = "F#"; break;
-                case 7: note = "G"; break;
-                case 8: note = "G#"; break;
-                case 9: note = "A"; break;
-                case 10: note = "A#"; break;
-                case 11: note = "B"; break;
-            default: note="noteX";
-            }
-
-            int coefOctave = 1;
-            for (int z=0; z <i; ++z)
-                coefOctave*=2;
-
-            double theFreq = fTable[j]*coefOctave;
-            midiNote = 12+j + 12*i;
-
-            std::string fullLine = note + octave +" - " +
-                std::to_string(midiNote) +" - " + std::to_string(theFreq);
-            items.push_back(fullLine.c_str());
-        }
-
-
-    }
-
-    //items.push_back("another thesr");
-    //items.push_back("once_more");
-
-    for (int i = 0; i < pTab->getV(currentTrack)->tuning.getStringsAmount(); ++i) {
-        int preValue = pTab->getV(currentTrack)->tuning.getTune(i)-12;
-        QString resp = QInputDialog::getItem(0,"Input tune",
-                                        ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
-        int respIndex = -1;
-        for (int j = 0; j < items.size(); ++j)
-            if (items.at(j)==resp) {
-                respIndex = j;
-                break;
-            }
-
-        if (ok)
-            if (respIndex>=0)
-                pTab->getV(currentTrack)->tuning.setTune(i,respIndex+12);
-    }
-}
-
+        setTune(pTab->getV(currentTrack));
 }
