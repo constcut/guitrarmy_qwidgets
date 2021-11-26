@@ -6,6 +6,7 @@
 #include "g0/tab.h"
 #include "g0/aconfig.h"
 
+#include "tabcommands.h"
 
 #include <QPainter>
 #include "athread.h"
@@ -72,10 +73,12 @@ public:
 
 
 public:
-    virtual void onclick(int x1, int y1){ not_used(&x1); not_used(&y1);} //virt
-    virtual void ondblclick(int x1, int y1){onclick(x1,y1);} //virt
-    virtual void keyevent(std::string press){press.empty();} //virt
-    virtual void ongesture(int offset, bool horizontal) {not_used(&offset); not_used(&horizontal); }
+    virtual void onclick([[maybe_unused]] int x1, [[maybe_unused]] int y1){ } //virt
+    virtual void ondblclick([[maybe_unused]] int x1, [[maybe_unused]] int y1){} //virt
+    virtual void keyevent([[maybe_unused]] std::string press){} //virt
+    virtual void ongesture([[maybe_unused]] int offset, [[maybe_unused]] bool horizontal) {}
+
+    virtual void onTabCommand(TabCommands command) {}
 
     virtual void *getPannel() { return 0; }
 };
@@ -263,8 +266,7 @@ public:
       virtual void SetButton([[maybe_unused]]int index, [[maybe_unused]]std::string text, [[maybe_unused]]int x1, [[maybe_unused]]int y1, [[maybe_unused]]int w1, [[maybe_unused]]int h1, [[maybe_unused]]std::string pressSyn)
       {}
 
-      virtual void SetButton(int index, GLabel *w, std::string pressSyn)
-      {
+      virtual void SetButton(int index, GLabel *w, std::string pressSyn) {
           SetButton(index,w->getText(),w->getX(),w->getY(),w->getW(),w->getH(),pressSyn);
       }
 
@@ -286,6 +288,7 @@ public:
       virtual bool isPlaylistHere() { return false; }
       virtual void goOnPlaylist() {}
       virtual void cleanPlayList() {}
+
 };
 
 

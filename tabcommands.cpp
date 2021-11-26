@@ -2498,7 +2498,7 @@ void TabView::keyevent(std::string press) {
     }         
     if (press=="opentrack")
         openTrackQt(pTab->len(),lastOpenedTrack, this, displayTrack + 1); //TODO эту часть внутрь движка - разделяя с QT);
-    if (isdigit(*(press.c_str())))
+    if (isdigit(*(press.c_str()))) //The only one left here
         openTrackQt(pTab->len(),lastOpenedTrack, this, press.c_str()[0]-48);
     if (press=="newTrack") {
        createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
@@ -2520,5 +2520,63 @@ void TabView::keyevent(std::string press) {
         goToBar(pTab->getV(0)->len(), currentBar, displayBar);
     //if (press == "alt");//TODO
     if (press == "tune")
+        setTune(pTab->getV(currentTrack));
+}
+
+
+void TabView::onTabCommand(TabCommands command) {
+    if (command == TabCommands::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
+        setSignTillEnd(pTab, currentBar);
+    else if (command == TabCommands::SaveAs)
+        saveAs(pTab);
+    else if (command == TabCommands::Mute)
+        muteTrack(pTab, displayTrack);
+    else if (command == TabCommands::Solo)
+        soloTrack(pTab, displayTrack);
+    else if (command == TabCommands::MoveRight)
+        moveCursorInTrack(MoveDirections::right, displayBar, pTab->getV(0)->len() - 1); //TODO перероверить
+    else if (command == TabCommands::MoveLeft)
+        moveCursorInTrack(MoveDirections::left, displayBar);
+    else if (command == TabCommands::MoveUp)
+        MoveCursorOfTrack(MoveDirections::up, displayTrack, currentTrack);
+    else if (command == TabCommands::MoveDown)
+        MoveCursorOfTrack(MoveDirections::down, displayTrack, currentTrack, pTab->getV(0)->len());
+    else if (command == TabCommands::Drums)
+        changeDrumsFlag(pTab->getV(displayTrack));
+    else if (command == TabCommands::Instument)
+        getMaster()->setComboBox(1,"instruments",240,5,200,30,changeTrackInstrument(pTab->getV(displayTrack))); //Only UI feature
+    else if (command == TabCommands::Panoram)
+        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab->getV(displayTrack))); //Как и выше сбивает UI при отмене ввода
+    else if (command == TabCommands::Volume)
+        changeTrackVolume(pTab->getV(displayTrack));
+    else if (command == TabCommands::Name)
+        changeTrackName(pTab->getV(displayTrack));
+    else if (command == TabCommands::BPM) {
+        auto newBpm = changeTrackBpm(pTab);
+        bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
+        getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
+    }         
+    else if (command == TabCommands::OpenTrack)
+        openTrackQt(pTab->len(),lastOpenedTrack, this, displayTrack + 1); //TODO эту часть внутрь движка - разделяя с QT);
+    else if (command == TabCommands::NewTrack) {
+       createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
+    else if (command == TabCommands::DeleteTrack)
+        deleteTrack(pTab, displayTrack);
+    else if (command == TabCommands::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
+        playPressedQt(pTab, localThr, currentBar, this);
+    else if (command == TabCommands::GenerateMidi) //|| (press == "spc"))
+        generateMidiQt(pTab, statusLabel);
+    else if (command == TabCommands::PauseMidi)
+        midiPause(isPlaying);
+    else if (command == TabCommands::AddMarker)
+        setMarker(pTab->getV(0)->getV(currentBar));
+    else if (command == TabCommands::OpenReprise)
+        openReprise(pTab->getV(0)->getV(currentBar));
+    else if (command == TabCommands::CloseReprise)
+        closeReprise(pTab->getV(0)->getV(currentBar));
+    else if (command == TabCommands::GotoBar)
+        goToBar(pTab->getV(0)->len(), currentBar, displayBar);
+    //if (press == "alt");//TODO
+    else if (command = TabCommands::Tune)
         setTune(pTab->getV(currentTrack));
 }

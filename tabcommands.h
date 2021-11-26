@@ -5,11 +5,34 @@
 
 #include "g0/tab.h"
 
-class CommandRunner
-{
-public:
-    virtual void run() = 0;
+enum TabCommands {
+    SetSignTillEnd,
+    SaveAs,
+    Mute,
+    Solo,
+    MoveLeft,
+    MoveRight,
+    MoveUp,
+    MoveDown,
+    Drums,
+    Instument,
+    Panoram,
+    Volume,
+    Name,
+    BPM,
+    OpenTrack,
+    NewTrack,
+    DeleteTrack,
+    PlayMidi,
+    GenerateMidi,
+    PauseMidi,
+    AddMarker,
+    OpenReprise,
+    CloseReprise,
+    GotoBar,
+    Tune
 };
+
 
 //Comand types:
 

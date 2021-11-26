@@ -1229,8 +1229,9 @@ void CenterView::pushForceKey(std::string keyevent)
     }
 
     checkView();
-    if (getFirstChild())
+    if (getFirstChild()) {
         getFirstChild()->keyevent(keyevent);
+    }
 
     checkView();
 

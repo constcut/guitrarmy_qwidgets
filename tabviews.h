@@ -56,6 +56,7 @@ public:
      void draw(QPainter *painter);
 
      virtual void keyevent(std::string press);
+     virtual void onTabCommand(TabCommands command);
 
      void setPlaying(bool playValue) { isPlaying = playValue; }
      bool getPlaying()
