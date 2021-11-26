@@ -368,482 +368,410 @@ void TrackView::switchBeatEffect(int effIndex)
     commandSequence.push_back(command);
 }
 
+//Trackview events:
 
-void TrackView::keyevent(std::string press)
-{
-    if (press.substr(0,4)=="com:")
+void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView* mw) { //TODO keyeventsUI
+    std::string rest = press.substr(4);
+    size_t separator = rest.find(":");
+    std::string combo = rest.substr(0,separator);
+    std::string item = rest.substr(separator+1);
+    int itemNum = atoi(item.c_str());
+    if (combo=="0") //Это выбор другого трека
     {
-        std::string rest = press.substr(4);
-        size_t separator = rest.find(":");
-        std::string combo = rest.substr(0,separator);
-        std::string item = rest.substr(separator+1);
+        char mini[2]={0};
+        mini[0] = itemNum + 49;
+        mw->pushForceKey("esc");
+        mw->pushForceKey(mini);
+    }
+    if (combo=="1")
+    {
+        pTrack->setInstrument(itemNum);
+    }
+    if (combo=="2")
+    {
+        pTrack->setVolume(itemNum);
+    }
+    if (combo=="5")
+    {
+        pTrack->setStatus(itemNum);
+    }
+    if (combo=="6")
+    {
+        pTrack->setPan(itemNum);
+    }
+}
 
-        int itemNum = atoi(item.c_str());
+void gotoTrackStart(size_t& cursorBeat, size_t& cursor, size_t& displayIndex) {
+    cursor = 0;
+    cursorBeat = 0;
+    displayIndex = 0;
+}
 
-        if (combo=="0")
-        {
-            char mini[2]={0};
-            mini[0] = itemNum + 49;
 
-            tabParrent->getMaster()->pushForceKey("esc");
-            tabParrent->getMaster()->pushForceKey(mini);
-        }
-        if (combo=="1")
-        {
-            pTrack->setInstrument(itemNum);
-        }
-        if (combo=="2")
-        {
-            pTrack->setVolume(itemNum);
-        }
-        if (combo=="5")
-        {
-            pTrack->setStatus(itemNum);
-        }
-        if (combo=="6")
-        {
-            pTrack->setPan(itemNum);
-        }
+void changeBarSigns(Track* pTrack, int&  selectionBarFirst, int& selectionBarLast) {
+    bool ok=false;
+    int newNum = QInputDialog::getInt(0,"Input",
+                         "New Num:", QLineEdit::Normal,
+                         1,128,1,&ok);
+    if (!ok)
         return;
-    }
+    ok=false;
+    int newDen = QInputDialog::getInt(0,"Input",
+                         "New Denum(1,2,4,8,16):", QLineEdit::Normal,
+                         1,128,1,&ok);
+    if (ok)
+        if ((selectionBarFirst != -1) && (selectionBarLast != -1))
+           for (int i = selectionBarFirst; i <= selectionBarLast; ++i) {
+               pTrack->getV(i)->setSignNum(newNum);
+               pTrack->getV(i)->setSignDenum(newDen);
+           }
+}
 
-    if (press == "playFromStart")
+void moveSelectionLeft(Track *pTrack, int& selectionBeatFirst, int& selectionBarFirst) {
+    if (selectionBeatFirst)
+        --selectionBeatFirst;
+    else
     {
-        cursor = displayIndex = 0;
-        cursorBeat = 0;
-        keyevent(CONF_PARAM("TrackView.playMidi"));
-    }
-
-    if (press == "goToStart")
-    {
-        cursorBeat = 0;
-        cursor = displayIndex = 0;
-    }
-
-    if (press == "set for selected")
-    {
-        bool ok=false;
-        int newNum = QInputDialog::getInt(0,"Input",
-                             "New Num:", QLineEdit::Normal,
-                             1,128,1,&ok);
-        if (!ok)
-            return;
-
-        ok=false;
-
-        //GET ITEM
-        int newDen = QInputDialog::getInt(0,"Input",
-                             "New Denum(1,2,4,8,16):", QLineEdit::Normal,
-                             1,128,1,&ok);
-        if (ok)
+        if (selectionBarFirst)
         {
-                if ((selectionBarFirst != -1) && (selectionBarLast != -1))
-                {
-                   for (int i = selectionBarFirst; i <= selectionBarLast; ++i)
-                   {
-                       pTrack->getV(i)->setSignNum(newNum);
-                       pTrack->getV(i)->setSignDenum(newDen);
-                   }
-                }
+            --selectionBarFirst;
+            selectionBeatFirst = pTrack->getV(selectionBarFirst)->len()-1;
         }
     }
+}
 
-    if (press == "select <")
+void moveSelectionRight(Track *pTrack, int& selectionBeatLast, int& selectionBarLast) {
+    if (selectionBarLast >= 0)
     {
-        if (selectionBeatFirst)
-            --selectionBeatFirst;
+        if (selectionBeatLast < (pTrack->getV(selectionBarLast)->len()-1)) //TODO лучше способ хранить зоны выделенности (флаг вкюченности и size_t)
+            ++selectionBeatLast;
         else
-        {
-            if (selectionBarFirst)
+            if (selectionBarLast < (pTrack->len()-1))
             {
-                --selectionBarFirst;
-                selectionBeatFirst = pTrack->getV(selectionBarFirst)->len()-1;
+                ++selectionBarLast;
+                selectionBeatLast = 0;
             }
-        }
-        return;
     }
-    if (press == "select >")
-    {
-        if (selectionBarLast >= 0)
-        {
-            if (selectionBeatLast <
-                    (pTrack->getV(selectionBarLast)->len()-1))
-            {
-                ++selectionBeatLast;
-            }
-            else
-            {
-                if (selectionBarLast < (pTrack->len()-1) )
-                {
-                    ++selectionBarLast;
-                    selectionBeatLast = 0;
-                }
-            }
-        }
-        return;
-    }
+}
 
-    if((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen"))
-    {
-        //yet blocked
-    }
+void insertBar(Track *pTrack, size_t cursor, size_t cursorBeat,  std::vector<SingleCommand>& commandSequence) {
+    Beat *beat=new Beat();
+    beat->setPause(true);
+    beat->setDuration(4);
+    beat->setDotted(0);
+    beat->setDurationDetail(0);
+
+    pTrack->getV(cursor)->insertBefore(beat,cursorBeat);
+    pTrack->connectAll(); //autochain cries
+
+    SingleCommand command(18);
+    command.setPosition(0,cursor,cursorBeat);
+    commandSequence.push_back(command);
+    return;
+}
 
 
+void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, size_t cursorBeat, size_t stringCursor, std::vector<SingleCommand>& commandSequence) {
 
-    if (press == "ins")
-    {
-        Beat *beat=new Beat();
-        beat->setPause(true);
-        beat->setDuration(4);
-        beat->setDotted(0);
-        beat->setDurationDetail(0);
-
-        pTrack->getV(cursor)->insertBefore(beat,cursorBeat);
-        pTrack->connectAll(); //autochain cries
-
-        SingleCommand command(18);
-        command.setPosition(0,cursor,cursorBeat);
-        commandSequence.push_back(command);
-        return;
-    }
-
-    if (isdigit(press[0]))
-    {
-        int digit = press[0]-48;
-
-        //group operations
-        if (digitPress>=0)
-        {
-            if (digitPress<10)
-            {
-                int pre = digitPress;
-                digitPress*=10;
-                digitPress+=digit;
-
-                if (digitPress > pTrack->getGPCOMPInts(3)) //hate this refact
-                {
-                    digitPress = digit;
-                    if (digit == pre)
-                        return; //no changes
-                }
-            }
-            else
-            {
-                digitPress =digit;
+    //group operations
+    if (digitPress>=0) {
+        if (digitPress<10) {
+            int pre = digitPress;
+            digitPress*=10;
+            digitPress+=digit;
+            if (digitPress > pTrack->getGPCOMPInts(3)) { //Destoy all GPCOMP TODO
+                digitPress = digit;
+                if (digit == pre)
+                    return; //no changes
             }
         }
         else
             digitPress = digit;
+    }
+    else
+        digitPress = digit;
 
-        //chose where to change or what to add
-        //pTrack->getV(cursor).getV(cursorBeat).getV(0).setFret(digitPress);
 
-        if ( pTrack->getV(cursor)->len() > cursorBeat )
+
+    if ( pTrack->getV(cursor)->len() > cursorBeat ) {
+        byte lastFret = pTrack->getV(cursor)->getV(cursorBeat)->getFret(stringCursor+1);
+
+        SingleCommand command(3,lastFret);
+        command.setPosition(0,cursor,cursorBeat,stringCursor+1);
+        commandSequence.push_back(command);
+        pTrack->getV(cursor)->getV(cursorBeat)->setFret(digitPress,stringCursor+1);
+        Note *inputedNote =  pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1);
+        byte tune = pTrack->tuning.getTune(stringCursor);
+        int chan = 0;
+        if (pTrack->isDrums())
         {
-            byte lastFret = pTrack->getV(cursor)->getV(cursorBeat)->getFret(stringCursor+1);
-
-
-
-            SingleCommand command(3,lastFret);
-            command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-            commandSequence.push_back(command);
-
-            pTrack->getV(cursor)->getV(cursorBeat)->setFret(digitPress,stringCursor+1);
-
-            Note *inputedNote =  pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1);
-
-            byte tune = pTrack->tuning.getTune(stringCursor);
-
-
-            int chan = 0;
-            if (pTrack->isDrums())
-            {
-                chan = 9; //tune to 0 attention refact error
-                tune = 0;
-            }
-            byte midiNote = inputedNote->getMidiNote(tune);
-
-            MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
-
-           //attention something gone wrong there - recheck on local
-            ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
-            //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
+            chan = 9; //tune to 0 attention refact error
+            tune = 0;
         }
-        return;
+        byte midiNote = inputedNote->getMidiNote(tune);
+        MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
+       //attention something gone wrong there - recheck on local
+        ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
+        //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
     }
+}
 
 
-    if (press == CONF_PARAM("TrackView.nextBar")) // => //bar walk
+
+void moveToNextBar(size_t& cursor, Track* pTrack, size_t& cursorBeat, size_t& displayIndex, size_t& stringCursor, int& digitPress, size_t& lastSeen) {
+    if ((cursor+1) != pTrack->len())
     {
-        if ((cursor+1) != pTrack->len())
-        {
-            ++cursor;
-            cursorBeat = 0;
+        ++cursor;
+        cursorBeat = 0;
 
-            if (cursor > (lastSeen-1))
-                displayIndex = cursor;
-
-            if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
-                stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
-
-        }
-
-        digitPress=-1; // flush input after movement
-        return;
-    }
-    if (press == CONF_PARAM("TrackView.prevBar")) // <= //bar walk
-    {
-        if (cursor>0)
-        {
-            --cursor;
-            cursorBeat = 0;
-
-            if (cursor < displayIndex)
-                displayIndex = cursor;
-
-            if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
-                stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
-
-        }
-
-        digitPress=-1; // flush input after movement
-        return;
-    }
-
-    if (press == "prevPage")
-    {
-        if (displayIndex > 7)
-        {
-            displayIndex -= 7; //not real paging
-            cursor = displayIndex;
-            cursorBeat = 0;
-            digitPress = -1;
-            tabParrent->setCurrentBar(cursor);
-        }
-        return;
-    }
-
-    if (press == "nextPage")
-    {
-        if ((lastSeen+1) <= pTrack->len())
-        {
-            displayIndex = lastSeen+1;
-            cursor = displayIndex;
-            cursorBeat = 0;
-            digitPress = -1;
-            tabParrent->setCurrentBar(cursor);
-        }
-        return;
-    }
-
-    if (press == "nextTrack")
-    {
-        int trackInd = tabParrent->getLastOpenedTrack();
-
-        ++trackInd;
-
-        char pressImit[2]={0};
-        pressImit[0]=trackInd+49;
-        std::string pressIm = pressImit;
-        //refact for open function
-        tabParrent->keyevent(pressIm);
-
-        digitPress = -1;
-        return;
-
-    }
-
-    if (press == "prevTrack")
-    {
-        int trackInd = tabParrent->getLastOpenedTrack();
-
-        --trackInd;
-
-        char pressImit[2]={0};
-        pressImit[0]=trackInd+49;
-        std::string pressIm = pressImit;
-        //refact for open function
-        tabParrent->keyevent(pressIm);
-
-        digitPress = -1;
-        return;
-    }
-
-
-    if (press==CONF_PARAM("TrackView.stringDown")) // down
-    {
-
-        if ((stringCursor+1) < pTrack->tuning.getStringsAmount())
-        ++stringCursor;
-
-        digitPress=-1; // flush input after movement
-        return;
-
-    }
-
-    if (press==CONF_PARAM("TrackView.stringUp")) // up
-    {
-        if (stringCursor > 0)
-        --stringCursor;
-
-        digitPress=-1; // flush input after movement
-        return;
-    }
-
-
-    //synonime to make without mode
-    if (press == CONF_PARAM("TrackView.prevBeat"))
-    {
-        //scrol if out of bar
-        if (cursorBeat==0)
-        {
-            if (cursor)
-            {
-                --cursor;
-                if (cursor < displayIndex)
-                    displayIndex = cursor;
-                   cursorBeat = pTrack->getV(cursor)->len()-1;
-            }
-        }
-        else
-            --cursorBeat;
+        if (cursor > (lastSeen-1))
+            displayIndex = cursor;
 
         if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
             stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
 
-
-        digitPress=-1; // flush input after movement
-        return;
     }
 
-    if (press == CONF_PARAM("TrackView.nextBeat"))
+    digitPress=-1; // flush input after movement
+}
+
+
+void moveToPrevBar(size_t& cursor, Track* pTrack, size_t& cursorBeat, size_t& displayIndex, size_t& stringCursor, int& digitPress) {
+    if (cursor>0)
     {
-        ++cursorBeat;
+        --cursor;
+        cursorBeat = 0;
+
+        if (cursor < displayIndex)
+            displayIndex = cursor;
+
+        if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
+            stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
+
+    }
+
+    digitPress=-1; // flush input after movement
+}
 
 
-        //if incomplete if compl or exeed +2
-        if ((cursorBeat) >= pTrack->getV(cursor)->len())
+void moveToPrevPage(size_t& cursor, TabView* tabView, size_t& cursorBeat, size_t& displayIndex, int& digitPress) {
+    if (displayIndex > 7) {
+        displayIndex -= 7; //not real paging
+        cursor = displayIndex;
+        cursorBeat = 0;
+        digitPress = -1;
+        tabView->setCurrentBar(cursor); //QT dependency отвязать TODO
+    }
+}
+
+
+void moveToNextPage(size_t& cursor, TabView* tabView, Track *pTrack, size_t& cursorBeat, size_t& displayIndex, int& digitPress, size_t& lastSeen) {
+    if ((lastSeen+1) <= pTrack->len()) {
+        displayIndex = lastSeen+1;
+        cursor = displayIndex;
+        cursorBeat = 0;
+        digitPress = -1;
+        tabView->setCurrentBar(cursor);
+    }
+}
+
+
+void moveToNextTrack(TabView* tabParrent, int& digitPress) {
+    int trackInd = tabParrent->getLastOpenedTrack();
+    ++trackInd;
+    char pressImit[2]={0};
+    pressImit[0]=trackInd+49;
+    std::string pressIm = pressImit;
+    //refact for open function
+    tabParrent->keyevent(pressIm);
+    digitPress = -1;
+    return;
+}
+
+
+void moveToPrevTrack(TabView* tabParrent, int& digitPress) {
+    int trackInd = tabParrent->getLastOpenedTrack();
+    --trackInd;
+    char pressImit[2]={0};
+    pressImit[0]=trackInd+49;
+    std::string pressIm = pressImit;
+    //refact for open function
+    tabParrent->keyevent(pressIm);
+    digitPress = -1;
+}
+
+void moveToStringUp(Track* pTrack, size_t& stringCursor, int& digitPress) {
+    if ((stringCursor+1) < pTrack->tuning.getStringsAmount())
+        ++stringCursor;
+    digitPress=-1; // flush input after movement
+    return;
+
+}
+
+void moveToStringDown(Track* pTrack, size_t& stringCursor, int& digitPress) {
+    if (stringCursor > 0)
+        --stringCursor;
+    digitPress=-1; // flush input after movement
+}
+
+
+void moveToPrevBeat(size_t& cursorBeat, size_t& cursor, size_t& displayIndex, size_t& stringCursor, int& digitPress, Track* pTrack) {
+    //scrol if out of bar
+    if (cursorBeat==0)
+    {
+        if (cursor)
         {
-            //edit mode
+            --cursor;
+            if (cursor < displayIndex)
+                displayIndex = cursor;
+               cursorBeat = pTrack->getV(cursor)->len()-1;
+        }
+    }
+    else
+        --cursorBeat;
 
-            if (1) //pan->isOpenned())
+    if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
+        stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
+
+    digitPress=-1; // flush input after movement
+}
+
+void moveToNextBeat(size_t& cursorBeat, size_t& cursor, size_t& displayIndex, size_t& stringCursor, int& digitPress, size_t& lastSeen, Track* pTrack,
+                     std::vector<SingleCommand>& commandSequence) {
+    ++cursorBeat;
+    if ((cursorBeat) >= pTrack->getV(cursor)->len())
+    {
+        if (1) //pan->isOpenned())
+        {
+            static int lastDur = 4; //TODO?
+            if (cursorBeat) {
+                Bar *b = pTrack->getV(cursor);
+                Beat *beat = b->getV(b->len()-1);
+                lastDur = beat->getDuration();
+                //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
+                /// lastDur from prev position
+            }
+            if (pTrack->getV(cursor)->getCompleteStatus()==1)
             {
-                static int lastDur = 4;
+                Bar *bar = pTrack->getV(cursor);
+                Beat *beat=new Beat();
+                beat->setPause(true);
+                beat->setDuration(lastDur);
+                beat->setDotted(0);
+                beat->setDurationDetail(0);
+                bar->add(beat);
 
-                if (cursorBeat)
+                SingleCommand command(18);
+                command.setPosition(0,cursor,cursorBeat);
+                commandSequence.push_back(command);
+
+                ///ADD COMMAND              - TASK!!!!!!!!!!!!
+            }
+            else //in edit mode - else add new bar
+            //scrol if out of bar
+            {
+                if ((cursor+1) == pTrack->len())
                 {
-                    Bar *b = pTrack->getV(cursor);
-                    Beat *beat = b->getV(b->len()-1);
-                    lastDur = beat->getDuration();
+                    Bar *newBar = new Bar();
+                    newBar->flush();
+                    newBar->setSignDenum(4);
+                    newBar->setSignNum(4);
+                    newBar->setRepeat(0);
 
-                    //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
-                    /// lastDur from prev position
-
-                }
-
-                if (pTrack->getV(cursor)->getCompleteStatus()==1)
-                {
-                    Bar *bar = pTrack->getV(cursor);
                     Beat *beat=new Beat();
                     beat->setPause(true);
                     beat->setDuration(lastDur);
                     beat->setDotted(0);
                     beat->setDurationDetail(0);
-                    bar->add(beat);
+                    newBar->add(beat);
+                    pTrack->add(newBar);
 
-                    SingleCommand command(18);
-                    command.setPosition(0,cursor,cursorBeat);
+                    SingleCommand command(16);
+                    command.setPosition(0,cursor+1,0);
                     commandSequence.push_back(command);
 
-                    ///ADD COMMAND              - TASK!!!!!!!!!!!!
-                }
-                else //in edit mode - else add new bar
-                //scrol if out of bar
-                {
-                    if ((cursor+1) == pTrack->len())
-                    {
-                        Bar *newBar = new Bar();
-                        newBar->flush();
-                        newBar->setSignDenum(4);
-                        newBar->setSignNum(4);
-                        newBar->setRepeat(0);
-
-                        Beat *beat=new Beat();
-                        beat->setPause(true);
-                        beat->setDuration(lastDur);
-                        beat->setDotted(0);
-                        beat->setDurationDetail(0);
-                        newBar->add(beat);
-                        pTrack->add(newBar);
-
-                        ///ADD COMMAND          - TASK!!!!!!!!!!!!
-
-
-                        SingleCommand command(16);
-                        command.setPosition(0,cursor+1,0);
-                        commandSequence.push_back(command);
-
-                        //ul trackLen = pTrack->len();
-                        //++cursor;
-                        /*
-                        if (cursor > (lastSeen-1))
-                            displayIndex = cursor; */
-
-                        //cursorBeat = 0;
-                        //--cursorBeat;
-
-                        ++lastSeen;
-
-                        cursorBeat = 0;
-                        ++cursor;
-
-                    }
-                    else
-                    {
-                        if ((cursor+1) != pTrack->len())
-                          {
-                            ++cursor;
-
-
-                           if (cursor > (lastSeen-1))
-                                displayIndex = cursor;
-
-                            cursorBeat = 0;
-                          }
-                            else
-                            --cursorBeat;
-
-
-
-                    }
-                }
-            }
-            else
-            {
-                if ((cursor+1) != pTrack->len())
-                  {
-                    ++cursor;
-
-                    if (cursor > (lastSeen-1))
-                        displayIndex = cursor;
-
+                    ++lastSeen;
                     cursorBeat = 0;
-                  }
-                    else
-                    --cursorBeat;
+                    ++cursor;
+                }
+                else
+                {
+                    if ((cursor+1) != pTrack->len()) {
+                        ++cursor;
+                       if (cursor > (lastSeen-1))
+                            displayIndex = cursor;
+                        cursorBeat = 0;
+                     }
+                        else
+                        --cursorBeat;
+                }
             }
         }
-
-        if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
-            stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
-            //need acces
-        digitPress=-1; // flush input after movement
-        return;
+        else //TODO view mode maybe remove?
+        {
+            if ((cursor+1) != pTrack->len())
+              {
+                ++cursor;
+                if (cursor > (lastSeen-1))
+                    displayIndex = cursor;
+                cursorBeat = 0;
+              }
+                else
+                --cursorBeat;
+        }
     }
 
-    //commands
-    if (press == CONF_PARAM("TrackView.setPause"))
-    {
+    if (pTrack->getV(cursor)->getV(cursorBeat)->getPause() == false)
+        stringCursor = pTrack->getV(cursor)->getV(cursorBeat)->getV(0)->getStringNumber()-1;
+        //need acces
+    digitPress=-1; // flush input after movement
+    return;
+}
+
+
+void TrackView::keyevent(std::string press)
+{
+    if (press.substr(0,4)=="com:")
+        reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
+    if (press == "playFromStart") {
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+        onTabCommand(TabCommands::PlayMidi);
+    }
+    if (press == "goToStart")
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+    if (press == "set for selected")
+      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
+    if (press == "select <")
+        moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
+    if (press == "select >")
+        moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
+    //if((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) //TODO
+    if (press == "ins")
+        insertBar(pTrack, cursor, cursorBeat, commandSequence);
+    if (isdigit(press[0]))
+        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, commandSequence);
+    if (press == CONF_PARAM("TrackView.nextBar")) // => //bar walk
+        moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
+    if (press == CONF_PARAM("TrackView.prevBar")) // <= //bar walk
+        moveToPrevBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress);
+    if (press == "prevPage")
+        moveToPrevPage(cursor, tabParrent, cursorBeat, displayIndex, digitPress);
+    if (press == "nextPage")
+        moveToNextPage(cursor, tabParrent, pTrack, cursorBeat, displayIndex, digitPress, lastSeen);
+    if (press == "nextTrack")
+        moveToNextTrack(tabParrent, digitPress);
+    if (press == "prevTrack")
+        moveToPrevTrack(tabParrent, digitPress);
+    if (press == CONF_PARAM("TrackView.stringDown"))
+        moveToStringUp(pTrack, stringCursor, digitPress);
+    if (press == CONF_PARAM("TrackView.stringUp"))
+        moveToStringDown(pTrack, stringCursor, digitPress);
+    if (press == CONF_PARAM("TrackView.prevBeat"))
+        moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
+    if (press == CONF_PARAM("TrackView.nextBeat"))
+        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack, astSeen, commandSequence);
+
+    if (press == CONF_PARAM("TrackView.setPause")) {
         SingleCommand command(7);
         command.setPosition(0,cursor,cursorBeat);
         command.requestStoredNotes();
@@ -1819,7 +1747,7 @@ return;
     }
     */
 
-    tabParrent->keyevent(press);
+    tabParrent->keyevent(press); //TODO only else case! dont repeat events
 }
 
 //Tab commands functions, TODO cover under some engine inside of TAB

@@ -100,9 +100,9 @@ class TrackView : public GView
 {
 protected:
     Track *pTrack;
-    ul cursor;
-    ul cursorBeat;
-    ul stringCursor;
+    size_t cursor;
+    size_t cursorBeat;
+    size_t stringCursor;
 
     int digitPress;
 
@@ -110,8 +110,8 @@ protected:
 
     ThreadLocal *localThr;
 
-    ul displayIndex;
-    ul lastSeen;
+    size_t displayIndex;
+    size_t lastSeen;
 
     ViewPull barsPull;
 
