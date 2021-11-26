@@ -1822,6 +1822,9 @@ return;
     tabParrent->keyevent(press);
 }
 
+//Tab commands functions, TODO cover under some engine inside of TAB
+//And make handlers for all the functions (used them without arguments)
+
 
 void TrackView::onTabCommand(TabCommands command) {
     tabParrent->onTabCommand(command);
