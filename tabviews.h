@@ -196,6 +196,8 @@ public:
 
     bool gotChanges();
 
+    void reverseCommand(SingleCommand &command);//TODO как и другие элементы комманд убрать в общий класс
+
 protected:
 
     void switchNoteState(byte changeState);
@@ -203,7 +205,7 @@ protected:
 
     void switchBeatEffect(int effIndex);
 
-    void reverseCommand(SingleCommand &command);
+
 
 };
 

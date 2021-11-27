@@ -1099,630 +1099,508 @@ void newBar(Track* pTrack, size_t cursor, size_t& cursorBeat, std::vector<Single
 }
 
 
-void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
-{
-    if (press.substr(0,4)=="com:")
-        reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
-    if (press == "playFromStart") {
-        gotoTrackStart(cursorBeat, cursor, displayIndex);
-        onTabCommand(TabCommands::PlayMidi);
-    }
-    if (press == "goToStart")
-        gotoTrackStart(cursorBeat, cursor, displayIndex);
-    if (press == "set for selected")
-      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
-    if (press == "select <")
-        moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
-    if (press == "select >")
-        moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
-    //if((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) //TODO
-    if (press == "ins")
-        insertBar(pTrack, cursor, cursorBeat, commandSequence);
-    if (isdigit(press[0]))
-        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, commandSequence);
-    if (press == CONF_PARAM("TrackView.nextBar")) // => //bar walk
-        moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
-    if (press == CONF_PARAM("TrackView.prevBar")) // <= //bar walk
-        moveToPrevBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress);
-    if (press == "prevPage")
-        moveToPrevPage(cursor, tabParrent, cursorBeat, displayIndex, digitPress);
-    if (press == "nextPage")
-        moveToNextPage(cursor, tabParrent, pTrack, cursorBeat, displayIndex, digitPress, lastSeen);
-    if (press == "nextTrack")
-        moveToNextTrack(tabParrent, digitPress);
-    if (press == "prevTrack")
-        moveToPrevTrack(tabParrent, digitPress);
-    if (press == CONF_PARAM("TrackView.stringDown"))
-        moveToStringUp(pTrack, stringCursor, digitPress);
-    if (press == CONF_PARAM("TrackView.stringUp"))
-        moveToStringDown(pTrack, stringCursor, digitPress);
-    if (press == CONF_PARAM("TrackView.prevBeat"))
-        moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
-    if (press == CONF_PARAM("TrackView.nextBeat"))
-        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
-    if (press == CONF_PARAM("TrackView.setPause"))
-        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
-    if (press == "delete bar")
-        deleteBar(cursor, pTrack, commandSequence);
-    if (press == "delete selected bars")
-        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
-    if (press == "delete selected beats")
-        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
-    if (press == CONF_PARAM("TrackView.deleteNote"))
-        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
-    if (press == CONF_PARAM("TrackView.increaceDuration"))
-        incDuration(pTrack, cursor, cursorBeat, commandSequence);
-    if (press == CONF_PARAM("TrackView.decreaceDuration"))
-        decDuration(pTrack, cursor, cursorBeat, commandSequence);
-    if  (press == CONF_PARAM("TrackView.playMidi"))  //|| (press=="playMerge")
-        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
-    if (press == CONF_PARAM("TrackView.save")||(press == "quicksave"))
-        saveFromTrack(tabParrent);
-    if (press == "save as")
-        saveAsFromTrack(tabParrent);
-    if (press == "newBar")
-        newBar(pTrack, cursor, cursorBeat, commandSequence);
-    if (press == "dot") {
-        byte dotted = pTrack->getV(cursor)->getV(cursorBeat)->getDotted();
-        SingleCommand command(6,dotted);
-        command.setPosition(0,cursor,cursorBeat);
-        commandSequence.push_back(command);
+void setDotOnBeat(Beat* beat, size_t cursor, size_t cursorBeat, std::vector<SingleCommand>& commandSequence) {
+    byte dotted = beat->getDotted();
+    SingleCommand command(6,dotted);
+    command.setPosition(0,cursor,cursorBeat);
+    commandSequence.push_back(command);
 
-        if (dotted & 1)
-            pTrack->getV(cursor)->getV(cursorBeat)->setDotted(0);
-        else
-            pTrack->getV(cursor)->getV(cursorBeat)->setDotted(1);
+    if (dotted & 1)
+        beat->setDotted(0);
+    else
+        beat->setDotted(1);
 
-        return;
-    }
-
-    if (press == "-3-") {
-        byte curDetail = pTrack->getV(cursor)->getV(cursorBeat)->getDurationDetail();
-        SingleCommand command(5,curDetail);
-        command.setPosition(0,cursor,cursorBeat);
-        commandSequence.push_back(command);
-
-        if (curDetail == 3)
-        {
-            pTrack->getV(cursor)->getV(cursorBeat)->setDurationDetail(0);
-        }
-        else
-            pTrack->getV(cursor)->getV(cursorBeat)->setDurationDetail(3);
-        return;
-    }
-
-    if (press == "leeg")
-    {   
-        switchNoteState(2);
-        digitPress = -1;
-        return;
-    }
-
-    if (press == "dead")
-    {
-        switchNoteState(3);
-        digitPress = -1;
-        return;
-    }
-
-    //EFFECTS - have yet the same problem
-
-    if (press == CONF_PARAM("effects.vibrato"))
-        switchEffect(1);
-
-    if (press == CONF_PARAM("effects.slide"))
-{
-        switchEffect(4);
-        return;
-        }
-
-    if (press == CONF_PARAM("effects.hammer"))
-{
-        switchEffect(10);
-        return;
-        }
-
-    if (press == CONF_PARAM("effects.letring"))
-{
-        switchEffect(18);
-        return;
-        }
-
-    if (press == CONF_PARAM("effects.palmmute"))
-{
-        switchEffect(2);
-        return;
-    }
-
-    if (press == CONF_PARAM("effects.harmonics"))
-    {
-        switchEffect(14);
-        return;
-    }
-
-    if (press == "trem")
-    {
-        switchEffect(24); //tremlo picking
-        return;//
-    }
-
-    if (press == CONF_PARAM("effects.trill"))
-{
-        switchEffect(24);
-
-return;
+    return;
 }
 
-    if (press == CONF_PARAM("effects.stokatto"))
-{
-        switchEffect(23);
-return;
+
+void setTriolOnBeat(Beat* beat, size_t cursor, size_t cursorBeat, std::vector<SingleCommand>& commandSequence) { //TODO разные варианты
+    byte curDetail = beat->getDurationDetail();
+    SingleCommand command(5,curDetail);
+    command.setPosition(0,cursor,cursorBeat);
+    commandSequence.push_back(command);
+    if (curDetail == 3)
+        beat->setDurationDetail(0);
+    else
+        beat->setDurationDetail(3);
+    return;
 }
 
-    if (press == "tapp") //link
-    return;
-    if (press == "slap")
-    return;
-    if (press == "pop")
-    return;
 
-    if (press == CONF_PARAM("effects.fadein"))
-    {
-        switchBeatEffect(20);
-        return;
-    }
+void setBendOnNote(Note* currentNote, MasterView* mw) {
 
-
-    if (press == "up m")
-    {
-return;
-    }
-    if (press == "down m")
-    {
-return;
-    }
-
-    if (press == CONF_PARAM("effects.accent"))
-    {
-        switchEffect(27);
-        return;
-    }
-
-    if (press == "h acc")
-    {
-            switchEffect(27); ///should be another
-    return;
-    }
-
-    //with imputs
-
-    if (press == "bend")
-    {
-        Note *currentNote = pTrack->getV(cursor)->getV(cursorBeat)
-        ->getNote(stringCursor+1);
-
-
-       if (currentNote->effPack.get(17))
+   if (currentNote->effPack.get(17)) {
+       Package *bendPack = currentNote->effPack.getPack(17);
+       if (bendPack) //attention possible errors escaped
        {
-           Package *bendPack = currentNote->effPack.getPack(17);
-           if (bendPack) //attention possible errors escaped
-           {
-            BendPoints *bend = (BendPoints*) bendPack->getPointer();
-            BendInput::setPtrNote(currentNote);
-            BendInput::setPtrBend(bend);
-           }
-           else
-           {
-
-               BendInput::setPtrBend(0);
-               BendInput::setPtrNote(currentNote);
-           }
+        BendPoints *bend = (BendPoints*) bendPack->getPointer();
+        BendInput::setPtrNote(currentNote);
+        BendInput::setPtrBend(bend);
        }
-       else
-       {
-            BendInput::setPtrBend(0);
-            BendInput::setPtrNote(currentNote);
+       else {
+           BendInput::setPtrBend(0);
+           BendInput::setPtrNote(currentNote);
        }
+   }
+   else {
+        BendInput::setPtrBend(0);
+        BendInput::setPtrNote(currentNote);
+   }
+    if (mw)
+        mw->pushForceKey("bend_view");
+}
 
-        if (getMaster())
-            getMaster()->pushForceKey("bend_view");
-    }
-    if (press == "chord")
+void setTextOnBeat(Beat *beat) {
+    std::string beatText;
+    beat->getGPCOMPText(beatText);
+
+    bool ok=false;
+    QString newText = QInputDialog::getText(0,"Input",
+                     "Input text:", QLineEdit::Normal,beatText.c_str(),&ok);
+    if (ok)
     {
-
-        if (getMaster())
-            getMaster()->pushForceKey("chord_view");
-        return;
+        beatText = newText.toStdString();
+        beat->setGPCOMPText(beatText);
     }
-    if (press == "text")
+
+    return;
+}
+
+
+void setChangesOnBeat(Beat* beat, MasterView* mw) {
+    ChangesInput::setPtrBeat(beat);
+    if (mw)
+        mw->pushForceKey("change_view");
+}
+
+void setBarSign(Bar* bar, size_t cursor, std::vector<SingleCommand>& commandSequence) {
+    bool ok=false;
+
+    byte oldDen = bar->getSignDenum();
+    byte oldNum = bar->getSignNum();
+
+    int newNum = QInputDialog::getInt(0,"Input",
+                         "New Num:", QLineEdit::Normal,
+                         1,128,1,&ok);
+
+    bool thereWasChange = false;
+
+    if (ok)
     {
-        Beat *beat = pTrack->getV(cursor)->getV(cursorBeat);
+        bar->setSignNum(newNum);
+        thereWasChange = true;
+    }
 
-        std::string beatText;
-        beat->getGPCOMPText(beatText);
+    ok=false;
 
-        bool ok=false;
-        QString newText = QInputDialog::getText(0,"Input",
-                         "Input text:", QLineEdit::Normal,beatText.c_str(),&ok);
-        if (ok)
+    //GET ITEM
+    int newDen = QInputDialog::getInt(0,"Input",
+                         "New Denum(1,2,4,8,16):", QLineEdit::Normal,
+                         1,128,1,&ok);
+    if (ok) {
+        bar->setSignDenum(newDen);
+        thereWasChange = true;
+    }
+
+    if (thereWasChange) { //also could set to all here if turned on such flag
+
+        if ((bar->getSignDenum() != oldDen) ||
+            (bar->getSignNum() != oldNum))
         {
-            beatText = newText.toStdString();
-            beat->setGPCOMPText(beatText);
-        }
-
-        return;
-    }
-    if (press == "changes")
-    {
-        Beat *beat = pTrack->getV(cursor)->getV(cursorBeat);
-        ChangesInput::setPtrBeat(beat);
-        if (getMaster())
-            getMaster()->pushForceKey("change_view");
-        return;
-    }
-    if (press == "fing")
-    {
-        return;
-    }
-
-    if (press == "upstroke")
-    {
-        switchBeatEffect(25);
-        return;
-    }
-
-    if (press == "downstroke")
-    {
-        switchBeatEffect(26);
-        return;
-    }
-
-    if (press == "signs")
-    {
-        bool ok=false;
-
-        byte oldDen = pTrack->getV(cursor)->getSignDenum();
-        byte oldNum = pTrack->getV(cursor)->getSignNum();
-
-        int newNum = QInputDialog::getInt(0,"Input",
-                             "New Num:", QLineEdit::Normal,
-                             1,128,1,&ok);
-
-        bool thereWasChange = false;
-
-        if (ok)
-        {
-            pTrack->getV(cursor)->setSignNum(newNum);
-            thereWasChange = true;
-        }
-
-        ok=false;
-
-        //GET ITEM
-        int newDen = QInputDialog::getInt(0,"Input",
-                             "New Denum(1,2,4,8,16):", QLineEdit::Normal,
-                             1,128,1,&ok);
-        if (ok)
-        {
-            pTrack->getV(cursor)->setSignDenum(newDen);
-            thereWasChange = true;
-        }
-
-        if (thereWasChange)
-        {
-            //also could set to all here if turned on such flag
-
-            if ((pTrack->getV(cursor)->getSignDenum() != oldDen) ||
-                (pTrack->getV(cursor)->getSignNum() != oldNum))
-            {
-                SingleCommand command(19);
-                command.setPosition(0,cursor,0);
-                command.setValue(oldDen);
-                command.setValue2(oldNum);
-                commandSequence.push_back(command);
-            }
+            SingleCommand command(19);
+            command.setPosition(0,cursor,0);
+            command.setValue(oldDen);
+            command.setValue2(oldNum);
+            commandSequence.push_back(command);
         }
     }
+}
 
 
-
-
-    if (press == "cut")
-    {
-        //oups - yet works only without selection for 1 bar
-        if (selectionBarFirst == -1)
-        {
-            //int trackInd=tabParrent->getLastOpenedTrack();
-
-            Bar *cloner = new Bar;
-            cloner->flush();
-            cloner->clone(pTrack->getV(cursor));
-
-            AClipboard::current()->setPtr(cloner);
-            AClipboard::current()->setType(4);
-
-            keyevent("delete bar");
-
-        }
+void clipboardCutBar(int& selectionBarFirst, Bar* bar, TrackView* tv) {
+    if (selectionBarFirst == -1) {
+        //int trackInd=tabParrent->getLastOpenedTrack();
+        Bar *cloner = new Bar;
+        cloner->flush();
+        cloner->clone(bar);
+        AClipboard::current()->setPtr(cloner);
+        AClipboard::current()->setType(4);
+        tv->keyevent("delete bar"); //TODO command
     }
+}
 
-    if (press == "copy") //1 bar
+
+void clipboarCopyBar(Bar* bar, int& selectionBarFirst, int& selectionBarLast, int& selectionBeatFirst,
+                   int& selectionBeatLast, TabView *tw) {
+
+    if (selectionBarFirst == -1) {
+        //int trackInd=tabParrent->getLastOpenedTrack();
+        /*
+        AClipboard::current()->setBeginIndexes(trackInd,cursor);
+        AClipboard::current()->setType(0); //copy single bar
+        */
+        Bar *cloner = new Bar;
+        cloner->flush();
+        cloner->clone(bar);
+
+        AClipboard::current()->setPtr(cloner);
+        AClipboard::current()->setType(4);
+    }
+    else {
+        int trackInd = tw->getLastOpenedTrack();
+        AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst,selectionBeatFirst);
+        AClipboard::current()->setType(1); //copy single beat
+        AClipboard::current()->setEndIndexes(trackInd,selectionBarLast,selectionBeatLast);
+    }
+    selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
+    //AClipboard::current()->setType(4);
+    //AClipboard::current()->setPtr();
+    return;
+}
+
+
+void clipboarCopyBeat(int& selectionBarFirst, int& selectionBarLast, int& selectionBeatFirst,
+                      int& selectionBeatLast, TabView *tw, size_t cursor, size_t cursorBeat) {
+    int trackInd=tw->getLastOpenedTrack();
+
+    if (selectionBarFirst == -1)
     {
-        //copyIndex = cursor;
+        AClipboard::current()->setBeginIndexes(trackInd,cursor,cursorBeat);
+        AClipboard::current()->setType(1); //copy single beat
+        AClipboard::current()->setEndIndexes(trackInd,cursor,cursorBeat);
+    }
+    else
+    {
+        AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst,selectionBeatFirst);
+        AClipboard::current()->setType(1); //copy single beat
+        AClipboard::current()->setEndIndexes(trackInd,selectionBarLast,selectionBeatLast);
+    }
+    selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
+    return;
+}
 
-        if (selectionBarFirst == -1)
+
+void clipboardCopyBars(int& selectionBarFirst, int& selectionBarLast, int& selectionBeatFirst,
+                       int& selectionBeatLast, TabView *tw, size_t cursor) {
+    int trackInd=tw->getLastOpenedTrack();
+    //copyIndex = cursor;
+    if (selectionBarFirst == -1)
+    {
+        AClipboard::current()->setBeginIndexes(trackInd,cursor);
+        AClipboard::current()->setType(0); //copy single bar
+    }
+    else
+    {
+        AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst);
+        AClipboard::current()->setType(2); //copy single bar
+        AClipboard::current()->setEndIndexes(trackInd,selectionBarLast);
+    }
+    selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
+    return;
+}
+
+
+void clipboardPaste(Tab *tab, Track* pTrack, const size_t& cursor, std::vector<SingleCommand>& commandSequence) { //insure cursor
+    if (AClipboard::current()->getType() >= 0)
+    {
+
+        if (AClipboard::current()->getType()==4)
         {
-            //int trackInd=tabParrent->getLastOpenedTrack();
+            Bar *addition=new Bar();
+            Bar *bOrigin=(Bar*)AClipboard::current()->getPtr();
+
+            addition->clone(bOrigin);
+
+            pTrack->insertBefore(addition,cursor);
+            pTrack->connectAll();
+            //AClipboard::current()->setType(-1); //refact attention
+
+            SingleCommand command(16);
+            command.setPosition(0,cursor,0);
+            commandSequence.push_back(command);
+
+            return;
+        }
+
+
+        Track *track = tab->getV(AClipboard::current()->getTrackIndex());
+
+        if (AClipboard::current()->getType()==0)
+        {
+            Bar *origin = track->getV(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
+            Bar *addition=new Bar();
+            addition->clone(origin);
+
+            track->insertBefore(addition,cursor);
+            track->connectAll();
+            AClipboard::current()->setType(-1); //refact attention
+
+            SingleCommand command(16);
+            command.setPosition(0,cursor,0);
+            commandSequence.push_back(command);
+
+            return;
+        }
+
+        if (AClipboard::current()->getType()==1)
+        {
+            ///THIS MUST BE CYCLED
+            ///
             /*
-            AClipboard::current()->setBeginIndexes(trackInd,cursor);
-            AClipboard::current()->setType(0); //copy single bar
+            Bar *origin = track->getV(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
+
+            Beat *addition=new Beat();
+            Beat *beatOrigin = origin->getV(AClipboard::current()->getBeatIndex());
+            addition->clone(beatOrigin);
+            Bar *bar = track->getV(AClipboard::current()->getBarIndex());
+            bar->insertBefore(addition,cursorBeat);
+
             */
-            Bar *cloner = new Bar;
-            cloner->flush();
-            cloner->clone(pTrack->getV(cursor));
 
-            AClipboard::current()->setPtr(cloner);
-            AClipboard::current()->setType(4);
-        }
-        else
-        {
-            int trackInd=tabParrent->getLastOpenedTrack();
-            AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst,selectionBeatFirst);
-            AClipboard::current()->setType(1); //copy single beat
-            AClipboard::current()->setEndIndexes(trackInd,selectionBarLast,selectionBeatLast);
-        }
-        selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
-
-
-        //AClipboard::current()->setType(4);
-        //AClipboard::current()->setPtr();
-
-        return;
-    }
-
-    if (press == "copyBeat")
-    {
-    //replace selected if selectionBarFirst ==-1
-        int trackInd=tabParrent->getLastOpenedTrack();
-
-        if (selectionBarFirst == -1)
-        {
-            AClipboard::current()->setBeginIndexes(trackInd,cursor,cursorBeat);
-            AClipboard::current()->setType(1); //copy single beat
-            AClipboard::current()->setEndIndexes(trackInd,cursor,cursorBeat);
-        }
-        else
-        {
-            AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst,selectionBeatFirst);
-            AClipboard::current()->setType(1); //copy single beat
-            AClipboard::current()->setEndIndexes(trackInd,selectionBarLast,selectionBeatLast);
-        }
-        selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
-        return;
-    }
-
-    if (press == "copyBars") //copybaryy
-    {
-    int trackInd=tabParrent->getLastOpenedTrack();
-        //copyIndex = cursor;
-        if (selectionBarFirst == -1)
-        {
-            AClipboard::current()->setBeginIndexes(trackInd,cursor);
-            AClipboard::current()->setType(0); //copy single bar
-        }
-        else
-        {
-            AClipboard::current()->setBeginIndexes(trackInd,selectionBarFirst);
-            AClipboard::current()->setType(2); //copy single bar
-            AClipboard::current()->setEndIndexes(trackInd,selectionBarLast);
-        }
-        selectionBarFirst=selectionBarLast=selectionBeatFirst=selectionBeatLast=-1;
-        return;
-    }
-
-    if (press == "paste")
-    {
-        if (AClipboard::current()->getType() >= 0)
-        {
-            Tab *tab = tabParrent->getTab();
-
-            if (AClipboard::current()->getType()==4)
+            if (AClipboard::current()->getSecondBarI()==AClipboard::current()->getBarIndex())
             {
-                Bar *addition=new Bar();
-                Bar *bOrigin=(Bar*)AClipboard::current()->getPtr();
-
-                addition->clone(bOrigin);
-
-                pTrack->insertBefore(addition,cursor);
-                pTrack->connectAll();
-                //AClipboard::current()->setType(-1); //refact attention
-
-                SingleCommand command(16);
-                command.setPosition(0,cursor,0);
-                commandSequence.push_back(command);
-
-                return;
-            }
 
 
-            Track *track = tab->getV(AClipboard::current()->getTrackIndex());
+                Bar *origin = track->getV(AClipboard::current()->getBarIndex());
+                Bar *addition = new Bar();
+                addition->setSignDenum(origin->getSignDenum());
+                addition->setSignNum(origin->getSignNum());
 
-            if (AClipboard::current()->getType()==0)
-            {
-                Bar *origin = track->getV(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
-                Bar *addition=new Bar();
-                addition->clone(origin);
+                for (int beats = AClipboard::current()->getBeatIndex();
+                     beats  <= AClipboard::current()->getSecondBeatI(); ++beats)
+                {
+                    Beat *additionBeat=new Beat();
+                    Beat *beatOrigin = origin->getV(beats);
+                    additionBeat->clone(beatOrigin);
+                    addition->add(additionBeat);
+                }
 
                 track->insertBefore(addition,cursor);
-                track->connectAll();
-                AClipboard::current()->setType(-1); //refact attention
 
                 SingleCommand command(16);
                 command.setPosition(0,cursor,0);
                 commandSequence.push_back(command);
 
-                return;
             }
-
-            if (AClipboard::current()->getType()==1)
+            else
+            for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
-                ///THIS MUST BE CYCLED
-                ///
-                /*
-                Bar *origin = track->getV(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
+                Bar *origin = track->getV(bars);
+                Bar *addition = new Bar();
+                addition->setSignDenum(origin->getSignDenum());
+                addition->setSignNum(origin->getSignNum());
 
-                Beat *addition=new Beat();
-                Beat *beatOrigin = origin->getV(AClipboard::current()->getBeatIndex());
-                addition->clone(beatOrigin);
-                Bar *bar = track->getV(AClipboard::current()->getBarIndex());
-                bar->insertBefore(addition,cursorBeat);
-
-                */
-
-                if (AClipboard::current()->getSecondBarI()==AClipboard::current()->getBarIndex())
+                if (bars==AClipboard::current()->getSecondBarI())
                 {
-
-
-                    Bar *origin = track->getV(AClipboard::current()->getBarIndex());
-                    Bar *addition = new Bar();
-                    addition->setSignDenum(origin->getSignDenum());
-                    addition->setSignNum(origin->getSignNum());
-
-                    for (int beats = AClipboard::current()->getBeatIndex();
-                         beats  <= AClipboard::current()->getSecondBeatI(); ++beats)
+                    //last
+                    for (int beats = 0; beats <= AClipboard::current()->getSecondBeatI(); ++beats)
                     {
                         Beat *additionBeat=new Beat();
                         Beat *beatOrigin = origin->getV(beats);
                         additionBeat->clone(beatOrigin);
                         addition->add(additionBeat);
                     }
-
-                    track->insertBefore(addition,cursor);
-
-                    SingleCommand command(16);
-                    command.setPosition(0,cursor,0);
-                    commandSequence.push_back(command);
-
+                }
+                else if (bars == AClipboard::current()->getBarIndex())
+                {
+                    //first
+                    for (size_t beats = AClipboard::current()->getBeatIndex();
+                         beats < origin->len(); ++beats)
+                    {
+                        Beat *additionBeat=new Beat();
+                        Beat *beatOrigin = origin->getV(beats);
+                        additionBeat->clone(beatOrigin);
+                        addition->add(additionBeat);
+                    }
                 }
                 else
-                for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
                 {
-                    Bar *origin = track->getV(bars);
-                    Bar *addition = new Bar();
-                    addition->setSignDenum(origin->getSignDenum());
-                    addition->setSignNum(origin->getSignNum());
-
-                    if (bars==AClipboard::current()->getSecondBarI())
-                    {
-                        //last
-                        for (int beats = 0; beats <= AClipboard::current()->getSecondBeatI(); ++beats)
-                        {
-                            Beat *additionBeat=new Beat();
-                            Beat *beatOrigin = origin->getV(beats);
-                            additionBeat->clone(beatOrigin);
-                            addition->add(additionBeat);
-                        }
-                    }
-                    else if (bars == AClipboard::current()->getBarIndex())
-                    {
-                        //first
-                        for (size_t beats = AClipboard::current()->getBeatIndex();
-                             beats < origin->len(); ++beats)
-                        {
-                            Beat *additionBeat=new Beat();
-                            Beat *beatOrigin = origin->getV(beats);
-                            additionBeat->clone(beatOrigin);
-                            addition->add(additionBeat);
-                        }
-                    }
-                    else
-                    {
-                        //midle
-                        addition->clone(origin);
-                    }
-
-                    //wrong?
-                    track->insertBefore(addition,cursor);
-                }
-
-                int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
-                SingleCommand command(16);
-                command.setPosition(0,cursor,barsRange);
-                commandSequence.push_back(command);
-                //tricke mech
-                //will be able isert many times
-                AClipboard::current()->setType(-1); //refact attention
-                return;
-            }
-            if (AClipboard::current()->getType()==2)
-            {
-                for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
-                {
-                    Bar *origin = track->getV(bars);
-                    Bar *addition = new Bar();
+                    //midle
                     addition->clone(origin);
-
-                    track->insertBefore(addition,cursor);
                 }
 
-                int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
-                SingleCommand command(16);
-                command.setPosition(0,cursor,barsRange+1);
-                commandSequence.push_back(command);
-
-                track->connectAll();
-                AClipboard::current()->setType(-1); //refact attention
-                return;
+                //wrong?
+                track->insertBefore(addition,cursor);
             }
 
-            //REFACT
-            //--clpboard auto clenup
-
-
+            int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
+            SingleCommand command(16);
+            command.setPosition(0,cursor,barsRange);
+            commandSequence.push_back(command);
+            //tricke mech
+            //will be able isert many times
+            AClipboard::current()->setType(-1); //refact attention
+            return;
         }
-        AClipboard::current()->setType(-1); //refact attention
-        return;
-    }
-
-    if (press == "undo")
-    {
-        if (commandSequence.size())
+        if (AClipboard::current()->getType()==2)
         {
-            SingleCommand lastCommand = commandSequence[commandSequence.size()-1];
-            commandSequence.pop_back();
-            reverseCommand(lastCommand);
+            for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
+            {
+                Bar *origin = track->getV(bars);
+                Bar *addition = new Bar();
+                addition->clone(origin);
+
+                track->insertBefore(addition,cursor);
+            }
+
+            int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
+            SingleCommand command(16);
+            command.setPosition(0,cursor,barsRange+1);
+            commandSequence.push_back(command);
+
+            track->connectAll();
+            AClipboard::current()->setType(-1); //refact attention
+            return;
         }
-        return;
+
+        //REFACT
+        //--clpboard auto clenup
+
+
     }
+    AClipboard::current()->setType(-1); //refact attention
+    return;
+}
 
-    //pannels switching
-/*
-    if (press == "eff")
-    {
-        if (pan == trackPan)
-            pan = effPan;
-        else
-            pan = trackPan;
 
-        pan->setW(getMaster()->getWidth());
-        pan->setH(getMaster()->getHeist());
-        pan->resetButtons();
+void undoOnTrack(TrackView* tw, std::vector<SingleCommand>& commandSequence) {
+    if (commandSequence.size()) {
+        SingleCommand lastCommand = commandSequence[commandSequence.size()-1];
+        commandSequence.pop_back();
+        tw->reverseCommand(lastCommand);
     }
+    return;
+}
 
-    if (press == "clip")
-    {
-        if (pan == trackPan)
-            pan = clipPan;
-        else
-            pan = trackPan;
 
-        pan->setW(getMaster()->getWidth());
-        pan->setH(getMaster()->getHeight());
-        pan->resetButtons();
+void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
+{
+    if (press.substr(0,4)=="com:")
+        reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
+    else if (press == "playFromStart") {
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+        onTabCommand(TabCommands::PlayMidi);
     }
-    */
-
-    tabParrent->keyevent(press); //TODO only else case! dont repeat events
+    else if (press == "goToStart")
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+    else if (press == "set for selected")
+      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
+    else if (press == "select <")
+        moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
+    else if (press == "select >")
+        moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
+    //if((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) //TODO
+    else if (press == "ins")
+        insertBar(pTrack, cursor, cursorBeat, commandSequence);
+    else if (isdigit(press[0]))
+        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, commandSequence);
+    else if (press == CONF_PARAM("TrackView.nextBar")) // => //bar walk
+        moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
+    else if (press == CONF_PARAM("TrackView.prevBar")) // <= //bar walk
+        moveToPrevBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress);
+    else if (press == "prevPage")
+        moveToPrevPage(cursor, tabParrent, cursorBeat, displayIndex, digitPress);
+    else if (press == "nextPage")
+        moveToNextPage(cursor, tabParrent, pTrack, cursorBeat, displayIndex, digitPress, lastSeen);
+    else if (press == "nextTrack")
+        moveToNextTrack(tabParrent, digitPress);
+    else if (press == "prevTrack")
+        moveToPrevTrack(tabParrent, digitPress);
+    else if (press == CONF_PARAM("TrackView.stringDown"))
+        moveToStringUp(pTrack, stringCursor, digitPress);
+    else if (press == CONF_PARAM("TrackView.stringUp"))
+        moveToStringDown(pTrack, stringCursor, digitPress);
+    else if (press == CONF_PARAM("TrackView.prevBeat"))
+        moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
+    else if (press == CONF_PARAM("TrackView.nextBeat"))
+        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
+    else if (press == CONF_PARAM("TrackView.setPause"))
+        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
+    else if (press == "delete bar")
+        deleteBar(cursor, pTrack, commandSequence);
+    else if (press == "delete selected bars")
+        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+    else if (press == "delete selected beats")
+        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+    else if (press == CONF_PARAM("TrackView.deleteNote"))
+        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
+    else if (press == CONF_PARAM("TrackView.increaceDuration"))
+        incDuration(pTrack, cursor, cursorBeat, commandSequence);
+    else if (press == CONF_PARAM("TrackView.decreaceDuration"))
+        decDuration(pTrack, cursor, cursorBeat, commandSequence);
+    else if  (press == CONF_PARAM("TrackView.playMidi"))  //|| (press=="playMerge")
+        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
+    else if (press == CONF_PARAM("TrackView.save")||(press == "quicksave"))
+        saveFromTrack(tabParrent);
+    else if (press == "save as")
+        saveAsFromTrack(tabParrent);
+    else if (press == "newBar")
+        newBar(pTrack, cursor, cursorBeat, commandSequence);
+    else if (press == "dot")
+        setDotOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+    else if (press == "-3-")
+        setTriolOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+    else if (press == "leeg") {
+        switchNoteState(2); digitPress = -1;
+    }
+    else if (press == "dead") {
+        switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
+    }
+    else if (press == CONF_PARAM("effects.vibrato"))
+        switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
+    else if (press == CONF_PARAM("effects.slide"))
+        switchEffect(4); //TODO cover on new abstraction level tabs-core
+    else if (press == CONF_PARAM("effects.hammer"))
+        switchEffect(10);
+    else if (press == CONF_PARAM("effects.letring"))
+        switchEffect(18);
+    else if (press == CONF_PARAM("effects.palmmute"))
+        switchEffect(2);
+    else if (press == CONF_PARAM("effects.harmonics"))
+        switchEffect(14);
+    else if (press == "trem")
+        switchEffect(24); //tremlo picking
+    else if (press == CONF_PARAM("effects.trill"))
+        switchEffect(24);
+    else if (press == CONF_PARAM("effects.stokatto"))
+        switchEffect(23);
+    //if (press == "tapp") return;  if (press == "slap") return; if (press == "pop") return; //TODO
+    else if (press == CONF_PARAM("effects.fadein"))
+        switchBeatEffect(20);
+    //if (press == "up m") return; if (press == "down m") return; //TODO
+    else if (press == CONF_PARAM("effects.accent"))
+        switchEffect(27);
+    else if (press == "h acc")
+        switchEffect(27); ///should be another TODO
+    else if (press == "bend")
+        setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
+    else if (press == "chord") {
+        if (getMaster()) getMaster()->pushForceKey("chord_view"); }
+    else if (press == "text")
+        setTextOnBeat(pTrack->getV(cursor)->getV(cursorBeat));
+    else if (press == "changes")
+        setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
+    //if (press == "fing") return; //TODO
+    else if (press == "upstroke")
+        switchBeatEffect(25);
+    else if (press == "downstroke")
+        switchBeatEffect(26);
+    else if (press == "signs")
+        setBarSign(pTrack->getV(cursor), cursor, commandSequence);
+    else if (press == "cut") //oups - yet works only without selection for 1 bar
+        clipboardCutBar(selectionBarFirst, pTrack->getV(cursor), this);
+    else if (press == "copy") //1 bar
+        clipboarCopyBar(pTrack->getV(cursor), selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent);
+    else if (press == "copyBeat")
+        clipboarCopyBeat(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor, cursorBeat);
+    else if (press == "copyBars")
+        clipboardCopyBars(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor);
+    else if (press == "paste")
+        clipboardPaste(tabParrent->getTab(), pTrack, cursor, commandSequence);
+    else if (press == "undo")
+        undoOnTrack(this, commandSequence);
+    else
+        tabParrent->keyevent(press); //TODO перепроверить что все команды работают без повторного запуска через
 }
 
 //Tab commands functions, TODO cover under some engine inside of TAB
