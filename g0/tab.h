@@ -829,7 +829,7 @@ public:
     bool playing() {
         return isPlaying;
     }
-    bool setPlaying(bool v) {
+    void setPlaying(bool v) {
         isPlaying = v;
     }
     size_t& getDisplayTrack() {
@@ -853,6 +853,13 @@ public:
     int changeTrackPanoram();
     int changeTrackBpm();
     Track* createNewTrack(); 
+
+    void muteTrack(); //current
+    void soloTrack();
+    bool changeDrumsFlag();
+    void midiPause();
+    void openReprise();
+    void closeReprise();
 };
 
 

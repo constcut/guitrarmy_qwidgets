@@ -1722,7 +1722,7 @@ void TabView::onTabCommand(TabCommand command) {
        pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
-    else if (command == TabCommand::GenerateMidi) //|| (press == "spc"))
+    else if (command == TabCommand::GenerateMidi)
         generateMidiQt(pTab, statusLabel);
     else
         pTab->onTabCommand(command);

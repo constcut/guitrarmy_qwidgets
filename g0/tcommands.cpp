@@ -75,20 +75,21 @@ void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получ
 }
 
 
-void muteTrack(Tab* pTab, size_t displayTrack) { //Move into Tab
-    byte curStat = pTab->getV(displayTrack)->getStatus();
+void Tab::muteTrack() { //Move into Tab
+    byte curStat = this->getV(displayTrack)->getStatus();
     if (curStat==1)
-        pTab->getV(displayTrack)->setStatus(0);
+        this->getV(displayTrack)->setStatus(0);
     else
-        pTab->getV(displayTrack)->setStatus(1);
+        this->getV(displayTrack)->setStatus(1);
 }
 
-void soloTrack(Tab* pTab, size_t displayTrack) { //Move into Tab
-    byte curStat = pTab->getV(displayTrack)->getStatus();
+
+void Tab::soloTrack() { //Move into Tab
+    byte curStat = this->getV(displayTrack)->getStatus();
     if (curStat==2)
-        pTab->getV(displayTrack)->setStatus(0);
+        this->getV(displayTrack)->setStatus(0);
     else
-        pTab->getV(displayTrack)->setStatus(2);
+        this->getV(displayTrack)->setStatus(2);
 }
 
 
@@ -142,16 +143,18 @@ void MoveCursorOfTrack(MoveDirections dir, size_t& displayTrack, size_t& current
 }
 
 
-void changeDrumsFlag(Track* pTrack) {
+bool Tab::changeDrumsFlag() {
+    Track* pTrack = this->getV(displayTrack);
     bool drums = pTrack->isDrums();
     drums = !drums;
     pTrack->setDrums(drums);
+    return drums;
 }
 
 
 int Tab::changeTrackInstrument() {
     Track* pTrack = getV(currentTrack);
-
+    //TODO отделить запрос от ядра
     std::string instruments[]= { //Move to sepparated file TODO
     "Acoustic Grand Piano",
     "Bright Acoustic Piano",
@@ -439,7 +442,7 @@ void deleteTrack(Tab* pTab, size_t& displayTrack) {
     }
 }
 
-void midiPause(bool& isPlaying) {
+void Tab::midiPause() {
     if (isPlaying == false) {
         MidiEngine::closeDefaultFile();
         MidiEngine::openDefaultFile();
@@ -463,7 +466,8 @@ void setMarker(Bar* fromFirstTrack) {
 }
 
 
-void openReprise(Bar *firstTrackBar) {
+void Tab::openReprise() {
+    Bar *firstTrackBar = this->getV(0)->getV(currentBar);
     byte repeat = firstTrackBar->getRepeat();
     byte repeatOpens = repeat & 1;
     byte repeatCloses = repeat & 2;
@@ -475,7 +479,9 @@ void openReprise(Bar *firstTrackBar) {
         firstTrackBar->setRepeat(1);
 }
 
-void closeReprise(Bar *firstTrackBar) {
+
+void Tab::closeReprise() { //TODO argument repeat times
+    Bar *firstTrackBar = this->getV(0)->getV(currentBar);
     byte repeat = firstTrackBar->getRepeat();
     byte repeatOpens = repeat & 1;
     byte repeatCloses = repeat & 2;
@@ -491,6 +497,7 @@ void closeReprise(Bar *firstTrackBar) {
             firstTrackBar->setRepeat(2,newTimes);
     }
 }
+
 
 void goToBar(size_t trackLen, size_t& currentBar, size_t& displayBar) {
     bool ok=false; //TODO позже разделить Qt запросы и установку параметров
@@ -591,9 +598,9 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::SaveAs)
         saveAs(this);
     else if (command == TabCommand::Mute)
-        muteTrack(this, displayTrack);
+        muteTrack();
     else if (command == TabCommand::Solo)
-        soloTrack(this, displayTrack);
+        soloTrack();
     else if (command == TabCommand::MoveRight)
         moveCursorInTrack(MoveDirections::right, displayBar, this->getV(0)->len() - 1); //TODO перероверить
     else if (command == TabCommand::MoveLeft)
@@ -603,7 +610,7 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::MoveDown)
         MoveCursorOfTrack(MoveDirections::down, displayTrack, currentTrack, this->getV(0)->len());
     else if (command == TabCommand::Drums)
-        changeDrumsFlag(this->getV(displayTrack));
+        changeDrumsFlag();
     else if (command == TabCommand::Volume)
         changeTrackVolume(this->getV(displayTrack));
     else if (command == TabCommand::Name)
@@ -611,13 +618,13 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::DeleteTrack)
         deleteTrack(this, displayTrack);
     else if (command == TabCommand::PauseMidi)
-        midiPause(isPlaying);
+        midiPause();
     else if (command == TabCommand::AddMarker)
         setMarker(this->getV(0)->getV(currentBar));
     else if (command == TabCommand::OpenReprise)
-        openReprise(this->getV(0)->getV(currentBar));
+        openReprise();
     else if (command == TabCommand::CloseReprise)
-        closeReprise(this->getV(0)->getV(currentBar));
+        closeReprise();
     else if (command == TabCommand::GotoBar)
         goToBar(this->getV(0)->len(), currentBar, displayBar);
     //if (press == "alt");//TODO
