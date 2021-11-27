@@ -28,6 +28,7 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
+    g0/tcommands.cpp \
         mainwindow.cpp \
     gview.cpp \
     g0/abitarray.cpp \

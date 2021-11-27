@@ -11,6 +11,7 @@
 //and comments should be used to let know what and where lays
 
 #include "abitarray.h"
+#include "tabcommands.h" //move into g0
 
 int updateDurationWithDetail(byte detail, int base);
 
@@ -756,12 +757,13 @@ struct TimeLineKnot
 class Tab : public ChainContainer<Track*>
 {
 public:
-    //cover it later
+
+    Tab() :isPlaying(false),
+        displayTrack(0),currentTrack(0),currentBar(0),displayBar(0) {}
+
     std::vector<TimeLineKnot> timeLine;
 
-    //Tab(); 
-    virtual ~Tab()
-    {
+    virtual ~Tab() {
         for (ul i=0; i < len(); ++i)
                    delete getV(i);
     }
@@ -769,27 +771,21 @@ public:
     void printToStream(std::ostream &stream);
 
     void createTimeLine(ul shiftTheCursor=0);
-
     byte getBPMStatusOnBar(ul barN);
     int getBpmOnBar(ul barN);
 
-    void connectTracks()
-    {
+    void connectTracks(){
         for (ul i = 0; i < len(); ++i)
         getV(i)->connectAll();
-
         createTimeLine();
     }
 
-    void postGTP()
-    {
-        for (ul i = 0; i < len(); ++i)
-        {
+    void postGTP() {
+        for (ul i = 0; i < len(); ++i) {
             ul port = getV(i)->getGPCOMPInts(0);
             ul chan = getV(i)->getGPCOMPInts(1);
             ul ind = (chan-1) + (port-1)*16;
-            if (ind < 70)
-            {
+            if (ind < 70) {
                 int instr = GpCompMidiChannels[ind].instrument;
                 byte pan = GpCompMidiChannels[ind].balance;
                 byte vol = GpCompMidiChannels[ind].volume;
@@ -801,8 +797,7 @@ public:
          }
     }
 
-    Tab &operator=([[maybe_unused]]Tab another)
-    {
+    Tab &operator=([[maybe_unused]]Tab another) {
         //lone(another); //TODO
         return *this;
     }
@@ -822,9 +817,42 @@ public:
     int getBPM() { return bpmTemp; }
     void setBPM(int newBPM) { bpmTemp = newBPM; }
 	
-protected:
-    //Navigation
+protected: //Move from TabView
+    bool isPlaying;
+    size_t displayTrack;
+    size_t currentTrack;
+    size_t currentBar;
+    size_t displayBar;
+    //int lastOpenedTrack;
 
+public:
+    bool playing() {
+        return isPlaying;
+    }
+    bool setPlaying(bool v) {
+        isPlaying = v;
+    }
+    size_t& getDisplayTrack() {
+        return displayTrack;
+    }
+    size_t& getCurrentTrack() {
+        return currentTrack;
+    }
+    size_t& getCurrentBar() {
+        return currentBar;
+    }
+    size_t& getDisplayBar() {
+        return displayBar;
+    }
+    void onTabCommand(TabCommand command);
+
+protected:
+
+public:
+    int changeTrackInstrument();
+    int changeTrackPanoram();
+    int changeTrackBpm();
+    Track* createNewTrack(); 
 };
 
 

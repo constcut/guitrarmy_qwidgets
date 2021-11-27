@@ -3,7 +3,7 @@
 
 #include "g0/types.h"
 
-#include "g0/tab.h"
+//#include "g0/tab.h"
 
 enum TabCommand {
     SetSignTillEnd,
@@ -136,6 +136,9 @@ enum TrackCommand {
 
 //24 - delete bar
 //25 - delete range of bars (could be groupped but yet no reason)
+
+class Note;
+class Bar;
 
 class SingleCommand
 {

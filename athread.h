@@ -103,7 +103,7 @@ protected:
 
 
 
-class ThreadLocal : public QThread ,public PlayAnimationThr
+class ThreadLocal : public QThread, public PlayAnimationThr //TODO replace with usual thread?
 {
     Q_OBJECT
 signals:

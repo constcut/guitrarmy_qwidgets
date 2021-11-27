@@ -19,17 +19,9 @@ protected:
     GLabel *statusLabel;
     GLabel *bpmLabel;
 
-    bool isPlaying;
-
     GTabPannel *pan;
 
-    size_t displayTrack;
-    size_t currentTrack;
-
-    size_t currentBar;
-    size_t displayBar;
-
-    int lastOpenedTrack;
+    int lastOpenedTrack; //Подумать, можно ли перенести?
 
     ThreadLocal *localThr;
 
@@ -37,8 +29,8 @@ public:
 
     virtual void setUI();
 
-    void setCurrentBar(int curBar)
-    {currentBar = curBar; }
+    void setCurrentBar(int curBar) {
+        pTab->getCurrentBar() = curBar; }
 
     virtual bool isMovableX() { return true; }
     virtual bool isMovableY() { return true; }
@@ -47,7 +39,7 @@ public:
 
     std::vector<TrackView*> tracksView;
 
-    int getCurTrack() { return currentTrack; }
+    int getCurTrack() { return pTab->getCurrentTrack(); }
     int getLastOpenedTrack() { return lastOpenedTrack; }
 
     void setTab(Tab* point2Tab);// {pTab = point2Tab;}
@@ -59,15 +51,15 @@ public:
      virtual void onTabCommand(TabCommand command);
      virtual void onTrackCommand(TrackCommand command);
 
-     void setPlaying(bool playValue) { isPlaying = playValue; }
+     void setPlaying(bool playValue) { pTab->setPlaying(playValue); }
      bool getPlaying()
      {
-         if (isPlaying)
+         if (pTab->playing())
              if (localThr)
                  if (localThr->getStatus())
                      setPlaying(false);
 
-         return isPlaying;
+         return pTab->playing();
      }
 
      void addSingleTrack(Track *track);
