@@ -469,6 +469,10 @@ void TrackView::connectThreadSignal(MasterView *masterView)
 
 void TrackView::switchNoteState(byte changeState)
 {
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+
     Note *note = (pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1));
 
     if ((pTrack->getV(cursor)->getV(cursorBeat)->getPause()) ||
@@ -514,25 +518,20 @@ void TrackView::switchNoteState(byte changeState)
 
 void TrackView::ongesture(int offset, bool horizontal)
 {
-    if (horizontal)
-    {
+    if (horizontal){
         //x offset
-
         /* forbiden for a while
         int restOffset = offset;
         while (restOffset != 0)
         restOffset = horizonMove(restOffset);
         */
-
         //there could be selection for
-
     }
-    else
-    {
+    else{
+        size_t& cursor = pTrack->cursor();
+        size_t& displayIndex = pTrack->displayIndex();
         //y offset
-
-        if (offset < 0)
-        {
+        if (offset < 0) {
             /*
             int quant = offset/-80;
                 displayIndex = cursor += quant;
@@ -542,22 +541,15 @@ void TrackView::ongesture(int offset, bool horizontal)
             */
 
             int absOffset = -1*offset;
-
-
             int shiftTo = 0;
             int curY = barsPull[0].getY();
 
-            while (absOffset>0)
-            {
+            while (absOffset>0) {
                 int barY = barsPull[shiftTo].getY();
-                if (barY > curY)
-                {
-
+                if (barY > curY) {
                     absOffset -= (barY-curY);
                     curY=barY;
-
-                    if (absOffset < barsPull[0].getH())
-                    {
+                    if (absOffset < barsPull[0].getH()) {
                         //--shiftTo;
                         break;
                     }
@@ -566,12 +558,10 @@ void TrackView::ongesture(int offset, bool horizontal)
             }
 
 
-             ul trackLen = pTrack->len();
+            ul trackLen = pTrack->len();
             displayIndex = cursor  +=shiftTo;
 
-
-            if (trackLen <= displayIndex)
-            {
+            if (trackLen <= displayIndex){
 
                 displayIndex = trackLen;
                 if (trackLen)
@@ -579,25 +569,17 @@ void TrackView::ongesture(int offset, bool horizontal)
 
                 cursor=displayIndex;
             }
-
-
-
-
             qDebug()<<"Shifting to "<<shiftTo;
-
-
         }
-        else
-        {
-            int quant = offset/80;
+        else {
+            size_t& cursorBeat = pTrack->cursorBeat();
+            size_t quant = offset/80;
             if (cursor > quant)
                 displayIndex = cursor -= quant;
             else
                 displayIndex = cursor = 0;
-
             cursorBeat=0;
 
-            //refact but first need to make anoth thing
         }
         tabParrent->setCurrentBar(cursor);
         //verticalMove - same way but skips whole line - height is always the same
@@ -614,22 +596,19 @@ int TrackView::horizonMove(int offset)
     int absOffset = offset > 0? offset: offset*-1;
     int rest = offset;
 
-    if (absOffset > bV->getW())
-    {
-            if (offset > 0)
-            {
+    if (absOffset > bV->getW()){
+
+        size_t& displayIndex = pTrack->displayIndex();
+        size_t& lastSeen = pTrack->lastSeen();
+
+            if (offset > 0){
                 if ((displayIndex+1) < (lastSeen-1))
-                {
                     ++displayIndex;
-                }
                 rest -= bV->getW();
             }
-            else
-            {
+            else {
                 if (displayIndex > 0)
-                {
                     --displayIndex;
-                }
                 rest += bV->getW();
             }
        return rest;
@@ -651,6 +630,11 @@ void TrackView::onclick(int x1, int y1)
     {
         return; //skip
     }
+
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+    size_t& displayIndex = pTrack->displayIndex();
 
     //touch and mouse events on first note
     for (ul i = 0; i < barsPull.len(); ++i)
@@ -736,11 +720,13 @@ void TrackView::ondblclick(int x1, int y1)
 
             qDebug() << "Bar hits "<<beatClick<<" of "<<fullBar;
 
+            size_t& displayIndex = pTrack->displayIndex();
+            int& selectionBeatFirst = pTrack->selectBeatFirst();
+            int& selectionBeatLast = pTrack->selectBeatLast();
+            int& selectionBarFirst = pTrack->selectBarFirst();
+            int& selectionBarLast = pTrack->selectBarLast();
 
-
-
-            if (selectionBeatFirst == -1)
-            {
+            if (selectionBeatFirst == -1) {
                 selectionBeatFirst = selectionBeatLast =  bV->getClickBeat(x1);
                 selectionBarFirst = selectionBarLast = i+displayIndex;
             }
@@ -820,8 +806,11 @@ void TrackView::ondblclick(int x1, int y1)
         }
     }
 
-    if (wasPressed == false)
-    {
+    if (wasPressed == false) {
+        int& selectionBeatFirst = pTrack->selectBeatFirst();
+        int& selectionBeatLast = pTrack->selectBeatLast();
+        int& selectionBarFirst = pTrack->selectBarFirst();
+        int& selectionBarLast = pTrack->selectBarLast();
         selectionBeatFirst = selectionBeatLast =  -1;
         selectionBarFirst = selectionBarLast = -1;
 
@@ -830,6 +819,10 @@ void TrackView::ondblclick(int x1, int y1)
 
 void TrackView::setDisplayBar(int barPosition)
 {
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& displayIndex = pTrack->displayIndex();
+
     displayIndex = barPosition;
     cursor = displayIndex;
     tabParrent->setCurrentBar(cursor);
@@ -886,6 +879,15 @@ void TrackView::draw(QPainter *painter)
     int hLimit = (h-50)/100;
     hLimit *= 100;
 
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+    size_t& lastSeen = pTrack->lastSeen();
+    size_t& displayIndex = pTrack->displayIndex();
+    int& selectionBeatFirst = pTrack->selectBeatFirst();
+    int& selectionBeatLast = pTrack->selectBeatLast();
+    int& selectionBarFirst = pTrack->selectBarFirst();
+    int& selectionBarLast = pTrack->selectBarLast();
 
     //to automate scroll
     if (cursor < displayIndex)
@@ -956,50 +958,27 @@ void TrackView::draw(QPainter *painter)
             lastSeen = i;
 
         int xShNEXT = xSh + bView.getW()+15;
-
-
-
         int border = getMaster()->getWidth();
 
-        if (xShNEXT > border)
-        {
+        if (xShNEXT > border) {
             xSh = 0;
             ySh += bView.getH(); // there was 100 hardcoded
 
-
-
-            /*
-            if (pan->isOpenned())
-            {
-                int panH = pan->getH();
-                hLimit -= panH;
-            }
-            */
-
-            if (ySh >= (hLimit+480))
-            {
-
+            if (ySh >= (hLimit+480)){
                 pan->draw(painter);
                 return; //stop that
             }
         }
 
-
         bView.setShifts(xSh,ySh);
-
-
         byte barCompleteStatus = curBar->getCompleteStatus(); //avoid recalculations
 
-        if (( i == cursor ))
-        {
+        if ( i == cursor ) {
             changeColor(CONF_PARAM("colors.curBar"), painter);
-
-
             if (i==cursor)
                 bView.setCursor(cursorBeat,stringCursor+1);
         }
-        else
-        {
+        else {
             //refact add another color
             if ((barCompleteStatus==2)||(barCompleteStatus==1))
                 changeColor(CONF_PARAM("colors.exceed"), painter);
@@ -1025,14 +1004,12 @@ void TrackView::draw(QPainter *painter)
             //painter->drawLine(xSh,ySh+20*track1->tuning.getStringsAmount(),xSh+bView.getW(),ySh+20*track1->tuning.getStringsAmount());
             //painter->drawLine(xSh+cursorBeat*12,5+ySh+20*track1->tuning.getStringsAmount(),xSh+cursorBeat*12+12,5+ySh+20*track1->tuning.getStringsAmount());
         }
-
     }
 
     //if (ySh <= (hLimit))
     {
         ++lastSeen;
     }
-
 
     pan->draw(painter);
 
@@ -1042,42 +1019,20 @@ void TrackView::prepareThread(ul shiftTheCursor)
 {
     //prepare for the animation
 
-    if (localThr)
-    {
+    if (localThr) {
         localThr->requestStop();
         localThr->terminate();
-
         if (CONF_PARAM("crashOnPlayHotFix") != "1")
         localThr->deleteLater();
         //local
-
-
     }
 
     localThr = new ThreadLocal;
 
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+
     localThr->setInc(&cursor,&cursorBeat);
-
-    /*
-     *
-    localThr->setBPM(tabParrent->getTab()->getBPM());
-    ul timeLoopLen = pTrack->timeLoop.len();
-    for (ul i = shiftTheCursor; i < timeLoopLen; ++i)
-    {
-        //abit exceed because making for each bar repeat
-        localThr->addBeatTimes(pTrack->timeLoop.getV(i));
-        //pushing first for bpm set
-
-        //log << "I= "<<i<<"; for index "<<pTrack->timeLoopIndexStore[i];
-
-        localThr->addNumDenum(pTrack->timeLoop.getV(i)->getSignNum(),
-        pTrack->timeLoop.getV(i)->getSignDenum(), pTrack->timeLoopIndexStore[i]);
-
-
-    }
-    localThr->setLimit(pTrack->timeLoop.len());
-    */
-
     localThr->setupValues(tabParrent->getTab(),pTrack,shiftTheCursor);
 }
 

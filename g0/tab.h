@@ -609,11 +609,18 @@ protected:
     ///void updateAplicature(); //list of changes
 public:
 
-    Track():timeLoop(),drums(false),status(0){ GpCompInts[3]=24; } //REFACT GCOMP
-    virtual ~Track()
-    {
+    Track():timeLoop(),drums(false),status(0),pan(0),_cursor(0),_cursorBeat(0),_stringCursor(0),
+    _displayIndex(0),_lastSeen(0),_selectCursor(-1) { 
+        GpCompInts[3]=24; //REFACT GCOMP
+        _selectionBarFirst=-1;
+        _selectionBarLast=-1;
+        _selectionBeatFirst=-1;
+        _selectionBeatLast=-1;
+    } 
+
+    virtual ~Track() {
         for (ul i=0; i < len(); ++i)
-                   delete getV(i);
+            delete getV(i);
     }
 
     void printToStream(std::ostream &stream);
@@ -660,26 +667,19 @@ protected:
 
     byte status; //0 - none 1 - mute 2 - soloe
 
-	public:
-
-//pub classes are part of set get operations
+public:
 	GuitarTuning tuning;
 
     ul connectBars();
     ul connectBeats();
     ul connectNotes(); //for let ring
     ul connectTimeLoop();
-
     void connectAll();
-
 
     void pushReprise(Bar *beginRepeat, Bar *endRepeat,
                      Bar *preTail, Bar *tailBegin, Bar *tailEnd, ul beginIndex, ul endIndex,
                      ul preTailIndex=0, ul tailBeginIndex=0, ul tailEndIndex=0);
 
-
-//SET GET operations
-	
 	void setName( std::string &nValue) { name = nValue; }
     std::string getName() { return name; } //or return?
 	
@@ -695,9 +695,9 @@ protected:
 	void setVolume(byte vValue) { volume = vValue; }
 	byte getVolume() { return volume; }
 	
-	//skip checks yet
+	
 	void setGPCOMPInts(size_t index, ul value) { GpCompInts[index] = value; }
-	ul getGPCOMPInts(size_t index) { return GpCompInts[index]; }
+	ul getGPCOMPInts(size_t index) { return GpCompInts[index]; } //TODO get rid
 	
     void setDrums(bool newDrums) {
         drums = newDrums;
@@ -705,10 +705,34 @@ protected:
     }
 
     bool isDrums() { return drums; }
-	//pack function	
 
     byte getStatus() { return status; } //refact name
     void setStatus(byte newStat) { status = newStat; }
+
+protected:
+    size_t _cursor;
+    size_t _cursorBeat;
+    size_t _stringCursor;
+    size_t _displayIndex;
+    size_t _lastSeen;
+    int _selectCursor; //TOSO to size_t
+    int _selectionBarFirst;
+    int _selectionBarLast;
+    int _selectionBeatFirst;
+    int _selectionBeatLast;
+    //TODO digit press?
+
+public:
+    size_t& cursor() { return _cursor; } //TODO после всего рефакторинга обязаны быть const
+    size_t& cursorBeat() { return _cursorBeat; }
+    size_t& stringCursor() { return _stringCursor; }
+    size_t& displayIndex() { return _displayIndex; }
+    size_t& lastSeen() { return _lastSeen; }
+    int& selectCursor() { return _selectCursor;}
+    int& selectBarFirst() { return _selectionBarFirst;}
+    int& selectBarLast() { return _selectionBarLast;}
+    int& selectBeatFirst() { return _selectionBeatFirst;}
+    int& selectBeatLast() { return _selectionBeatLast;}
 };
 
 //here would lay Guitar Pro header comptibilator

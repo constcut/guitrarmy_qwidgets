@@ -125,19 +125,19 @@ void TrackView::reverseCommand(SingleCommand &command)
         if (!len)
         { //as len = 1 but default
             pTrack->remove(barN);
-            cursor = displayIndex;
-            tabParrent->setCurrentBar(cursor);
+            pTrack->cursor() = pTrack->displayIndex();
+            tabParrent->setCurrentBar(pTrack->cursor());
         }
         else
         {
             for (int i = 0; i < len; ++i)
                 pTrack->remove(barN);
 
-            cursor = displayIndex;
-            tabParrent->setCurrentBar(cursor);
+            pTrack->cursor() = pTrack->displayIndex();
+            tabParrent->setCurrentBar(pTrack->cursor());
         }
-        if (cursor)
-            --cursor;
+        if (pTrack->cursor())
+            --pTrack->cursor();
     }
 
     if (type == 17)
@@ -150,8 +150,8 @@ void TrackView::reverseCommand(SingleCommand &command)
     {
         pTrack->getV(barN)->remove(beatN);
         pTrack->connectAll();
-        if (cursorBeat)
-            --cursorBeat;
+        if (pTrack->cursorBeat())
+            --pTrack->cursorBeat();
         //may be shift cursorBeat (when activate <> undo)
     }
 
@@ -188,7 +188,7 @@ void TrackView::reverseCommand(SingleCommand &command)
         }
         pTrack->insertBefore(firstBar,barN);
         pTrack->connectAll();
-        cursor=barN;
+        pTrack->cursor()=barN;
     }
 
     if (type == 26)
@@ -307,16 +307,20 @@ void TrackView::reverseCommand(SingleCommand &command)
         }
 
        pTrack->connectAll();
-       cursor=barN;
-       if (displayIndex>cursor)
-           displayIndex=cursor;
+       pTrack->cursor()=barN;
+       if (pTrack->displayIndex() > pTrack->cursor())
+           pTrack->displayIndex() = pTrack->cursor();
        //from here till first beat insert at barN
 
     }
 }
 
-void TrackView::switchEffect(int effIndex)
-{
+void TrackView::switchEffect(int effIndex) {
+
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+
     if (pTrack->getV(cursor)->getV(cursorBeat)->getPause())
         return;
 
@@ -344,6 +348,9 @@ void TrackView::switchEffect(int effIndex)
 
 void TrackView::switchBeatEffect(int effIndex)
 {
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+
     if (pTrack->getV(cursor)->getV(cursorBeat)->getPause())
         return;
 
@@ -1461,6 +1468,16 @@ void TabView::onTrackCommand(TrackCommand command) {
 
 void TrackView::onTrackCommand(TrackCommand command) {
 
+    size_t& cursor = pTrack->cursor(); //TODO get rid slowly
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+    size_t& lastSeen = pTrack->lastSeen();
+    size_t& displayIndex = pTrack->displayIndex();
+    int& selectionBeatFirst = pTrack->selectBeatFirst();
+    int& selectionBeatLast = pTrack->selectBeatLast();
+    int& selectionBarFirst = pTrack->selectBarFirst();
+    int& selectionBarLast = pTrack->selectBarLast();
+
     if (command == TrackCommand::PlayFromStart) {
         gotoTrackStart(cursorBeat, cursor, displayIndex);
         onTabCommand(TabCommand::PlayMidi);
@@ -1583,6 +1600,10 @@ void TrackView::onTrackCommand(TrackCommand command) {
 
 void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
 {
+    size_t& cursor = pTrack->cursor();
+    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& stringCursor = pTrack->stringCursor();
+
     if (press.substr(0,4)=="com:")
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
     else if (isdigit(press[0]))

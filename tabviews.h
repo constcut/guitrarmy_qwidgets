@@ -18,12 +18,10 @@ protected:
     Tab* pTab;
     GLabel *statusLabel;
     GLabel *bpmLabel;
-
     GTabPannel *pan;
 
     int lastOpenedTrack; //Подумать, можно ли перенести?
-
-    ThreadLocal *localThr;
+    ThreadLocal *localThr; //Возможно тоже если без QT
 
 public:
 
@@ -93,57 +91,26 @@ class TrackView : public GView
 {
 protected:
     Track *pTrack;
-    size_t cursor;
-    size_t cursorBeat;
-    size_t stringCursor;
 
     int digitPress;
 
     TabView *tabParrent;
-
     ThreadLocal *localThr;
-
-    size_t displayIndex;
-    size_t lastSeen;
-
     ViewPull barsPull;
 
     GPannel *pan;
-
     GTrackPannel *trackPan;
     GEffectsPannel *effPan;
     GClipboardPannel *clipPan;
 
-    //int copyIndex;
-    //better store in tab view! - ///NO main window is better
-    //AClipboard clipboard0;
-    //AClipboard clipboard1;
-    //AClipboard clipboard2;
-    int selectCursor;
-
-    int selectionBarFirst;
-    int selectionBarLast;
-    int selectionBeatFirst;
-    int selectionBeatLast;
-    //later move other refact..
-
     std::vector<SingleCommand> commandSequence;
-
 
 public:
 
     virtual void setUI();
     virtual bool isMovableY() { return true; }
 
-    TrackView(Track *from):pTrack(from),cursor(0),cursorBeat(0),
-      stringCursor(0),digitPress(-1),localThr(0),displayIndex(0),lastSeen(0), pan(0),
-      selectCursor(-1)
-     //,copyIndex(-1)
-    {
-        selectionBarFirst=-1;
-        selectionBarLast=-1;
-        selectionBeatFirst=-1;
-        selectionBeatLast=-1;
+    TrackView(Track *from):pTrack(from),digitPress(-1),localThr(0), pan(0) {
 
         trackPan = new GTrackPannel(300,480,800);
         effPan = new GEffectsPannel(300,480,800);
@@ -198,8 +165,6 @@ protected:
     void switchEffect(int effIndex);
 
     void switchBeatEffect(int effIndex);
-
-
 
 };
 
