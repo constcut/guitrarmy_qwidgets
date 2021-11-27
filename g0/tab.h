@@ -741,6 +741,8 @@ public:
 
     std::vector<SingleCommand> commandSequence;
 
+    void onTrackCommand(TrackCommand command);
+
     void gotoTrackStart();
     void changeBarSigns(int num, int denom);
     void moveSelectionLeft();
@@ -768,7 +770,7 @@ public:
     void setDotOnBeat();
     void setTriolOnBeat();
     //void setBendOnNote(); //TODO
-    void setTextOnBeat();
+    void setTextOnBeat(std::string newText);
     void setBarSign(int num, int denom);
     void clipboarCopyBar(); //refact name
     void clipboarCopyBeat();
