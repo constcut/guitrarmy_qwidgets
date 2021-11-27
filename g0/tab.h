@@ -810,34 +810,21 @@ public:
 
 protected:	
     int bpmTemp;
-	//polyrithmm and own temp for track flags
 	//version control flag
-	//compitibility flag
-
-	std::string origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style
-	
-		
-	//better class for header
-	
+	std::string origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style	
 	byte GpCompSignKey;
-	byte GpCompSignOctave;
+    byte GpCompSignOctave; //TODO get rid
 	byte GpCompTripletFeel;
 
-
-
-	public:
-//public classes live before  set get operations as them part of them
-
-		VariableStrings variableInforation;
-        MidiChannelInfo GpCompMidiChannels[64];
-
 public:
-//SET GET operations
-        int getBPM() { return bpmTemp; }
-        void setBPM(int newBPM) { bpmTemp = newBPM; }
+    VariableStrings variableInforation;
+    MidiChannelInfo GpCompMidiChannels[64]; //TODO refactor
+    int getBPM() { return bpmTemp; }
+    void setBPM(int newBPM) { bpmTemp = newBPM; }
 	
-	
-//pack function				
+protected:
+    //Navigation
+
 };
 
 
