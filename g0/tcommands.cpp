@@ -102,43 +102,30 @@ enum MoveDirections {
 };
 
 
-void moveCursorInTrack(MoveDirections dir, size_t& displayBar, size_t barsCount = 0) {
-    switch(dir) { //Move into Tab
-        case MoveDirections::right:
-            if (displayBar < barsCount)
-                ++displayBar;
-        break;
-        case MoveDirections::left:
-            if (displayBar > 0)
-                --displayBar;
-        break;
-        case none:
-        case MoveDirections::up:
-        case MoveDirections::down:
-            qDebug() << "ERROR: Empty move direction!";
-    }
+void Tab::moveCursorInTrackRight() {
+    if (displayBar < getV(0)->len() - 1)
+        ++displayBar;
+}
+
+void Tab::moveCursorInTrackLeft() {
+    if (displayBar > 0)
+        --displayBar;
 }
 
 
-void MoveCursorOfTrack(MoveDirections dir, size_t& displayTrack, size_t& currentTrack, size_t trackLen=0) {
-    switch(dir) { //Move into Tab
-        case MoveDirections::up:
-        if (displayTrack > 0) {
-            --displayTrack;
+
+void Tab::moveCursorOfTrackUp() {
+    if (displayTrack > 0) {
+        --displayTrack;
+        currentTrack = displayTrack;
+    }
+}
+
+void Tab::moveCursorOfTrackDown() {
+    if (displayTrack < len()){
+        ++displayTrack;
+        if (currentTrack < displayTrack)
             currentTrack = displayTrack;
-        }
-        break;
-        case MoveDirections::down:
-        if (displayTrack < trackLen){
-            ++displayTrack;
-            if (currentTrack < displayTrack)
-                currentTrack = displayTrack;
-        }
-        break;
-    case none:
-    case MoveDirections::right:
-    case MoveDirections::left:
-        qDebug() << "ERROR: Empty move direction!";
     }
 }
 
@@ -602,13 +589,13 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::Solo)
         soloTrack();
     else if (command == TabCommand::MoveRight)
-        moveCursorInTrack(MoveDirections::right, displayBar, this->getV(0)->len() - 1); //TODO перероверить
+        moveCursorInTrackRight(); //TODO перероверить
     else if (command == TabCommand::MoveLeft)
-        moveCursorInTrack(MoveDirections::left, displayBar);
+        moveCursorInTrackLeft();
     else if (command == TabCommand::MoveUp)
-        MoveCursorOfTrack(MoveDirections::up, displayTrack, currentTrack);
+        moveCursorOfTrackUp();
     else if (command == TabCommand::MoveDown)
-        MoveCursorOfTrack(MoveDirections::down, displayTrack, currentTrack, this->getV(0)->len());
+        moveCursorOfTrackDown();
     else if (command == TabCommand::Drums)
         changeDrumsFlag();
     else if (command == TabCommand::Volume)

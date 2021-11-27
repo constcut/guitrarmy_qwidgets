@@ -860,6 +860,11 @@ public:
     void midiPause();
     void openReprise();
     void closeReprise();
+
+    void moveCursorInTrackRight();
+    void moveCursorInTrackLeft();
+    void moveCursorOfTrackUp();
+    void moveCursorOfTrackDown();
 };
 
 
