@@ -848,7 +848,7 @@ public:
 
 protected:
 
-public:
+public: //later cover under midlayer TabCommandsHandler
     int changeTrackInstrument();
     int changeTrackPanoram();
     int changeTrackBpm();
@@ -865,6 +865,14 @@ public:
     void moveCursorInTrackLeft();
     void moveCursorOfTrackUp();
     void moveCursorOfTrackDown();
+
+    void deleteTrack();
+
+    void setSignsTillEnd(int num, int denom);
+    void changeTrackVolume(int newVol);
+    void changeTrackName(std::string newName);
+
+
 };
 
 

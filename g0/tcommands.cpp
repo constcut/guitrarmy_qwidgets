@@ -19,8 +19,15 @@
 
 //TODO rename file when old tab commands would be erased
 
+void Tab::setSignsTillEnd(int num, int denom) {
+    for (size_t i = currentBar; i < this->getV(0)->len(); ++i){
+        this->getV(0)->getV(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
+        this->getV(0)->getV(i)->setSignNum(num);
+    }
+}
 
-void setSignTillEnd(Tab* pTab, size_t currentBar) {
+
+void setSignTillEnd(Tab* pTab, size_t currentBar) { //TODOM
     bool ok=false;
     int newNum = QInputDialog::getInt(0,"Input",
                          "New Num:", QLineEdit::Normal,
@@ -32,14 +39,8 @@ void setSignTillEnd(Tab* pTab, size_t currentBar) {
                          "New Denum(1,2,4,8,16):", QLineEdit::Normal,
                          1,128,1,&ok);
     if (ok)
-    {
-        //how to make undo? list of index old num old denum?
-        for (size_t i = currentBar; i < pTab->getV(0)->len(); ++i)
-        {
-            pTab->getV(0)->getV(i)->setSignDenum(newDen); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
-            pTab->getV(0)->getV(i)->setSignNum(newNum);
-        }
-    }
+        pTab->setSignsTillEnd(newDen, newNum);
+
 }
 
 void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получения имени файла)
@@ -341,25 +342,34 @@ int Tab::changeTrackPanoram() {
 }
 
 
-void changeTrackVolume(Track* pTrack)   {
+void changeTrackVolume(Tab* pTab)  { //TODOM
     bool ok=false;
     int newVol = QInputDialog::getInt(0,"Input",
                          "Vol Instrument:", QLineEdit::Normal,
                          0,16,1, &ok);
     if (ok)
-       pTrack->setVolume(newVol);
+        pTab->changeTrackVolume(newVol);
+
+}
+
+void Tab::changeTrackVolume(int newVol) {
+     getV(currentTrack)->setVolume(newVol);
 }
 
 
-void changeTrackName(Track* pTrack) {
+void changeTrackName(Tab* pTab) { //TODOM
     bool ok=false;
     //refact inputs to gview
     QString newName = QInputDialog::getText(0,"Input",
                          "New Instrument name:", QLineEdit::Normal,"untitled",&ok);
-
     std::string stdName = newName.toStdString();
     if (ok)
-       pTrack->setName(stdName);
+       pTab->changeTrackName(stdName);
+}
+
+
+void Tab::changeTrackName(std::string newName) {
+    getV(currentTrack)->setName(newName);
 }
 
 
@@ -416,18 +426,20 @@ Track* Tab::createNewTrack() { //Move into Tab
 }
 
 
-void deleteTrack(Tab* pTab, size_t& displayTrack) {
+void deleteTrack(Tab* pTab) { //TODOM
     bool ok=false;
     int inp = QInputDialog::getInt(0,"Delete track","Delete track",0,0,1,1,&ok);
-
     if ((ok) && (inp))
-    {
-        pTab->remove(displayTrack);
-
-        if (displayTrack)
-            --displayTrack;
-    }
+        pTab->deleteTrack();
 }
+
+
+void Tab::deleteTrack() {
+    this->remove(displayTrack);
+    if (displayTrack)
+        --displayTrack;
+}
+
 
 void Tab::midiPause() {
     if (isPlaying == false) {
@@ -581,7 +593,7 @@ void setTune(Track* pTrack) {
 
 void Tab::onTabCommand(TabCommand command) {
     if (command == TabCommand::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
-        setSignTillEnd(this, currentBar);
+        setSignTillEnd(this, currentBar); //TODOM
     else if (command == TabCommand::SaveAs)
         saveAs(this);
     else if (command == TabCommand::Mute)
@@ -599,11 +611,11 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::Drums)
         changeDrumsFlag();
     else if (command == TabCommand::Volume)
-        changeTrackVolume(this->getV(displayTrack));
+        ::changeTrackVolume(this);
     else if (command == TabCommand::Name)
-        changeTrackName(this->getV(displayTrack));
+        ::changeTrackName(this);
     else if (command == TabCommand::DeleteTrack)
-        deleteTrack(this, displayTrack);
+        ::deleteTrack(this);
     else if (command == TabCommand::PauseMidi)
         midiPause();
     else if (command == TabCommand::AddMarker)
