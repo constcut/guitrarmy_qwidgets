@@ -1472,6 +1472,125 @@ void undoOnTrack(TrackView* tw, std::vector<SingleCommand>& commandSequence) {
     return;
 }
 
+void TrackView::onTrackCommand(TrackCommand command) {
+
+    if (command == TrackCommand::PlayFromStart) {
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+        onTabCommand(TabCommand::PlayMidi);
+    }
+    else if (command == TrackCommand::GotoStart)
+        gotoTrackStart(cursorBeat, cursor, displayIndex);
+    else if (command == TrackCommand::SetSignForSelected)
+      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
+    else if (command == TrackCommand::SelectionExpandLeft)
+        moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
+    else if (command == TrackCommand::SelectionExpanRight)
+        moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
+    else if (command == TrackCommand::InsertBar)
+        insertBar(pTrack, cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::NextBar) // => //bar walk
+        moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
+    else if (command == TrackCommand::PrevBar) // <= //bar walk
+        moveToPrevBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress);
+    else if (command == TrackCommand::PrevPage)
+        moveToPrevPage(cursor, tabParrent, cursorBeat, displayIndex, digitPress);
+    else if (command == TrackCommand::NextPage)
+        moveToNextPage(cursor, tabParrent, pTrack, cursorBeat, displayIndex, digitPress, lastSeen);
+    else if (command == TrackCommand::NextTrack)
+        moveToNextTrack(tabParrent, digitPress);
+    else if (command == TrackCommand::PrevTrack)
+        moveToPrevTrack(tabParrent, digitPress);
+    else if (command == TrackCommand::StringDown)
+        moveToStringUp(pTrack, stringCursor, digitPress);
+    else if (command == TrackCommand::StringUp)
+        moveToStringDown(pTrack, stringCursor, digitPress);
+    else if (command == TrackCommand::PrevBeat)
+        moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
+    else if (command == TrackCommand::NextBeat)
+        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
+    else if (command == TrackCommand::SetPause)
+        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
+    else if (command == TrackCommand::DeleteBar)
+        deleteBar(cursor, pTrack, commandSequence);
+    else if (command == TrackCommand::DeleteBar)
+        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+    else if (command == TrackCommand::DeleteSelectedBars)
+        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+    else if (command == TrackCommand::DeleteSelectedBeats)
+        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
+    else if (command == TrackCommand::IncDuration)
+        incDuration(pTrack, cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::DecDuration)
+        decDuration(pTrack, cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
+        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
+    else if (command == TrackCommand::SaveFile)
+        saveFromTrack(tabParrent);
+    else if (command == TrackCommand::SaveAsFromTrack)
+        saveAsFromTrack(tabParrent);
+    else if (command == TrackCommand::NewBar)
+        newBar(pTrack, cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::SetDot)
+        setDotOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::SetTriole)
+        setTriolOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+    else if (command == TrackCommand::Leeg) {
+        switchNoteState(2); digitPress = -1;
+    }
+    else if (command == TrackCommand::Dead) {
+        switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
+    }
+    else if (command == TrackCommand::Vibrato)
+        switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
+    else if (command == TrackCommand::Slide)
+        switchEffect(4); //TODO cover on new abstraction level tabs-core
+    else if (command == TrackCommand::Hammer)
+        switchEffect(10);
+    else if (command == TrackCommand::LetRing)
+        switchEffect(18);
+    else if (command == TrackCommand::PalmMute)
+        switchEffect(2);
+    else if (command == TrackCommand::Harmonics)
+        switchEffect(14);
+    else if (command == TrackCommand::TremoloPickings)
+        switchEffect(24); //tremlo picking
+    else if (command == TrackCommand::Trill)
+        switchEffect(24);
+    else if (command == TrackCommand::Stokatto)
+        switchEffect(23);
+    else if (command == TrackCommand::FadeIn) //TODO fade out
+        switchBeatEffect(20);
+    else if (command == TrackCommand::Accent)
+        switchEffect(27);
+    else if (command == TrackCommand::HeaveAccent)
+        switchEffect(27); ///should be another TODO
+    else if (command == TrackCommand::Bend)
+        setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
+    else if (command == TrackCommand::Chord) {
+        if (getMaster()) getMaster()->pushForceKey("chord_view"); }
+    else if (command == TrackCommand::Text)
+        setTextOnBeat(pTrack->getV(cursor)->getV(cursorBeat));
+    else if (command == TrackCommand::Changes)
+        setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
+    else if (command == TrackCommand::UpStroke)
+        switchBeatEffect(25);
+    else if (command == TrackCommand::DownStroke)
+        switchBeatEffect(26);
+    else if (command == TrackCommand::SetBarSign)
+        setBarSign(pTrack->getV(cursor), cursor, commandSequence);
+    else if (command == TrackCommand::Cut) //oups - yet works only without selection for 1 bar
+        clipboardCutBar(selectionBarFirst, pTrack->getV(cursor), this);
+    else if (command == TrackCommand::Copy) //1 bar
+        clipboarCopyBar(pTrack->getV(cursor), selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent);
+    else if (command == TrackCommand::CopyBeat)
+        clipboarCopyBeat(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor, cursorBeat);
+    else if (command == TrackCommand::CopyBars)
+        clipboardCopyBars(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor);
+    else if (command == TrackCommand::Past )
+        clipboardPaste(tabParrent->getTab(), pTrack, cursor, commandSequence);
+    else if (command == TrackCommand::Undo)
+        undoOnTrack(this, commandSequence);
+}
 
 void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
 {
@@ -1479,7 +1598,7 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
     else if (press == "playFromStart") {
         gotoTrackStart(cursorBeat, cursor, displayIndex);
-        onTabCommand(TabCommands::PlayMidi);
+        onTabCommand(TabCommand::PlayMidi);
     }
     else if (press == "goToStart")
         gotoTrackStart(cursorBeat, cursor, displayIndex);
@@ -1599,15 +1718,17 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
         clipboardPaste(tabParrent->getTab(), pTrack, cursor, commandSequence);
     else if (press == "undo")
         undoOnTrack(this, commandSequence);
-    else
-        tabParrent->keyevent(press); //TODO перепроверить что все команды работают без повторного запуска через
+    else {
+        qDebug() << "Key event falls into TabView from TrackView " << press.c_str();
+        tabParrent->keyevent(press); //TODO проверить
+    }//TODO перепроверить что все команды работают без повторного запуска через TabView
 }
 
 //Tab commands functions, TODO cover under some engine inside of TAB
 //And make handlers for all the functions (used them without arguments)
 
 
-void TrackView::onTabCommand(TabCommands command) {
+void TrackView::onTabCommand(TabCommand command) {
     tabParrent->onTabCommand(command);
 }
 
@@ -2260,59 +2381,59 @@ void TabView::keyevent(std::string press) {
 }
 
 
-void TabView::onTabCommand(TabCommands command) {
-    if (command == TabCommands::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
+void TabView::onTabCommand(TabCommand command) {
+    if (command == TabCommand::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
         setSignTillEnd(pTab, currentBar);
-    else if (command == TabCommands::SaveAs)
+    else if (command == TabCommand::SaveAs)
         saveAs(pTab);
-    else if (command == TabCommands::Mute)
+    else if (command == TabCommand::Mute)
         muteTrack(pTab, displayTrack);
-    else if (command == TabCommands::Solo)
+    else if (command == TabCommand::Solo)
         soloTrack(pTab, displayTrack);
-    else if (command == TabCommands::MoveRight)
+    else if (command == TabCommand::MoveRight)
         moveCursorInTrack(MoveDirections::right, displayBar, pTab->getV(0)->len() - 1); //TODO перероверить
-    else if (command == TabCommands::MoveLeft)
+    else if (command == TabCommand::MoveLeft)
         moveCursorInTrack(MoveDirections::left, displayBar);
-    else if (command == TabCommands::MoveUp)
+    else if (command == TabCommand::MoveUp)
         MoveCursorOfTrack(MoveDirections::up, displayTrack, currentTrack);
-    else if (command == TabCommands::MoveDown)
+    else if (command == TabCommand::MoveDown)
         MoveCursorOfTrack(MoveDirections::down, displayTrack, currentTrack, pTab->getV(0)->len());
-    else if (command == TabCommands::Drums)
+    else if (command == TabCommand::Drums)
         changeDrumsFlag(pTab->getV(displayTrack));
-    else if (command == TabCommands::Instument)
+    else if (command == TabCommand::Instument)
         getMaster()->setComboBox(1,"instruments",240,5,200,30,changeTrackInstrument(pTab->getV(displayTrack))); //Only UI feature
-    else if (command == TabCommands::Panoram)
+    else if (command == TabCommand::Panoram)
         getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab->getV(displayTrack))); //Как и выше сбивает UI при отмене ввода
-    else if (command == TabCommands::Volume)
+    else if (command == TabCommand::Volume)
         changeTrackVolume(pTab->getV(displayTrack));
-    else if (command == TabCommands::Name)
+    else if (command == TabCommand::Name)
         changeTrackName(pTab->getV(displayTrack));
-    else if (command == TabCommands::BPM) {
+    else if (command == TabCommand::BPM) {
         auto newBpm = changeTrackBpm(pTab);
         bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(pTab->getBPM()));
     }         
-    else if (command == TabCommands::OpenTrack)
+    else if (command == TabCommand::OpenTrack)
         openTrackQt(pTab->len(),lastOpenedTrack, this, displayTrack + 1); //TODO эту часть внутрь движка - разделяя с QT);
-    else if (command == TabCommands::NewTrack) {
+    else if (command == TabCommand::NewTrack) {
        createNewTrack(pTab); this->setTab(pTab); } //Второе нужно для обновления
-    else if (command == TabCommands::DeleteTrack)
+    else if (command == TabCommand::DeleteTrack)
         deleteTrack(pTab, displayTrack);
-    else if (command == TabCommands::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
+    else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, currentBar, this);
-    else if (command == TabCommands::GenerateMidi) //|| (press == "spc"))
+    else if (command == TabCommand::GenerateMidi) //|| (press == "spc"))
         generateMidiQt(pTab, statusLabel);
-    else if (command == TabCommands::PauseMidi)
+    else if (command == TabCommand::PauseMidi)
         midiPause(isPlaying);
-    else if (command == TabCommands::AddMarker)
+    else if (command == TabCommand::AddMarker)
         setMarker(pTab->getV(0)->getV(currentBar));
-    else if (command == TabCommands::OpenReprise)
+    else if (command == TabCommand::OpenReprise)
         openReprise(pTab->getV(0)->getV(currentBar));
-    else if (command == TabCommands::CloseReprise)
+    else if (command == TabCommand::CloseReprise)
         closeReprise(pTab->getV(0)->getV(currentBar));
-    else if (command == TabCommands::GotoBar)
+    else if (command == TabCommand::GotoBar)
         goToBar(pTab->getV(0)->len(), currentBar, displayBar);
     //if (press == "alt");//TODO
-    else if (command == TabCommands::Tune)
+    else if (command == TabCommand::Tune)
         setTune(pTab->getV(currentTrack));
 }

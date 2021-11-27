@@ -804,32 +804,32 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
     uiWidgets[i] = std::vector<QWidget*>();
 
     tabCommands = {
-        {"set till the end", TabCommands::SetSignTillEnd},
-        {"save as",TabCommands::SaveAs},
-        {"mute", TabCommands::Mute},
-        {"solo", TabCommands::Solo},
-        {">>>", TabCommands::MoveRight},
-        {"<<<", TabCommands::MoveLeft},
-        {"^^^", TabCommands::MoveUp},
-        {"vvv", TabCommands::MoveDown},
-        {"drums", TabCommands::Drums},
-        {"instr", TabCommands::Instument},
-        {"pan", TabCommands::Panoram},
-        {"volume",TabCommands::Volume },
-        {"name", TabCommands::Name},
-        {"bpm", TabCommands::BPM},
-        {"opentrack", TabCommands::OpenTrack},
-        {"newTrack", TabCommands::NewTrack},
-        {"deleteTrack", TabCommands::DeleteTrack},
-        {CONF_PARAM("TrackView.playMidi"), TabCommands::PlayMidi}, //TODO перепроверить что они уже заданы
-        {CONF_PARAM("TabView.genMidi"), TabCommands::GenerateMidi},
-        {"spc",TabCommands::PlayMidi},
-        {"p", TabCommands::PauseMidi},
-        {"marker", TabCommands::AddMarker},
-        {"|:", TabCommands::OpenReprise},
-        {":|", TabCommands::CloseReprise},
-        {"goToN", TabCommands::GotoBar},
-        {"tune",  TabCommands::Tune}
+        {"set till the end", TabCommand::SetSignTillEnd},
+        {"save as",TabCommand::SaveAs},
+        {"mute", TabCommand::Mute},
+        {"solo", TabCommand::Solo},
+        {">>>", TabCommand::MoveRight},
+        {"<<<", TabCommand::MoveLeft},
+        {"^^^", TabCommand::MoveUp},
+        {"vvv", TabCommand::MoveDown},
+        {"drums", TabCommand::Drums},
+        {"instr", TabCommand::Instument},
+        {"pan", TabCommand::Panoram},
+        {"volume",TabCommand::Volume },
+        {"name", TabCommand::Name},
+        {"bpm", TabCommand::BPM},
+        {"opentrack", TabCommand::OpenTrack},
+        {"newTrack", TabCommand::NewTrack},
+        {"deleteTrack", TabCommand::DeleteTrack},
+        {CONF_PARAM("TrackView.playMidi"), TabCommand::PlayMidi}, //TODO перепроверить что они уже заданы
+        {CONF_PARAM("TabView.genMidi"), TabCommand::GenerateMidi},
+        {"spc",TabCommand::PlayMidi},
+        {"p", TabCommand::PauseMidi},
+        {"marker", TabCommand::AddMarker},
+        {"|:", TabCommand::OpenReprise},
+        {":|", TabCommand::CloseReprise},
+        {"goToN", TabCommand::GotoBar},
+        {"tune",  TabCommand::Tune}
     };
 }
 

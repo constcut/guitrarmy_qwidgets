@@ -5,7 +5,7 @@
 
 #include "g0/tab.h"
 
-enum TabCommands {
+enum TabCommand {
     SetSignTillEnd,
     SaveAs,
     Mute,
@@ -31,6 +31,73 @@ enum TabCommands {
     CloseReprise,
     GotoBar,
     Tune
+};
+
+enum TrackCommand {
+    PlayFromStart,
+    GotoStart,
+    SetSignForSelected,
+    SelectionExpandLeft,
+    SelectionExpanRight,
+    InsertBar,
+    NextBar,
+    PrevBar,
+    NextPage,
+    PrevPage,
+    NextTrack,
+    PrevTrack,
+    StringDown,
+    StringUp,
+    PrevBeat,
+    NextBeat,
+    SetPause,
+    DeleteBar,
+    DeleteSelectedBars,
+    DeleteSelectedBeats,
+    DeleteNote,
+    IncDuration,
+    DecDuration,
+    PlayTrackMidi,
+    SaveFile,
+    SaveAsFromTrack,
+    NewBar,
+    SetDot,
+    SetTriole,
+    Leeg,
+    Dead,
+    Vibrato,
+    Slide,
+    Hammer,
+    LetRing,
+    PalmMute,
+    Harmonics,
+    TremoloPickings,
+    Trill,
+    Stokatto,
+    FadeIn,
+    Accent,
+    HeaveAccent,
+    Bend,
+    Chord,
+    Text,
+    Changes,
+    UpStroke,
+    DownStroke,
+    SetBarSign,
+    Cut,
+    Copy,
+    CopyBeat,
+    CopyBars,
+    Past,
+    Undo,
+    //Next commands yet not implemented
+    QuickOpen,
+    Tapping,
+    Slap,
+    Pop,
+    UpM,
+    DownM,
+    Figering
 };
 
 

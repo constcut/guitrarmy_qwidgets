@@ -95,7 +95,7 @@ protected:
     }
 
     virtual void keyevent(std::string press);
-    virtual void onTabCommand(TabCommands command);
+    virtual void onTabCommand(TabCommand command);
 
     void setTabLoaded(Tab *tab);
 

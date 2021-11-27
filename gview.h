@@ -79,9 +79,11 @@ public:
     virtual void keyevent([[maybe_unused]] std::string press){} //virt
     virtual void ongesture([[maybe_unused]] int offset, [[maybe_unused]] bool horizontal) {}
 
-    virtual void onTabCommand(TabCommands command) {
+    virtual void onTabCommand([[maybe_unused]]TabCommand command) {
+    }
 
-        qDebug() << "Tab command on GView called ";
+    virtual void onTrackCommand(TrackCommand command) {
+        
     }
 
     virtual void *getPannel() { return 0; }

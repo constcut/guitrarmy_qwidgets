@@ -56,7 +56,7 @@ public:
      void draw(QPainter *painter);
 
      virtual void keyevent(std::string press);
-     virtual void onTabCommand(TabCommands command);
+     virtual void onTabCommand(TabCommand command);
 
      void setPlaying(bool playValue) { isPlaying = playValue; }
      bool getPlaying()
@@ -169,7 +169,8 @@ public:
     virtual ~TrackView(){}
 
     virtual void keyevent(std::string press);
-    virtual void onTabCommand(TabCommands command);
+    virtual void onTabCommand(TabCommand command);
+    virtual void onTrackCommand(TrackCommand command);
 
     void onclick(int x1, int y1);
     void ondblclick(int x1, int y1); //{ onclick(x1,y1);}

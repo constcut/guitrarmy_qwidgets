@@ -166,7 +166,7 @@ protected:
     std::map < int , std::vector<QWidget*> > uiWidgets;
 
     //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
-    std::unordered_map<std::string, TabCommands> tabCommands;
+    std::unordered_map<std::string, TabCommand> tabCommands;
 
     //std::vector<QPushButton*> testButtons;
     //std::vector<QComboBox*> patternInstruments;
