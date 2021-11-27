@@ -57,6 +57,7 @@ public:
 
      virtual void keyevent(std::string press);
      virtual void onTabCommand(TabCommand command);
+     virtual void onTrackCommand(TrackCommand command);
 
      void setPlaying(bool playValue) { isPlaying = playValue; }
      bool getPlaying()

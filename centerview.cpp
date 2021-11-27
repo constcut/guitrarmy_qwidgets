@@ -1320,12 +1320,19 @@ void CenterView::pushForceKey(std::string keyevent)
 
     checkView();
     if (auto child = getFirstChild()) {
-
-        if (trackCommands.count(keyevent)) {
+        bool isMoveCommand = keyevent == ">>>" || keyevent == "<<<" || keyevent == "vvv" || keyevent == "^^^";
+        if (isMoveCommand) {
+            auto mw = dynamic_cast<MainView*>(child);
+            if (mw && dynamic_cast<TabView*>(mw->getCurrenView()) != nullptr)
+                child->onTabCommand(tabCommands.at(keyevent));
+            if (mw && dynamic_cast<TrackView*>(mw->getCurrenView()) != nullptr)
+                child->onTrackCommand(trackCommands.at(keyevent));
+        }
+        else if (trackCommands.count(keyevent)) {
             qDebug() << "Pushed as a track command";
             child->onTrackCommand(trackCommands.at(keyevent));
         }
-        else if (tabCommands.count(keyevent)) { //Расчесать помере замены комманд на Enum
+        else if (tabCommands.count(keyevent)) {
             qDebug() << "Pushed as a tab command";
             child->onTabCommand(tabCommands.at(keyevent)); //TODO мы будем терять навигацию пока что
         }
@@ -1334,9 +1341,7 @@ void CenterView::pushForceKey(std::string keyevent)
             child->keyevent(keyevent);
         }
     }
-
     checkView();
-
     update();
 }
 

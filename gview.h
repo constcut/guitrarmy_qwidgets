@@ -82,8 +82,8 @@ public:
     virtual void onTabCommand([[maybe_unused]]TabCommand command) {
     }
 
-    virtual void onTrackCommand(TrackCommand command) {
-        
+    virtual void onTrackCommand([[maybe_unused]]TrackCommand command) {
+        qDebug() << "EMPY on TrackCommand";
     }
 
     virtual void *getPannel() { return 0; }

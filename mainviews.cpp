@@ -87,6 +87,11 @@ void MainView::onTabCommand(TabCommand command) {
         currentView->onTabCommand(command);
 }
 
+void MainView::onTrackCommand(TrackCommand command) {
+    if (currentView)
+        currentView->onTrackCommand(command);
+}
+
 void MainView::keyevent(std::string press)
 {
     if (press=="welcome")

@@ -1473,6 +1473,10 @@ void undoOnTrack(TrackView* tw, std::vector<SingleCommand>& commandSequence) {
 }
 
 
+void TabView::onTrackCommand(TrackCommand command) {
+    qDebug() << "ERROR: Track Command falling into TabView";
+}
+
 
 void TrackView::onTrackCommand(TrackCommand command) {
 
@@ -1600,128 +1604,8 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
 {
     if (press.substr(0,4)=="com:")
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
-    else if (press == "playFromStart") {
-        gotoTrackStart(cursorBeat, cursor, displayIndex);
-        onTabCommand(TabCommand::PlayMidi);
-    }
-    else if (press == "goToStart")
-        gotoTrackStart(cursorBeat, cursor, displayIndex);
-    else if (press == "set for selected")
-      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
-    else if (press == "select <")
-        moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
-    else if (press == "select >")
-        moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
-    //if((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) //TODO
-    else if (press == "ins")
-        insertBar(pTrack, cursor, cursorBeat, commandSequence);
     else if (isdigit(press[0]))
         handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, commandSequence);
-    else if (press == CONF_PARAM("TrackView.nextBar")) // => //bar walk
-        moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
-    else if (press == CONF_PARAM("TrackView.prevBar")) // <= //bar walk
-        moveToPrevBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress);
-    else if (press == "prevPage")
-        moveToPrevPage(cursor, tabParrent, cursorBeat, displayIndex, digitPress);
-    else if (press == "nextPage")
-        moveToNextPage(cursor, tabParrent, pTrack, cursorBeat, displayIndex, digitPress, lastSeen);
-    else if (press == "nextTrack")
-        moveToNextTrack(tabParrent, digitPress);
-    else if (press == "prevTrack")
-        moveToPrevTrack(tabParrent, digitPress);
-    else if (press == CONF_PARAM("TrackView.stringDown"))
-        moveToStringUp(pTrack, stringCursor, digitPress);
-    else if (press == CONF_PARAM("TrackView.stringUp"))
-        moveToStringDown(pTrack, stringCursor, digitPress);
-    else if (press == CONF_PARAM("TrackView.prevBeat"))
-        moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
-    else if (press == CONF_PARAM("TrackView.nextBeat"))
-        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
-    else if (press == CONF_PARAM("TrackView.setPause"))
-        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
-    else if (press == "delete bar")
-        deleteBar(cursor, pTrack, commandSequence);
-    else if (press == "delete selected bars")
-        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
-    else if (press == "delete selected beats")
-        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
-    else if (press == CONF_PARAM("TrackView.deleteNote"))
-        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
-    else if (press == CONF_PARAM("TrackView.increaceDuration"))
-        incDuration(pTrack, cursor, cursorBeat, commandSequence);
-    else if (press == CONF_PARAM("TrackView.decreaceDuration"))
-        decDuration(pTrack, cursor, cursorBeat, commandSequence);
-    else if  (press == CONF_PARAM("TrackView.playMidi"))  //|| (press=="playMerge")
-        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
-    else if (press == CONF_PARAM("TrackView.save")||(press == "quicksave"))
-        saveFromTrack(tabParrent);
-    else if (press == "save as")
-        saveAsFromTrack(tabParrent);
-    else if (press == "newBar")
-        newBar(pTrack, cursor, cursorBeat, commandSequence);
-    else if (press == "dot")
-        setDotOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
-    else if (press == "-3-")
-        setTriolOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
-    else if (press == "leeg") {
-        switchNoteState(2); digitPress = -1;
-    }
-    else if (press == "dead") {
-        switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
-    }
-    else if (press == CONF_PARAM("effects.vibrato"))
-        switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
-    else if (press == CONF_PARAM("effects.slide"))
-        switchEffect(4); //TODO cover on new abstraction level tabs-core
-    else if (press == CONF_PARAM("effects.hammer"))
-        switchEffect(10);
-    else if (press == CONF_PARAM("effects.letring"))
-        switchEffect(18);
-    else if (press == CONF_PARAM("effects.palmmute"))
-        switchEffect(2);
-    else if (press == CONF_PARAM("effects.harmonics"))
-        switchEffect(14);
-    else if (press == "trem")
-        switchEffect(24); //tremlo picking
-    else if (press == CONF_PARAM("effects.trill"))
-        switchEffect(24);
-    else if (press == CONF_PARAM("effects.stokatto"))
-        switchEffect(23);
-    //if (press == "tapp") return;  if (press == "slap") return; if (press == "pop") return; //TODO
-    else if (press == CONF_PARAM("effects.fadein"))
-        switchBeatEffect(20);
-    //if (press == "up m") return; if (press == "down m") return; //TODO
-    else if (press == CONF_PARAM("effects.accent"))
-        switchEffect(27);
-    else if (press == "h acc")
-        switchEffect(27); ///should be another TODO
-    else if (press == "bend")
-        setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
-    else if (press == "chord") {
-        if (getMaster()) getMaster()->pushForceKey("chord_view"); }
-    else if (press == "text")
-        setTextOnBeat(pTrack->getV(cursor)->getV(cursorBeat));
-    else if (press == "changes")
-        setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
-    //if (press == "fing") return; //TODO
-    else if (press == "upstroke")
-        switchBeatEffect(25);
-    else if (press == "downstroke")
-        switchBeatEffect(26);
-    else if (press == "signs")
-        setBarSign(pTrack->getV(cursor), cursor, commandSequence);
-    else if (press == "cut") //oups - yet works only without selection for 1 bar
-        clipboardCutBar(selectionBarFirst, pTrack->getV(cursor), this);
-    else if (press == "copy") //1 bar
-        clipboarCopyBar(pTrack->getV(cursor), selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent);
-    else if (press == "copyBeat")
-        clipboarCopyBeat(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor, cursorBeat);
-    else if (press == "copyBars")
-        clipboardCopyBars(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor);
-    else if (press == "paste")
-        clipboardPaste(tabParrent->getTab(), pTrack, cursor, commandSequence);
-    else if (press == "undo")
-        undoOnTrack(this, commandSequence);
     else {
         qDebug() << "Key event falls into TabView from TrackView " << press.c_str();
         tabParrent->keyevent(press); //TODO проверить
