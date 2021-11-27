@@ -103,9 +103,11 @@ protected:
     GEffectsPannel *effPan;
     GClipboardPannel *clipPan;
 
-    std::vector<SingleCommand> commandSequence;
+
 
 public:
+
+    Track* getTrack() { return pTrack; }
 
     virtual void setUI();
     virtual bool isMovableY() { return true; }
@@ -156,15 +158,6 @@ public:
     void *getPannel() { return pan; }
 
     bool gotChanges();
-
-    void reverseCommand(SingleCommand &command);//TODO как и другие элементы комманд убрать в общий класс
-
-protected:
-
-    void switchNoteState(byte changeState);
-    void switchEffect(int effIndex);
-
-    void switchBeatEffect(int effIndex);
 
 };
 

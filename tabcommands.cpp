@@ -20,353 +20,8 @@
 #include <fstream>
 
 
-void TrackView::reverseCommand(SingleCommand &command)
-{
-    byte type = command.getType();
-    byte value = command.getValue();
-    byte value2 = command.getValue2();
 
-    //byte trackN = command.getTrackNum();
 
-    int barN = command.getBarNum();
-    int beatN = command.getBeatNum();
-    byte stringN = command.getStringNum();
-
-    if (type == 1) //eff
-    {
-        int ind = value;
-        bool effect = pTrack->getV(barN)->getV(beatN)->getNote(stringN)->effPack.get(ind);
-        effect = !effect;
-        pTrack->getV(barN)->getV(beatN)->getNote(stringN)->effPack.set(ind,effect);
-    }
-
-    if (type == 2) //beat eff
-    {
-        int ind = value;
-        bool effect = pTrack->getV(barN)->getV(beatN)->effPack.get(ind);
-        effect = !effect;
-        pTrack->getV(barN)->getV(beatN)->effPack.set(ind,effect);
-    }
-
-    if (type == 3) //fret
-    {
-        if (value != 255)
-            pTrack->getV(barN)->getV(beatN)->setFret(value,stringN);
-        else
-            pTrack->getV(barN)->getV(beatN)->deleteNote(stringN);
-
-    }
-
-    if (type == 4) //duration
-    {
-        pTrack->getV(barN)->getV(beatN)->setDuration(value);
-    }
-
-    if (type == 5) //detail
-    {
-        pTrack->getV(barN)->getV(beatN)->setDurationDetail(value);
-    }
-
-    if (type == 6) //dot
-    {
-        pTrack->getV(barN)->getV(beatN)->setDotted(value);
-    }
-
-    if (type == 7) //pause
-    {
-        if (command.storedNotes)
-        {
-            for (size_t i = 0; i < command.storedNotes->size(); ++i)
-            {
-                Note *note = command.storedNotes->operator [](i);
-                pTrack->getV(barN)->getV(beatN)->add(note);
-            }
-
-            pTrack->getV(barN)->getV(beatN)->setPause(false);
-
-            command.releaseStoredNotes();
-        }
-    }
-
-    if (type == 8)
-    {
-        if (command.storedNotes) //delete note
-        {
-            Note *note = command.storedNotes->operator [](0);
-            pTrack->getV(barN)->getV(beatN)->add(note);
-
-            pTrack->getV(barN)->getV(beatN)->setPause(false);
-
-            command.releaseStoredNotes();
-        }
-        else //deleted beat
-        {
-            Beat *beat = new Beat();
-
-            byte dur = value&7;
-            byte rhythmDetail = value & 0x78; //4 bits after first 3
-            rhythmDetail>>=3;
-
-            byte dotAppear = stringN & 3; //wow
-
-            beat->setPause(true);
-            beat->setDotted(dotAppear);
-            beat->setDuration(dur);
-            beat->setDurationDetail(rhythmDetail);
-
-            pTrack->getV(barN)->insertBefore(beat,beatN);
-            pTrack->connectAll(); //oups?
-        }
-    }
-
-    if (type == 16)
-    {
-        int len = beatN; //param
-        if (!len)
-        { //as len = 1 but default
-            pTrack->remove(barN);
-            pTrack->cursor() = pTrack->displayIndex();
-            tabParrent->setCurrentBar(pTrack->cursor());
-        }
-        else
-        {
-            for (int i = 0; i < len; ++i)
-                pTrack->remove(barN);
-
-            pTrack->cursor() = pTrack->displayIndex();
-            tabParrent->setCurrentBar(pTrack->cursor());
-        }
-        if (pTrack->cursor())
-            --pTrack->cursor();
-    }
-
-    if (type == 17)
-    {
-        Note *note = (pTrack->getV(barN)->getV(beatN)->getNote(stringN));
-        note->setState(value);
-    }
-
-    if (type == 18)
-    {
-        pTrack->getV(barN)->remove(beatN);
-        pTrack->connectAll();
-        if (pTrack->cursorBeat())
-            --pTrack->cursorBeat();
-        //may be shift cursorBeat (when activate <> undo)
-    }
-
-    if (type == 19)
-    {
-        pTrack->getV(barN)->setSignDenum(value);
-        pTrack->getV(barN)->setSignNum(value2);
-    }
-
-    if (type == 24)
-    {
-        int len = beatN;
-        if (!len)
-        {
-            Bar *addition = (Bar*)(command.outerPtr);
-            pTrack->insertBefore(addition,barN);
-            pTrack->connectAll();
-        }
-    }
-
-    if (type == 25)
-    {
-        Bar *addition = (Bar*)(command.outerPtrEnd);
-        Bar *firstBar  = (Bar*)(command.outerPtr);
-        //sicky
-        for (;addition != firstBar; addition=(Bar*)addition->getPrev())
-        {
-            if (addition == 0)
-                break;
-
-            qDebug() << "Addition addr "<<(addition);
-
-            pTrack->insertBefore(addition,barN);
-        }
-        pTrack->insertBefore(firstBar,barN);
-        pTrack->connectAll();
-        pTrack->cursor()=barN;
-    }
-
-    if (type == 26)
-    {
-        Beat *firstBeat = (Beat*)(command.outerPtr);
-        Beat *lastBeat  = (Beat*)(command.outerPtrEnd);
-        Bar *firstPa = (Bar*)(firstBeat->getParent());
-        Bar *lastPa = (Bar*)(lastBeat->getParent());//s
-
-        Beat *curBeat = lastBeat;
-
-        if (firstPa == lastPa)
-        {
-            if (value && value2)
-                pTrack->insertBefore(firstPa,barN);
-            else
-            {
-                while(curBeat != firstBeat)
-                {
-                    pTrack->getV(barN)->insertBefore(curBeat,beatN);
-                    curBeat = (Beat*)curBeat->getPrev();
-                    if (curBeat == 0)
-                        break;
-                }
-                if (curBeat==firstBeat)
-                    pTrack->getV(barN)->insertBefore(curBeat,beatN);
-            }
-        }
-        else
-        {
-            if (value==0)
-                ++barN; //sift when first not full
-
-            Bar *curBar = (Bar*)lastPa->getPrev();
-
-            if (value2)
-            {
-                //last pa if full
-                pTrack->insertBefore(lastPa,barN);
-            }
-            else
-            {
-                //int indexInBar = -1;
-
-                while(curBeat->getParent() == lastPa)
-                {
-                    pTrack->getV(barN)->insertBefore(curBeat,0);
-                    curBeat = (Beat*)curBeat->getPrev();
-                    if (curBeat == 0)
-                    {
-                        //what is this
-                        if(curBar)
-                        curBeat = curBar->getV(curBar->len()-1); //issuepossible
-                        break;
-                    }
-                }
-            }
-
-
-           //middle part - if there is particular cut - then
-           //then we have pointers to alive bars
-
-           //could find their indexes
-
-            Bar *firstInSeq = command.startBar;
-            Bar *lastInSeq  = command.endBar;
-
-            if ((lastInSeq != firstPa) || (firstInSeq != lastPa))
-            {
-                Bar *currentBar = lastInSeq;
-
-                while (currentBar != firstInSeq)
-                {
-                    pTrack->insertBefore(currentBar,barN);
-
-                    currentBar = (Bar*)currentBar->getPrev();
-                    if (currentBar==0)
-                        break;
-                }
-
-                if (currentBar == firstInSeq)
-                    pTrack->insertBefore(currentBar,barN);
-            }
-
-
-
-           if (value)
-           {    //first is full
-
-               pTrack->insertBefore(firstPa,barN);
-           }
-           else
-           {
-               --barN;
-               //curBeat = curBeat->getPrev(); //slide into first pa property
-
-
-               curBeat = firstBeat;
-               //insert here
-               int counter = 0;
-
-               if (curBeat)
-               while (curBeat->getParent() == firstPa)
-               {
-                   pTrack->getV(barN)->
-                           insertBefore(curBeat,
-                                        pTrack->getV(barN)->len()
-                                                    -counter);
-
-                   ++counter;
-                   curBeat = (Beat*)curBeat->getNext();
-                   if (curBeat==0)
-                       break;
-               }
-           }
-        }
-
-       pTrack->connectAll();
-       pTrack->cursor()=barN;
-       if (pTrack->displayIndex() > pTrack->cursor())
-           pTrack->displayIndex() = pTrack->cursor();
-       //from here till first beat insert at barN
-
-    }
-}
-
-void TrackView::switchEffect(int effIndex) {
-
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
-
-    if (pTrack->getV(cursor)->getV(cursorBeat)->getPause())
-        return;
-
-    if (pTrack->getV(cursor)->getV(cursorBeat)->len()==0)
-        return;
-
-    if (tabParrent->getPlaying())
-        return;
-
-    int ind = effIndex;
-    //check for pause
-
-    Note *theNote = pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1);
-    if (theNote)
-    {
-        bool effect = theNote->effPack.get(ind);
-        effect = !effect;
-        pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1)->effPack.set(ind,effect);
-
-        SingleCommand command(1,effIndex); //note effect
-        command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-        commandSequence.push_back(command);
-    }
-}
-
-void TrackView::switchBeatEffect(int effIndex)
-{
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-
-    if (pTrack->getV(cursor)->getV(cursorBeat)->getPause())
-        return;
-
-    if (tabParrent->getPlaying())
-        return;
-
-    int ind = effIndex;
-    //check for pause
-    bool effect = pTrack->getV(cursor)->getV(cursorBeat)->effPack.get(ind);
-    effect = !effect;
-    pTrack->getV(cursor)->getV(cursorBeat)->effPack.set(ind,effect);
-
-    SingleCommand command(2,effIndex); //beat effect
-    command.setPosition(0,cursor,cursorBeat);
-    commandSequence.push_back(command);
-}
 
 //Trackview events:
 
@@ -1455,7 +1110,7 @@ void undoOnTrack(TrackView* tw, std::vector<SingleCommand>& commandSequence) {
     if (commandSequence.size()) {
         SingleCommand lastCommand = commandSequence[commandSequence.size()-1];
         commandSequence.pop_back();
-        tw->reverseCommand(lastCommand);
+        tw->getTrack()->reverseCommand(lastCommand);
     }
     return;
 }
@@ -1491,7 +1146,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SelectionExpandRight)
         moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
     else if (command == TrackCommand::InsertBar)
-        insertBar(pTrack, cursor, cursorBeat, commandSequence);
+        insertBar(pTrack, cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::NextBar) // => //bar walk
         moveToNextBar(cursor, pTrack, cursorBeat, displayIndex, stringCursor, digitPress, lastSeen);
     else if (command == TrackCommand::PrevBar) // <= //bar walk
@@ -1511,21 +1166,21 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::PrevBeat)
         moveToPrevBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress, pTrack);
     else if (command == TrackCommand::NextBeat)
-        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, commandSequence);
+        moveToNextBeat(cursorBeat, cursor, displayIndex, stringCursor, digitPress,  lastSeen, pTrack, pTrack->commandSequence);
     else if (command == TrackCommand::SetPause)
-        setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
+        setTrackPause(cursor, cursorBeat, digitPress, pTrack, pTrack->commandSequence);
     else if (command == TrackCommand::DeleteBar)
-        deleteBar(cursor, pTrack, commandSequence);
+        deleteBar(cursor, pTrack, pTrack->commandSequence);
     else if (command == TrackCommand::DeleteSelectedBars)
-        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+        deleteSelectedBars(cursor, pTrack, pTrack->commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     else if (command == TrackCommand::DeleteSelectedBeats)
-        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+        deleteSelectedBeats(cursor, pTrack, pTrack->commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     else if (command == TrackCommand::DeleteNote)
-        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
+        deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, pTrack->commandSequence);
     else if (command == TrackCommand::IncDuration)
-        incDuration(pTrack, cursor, cursorBeat, commandSequence);
+        incDuration(pTrack, cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::DecDuration)
-        decDuration(pTrack, cursor, cursorBeat, commandSequence);
+        decDuration(pTrack, cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
         playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
     else if (command == TrackCommand::SaveFile)
@@ -1533,41 +1188,41 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
     else if (command == TrackCommand::NewBar)
-        newBar(pTrack, cursor, cursorBeat, commandSequence);
+        newBar(pTrack, cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::SetDot)
-        setDotOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+        setDotOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::SetTriole)
-        setTriolOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, commandSequence);
+        setTriolOnBeat(pTrack->getV(cursor)->getV(cursorBeat), cursor, cursorBeat, pTrack->commandSequence);
     else if (command == TrackCommand::Leeg) {
-        switchNoteState(2); digitPress = -1;
+        pTrack->switchNoteState(2); digitPress = -1;
     }
     else if (command == TrackCommand::Dead) {
-        switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
+        pTrack->switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
     }
     else if (command == TrackCommand::Vibrato)
-        switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
+        pTrack->switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
     else if (command == TrackCommand::Slide)
-        switchEffect(4); //TODO cover on new abstraction level tabs-core
+        pTrack->switchEffect(4); //TODO cover on new abstraction level tabs-core
     else if (command == TrackCommand::Hammer)
-        switchEffect(10);
+        pTrack->switchEffect(10);
     else if (command == TrackCommand::LetRing)
-        switchEffect(18);
+        pTrack->switchEffect(18);
     else if (command == TrackCommand::PalmMute)
-        switchEffect(2);
+        pTrack->switchEffect(2);
     else if (command == TrackCommand::Harmonics)
-        switchEffect(14);
+        pTrack->switchEffect(14);
     else if (command == TrackCommand::TremoloPickings)
-        switchEffect(24); //tremlo picking
+        pTrack->switchEffect(24); //tremlo picking
     else if (command == TrackCommand::Trill)
-        switchEffect(24);
+        pTrack->switchEffect(24);
     else if (command == TrackCommand::Stokatto)
-        switchEffect(23);
+        pTrack->switchEffect(23);
     else if (command == TrackCommand::FadeIn) //TODO fade out
-        switchBeatEffect(20);
+        pTrack->switchBeatEffect(20);
     else if (command == TrackCommand::Accent)
-        switchEffect(27);
+        pTrack->switchEffect(27);
     else if (command == TrackCommand::HeaveAccent)
-        switchEffect(27); ///should be another TODO
+        pTrack->switchEffect(27); ///should be another TODO
     else if (command == TrackCommand::Bend)
         setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
     else if (command == TrackCommand::Chord) {
@@ -1577,11 +1232,11 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::Changes)
         setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
     else if (command == TrackCommand::UpStroke)
-        switchBeatEffect(25);
+        pTrack->switchBeatEffect(25);
     else if (command == TrackCommand::DownStroke)
-        switchBeatEffect(26);
+        pTrack->switchBeatEffect(26);
     else if (command == TrackCommand::SetBarSign)
-        setBarSign(pTrack->getV(cursor), cursor, commandSequence);
+        setBarSign(pTrack->getV(cursor), cursor, pTrack->commandSequence);
     else if (command == TrackCommand::Cut) //oups - yet works only without selection for 1 bar
         clipboardCutBar(selectionBarFirst, pTrack->getV(cursor), this);
     else if (command == TrackCommand::Copy) //1 bar
@@ -1591,9 +1246,9 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::CopyBars)
         clipboardCopyBars(selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast, tabParrent, cursor);
     else if (command == TrackCommand::Past )
-        clipboardPaste(tabParrent->getTab(), pTrack, cursor, commandSequence);
+        clipboardPaste(tabParrent->getTab(), pTrack, cursor, pTrack->commandSequence);
     else if (command == TrackCommand::Undo)
-        undoOnTrack(this, commandSequence);
+        undoOnTrack(this, pTrack->commandSequence);
 }
 
 
@@ -1607,7 +1262,7 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
     if (press.substr(0,4)=="com:")
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
     else if (isdigit(press[0]))
-        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, commandSequence);
+        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, pTrack->commandSequence);
     else {
         qDebug() << "Key event falls into TabView from TrackView " << press.c_str();
         tabParrent->keyevent(press); //TODO проверить

@@ -733,6 +733,13 @@ public:
     int& selectBarLast() { return _selectionBarLast;}
     int& selectBeatFirst() { return _selectionBeatFirst;}
     int& selectBeatLast() { return _selectionBeatLast;}
+
+    void switchEffect(int effIndex);
+    void switchBeatEffect(int effIndex);
+    void switchNoteState(byte changeState);
+    void reverseCommand(SingleCommand &command);
+
+    std::vector<SingleCommand> commandSequence;
 };
 
 //here would lay Guitar Pro header comptibilator

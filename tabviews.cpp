@@ -467,52 +467,7 @@ void TrackView::connectThreadSignal(MasterView *masterView)
 }
 
 
-void TrackView::switchNoteState(byte changeState)
-{
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
 
-    Note *note = (pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1));
-
-    if ((pTrack->getV(cursor)->getV(cursorBeat)->getPause()) ||
-        (pTrack->getV(cursor)->getV(cursorBeat)->len()==0)
-            ||(note==0))
-    {
-        pTrack->getV(cursor)->getV(cursorBeat)->setPause(false);
-
-        Note *newNote=new Note();
-        newNote->setState(changeState);
-        newNote->setFret(0);
-        newNote->setStringNumber(stringCursor+1);
-
-        pTrack->getV(cursor)->getV(cursorBeat)->add(newNote);
-
-
-        SingleCommand command(3,255);
-        command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-        commandSequence.push_back(command);
-
-        return;
-    }
-
-
-    //if (note != 0)
-    {
-
-    byte state = note->getState();
-
-    if (state == changeState)
-        note->setState(0);
-    else
-        note->setState(changeState);
-
-    SingleCommand command(17,state);
-    command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-    commandSequence.push_back(command);
-
-    }
-}
 
 
 
@@ -1991,7 +1946,7 @@ bool TabView::gotChanges()
 
 bool TrackView::gotChanges()
 {
-    if (commandSequence.size())
+    if (pTrack->commandSequence.size())
         return true;
     return false;
 }
