@@ -740,6 +740,42 @@ public:
     void reverseCommand(SingleCommand &command);
 
     std::vector<SingleCommand> commandSequence;
+
+    void gotoTrackStart();
+    void changeBarSigns(int num, int denom);
+    void moveSelectionLeft();
+    void moveSelectionRight();
+    void insertBar();
+    void moveToNextBar();
+    void moveToPrevBar();
+    void moveToPrevPage();
+    void moveToNextPage();
+    void moveToNextTrack();
+    void moveToPrevTrack();
+    void moveToStringUp();
+    void moveToStringDown();
+    void moveToPrevBeat();
+    void moveToNextBeat();
+    void setTrackPause();
+    void deleteBar();
+    void deleteSelectedBars();
+    void deleteSelectedBeats();
+    void deleteNote();
+    void incDuration();
+    void decDuration();
+    void saveFromTrack();
+    void newBar();
+    void setDotOnBeat();
+    void setTriolOnBeat();
+    //void setBendOnNote(); //TODO
+    void setTextOnBeat();
+    void setBarSign(int num, int denom);
+    void clipboarCopyBar(); //refact name
+    void clipboarCopyBeat();
+    void clipboardCopyBars();
+    void clipboardCutBar(); //Вызов команды функцией
+    void clipboardPaste();
+    void undoOnTrack();
 };
 
 //here would lay Guitar Pro header comptibilator
