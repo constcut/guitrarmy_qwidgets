@@ -10,7 +10,8 @@
 #include <QDebug>
 
 //TODO rename file when old tab commands would be erased
-
+//TODO prepare undo operations
+//They have to be for all possible commands
 
 void Tab::setSignsTillEnd(int num, int denom) {
     for (size_t i = currentBar; i < this->getV(0)->len(); ++i){
@@ -82,6 +83,14 @@ void Tab::changeTrackName(std::string newName) {
     getV(currentTrack)->setName(newName);
 }
 
+
+void Tab::changeTrackInstrument(int val) {
+    getV(currentTrack)->setInstrument(val);
+}
+
+void Tab::changeTrackPanoram(int val) {
+    getV(currentTrack)->setPan(val);
+}
 
 Track* Tab::createNewTrack() { //Move into Tab
     Tab* pTab = this;

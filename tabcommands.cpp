@@ -5,9 +5,7 @@
 
 //other dep
 #include "g0/midifile.h"
-#include "g0/gmyfile.h"
 #include "g0/aexpimp.h"
-#include "g0/gtpfiles.h"
 
 #include <QInputDialog>
 #include <QMutex>
@@ -15,15 +13,10 @@
 #include <QApplication>
 #include <QScreen>
 
-#include <unordered_map>
-
 #include "midiengine.h"
-
 #include "libtim/miditopcm.h"
 
 #include <QDebug>
-
-
 #include <fstream>
 
 
@@ -384,21 +377,13 @@ void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView
         mw->pushForceKey(mini);
     }
     if (combo=="1")
-    {
         pTrack->setInstrument(itemNum);
-    }
     if (combo=="2")
-    {
         pTrack->setVolume(itemNum);
-    }
     if (combo=="5")
-    {
         pTrack->setStatus(itemNum);
-    }
     if (combo=="6")
-    {
         pTrack->setPan(itemNum);
-    }
 }
 
 void gotoTrackStart(size_t& cursorBeat, size_t& cursor, size_t& displayIndex) {
@@ -491,8 +476,6 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
     else
         digitPress = digit;
 
-
-
     if ( pTrack->getV(cursor)->len() > cursorBeat ) {
         byte lastFret = pTrack->getV(cursor)->getV(cursorBeat)->getFret(stringCursor+1);
 
@@ -503,14 +486,12 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
         Note *inputedNote =  pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1);
         byte tune = pTrack->tuning.getTune(stringCursor);
         int chan = 0;
-        if (pTrack->isDrums())
-        {
+        if (pTrack->isDrums()) {
             chan = 9; //tune to 0 attention refact error
             tune = 0;
         }
         byte midiNote = inputedNote->getMidiNote(tune);
         MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
-       //attention something gone wrong there - recheck on local
         ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
         //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
     }
@@ -1933,7 +1914,7 @@ int changeTrackPanoram(Tab* pTab) {
     int newPan = QInputDialog::getInt(0,"Input",
                         "Instrument Panoram:", QLineEdit::Normal,
                         0,16,1,&ok);*/
-    int curPan = pTrack->getPan();
+    int curPan = pTrack->getPan(); //TODO pTab->getTrackPan
     QString result = QInputDialog::getItem(0,"Input",
                                 "New Panoram:",items, curPan,false,&ok);
 
@@ -1945,7 +1926,7 @@ int changeTrackPanoram(Tab* pTab) {
                break;
            }
       if (backToNumber >= 0)
-        pTrack->setPan(backToNumber);
+        pTab->changeTrackPanoram(backToNumber);
     }
     return backToNumber;
 }
@@ -2091,7 +2072,7 @@ int changeTrackInstrument(Tab* pTab) {
         items.push_back(s.c_str());
     }
 
-    int curInstr = pTrack->getInstrument();
+    int curInstr = pTrack->getInstrument(); //TODO get current instr?
 
     QString result = QInputDialog::getItem(0,"Input",
                                  "New Instrument:",items, curInstr,false,&ok);
@@ -2104,7 +2085,7 @@ int changeTrackInstrument(Tab* pTab) {
             }
 
     if (backToNumber>=0)
-        pTrack->setInstrument(backToNumber);
+        pTab->changeTrackInstrument(backToNumber);
 
     return backToNumber;
 }

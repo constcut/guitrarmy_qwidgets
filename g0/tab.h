@@ -868,11 +868,15 @@ public: //later cover under midlayer TabCommandsHandler
     void setSignsTillEnd(int num, int denom);
     void changeTrackVolume(int newVol);
     void changeTrackName(std::string newName);
+    void changeTrackInstrument(int val);
+    void changeTrackPanoram(int val);
     void setMarker(std::string text);
 
     void gotoBar(size_t pos);
     void saveAs(std::string filename);
     void closeReprise(size_t count);
+
+
 };
 
 
