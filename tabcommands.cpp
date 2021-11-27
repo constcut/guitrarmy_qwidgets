@@ -1704,6 +1704,7 @@ void TabView::keyevent(std::string press) {
         openTrackQt(pTab->len(),lastOpenedTrack, this, press.c_str()[0]-48);
 }
 
+//Tab commands area
 
 void deleteTrack(Tab* pTab) { //TODOM
     bool ok=false;

@@ -4,17 +4,9 @@
 #include "g0/gmyfile.h"
 #include "g0/aexpimp.h"
 #include "g0/gtpfiles.h"
-
-#include <QInputDialog>
-#include <QMutex>
-#include <QFileDialog>
-#include <QApplication>
-#include <QScreen>
+#include "midiengine.h"
 
 #include <fstream>
-
-#include "midiengine.h"
-#include "libtim/miditopcm.h"
 #include <QDebug>
 
 //TODO rename file when old tab commands would be erased
@@ -26,7 +18,6 @@ void Tab::setSignsTillEnd(int num, int denom) {
         this->getV(0)->getV(i)->setSignNum(num);
     }
 }
-
 
 void Tab::muteTrack() { //Move into Tab
     byte curStat = this->getV(displayTrack)->getStatus();
@@ -45,7 +36,6 @@ void Tab::soloTrack() { //Move into Tab
         this->getV(displayTrack)->setStatus(2);
 }
 
-
 void Tab::moveCursorInTrackRight() {
     if (displayBar < getV(0)->len() - 1)
         ++displayBar;
@@ -55,7 +45,6 @@ void Tab::moveCursorInTrackLeft() {
     if (displayBar > 0)
         --displayBar;
 }
-
 
 
 void Tab::moveCursorOfTrackUp() {
@@ -153,7 +142,6 @@ void Tab::midiPause() {
 }
 
 
-
 void Tab::setMarker(std::string text) {
     Bar* fromFirstTrack = getV(0)->getV(currentBar);
     fromFirstTrack->setGPCOMPMarker(text,0);
@@ -172,7 +160,6 @@ void Tab::openReprise() {
     else
         firstTrackBar->setRepeat(1);
 }
-
 
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
@@ -196,13 +183,13 @@ void Tab::gotoBar(size_t pos) {
     displayBar = pos;
 }
 
+
 void Tab::saveAs(std::string filename) {
     std::ofstream file(filename);
     GmyFile gmyFile;
     gmyFile.saveToFile(&file, this);
     file.close();
 }
-
 
 
 void Tab::onTabCommand(TabCommand command) {
@@ -225,3 +212,5 @@ void Tab::onTabCommand(TabCommand command) {
     else if (command == TabCommand::OpenReprise)
         openReprise();
 }
+
+//TODO возможно дополнить установку инструмента, панорамы и громкости, чтобы не нужно было обращаться к текущему треку, а использовать "вшитые курсоры"
