@@ -167,6 +167,7 @@ protected:
 
     //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
     std::unordered_map<std::string, TabCommand> tabCommands;
+    std::unordered_map<std::string, TrackCommand> trackCommands;
 
     //std::vector<QPushButton*> testButtons;
     //std::vector<QComboBox*> patternInstruments;

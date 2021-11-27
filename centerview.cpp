@@ -831,6 +831,66 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
         {"goToN", TabCommand::GotoBar},
         {"tune",  TabCommand::Tune}
     };
+
+    trackCommands = {
+        {"playFromStart", TrackCommand::PlayFromStart},
+        {"gotoStart", TrackCommand::GotoStart},
+        {"set for selected", TrackCommand::SetSignForSelected},
+        {"select >", TrackCommand::SelectionExpandRight},
+        {"select <", TrackCommand::SelectionExpandLeft},
+        {"ins", TrackCommand::InsertBar},
+        {CONF_PARAM("TrackView.nextBar"), TrackCommand::NextBar},
+        {CONF_PARAM("TrackView.prevBar"), TrackCommand::PrevBar},
+        {"prevPage", TrackCommand::PrevPage},
+        {"nextPage", TrackCommand::NextPage},
+        {"nextTrack", TrackCommand::NextTrack},
+        {"prevTrack", TrackCommand::PrevTrack},
+        {CONF_PARAM("TrackView.stringDown"), TrackCommand::StringDown},
+        {CONF_PARAM("TrackView.stringUp"), TrackCommand::StringUp},
+        {CONF_PARAM("TrackView.prevBeat"), TrackCommand::PrevBeat},
+        {CONF_PARAM("TrackView.nextBeat"), TrackCommand::NextBeat},
+        {CONF_PARAM("TrackView.setPause"), TrackCommand::SetPause},
+        {"delete bar", TrackCommand::DeleteBar},
+        {"delete selected bars", TrackCommand::DeleteSelectedBars},
+        {"delete selected beats", TrackCommand::DeleteSelectedBeats},
+        {CONF_PARAM("TrackView.deleteNote"), TrackCommand::DeleteNote},
+        {CONF_PARAM("TrackView.increaceDuration"), TrackCommand::IncDuration},
+        {CONF_PARAM("TrackView.decreaceDuration"), TrackCommand::DecDuration},
+        {CONF_PARAM("TrackView.playMidi"), TrackCommand::PlayTrackMidi},
+        {CONF_PARAM("TrackView.save"), TrackCommand::SaveFile},
+        {"save as", TrackCommand::SaveAsFromTrack},
+        {"newBar", TrackCommand::NewBar},
+        {"dot", TrackCommand::SetDot},
+        {"-3-",  TrackCommand::SetTriole},
+        {"leeg", TrackCommand::Leeg},
+        {"dead", TrackCommand::Dead},
+        {CONF_PARAM("effects.vibrato"), TrackCommand::Vibrato },
+        {CONF_PARAM("effects.slide"), TrackCommand::Slide },
+        {CONF_PARAM("effects.hammer"), TrackCommand::Hammer},
+        {CONF_PARAM("effects.letring"), TrackCommand::LetRing},
+        {CONF_PARAM("effects.palmmute"), TrackCommand::PalmMute},
+        {CONF_PARAM("effects.harmonics"), TrackCommand::Harmonics},
+        {"trem", TrackCommand::TremoloPickings},
+        {CONF_PARAM("effects.trill"), TrackCommand::Trill},
+        {CONF_PARAM("effects.stokatto"), TrackCommand::Stokatto},
+        {CONF_PARAM("effects.fadein"), TrackCommand::FadeIn},
+        {CONF_PARAM("effects.accent"), TrackCommand::Accent},
+        {"h acc", TrackCommand::HeaveAccent},
+        {"bend", TrackCommand::Bend},
+        {"chord", TrackCommand::Chord},
+        {"text", TrackCommand::Text},
+        {"changes", TrackCommand::Changes},
+        {"upstroke", TrackCommand::UpStroke},
+        {"downstroke", TrackCommand::DownStroke},
+        {"signs", TrackCommand::SetBarSign},
+        {"cut", TrackCommand::Cut},
+        {"copy", TrackCommand::Copy},
+        {"copyBeat", TrackCommand::CopyBeat},
+        {"copyBars", TrackCommand::CopyBars},
+        {"paste", TrackCommand::Past},
+        {"undo", TrackCommand::Undo}
+        //TODO map not working too
+    };
 }
 
 void CenterView::connectThread(void *localThr)
@@ -1261,8 +1321,12 @@ void CenterView::pushForceKey(std::string keyevent)
     checkView();
     if (auto child = getFirstChild()) {
 
-        if (tabCommands.count(keyevent)) { //Расчесать помере замены комманд на Enum
-            qDebug() << "Pushed as a command";
+        if (trackCommands.count(keyevent)) {
+            qDebug() << "Pushed as a track command";
+            child->onTrackCommand(trackCommands.at(keyevent));
+        }
+        else if (tabCommands.count(keyevent)) { //Расчесать помере замены комманд на Enum
+            qDebug() << "Pushed as a tab command";
             child->onTabCommand(tabCommands.at(keyevent)); //TODO мы будем терять навигацию пока что
         }
         else  {

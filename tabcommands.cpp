@@ -1472,6 +1472,8 @@ void undoOnTrack(TrackView* tw, std::vector<SingleCommand>& commandSequence) {
     return;
 }
 
+
+
 void TrackView::onTrackCommand(TrackCommand command) {
 
     if (command == TrackCommand::PlayFromStart) {
@@ -1484,7 +1486,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
       changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
     else if (command == TrackCommand::SelectionExpandLeft)
         moveSelectionLeft(pTrack, selectionBeatFirst, selectionBarFirst);
-    else if (command == TrackCommand::SelectionExpanRight)
+    else if (command == TrackCommand::SelectionExpandRight)
         moveSelectionRight(pTrack, selectionBeatLast, selectionBarLast);
     else if (command == TrackCommand::InsertBar)
         insertBar(pTrack, cursor, cursorBeat, commandSequence);
@@ -1512,11 +1514,11 @@ void TrackView::onTrackCommand(TrackCommand command) {
         setTrackPause(cursor, cursorBeat, digitPress, pTrack, commandSequence);
     else if (command == TrackCommand::DeleteBar)
         deleteBar(cursor, pTrack, commandSequence);
-    else if (command == TrackCommand::DeleteBar)
-        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     else if (command == TrackCommand::DeleteSelectedBars)
-        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+        deleteSelectedBars(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
     else if (command == TrackCommand::DeleteSelectedBeats)
+        deleteSelectedBeats(cursor, pTrack, commandSequence, selectionBarFirst, selectionBarLast, selectionBeatFirst, selectionBeatLast);
+    else if (command == TrackCommand::DeleteNote)
         deleteNote(pTrack, cursor, cursorBeat, stringCursor, digitPress, commandSequence);
     else if (command == TrackCommand::IncDuration)
         incDuration(pTrack, cursor, cursorBeat, commandSequence);
@@ -1591,6 +1593,8 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::Undo)
         undoOnTrack(this, commandSequence);
 }
+
+
 
 void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
 {
@@ -1740,10 +1744,7 @@ void setSignTillEnd(Tab* pTab, size_t currentBar) {
                          1,128,1,&ok);
     if (!ok)
         return;
-
-    ok=false;
-
-    //GET ITEM
+    ok=  false;
     int newDen = QInputDialog::getInt(0,"Input",
                          "New Denum(1,2,4,8,16):", QLineEdit::Normal,
                          1,128,1,&ok);

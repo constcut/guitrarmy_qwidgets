@@ -38,7 +38,7 @@ enum TrackCommand {
     GotoStart,
     SetSignForSelected,
     SelectionExpandLeft,
-    SelectionExpanRight,
+    SelectionExpandRight,
     InsertBar,
     NextBar,
     PrevBar,
