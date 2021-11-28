@@ -345,7 +345,7 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
             sig->absValue = absTimeShift;
 
-            allSignals.push_back(sig);
+            allSignals.push_back(sig.get());
         }
     }
 

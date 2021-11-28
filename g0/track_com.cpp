@@ -10,7 +10,7 @@
 #include <fstream>
 #include <QDebug>
 
-void Track::switchEffect(int effIndex) {
+void Track::switchEffect(NoteEffects effect) {
 
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
@@ -22,7 +22,7 @@ void Track::switchEffect(int effIndex) {
     if (pa->playing())
         return;
 
-    int ind = effIndex;
+    int ind = (int)effect;
 
     Note *theNote = this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1);
     if (theNote) {
@@ -30,14 +30,15 @@ void Track::switchEffect(int effIndex) {
         effect = !effect;
         this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.set(ind,effect);
 
-        SingleCommand command(ReversableCommand::SwitchEffectNote, effIndex); //note effect
+        SingleCommand command(ReversableCommand::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
         commandSequence.push_back(std::move(command));
     }
 }
 
-void Track::switchBeatEffect(int effIndex) {
+void Track::switchBeatEffect(BeatEffects beatEffect) {
 
+    int effIndex = static_cast<int>(beatEffect);
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
     auto pa = parent;
@@ -54,8 +55,9 @@ void Track::switchBeatEffect(int effIndex) {
     commandSequence.push_back(std::move(command));
 }
 
-void Track::switchNoteState(std::uint8_t changeState)
+void Track::switchNoteState(NoteStates noteState)
 {
+    int changeState = static_cast<int>(noteState);
     size_t& cursor = this->cursor(); //TODO _
     size_t& cursorBeat = this->cursorBeat();
     size_t& stringCursor = this->stringCursor();
@@ -1130,52 +1132,52 @@ void Track::setBarSign(int newNum, int newDen) {
 }
 
 void Track::LeegNote() {
-    switchNoteState(2); //TODO enum
+    switchNoteState(NoteStates::Leeg); //TODO enum
     _digitPress = -1;
 }
 void Track::DeadNote() {
-    switchNoteState(3);
+    switchNoteState(NoteStates::Dead);
     _digitPress = -1;
 }
 void Track::Vibratto() {
-    switchEffect(1);
+    switchEffect(NoteEffects::Vibratto);
 }
 void Track::Slide() {
-    switchEffect(4);
+    switchEffect(NoteEffects::Slide);
 }
 void Track::Hammer() {
-    switchEffect(10);
+    switchEffect(NoteEffects::Hammer);
 }
 void Track::LetRing() {
-    switchEffect(18);
+    switchEffect(NoteEffects::LetRing);
 }
 void Track::PalmMute() {
-    switchEffect(2);
+    switchEffect(NoteEffects::PalmMute);
 }
 void Track::Harmonics() {
-    switchEffect(14);
+    switchEffect(NoteEffects::Harmonics);
 }
 void Track::TremoloPicking() {
-    switchEffect(24); //tremlo picking
+    switchEffect(NoteEffects::Trill); //EMM.. TODO //tremlo picking
 }
 void Track::Trill() {
-    switchEffect(24);
+    switchEffect(NoteEffects::Trill);
 }
 void Track::Stokatto() {
-    switchEffect(23);
+    switchEffect(NoteEffects::Stokatto);
 }
-void Track::FadeIn() {
-    switchBeatEffect(20);
-} //Todo fade out
+void Track::FadeIn() { //Todo fade out
+    switchBeatEffect(BeatEffects::FadeIn);
+}
 void Track::Accent() {
-    switchEffect(27);
+    switchEffect(NoteEffects::Accent);
 }
 void Track::HeavyAccent() {
-    switchEffect(27); //TODO real & new
+    switchEffect(NoteEffects::Accent); //TODO real & new
 }
 void Track::UpStroke() {
-    switchBeatEffect(25);
+    switchBeatEffect(BeatEffects::UpStroke);
 }
 void Track::DownStroke() {
-    switchBeatEffect(26);
+    switchBeatEffect(BeatEffects::DownStroke);
 }

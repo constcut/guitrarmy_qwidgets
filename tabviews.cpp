@@ -1483,14 +1483,9 @@ void BarView::draw(QPainter *painter)
 
         auto& curBeat = bar1->at(i);
 
-        for (size_t j =0; j < curBeat->size(); ++j)
-        {
+        for (size_t j =0; j < curBeat->size(); ++j) {
             auto& curNote = curBeat->at(j);
-
-
-
-            if (curNote)
-            {
+            if (curNote) {
                 int noteTune = 0;
                 int midiNote = 0;
 
