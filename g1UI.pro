@@ -28,6 +28,7 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
+    g0/bar.cpp \
     g0/tab_com.cpp \
     g0/track.cpp \
     g0/track_com.cpp \

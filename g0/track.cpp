@@ -542,6 +542,50 @@ ul Track::connectTimeLoop()
 }
 
 
+//REFACT - cover under Track operations
+typedef std::map<byte,PolyBar> AltRay;
+typedef std::map<byte,std::vector<int> > AltRayInd;
+
+void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, ul indA, ul indB)
+{
+    //possible we will need value for the default repeat
+    byte currentAlt = 0;
+
+    //int normalW = (int)b - (int)a;
+    //int backW = (int)a - (int)b;
+    //qDebug() << "Creating alt ray NORM: "<<normalW<<"; BACK: "<<backW;
+    //qDebug() << "Alt a : "<<(int)a<< " alt b :"<<(int)b;
+
+    ul localInd = 0;
+    for (Bar *barI=a; barI!=b; barI=(Bar*)barI->getNext()
+         ,++localInd)
+    {
+       if (trackLog)
+        qDebug() << "ALTRAY Bar ptr "<<barI;
+       if (barI->getAltRepeat() != 0)
+           currentAlt = barI->getAltRepeat();
+
+       for (byte i=0; i < 8; ++i) {
+           byte altMaskI = currentAlt & (1<<i);
+           if (altMaskI) {
+               altRay[i].add(barI);
+               //altRayInd[i].push_back()
+               altRayInd[i].push_back(localInd+indA);
+           }
+       }
+    }
+
+    currentAlt=b->getAltRepeat();
+    for (byte i=0; i < 8; ++i) {
+        byte altMaskI = currentAlt & (1<<i);
+        if (altMaskI) {
+               altRay[i].add(b);
+               altRayInd[i].push_back(indB);
+        }
+    }
+
+}
+
 
 
 void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,

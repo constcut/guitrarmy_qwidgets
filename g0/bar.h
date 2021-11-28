@@ -5,6 +5,12 @@
 #include "beat.h"
 
 
+int translateDenum(byte den);
+int translaeDuration(byte dur);
+int updateDurationWithDetail(byte detail, int base);
+
+
+
 class Track;
 
 class Bar : public ChainContainer<Beat*, Track> {
