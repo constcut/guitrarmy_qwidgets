@@ -248,6 +248,8 @@ void AConfig::checkConfig()
     addValue("zend","ofconfig");
 
     addValue("onloadBaseCheck","1");
+
+    addValue("midi.config","/home/punnalyse/dev/tim.cfg");
 }
 
 

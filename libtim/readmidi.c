@@ -65,6 +65,7 @@ static sint32 getvl(MidIStream *stream)
    or unprintable characters will be converted to periods. */
 static int read_meta_data(MidIStream *stream, MidSong *song, sint32 len, uint8 type)
 {
+#define TIMIDITY_DEBUG 1
 #ifdef TIMIDITY_DEBUG
   static const char *label[] = {
     "Text event: ", "Text: ", "Copyright: ", "Track name: ",

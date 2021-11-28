@@ -192,7 +192,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
             this->remove(barN);
             this->cursor() = this->displayIndex();
             //tabParrent->setCurrentBar(this->cursor());
-            //TODO must update UI
+            //TODO must update UI ???
         }
         else
         {
@@ -201,7 +201,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
 
             this->cursor() = this->displayIndex();
             //tabParrent->setCurrentBar(this->cursor());
-            //TODO must update UI
+            //TODO must update UI ???
         }
         if (_cursor)
             --_cursor;

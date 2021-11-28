@@ -540,6 +540,7 @@ void pre_resample(MidSong *song, MidSample *sp)
   sint32 incr, ofs, newlen, count;
   sint16 *newdata, *dest, *src = (sint16 *) sp->data, *vptr;
   sint32 v, v1, v2, v3, v4, v5, i;
+ #define TIMIDITY_DEBUG 1
 #ifdef TIMIDITY_DEBUG
   static const char note_name[12][3] = {
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"

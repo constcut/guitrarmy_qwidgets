@@ -14,7 +14,11 @@
 #include <QScreen>
 
 #include "midiengine.h"
+
+
 #include "libtim/miditopcm.h"
+
+
 
 #include <QDebug>
 #include <fstream>
@@ -174,6 +178,7 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
         outFile2.close();
 
         if (CONF_PARAM("midi.config").empty() == false){
+            qDebug() << "Midi config " << CONF_PARAM("midi.config").c_str();
             MidiToPcm generator(CONF_PARAM("midi.config"));
             std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
             generator.convert(fullOutName,outputSound);

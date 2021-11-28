@@ -58,15 +58,17 @@
 #define SWAPLE16(x) XCHG_SHORT(x)
 #define SWAPLE32(x) XCHG_LONG(x)
 #endif
-
+#define TIMIDITY_DEBUG 1
 #if defined(__GNUC__) && !(defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
 /* this is more compatible with very old gcc */
+
 #ifdef TIMIDITY_DEBUG
 #define DEBUG_MSG(fmt, args...) fprintf(stderr, fmt, ##args)
 #else
 #define DEBUG_MSG(fmt, args...)
 #endif
 #else /* use C99 varargs macros */
+#define TIMIDITY_DEBUG 1
 #ifdef TIMIDITY_DEBUG
 #define DEBUG_MSG(...) fprintf(stderr, __VA_ARGS__)
 #else
