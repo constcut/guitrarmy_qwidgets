@@ -17,7 +17,6 @@
 
 
 
-
 int translateDefaulColor(const std::string& confParam){
     int numColor = -1;
     if (confParam == "black") numColor = 0;

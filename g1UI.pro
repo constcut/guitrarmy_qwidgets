@@ -103,7 +103,8 @@ HEADERS  += mainwindow.h \
     qthelper.h \
     inputviews.h \
     midiengine.h \
-    g0/rec.h
+    g0/rec.h \
+    trackview.h
 
 
 
