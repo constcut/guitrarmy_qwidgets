@@ -1,5 +1,26 @@
 #include "beat.h"
 
+
+void BendPoints::insertNewPoint(BendPoint bendPoint)
+{
+    for (ul i = 0; i < len()-1; ++i)
+    {
+        if (at(i).horizontal < bendPoint.horizontal)
+            if (at(i+1).horizontal > bendPoint.horizontal)
+            {
+                this->insertBefore(bendPoint,i+1);
+                return;
+            }
+        if (at(i).horizontal == bendPoint.horizontal)
+        {
+            at(i).vertical = bendPoint.vertical;
+            return;
+        }
+    }
+    add(bendPoint);
+}
+
+
 void Beat::clone(Beat *from)
 {
    effPack.mergeWith(from->effPack);
