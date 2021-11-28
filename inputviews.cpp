@@ -189,12 +189,12 @@ void PatternInput::createBar()
 
 }
 
-void PatternInput::playBar()
-{
+void PatternInput::playBar() {
     //createBar();
 
     Tab patternTab;
     Track *patternTrack=new Track();
+    patternTrack->setParent(&patternTab);
     patternTrack->setDrums(true);
     patternTrack->setInstrument(0);
     patternTrack->setVolume(15);
@@ -822,6 +822,7 @@ void TapRyView::copyAndPlayBar()
     //copy paste
     Tab patternTab;
     Track *patternTrack=new Track();
+    patternTrack->setParent(&patternTab);
     patternTrack->setDrums(true);
     patternTrack->setInstrument(0);
     patternTrack->setVolume(15);
@@ -938,6 +939,7 @@ void TapRyView::keyevent(std::string press)
 
         Tab patternTab;
         Track *patternTrack=new Track();
+        patternTrack->setParent(&patternTab);
         patternTrack->setDrums(true);
         patternTrack->setInstrument(0);
         patternTrack->setVolume(15);
@@ -1516,6 +1518,7 @@ void MorzeInput::playBar()
     {
         Tab morzeTab;
         Track *morzeTrack=new Track();
+        morzeTrack->setParent(&morzeTab);
         morzeTrack->setDrums(true);
         morzeTrack->setInstrument(0);
         morzeTrack->setVolume(15);

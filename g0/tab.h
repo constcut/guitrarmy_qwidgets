@@ -5,10 +5,7 @@
 
 #include <memory.h>
 
-//All definitions to Tablature abstraction
-
-//Most parts now covered under header definition, but refactoring should leave this and hold definitions only but not implementations
-//and comments should be used to let know what and where lays
+//TODO Tab, Track, Bar, Beat, Note - sepparate all the files
 
 #include "abitarray.h"
 #include "tabcommands.h" //move into g0
@@ -601,12 +598,9 @@ class PolyBar : public ChainContainer<Bar*>
     }
 };
 
+
 class Track : public ChainContainer<Bar*>
 {
-protected:
-    //Aplicature applic;
-    //void fullFillAplicature();
-    ///void updateAplicature(); //list of changes
 public:
 
     Track():timeLoop(),drums(false),status(0),pan(0),_cursor(0),_cursorBeat(0),_stringCursor(0),

@@ -323,6 +323,7 @@ void MainView::keyevent(std::string press)
 
                 //newTab->connectTracks();
                 Track *track=new Track();
+                track->setParent(newTab);
                 std::string iName("NewInstrument");
                 track->setName(iName);
                 track->setInstrument(25);

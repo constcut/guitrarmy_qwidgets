@@ -9,15 +9,8 @@
 
 Track *GWave::generateTrack()
 {
-    int fullLen = origin.size()/2; //16 bit only? yep
-    short *rawData = (short*)(origin.data());
-
-    int indataCursor = 0;
-    //will fail all and everything now - not prepared
     Bar *newBar = generateBar(); //rawData,indataCursor);
-
     Track *track = new Track;
-    //give birth std tunning etc
 
     while (newBar != 0)
     {

@@ -517,6 +517,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     {
         //Each track
         Track *track=new Track();
+        track->setParent(tab);
 
         //Name
         std::string trackName="not yet";

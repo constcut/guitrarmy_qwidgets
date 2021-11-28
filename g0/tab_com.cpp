@@ -95,6 +95,7 @@ void Tab::changeTrackPanoram(int val) {
 Track* Tab::createNewTrack() { //Move into Tab
     Tab* pTab = this;
     Track *track=new Track();
+    track->setParent(pTab);
     std::string iName("NewInstrument");
     track->setName(iName);
     track->setInstrument(25);

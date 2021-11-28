@@ -1436,6 +1436,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     for (ul i = 0;i < tracksAmount; ++i)
     {
         Track *newTrack=new Track();
+        newTrack->setParent(tab);
 
         for (ul j = 0; j < beatsAmount; ++j)
         {
@@ -2513,6 +2514,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     for (ul i = 0;i < tracksAmount; ++i)
     {
         Track *newTrack=new Track();
+        newTrack->setParent(tab);
 
         for (ul j = 0; j < beatsAmount; ++j)
         {
@@ -3425,12 +3427,11 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount ;
 
 
-    for (ul i = 0;i < tracksAmount; ++i)
-    {
+    for (ul i = 0;i < tracksAmount; ++i) {
         Track *newTrack = new Track();
+        newTrack->setParent(tab);
 
-        for (ul j = 0; j < beatsAmount; ++j)
-        {
+        for (ul j = 0; j < beatsAmount; ++j) {
             Bar *newBeatBar=new Bar(); //RESERVATION
             newTrack->add(newBeatBar);
         }
