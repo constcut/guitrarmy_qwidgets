@@ -1098,12 +1098,7 @@ void Track::undoOnTrack() {
     }
 }
 
-//TODO play from start
 
-
-//void setBendOnNote(); //TODO
-void changeBarSignsQt(int num, int denom);
-void setBarSign(int num, int denom); //TODO проверить разницу с выше
 
 void Track::onTrackCommand(TrackCommand command) {
     if (handlers.count(command))
