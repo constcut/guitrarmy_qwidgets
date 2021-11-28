@@ -20,15 +20,15 @@ void BendPoints::insertNewPoint(BendPoint bendPoint)
 {
     for (ul i = 0; i < len()-1; ++i)
     {
-        if (getV(i).horizontal < bendPoint.horizontal)
-            if (getV(i+1).horizontal > bendPoint.horizontal)
+        if (at(i).horizontal < bendPoint.horizontal)
+            if (at(i+1).horizontal > bendPoint.horizontal)
             {
                 this->insertBefore(bendPoint,i+1);
                 return;
             }
-        if (getV(i).horizontal == bendPoint.horizontal)
+        if (at(i).horizontal == bendPoint.horizontal)
         {
-            getV(i).vertical = bendPoint.vertical;
+            at(i).vertical = bendPoint.vertical;
             return;
         }
     }
@@ -75,7 +75,7 @@ EffectsPack Note::getEffects()
  {
     stream << "Outputing #"<<len()<<" Tracks."<<std::endl;
     for (ul ind = 0; ind < len(); ++ind)
-            getV(ind)->printToStream(stream);
+            at(ind)->printToStream(stream);
 
     //as alrternative there
     //SHOULD APPEAR CLASS
@@ -87,21 +87,21 @@ EffectsPack Note::getEffects()
  {
      stream << "Outputing #"<<len()<<" Bars."<<std::endl;
      for (ul ind = 0; ind < len(); ++ind)
-             getV(ind)->printToStream(stream);
+             at(ind)->printToStream(stream);
  }
 
  void Bar::printToStream(std::ostream &stream)
  {
      stream << "Outputing #"<<len()<<" Beats."<<std::endl;
      for (ul ind = 0; ind < len(); ++ind)
-             getV(ind)->printToStream(stream);
+             at(ind)->printToStream(stream);
  }
 
  void Beat::printToStream(std::ostream &stream)
  {
      stream << "Outputing #"<<len()<<" Notes."<<std::endl;
      for (ul ind = 0; ind < len(); ++ind)
-             getV(ind)->printToStream(stream);
+             at(ind)->printToStream(stream);
  }
 
  void Note::printToStream(std::ostream &stream)
@@ -128,8 +128,8 @@ EffectsPack Note::getEffects()
 
      for (ul beatInd = 0; beatInd < len(); ++beatInd)
      {
-         ul duration = getV(beatInd)->getDuration();
-         ul detail = getV(beatInd)->getDurationDetail();
+         ul duration = at(beatInd)->getDuration();
+         ul detail = at(beatInd)->getDurationDetail();
 
          ul addition = 0;
 
@@ -154,7 +154,7 @@ EffectsPack Note::getEffects()
              addition /= 3;
          }
 
-         bool byteDote = getV(beatInd)->getDotted();
+         bool byteDote = at(beatInd)->getDotted();
          if (byteDote==1)
          {
              addition += addition/2;
@@ -275,9 +275,9 @@ EffectsPack Note::getEffects()
 
      for (ul i = 0; i < barSize; ++i)
      {
-        byte beatDur = getV(i)->getDuration();
-        byte durDetail = getV(i)->getDurationDetail();
-        byte isDotted = getV(i)->getDotted();
+        byte beatDur = at(i)->getDuration();
+        byte durDetail = at(i)->getDurationDetail();
+        byte isDotted = at(i)->getDotted();
 
         int localAbs = translaeDuration(beatDur);
 
@@ -393,7 +393,7 @@ EffectsPack Note::getEffects()
           ,++localInd)
      {
         if (tabLog)
-         qDebug() << "ALTRAY Bar ptr "<<(int)barI;
+         qDebug() << "ALTRAY Bar ptr "<<barI;
         if (barI->getAltRepeat() != 0)
             currentAlt = barI->getAltRepeat();
 
@@ -474,12 +474,12 @@ EffectsPack Note::getEffects()
                     PolyBar *thatEnd = &altRay[i];
                     std::vector<int> thatRayInd = altRayInd[i];
 
-                    if ((thatEnd->getV(0)->getRepeat() & 1)==0)
+                    if ((thatEnd->at(0)->getRepeat() & 1)==0)
                     { //don't repeat alts that begin
 
                         for (ul j = 0; j < thatEnd->len(); ++j)
                         {
-                            timeLoop.add(thatEnd->getV(j));
+                            timeLoop.add(thatEnd->at(j));
                             timeLoopIndexStore.push_back(thatRayInd[j]);
                         }
                             //timeLoop += thatEnd;
@@ -522,7 +522,7 @@ EffectsPack Note::getEffects()
 
                     for (ul j = 0; j < thatEnd->len(); ++j)
                     {
-                        timeLoop.add(thatEnd->getV(j));
+                        timeLoop.add(thatEnd->at(j));
                         timeLoopIndexStore.push_back(thatRayInd[j]);
                     }
                         //timeLoop += thatEnd;
@@ -557,7 +557,7 @@ EffectsPack Note::getEffects()
 
     ul lastIndex = len();
     ul curIndex = 0;
-    curBar = getV(0);
+    curBar = at(0);
 
     Bar *lastBeginRepeat = curBar;
 
@@ -749,27 +749,27 @@ EffectsPack Note::getEffects()
      if (len() == 0)
          return 0;
 
-     byte currentNum = getV(0)->getSignNum();
-     byte currentDen = getV(0)->getSignDenum();
+     byte currentNum = at(0)->getSignNum();
+     byte currentDen = at(0)->getSignDenum();
 
 
      ul trackLen = len();
 
      for(ul barsI=1; barsI < trackLen; ++barsI)
      {
-         getV(barsI)->setPrev(getV(barsI-1));
-         getV(barsI-1)->setNext(getV(barsI));
+         at(barsI)->setPrev(at(barsI-1));
+         at(barsI-1)->setNext(at(barsI));
 
-         byte thatNum = getV(barsI)->getSignNum();
-         byte thatDen = getV(barsI)->getSignDenum();
+         byte thatNum = at(barsI)->getSignNum();
+         byte thatDen = at(barsI)->getSignDenum();
 
          if (thatNum==0)
-             getV(barsI)->setSignNum(currentNum);
+             at(barsI)->setSignNum(currentNum);
          else
              currentNum = thatNum;
 
          if (thatDen==0)
-             getV(barsI)->setSignDenum(currentDen);
+             at(barsI)->setSignDenum(currentDen);
          else
              currentDen = thatDen;
 
@@ -786,7 +786,7 @@ EffectsPack Note::getEffects()
     if (len() == 0)
         return 0;
 
-    curBar = getV(0);
+    curBar = at(0);
     ul trackLen = len();
     ul fullCount=0;
 
@@ -796,13 +796,13 @@ EffectsPack Note::getEffects()
 
     for (ul barI = 0; barI < trackLen; ++barI)
     {
-        curBar = getV(barI);
+        curBar = at(barI);
 
         if (curBar->len())
         for (ul beatI = 0; beatI < (curBar->len()-1); ++beatI)
         {
-            curBeat = curBar->getV(beatI);
-            Beat *nextBeat = curBar->getV(beatI+1);
+            curBeat = curBar->at(beatI);
+            Beat *nextBeat = curBar->at(beatI+1);
 
             if ((nextBeat)&&(curBeat))
             {
@@ -816,7 +816,7 @@ EffectsPack Note::getEffects()
 
         if (barI+1 != trackLen)
         { //not the lastBar
-            Bar *nextBar = getV(barI+1);
+            Bar *nextBar = at(barI+1);
 
             if (nextBar->len()==0)
                 continue;
@@ -861,10 +861,10 @@ EffectsPack Note::getEffects()
             }
             else
             {
-                curBeat = curBar->getV(curBar->len()-1);
+                curBeat = curBar->at(curBar->len()-1);
             }
 
-            Beat *nextBeat = nextBar->getV(0);
+            Beat *nextBeat = nextBar->at(0);
 
             if ((nextBeat)&&(curBeat))
             {
@@ -893,10 +893,10 @@ EffectsPack Note::getEffects()
     if (len() == 0)
         return 0;
 
-    curBar = getV(0);
+    curBar = at(0);
 
     if (curBar->len())
-    curBeat = curBar->getV(0);
+    curBeat = curBar->at(0);
     else
     {
         while (curBar && curBar->len()==0)
@@ -904,7 +904,7 @@ EffectsPack Note::getEffects()
 
         if (curBar==0) return 0;
 
-        curBeat = curBar->getV(0);
+        curBeat = curBar->at(0);
 
     }
 
@@ -924,7 +924,7 @@ EffectsPack Note::getEffects()
 
         for (ul noteI=0; noteI < curBeat->len(); ++noteI)
         {
-            Note *curNote = curBeat->getV(noteI);
+            Note *curNote = curBeat->at(noteI);
 
             byte stringN = curNote->getStringNumber();
             Note *prevNote = ringRay[stringN];
@@ -1080,11 +1080,11 @@ EffectsPack Note::getEffects()
  {
         for (int i = 0 ; i < len(); ++i)
         {
-            Bar *bar = getV(i)->getV(barN);
+            Bar *bar = at(i)->at(barN);
 
             if (bar->len())
             {
-                if (bar->getV(0)->changes.len())
+                if (bar->at(0)->changes.len())
                 {
                     //bar->getV(0)->changes.getV(0)->changeType;
                 }
@@ -1113,7 +1113,7 @@ EffectsPack Note::getEffects()
 
      int lastNumDen=0;
 
-     ul barsAmount = getV(0)->timeLoop.len(); //should search longest
+     ul barsAmount = at(0)->timeLoop.len(); //should search longest
      for (ul barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
      {
          std::vector<BpmChangeKnot> timeChanges;
@@ -1122,23 +1122,23 @@ EffectsPack Note::getEffects()
          {
             short int localAccumulate = 0;///tracksI
 
-            if (getV(tracksI)->timeLoop.len() <= barsI)
+            if (at(tracksI)->timeLoop.len() <= barsI)
                 continue;
 
-            Bar *currentBar = getV(tracksI)->timeLoop[barsI]; //attention refact fix
+            Bar *currentBar = at(tracksI)->timeLoop[barsI]; //attention refact fix
 
             for (ul beatI = 0; beatI < currentBar->len(); ++beatI)
             {
-                if (currentBar->getV(beatI)->effPack == 28) //changes
+                if (currentBar->at(beatI)->effPack == 28) //changes
                 {
                     //search for bpm changes
-                    Package *changePack = currentBar->getV(beatI)->effPack.getPack(28);
+                    Package *changePack = currentBar->at(beatI)->effPack.getPack(28);
                     Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
                     for (ul indexChange = 0; indexChange != changes->len(); ++indexChange)
-                      if (changes->getV(indexChange).changeType==8)
+                      if (changes->at(indexChange).changeType==8)
                       {
-                          ul newBPM = changes->getV(indexChange).changeValue;
+                          ul newBPM = changes->at(indexChange).changeValue;
 
                           BpmChangeKnot newChangeBpm(newBPM,localAccumulate);
 
@@ -1148,9 +1148,9 @@ EffectsPack Note::getEffects()
 
                 }
 
-                byte beatDur = currentBar->getV(beatI)->getDuration();
-                byte durDetail = currentBar->getV(beatI)->getDurationDetail();
-                byte isDotted = currentBar->getV(beatI)->getDotted();
+                byte beatDur = currentBar->at(beatI)->getDuration();
+                byte durDetail = currentBar->at(beatI)->getDurationDetail();
+                byte isDotted = currentBar->at(beatI)->getDotted();
 
                 int localAbs = translaeDuration(beatDur);
 
@@ -1172,8 +1172,8 @@ EffectsPack Note::getEffects()
 
 
          //NOT POLY YET
-         byte thatNum = getV(0)->timeLoop.getV(barsI)->getSignNum();
-         byte thatDen = getV(0)->timeLoop.getV(barsI)->getSignDenum();
+         byte thatNum = at(0)->timeLoop.at(barsI)->getSignNum();
+         byte thatDen = at(0)->timeLoop.at(barsI)->getSignDenum();
 
 
          int packedMeter=0;
@@ -1237,7 +1237,7 @@ EffectsPack Note::getEffects()
 
     for (ul i = 0; i < from->len(); ++i)
     {
-        Beat *beat = from->getV(i);
+        Beat *beat = from->at(i);
         Beat *newBeat=new Beat();
 
         newBeat->clone(beat);
@@ -1258,7 +1258,7 @@ EffectsPack Note::getEffects()
 
     for (ul i = 0; i < from->len(); ++i)
     {
-        Note *note = from->getV(i);
+        Note *note = from->at(i);
         Note *newNote=new Note();
         newNote->clone(note);
         add(newNote);

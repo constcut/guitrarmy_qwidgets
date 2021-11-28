@@ -12,23 +12,23 @@
 
 void Track::switchEffect(int effIndex) {
 
-    if (this->getV(_cursor)->getV(_cursorBeat)->getPause())
+    if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
 
-    if (this->getV(_cursor)->getV(_cursorBeat)->len()==0)
+    if (this->at(_cursor)->at(_cursorBeat)->len()==0)
         return;
 
-    auto pa = parent; //TODO get rid of every void* void *
+    auto pa = parent;
     if (pa->playing())
         return;
 
     int ind = effIndex;
 
-    Note *theNote = this->getV(_cursor)->getV(_cursorBeat)->getNote(_stringCursor+1);
+    Note *theNote = this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1);
     if (theNote) {
         bool effect = theNote->effPack.get(ind);
         effect = !effect;
-        this->getV(_cursor)->getV(_cursorBeat)->getNote(_stringCursor+1)->effPack.set(ind,effect);
+        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.set(ind,effect);
 
         SingleCommand command(1,effIndex); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
@@ -38,16 +38,16 @@ void Track::switchEffect(int effIndex) {
 
 void Track::switchBeatEffect(int effIndex) {
 
-    if (this->getV(_cursor)->getV(_cursorBeat)->getPause())
+    if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
-    auto pa = parent; //TODO get rid of every void* void *
+    auto pa = parent;
     if (pa->playing())
         return;
     int ind = effIndex;
     //check for pause
-    bool effect = this->getV(_cursor)->getV(_cursorBeat)->effPack.get(ind);
+    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.get(ind);
     effect = !effect;
-    this->getV(_cursor)->getV(_cursorBeat)->effPack.set(ind,effect);
+    this->at(_cursor)->at(_cursorBeat)->effPack.set(ind,effect);
 
     SingleCommand command(2,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
@@ -60,17 +60,17 @@ void Track::switchNoteState(byte changeState)
     size_t& cursorBeat = this->cursorBeat();
     size_t& stringCursor = this->stringCursor();
 
-    Note *note = (this->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1));
+    Note *note = (this->at(cursor)->at(cursorBeat)->getNote(stringCursor+1));
 
-    if ((this->getV(cursor)->getV(cursorBeat)->getPause()) ||
-        (this->getV(cursor)->getV(cursorBeat)->len()==0) ||(note==0)) {
+    if ((this->at(cursor)->at(cursorBeat)->getPause()) ||
+        (this->at(cursor)->at(cursorBeat)->len()==0) ||(note==0)) {
 
-        this->getV(cursor)->getV(cursorBeat)->setPause(false);
+        this->at(cursor)->at(cursorBeat)->setPause(false);
         Note *newNote=new Note();
         newNote->setState(changeState);
         newNote->setFret(0);
         newNote->setStringNumber(stringCursor+1);
-        this->getV(cursor)->getV(cursorBeat)->add(newNote);
+        this->at(cursor)->at(cursorBeat)->add(newNote);
         SingleCommand command(3,255);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(command);
@@ -102,41 +102,41 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
     if (type == 1) //eff
     {
         int ind = value;
-        bool effect = this->getV(barN)->getV(beatN)->getNote(stringN)->effPack.get(ind);
+        bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.get(ind);
         effect = !effect;
-        this->getV(barN)->getV(beatN)->getNote(stringN)->effPack.set(ind,effect);
+        this->at(barN)->at(beatN)->getNote(stringN)->effPack.set(ind,effect);
     }
 
     if (type == 2) //beat eff
     {
         int ind = value;
-        bool effect = this->getV(barN)->getV(beatN)->effPack.get(ind);
+        bool effect = this->at(barN)->at(beatN)->effPack.get(ind);
         effect = !effect;
-        this->getV(barN)->getV(beatN)->effPack.set(ind,effect);
+        this->at(barN)->at(beatN)->effPack.set(ind,effect);
     }
 
     if (type == 3) //fret
     {
         if (value != 255)
-            this->getV(barN)->getV(beatN)->setFret(value,stringN);
+            this->at(barN)->at(beatN)->setFret(value,stringN);
         else
-            this->getV(barN)->getV(beatN)->deleteNote(stringN);
+            this->at(barN)->at(beatN)->deleteNote(stringN);
 
     }
 
     if (type == 4) //duration
     {
-        this->getV(barN)->getV(beatN)->setDuration(value);
+        this->at(barN)->at(beatN)->setDuration(value);
     }
 
     if (type == 5) //detail
     {
-        this->getV(barN)->getV(beatN)->setDurationDetail(value);
+        this->at(barN)->at(beatN)->setDurationDetail(value);
     }
 
     if (type == 6) //dot
     {
-        this->getV(barN)->getV(beatN)->setDotted(value);
+        this->at(barN)->at(beatN)->setDotted(value);
     }
 
     if (type == 7) //pause
@@ -146,10 +146,10 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             for (size_t i = 0; i < command.storedNotes->size(); ++i)
             {
                 Note *note = command.storedNotes->operator [](i);
-                this->getV(barN)->getV(beatN)->add(note);
+                this->at(barN)->at(beatN)->add(note);
             }
 
-            this->getV(barN)->getV(beatN)->setPause(false);
+            this->at(barN)->at(beatN)->setPause(false);
 
             command.releaseStoredNotes();
         }
@@ -160,9 +160,9 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
         if (command.storedNotes) //delete note
         {
             Note *note = command.storedNotes->operator [](0);
-            this->getV(barN)->getV(beatN)->add(note);
+            this->at(barN)->at(beatN)->add(note);
 
-            this->getV(barN)->getV(beatN)->setPause(false);
+            this->at(barN)->at(beatN)->setPause(false);
 
             command.releaseStoredNotes();
         }
@@ -181,7 +181,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             beat->setDuration(dur);
             beat->setDurationDetail(rhythmDetail);
 
-            this->getV(barN)->insertBefore(beat,beatN);
+            this->at(barN)->insertBefore(beat,beatN);
             this->connectAll(); //oups?
         }
     }
@@ -211,13 +211,13 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
 
     if (type == 17)
     {
-        Note *note = (this->getV(barN)->getV(beatN)->getNote(stringN));
+        Note *note = (this->at(barN)->at(beatN)->getNote(stringN));
         note->setState(value);
     }
 
     if (type == 18)
     {
-        this->getV(barN)->remove(beatN);
+        this->at(barN)->remove(beatN);
         this->connectAll();
         if (this->cursorBeat())
             --this->cursorBeat();
@@ -226,8 +226,8 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
 
     if (type == 19)
     {
-        this->getV(barN)->setSignDenum(value);
-        this->getV(barN)->setSignNum(value2);
+        this->at(barN)->setSignDenum(value);
+        this->at(barN)->setSignNum(value2);
     }
 
     if (type == 24)
@@ -277,13 +277,13 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             {
                 while(curBeat != firstBeat)
                 {
-                    this->getV(barN)->insertBefore(curBeat,beatN);
+                    this->at(barN)->insertBefore(curBeat,beatN);
                     curBeat = (Beat*)curBeat->getPrev();
                     if (curBeat == 0)
                         break;
                 }
                 if (curBeat==firstBeat)
-                    this->getV(barN)->insertBefore(curBeat,beatN);
+                    this->at(barN)->insertBefore(curBeat,beatN);
             }
         }
         else
@@ -298,13 +298,13 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             }
             else{
                 while(curBeat->getParent() == lastPa){
-                    this->getV(barN)->insertBefore(curBeat,0);
+                    this->at(barN)->insertBefore(curBeat,0);
                     curBeat = (Beat*)curBeat->getPrev();
                     if (curBeat == 0)
                     {
                         //what is this
                         if(curBar)
-                        curBeat = curBar->getV(curBar->len()-1); //issuepossible
+                        curBeat = curBar->at(curBar->len()-1); //issuepossible
                         break;
                     }
                 }
@@ -347,9 +347,9 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
                if (curBeat)
                while (curBeat->getParent() == firstPa)
                {
-                   this->getV(barN)->
+                   this->at(barN)->
                            insertBefore(curBeat,
-                                        this->getV(barN)->len()
+                                        this->at(barN)->len()
                                                     -counter);
 
                    ++counter;
@@ -385,7 +385,7 @@ void Track::moveSelectionLeft() {
         if (_selectionBarFirst)
         {
             --_selectionBarFirst;
-            _selectionBeatFirst = getV(_selectionBarFirst)->len()-1;
+            _selectionBeatFirst = at(_selectionBarFirst)->len()-1;
         }
     }
 }
@@ -394,7 +394,7 @@ void Track::moveSelectionLeft() {
 void Track::moveSelectionRight() {
     if (_selectionBarLast >= 0)
     {
-        if (_selectionBeatLast < (getV(_selectionBarLast)->len()-1)) //TODO лучше способ хранить зоны выделенности (флаг вкюченности и size_t)
+        if (_selectionBeatLast < (at(_selectionBarLast)->len()-1)) //TODO лучше способ хранить зоны выделенности (флаг вкюченности и size_t)
             ++_selectionBeatLast;
         else
             if (_selectionBarLast < (len()-1))
@@ -413,7 +413,7 @@ void Track::insertBar() {
     beat->setDotted(0);
     beat->setDurationDetail(0);
 
-    getV(_cursor)->insertBefore(beat, _cursorBeat);
+    at(_cursor)->insertBefore(beat, _cursorBeat);
     connectAll(); //autochain cries
 
     SingleCommand command(18);
@@ -430,8 +430,8 @@ void Track::moveToNextBar() {
         if (_cursor > (_lastSeen-1))
             _displayIndex = _cursor;
 
-        if (getV(_cursor)->getV(_cursorBeat)->getPause() == false)
-            _stringCursor = getV(_cursor)->getV(_cursorBeat)->getV(0)->getStringNumber()-1;
+        if (at(_cursor)->at(_cursorBeat)->getPause() == false)
+            _stringCursor = at(_cursor)->at(_cursorBeat)->at(0)->getStringNumber()-1;
     }
 
     _digitPress=-1; // flush input after movement
@@ -446,8 +446,8 @@ void Track::moveToPrevBar() {
         if (_cursor < _displayIndex)
             _displayIndex = _cursor;
 
-        if (getV(_cursor)->getV(_cursorBeat)->getPause() == false)
-            _stringCursor = getV(_cursor)->getV(_cursorBeat)->getV(0)->getStringNumber()-1;
+        if (at(_cursor)->at(_cursorBeat)->getPause() == false)
+            _stringCursor = at(_cursor)->at(_cursorBeat)->at(0)->getStringNumber()-1;
     }
 
     _digitPress=-1; // flush input after movement
@@ -514,14 +514,14 @@ void Track::moveToPrevBeat() {
             --_cursor;
             if (_cursor < _displayIndex)
                 _displayIndex = _cursor;
-            _cursorBeat = getV(_cursor)->len()-1;
+            _cursorBeat = at(_cursor)->len()-1;
         }
     }
     else
         --_cursorBeat;
 
-    if (getV(_cursor)->getV(_cursorBeat)->getPause() == false)
-        _stringCursor = getV(_cursor)->getV(_cursorBeat)->getV(0)->getStringNumber()-1;
+    if (at(_cursor)->at(_cursorBeat)->getPause() == false)
+        _stringCursor = at(_cursor)->at(_cursorBeat)->at(0)->getStringNumber()-1;
 
     _digitPress=-1; // flush input after movement
 }
@@ -529,20 +529,20 @@ void Track::moveToPrevBeat() {
 
 void Track::moveToNextBeat() {
     ++_cursorBeat;
-    if (_cursorBeat >= getV(_cursor)->len()) {
+    if (_cursorBeat >= at(_cursor)->len()) {
         if (1) //pan->isOpenned())
         {
             static int lastDur = 4; //TODO?
             if (_cursorBeat) {
-                Bar *b = getV(_cursor);
-                Beat *beat = b->getV(b->len()-1);
+                Bar *b = at(_cursor);
+                Beat *beat = b->at(b->len()-1);
                 lastDur = beat->getDuration();
                 //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
                 /// lastDur from prev position
             }
-            if (getV(_cursor)->getCompleteStatus()==1)
+            if (at(_cursor)->getCompleteStatus()==1)
             {
-                Bar *bar = getV(_cursor);
+                Bar *bar = at(_cursor);
                 Beat *beat=new Beat();
                 beat->setPause(true);
                 beat->setDuration(lastDur);
@@ -610,8 +610,8 @@ void Track::moveToNextBeat() {
         }
     }
 
-    if (getV(_cursor)->getV(_cursorBeat)->getPause() == false)
-        _stringCursor = getV(_cursor)->getV(_cursorBeat)->getV(0)->getStringNumber()-1;
+    if (at(_cursor)->at(_cursorBeat)->getPause() == false)
+        _stringCursor = at(_cursor)->at(_cursorBeat)->at(0)->getStringNumber()-1;
         //need acces
     _digitPress=-1; // flush input after movement
 }
@@ -621,13 +621,13 @@ void Track::setTrackPause() {
     SingleCommand command(7);
     command.setPosition(0, _cursor, _cursorBeat);
     command.requestStoredNotes();
-    for (ul i = 0; i < getV(_cursor)->getV(_cursorBeat)->len(); ++i) {
-        Note *note = getV(_cursor)->getV(_cursorBeat)->getV(i);
+    for (ul i = 0; i < at(_cursor)->at(_cursorBeat)->len(); ++i) {
+        Note *note = at(_cursor)->at(_cursorBeat)->at(i);
         command.storedNotes->push_back(note);
     }
     commandSequence.push_back(command);
-    getV(_cursor)->getV(_cursorBeat)->setPause(true);
-    getV(_cursor)->getV(_cursorBeat)->clear();
+    at(_cursor)->at(_cursorBeat)->setPause(true);
+    at(_cursor)->at(_cursorBeat)->clear();
     _digitPress = -1;
 }
 
@@ -635,7 +635,7 @@ void Track::setTrackPause() {
 void Track::deleteBar() {
     SingleCommand command(24);
     command.setPosition(0, _cursor,0);
-    command.outerPtr = getV(_cursor);
+    command.outerPtr = at(_cursor);
     commandSequence.push_back(command);
 
     //attention question for memoryleaks
@@ -652,8 +652,8 @@ void Track::deleteSelectedBars() {
             --_cursor; //attention
         SingleCommand command(25);
         command.setPosition(0, _selectionBarFirst,0);
-        command.outerPtr = getV(_selectionBarFirst);
-        command.outerPtrEnd = getV(_selectionBarLast);
+        command.outerPtr = at(_selectionBarFirst);
+        command.outerPtrEnd = at(_selectionBarLast);
         commandSequence.push_back(command);
         for (int i = _selectionBarLast; i >= _selectionBarFirst; --i)
             remove(i);
@@ -670,17 +670,17 @@ void Track::deleteSelectedBeats() {
         Beat *firstBeat = nullptr, *lastBeat = nullptr;
         SingleCommand command(26);
         command.setPosition(0,_selectionBarFirst,_selectionBeatFirst);
-        command.outerPtr = firstBeat = getV(_selectionBarFirst)->getV(_selectionBeatFirst);
-        command.outerPtrEnd = lastBeat = getV(_selectionBarLast)->getV(_selectionBeatLast);
-        getV(_selectionBarFirst)->getV(_selectionBeatFirst)->setParent(getV(_selectionBarFirst));
-        getV(_selectionBarLast)->getV(_selectionBeatLast)->setParent(getV(_selectionBarLast));
+        command.outerPtr = firstBeat = at(_selectionBarFirst)->at(_selectionBeatFirst);
+        command.outerPtrEnd = lastBeat = at(_selectionBarLast)->at(_selectionBeatLast);
+        at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst));
+        at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast));
 
         bool wholeFirst = false;
         bool wholeLast = false;
 
         if (_selectionBeatFirst==0)
             wholeFirst = true;
-        if (_selectionBeatLast == getV(_selectionBarLast)->len()-1)
+        if (_selectionBeatLast == at(_selectionBarLast)->len()-1)
             wholeLast = true;
 
         command.setValue(wholeFirst);
@@ -693,7 +693,7 @@ void Track::deleteSelectedBeats() {
                 remove(_selectionBarFirst);
             else
                 for (int bI = _selectionBeatLast; bI >= _selectionBeatFirst; --bI)
-                    getV(_selectionBarFirst)->remove(bI);
+                    at(_selectionBarFirst)->remove(bI);
 
         }
         else
@@ -705,12 +705,12 @@ void Track::deleteSelectedBeats() {
             else
             {
                 for (int bI = _selectionBeatLast; bI >= 0; --bI)
-                    getV(_selectionBarLast)->remove(bI);
+                    at(_selectionBarLast)->remove(bI);
             }
 
             ///GET range of bars
-            Bar *lastBarInMiddle = getV(_selectionBarLast-1);
-            Bar *firstBarInMiddle = getV(_selectionBarFirst+1);
+            Bar *lastBarInMiddle = at(_selectionBarLast-1);
+            Bar *firstBarInMiddle = at(_selectionBarFirst+1);
 
             command.startBar = firstBarInMiddle;
             command.endBar = lastBarInMiddle;
@@ -722,8 +722,8 @@ void Track::deleteSelectedBeats() {
                 remove(_selectionBarFirst);
             }
             else {
-                for (int bI = getV(_selectionBarFirst)->len()-1; bI >= _selectionBeatFirst; --bI)
-                    getV(_selectionBarFirst)->remove(bI);
+                for (int bI = at(_selectionBarFirst)->len()-1; bI >= _selectionBeatFirst; --bI)
+                    at(_selectionBarFirst)->remove(bI);
             }
         }
 
@@ -735,16 +735,16 @@ void Track::deleteSelectedBeats() {
 
 
 void Track::deleteNote() {
-    if (getV(_cursor)->getV(_cursorBeat)->len())
+    if (at(_cursor)->at(_cursorBeat)->len())
     {
         SingleCommand command(8);
         command.setPosition(0,_cursor,_cursorBeat);
         command.requestStoredNotes();
-        Note *note = getV(_cursor)->getV(_cursorBeat)->getNoteInstance(_stringCursor+1);
+        Note *note = at(_cursor)->at(_cursorBeat)->getNoteInstance(_stringCursor+1);
         command.storedNotes->push_back(note);
         if (note->getFret()!=255) {
             //delete one note
-            getV(_cursor)->getV(_cursorBeat)->deleteNote(_stringCursor+1);//shift from 0 to 1
+            at(_cursor)->at(_cursorBeat)->deleteNote(_stringCursor+1);//shift from 0 to 1
             commandSequence.push_back(command);
         }
         else
@@ -752,15 +752,15 @@ void Track::deleteNote() {
     }
     else
     {
-        if (getV(_cursor)->len() > 1) {
+        if (at(_cursor)->len() > 1) {
             byte packedValue = 0;
-            byte dur = getV(_cursor)->getV(_cursorBeat)->getDuration();
-            byte det =  getV(_cursor)->getV(_cursorBeat)->getDurationDetail();
-            byte dot =  getV(_cursor)->getV(_cursorBeat)->getDotted();
+            byte dur = at(_cursor)->at(_cursorBeat)->getDuration();
+            byte det =  at(_cursor)->at(_cursorBeat)->getDurationDetail();
+            byte dot =  at(_cursor)->at(_cursorBeat)->getDotted();
             packedValue = dur;
             packedValue |= det<<3;
-            Beat *beat = getV(_cursor)->getV(_cursorBeat);
-            getV(_cursor)->remove(_cursorBeat);
+            Beat *beat = at(_cursor)->at(_cursorBeat);
+            at(_cursor)->remove(_cursorBeat);
             connectAll(); //oups?
             delete beat;//cleanup
 
@@ -778,7 +778,7 @@ void Track::deleteNote() {
 
 
 void Track::incDuration() {
-    byte beatDur = getV(_cursor)->getV(_cursorBeat)->getDuration();
+    byte beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
 
     SingleCommand command(4,beatDur);
     command.setPosition(0,_cursor, _cursorBeat);
@@ -787,18 +787,18 @@ void Track::incDuration() {
     if (beatDur)
      --beatDur;
     //block not go out
-    getV(_cursor)->getV(_cursorBeat)->setDuration(beatDur);
+    at(_cursor)->at(_cursorBeat)->setDuration(beatDur);
 }
 
 
 void Track::decDuration() {
-    byte beatDur = getV(_cursor)->getV(_cursorBeat)->getDuration();
+    byte beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
     SingleCommand command(4,beatDur);
     command.setPosition(0, _cursor, _cursorBeat);
     commandSequence.push_back(command);
     if (beatDur < 6)
         ++beatDur;
-    getV(_cursor)->getV(_cursorBeat)->setDuration(beatDur);
+    at(_cursor)->at(_cursorBeat)->setDuration(beatDur);
 }
 
 
@@ -817,7 +817,7 @@ void Track::saveFromTrack() {
 
 void Track::newBar() {
     Bar *addition = new Bar();
-    Bar *bOrigin = getV(_cursor);
+    Bar *bOrigin = at(_cursor);
     addition->flush();
     addition->setSignDenum(bOrigin->getSignDenum());
     addition->setSignNum(bOrigin->getSignNum());
@@ -840,7 +840,7 @@ void Track::newBar() {
 
 
 void Track::setDotOnBeat() {
-    Beat* beat = getV(_cursor)->getV(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat);
     byte dotted = beat->getDotted();
     SingleCommand command(6,dotted);
     command.setPosition(0,_cursor, _cursorBeat);
@@ -853,7 +853,7 @@ void Track::setDotOnBeat() {
 
 
 void Track::setTriolOnBeat() {
-    Beat* beat = getV(_cursor)->getV(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat);
     byte curDetail = beat->getDurationDetail();
     SingleCommand command(5,curDetail);
     command.setPosition(0,_cursor,_cursorBeat);
@@ -866,13 +866,13 @@ void Track::setTriolOnBeat() {
 
 
 void Track::setTextOnBeat(std::string newText) {
-    Beat* beat = getV(_cursor)->getV(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat);
     beat->setGPCOMPText(newText);
 }
 
 
 void Track::clipboardCopyBar() {
-    Bar* bar = getV(_cursor);
+    Bar* bar = at(_cursor);
     if (_selectionBarFirst == -1) {
         Bar *cloner = new Bar;
         cloner->flush();
@@ -932,7 +932,7 @@ void Track::clipboardCopyBars() {
 
 
 void Track::clipboardCutBar() {
-    Bar* bar = getV(_cursor);
+    Bar* bar = at(_cursor);
     if (_selectionBarFirst == -1) {
         //int trackInd=tabParrent->getLastOpenedTrack();
         Bar *cloner = new Bar;
@@ -962,10 +962,10 @@ void Track::clipboardPaste() {
 
         //TODO tab
         Tab* tab = parent;
-        Track *track = tab->getV(AClipboard::current()->getTrackIndex());
+        Track *track = tab->at(AClipboard::current()->getTrackIndex());
 
         if (AClipboard::current()->getType()==0) {
-            Bar *origin = track->getV(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
+            Bar *origin = track->at(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
             Bar *addition=new Bar();
             addition->clone(origin);
 
@@ -995,7 +995,7 @@ void Track::clipboardPaste() {
             */
 
             if (AClipboard::current()->getSecondBarI()==AClipboard::current()->getBarIndex()) {
-                Bar *origin = track->getV(AClipboard::current()->getBarIndex());
+                Bar *origin = track->at(AClipboard::current()->getBarIndex());
                 Bar *addition = new Bar();
                 addition->setSignDenum(origin->getSignDenum());
                 addition->setSignNum(origin->getSignNum());
@@ -1003,7 +1003,7 @@ void Track::clipboardPaste() {
                 for (int beats = AClipboard::current()->getBeatIndex();
                      beats  <= AClipboard::current()->getSecondBeatI(); ++beats) {
                     Beat *additionBeat=new Beat();
-                    Beat *beatOrigin = origin->getV(beats);
+                    Beat *beatOrigin = origin->at(beats);
                     additionBeat->clone(beatOrigin);
                     addition->add(additionBeat);
                 }
@@ -1018,7 +1018,7 @@ void Track::clipboardPaste() {
             else
             for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
-                Bar *origin = track->getV(bars);
+                Bar *origin = track->at(bars);
                 Bar *addition = new Bar();
                 addition->setSignDenum(origin->getSignDenum());
                 addition->setSignNum(origin->getSignNum());
@@ -1029,7 +1029,7 @@ void Track::clipboardPaste() {
                     for (int beats = 0; beats <= AClipboard::current()->getSecondBeatI(); ++beats)
                     {
                         Beat *additionBeat=new Beat();
-                        Beat *beatOrigin = origin->getV(beats);
+                        Beat *beatOrigin = origin->at(beats);
                         additionBeat->clone(beatOrigin);
                         addition->add(additionBeat);
                     }
@@ -1041,7 +1041,7 @@ void Track::clipboardPaste() {
                          beats < origin->len(); ++beats)
                     {
                         Beat *additionBeat=new Beat();
-                        Beat *beatOrigin = origin->getV(beats);
+                        Beat *beatOrigin = origin->at(beats);
                         additionBeat->clone(beatOrigin);
                         addition->add(additionBeat);
                     }
@@ -1069,7 +1069,7 @@ void Track::clipboardPaste() {
         {
             for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
-                Bar *origin = track->getV(bars);
+                Bar *origin = track->at(bars);
                 Bar *addition = new Bar();
                 addition->clone(origin);
 
@@ -1207,15 +1207,15 @@ void Track::onTrackCommand(TrackCommand command) {
 void Track::changeBarSigns(int newNum, int newDen) {
     if ((_selectionBarFirst != -1) && (_selectionBarLast != -1))
        for (int i = _selectionBarFirst; i <= _selectionBarLast; ++i) {
-           getV(i)->setSignNum(newNum);
-           getV(i)->setSignDenum(newDen);
+           at(i)->setSignNum(newNum);
+           at(i)->setSignDenum(newDen);
            //TODO undo option?
        }
 }
 
 
 void Track::setBarSign(int newNum, int newDen) {
-    Bar* bar = getV(_cursor);
+    Bar* bar = at(_cursor);
     byte oldDen = bar->getSignDenum();
     byte oldNum = bar->getSignNum();
     bar->setSignNum(newNum);

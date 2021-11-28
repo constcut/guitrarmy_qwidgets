@@ -77,7 +77,7 @@ protected:
     ChainContainer():nextOne(0),prevOne(0),parent(0){}
 
     ChainContainer(int predefinedSize):nextOne(0),prevOne(0),parent(0) {
-        sequence.reserve(predefinedSize); // *=sizeof(CT); //?
+        sequence.reserve(predefinedSize);
     }
 
     Child& operator[](size_t ind) {
@@ -100,8 +100,8 @@ protected:
         sequence[ind] = val;
     }
 
-    Child &getV(int ind) {
-       return sequence[ind];
+    Child &at(int ind) {
+       return sequence.at(ind);
     }
 
     size_t len() {

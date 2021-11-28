@@ -158,25 +158,22 @@ bool ABitArray::empty()
 Package::Package():type(0),point(0){}
 
 
-void Package::setType(byte newType)
-{
+void Package::setType(byte newType) {
     type = newType;
 }
-byte Package::getType()
-{
+
+byte Package::getType() {
     return type;
 }
 
-void Package::setPointer(void *newPoint)
-{
+void Package::setPointer(void *newPoint) {
     point = newPoint;
 }
-void *Package::getPointer()
-{
+
+void *Package::getPointer() { //TODO
     return point;
 }
 
-bool Package::createPointer()
-{
+bool Package::createPointer() {
     return false;
 } //creates new from type

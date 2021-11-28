@@ -193,14 +193,14 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
     //MAIN CYCLE
     for (ul barI = shiftTheCursor; barI < timeLoopLen; ++barI)
     {
-        Bar *bar = track->timeLoop.getV(barI);
+        Bar *bar = track->timeLoop.at(barI);
         barMoments.clear();
 
         //addBeatTimes(bar);
 
         for (ul beatI = 0; beatI < bar->len(); ++beatI)
         {
-           Beat *beat = bar->getV(beatI);
+           Beat *beat = bar->at(beatI);
 
            byte dur = beat->getDuration();
            byte dot = beat->getDotted();
@@ -309,7 +309,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
     for (ul i = 0; i < curBar->len(); ++i)
     {
-        Beat *beat = curBar->getV(i);
+        Beat *beat = curBar->at(i);
 
 
         //CHANGE BPM
@@ -322,9 +322,9 @@ void PlayAnimationThr::addBeatTimes(void *bar)
                 Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
                 for (ul indexChange=0; indexChange <changes->len(); ++indexChange)
-                if (changes->getV(indexChange).changeType==8)
+                if (changes->at(indexChange).changeType==8)
                 {
-                    ul newBPM = changes->getV(indexChange).changeValue;
+                    ul newBPM = changes->at(indexChange).changeValue;
 
                     //CHANGING BPM from mix table!
 

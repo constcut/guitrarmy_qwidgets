@@ -14,31 +14,31 @@
 //They have to be for all possible commands
 
 void Tab::setSignsTillEnd(int num, int denom) {
-    for (size_t i = currentBar; i < this->getV(0)->len(); ++i){
-        this->getV(0)->getV(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
-        this->getV(0)->getV(i)->setSignNum(num);
+    for (size_t i = currentBar; i < this->at(0)->len(); ++i){
+        this->at(0)->at(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
+        this->at(0)->at(i)->setSignNum(num);
     }
 }
 
 void Tab::muteTrack() { //Move into Tab
-    byte curStat = this->getV(displayTrack)->getStatus();
+    byte curStat = this->at(displayTrack)->getStatus();
     if (curStat==1)
-        this->getV(displayTrack)->setStatus(0);
+        this->at(displayTrack)->setStatus(0);
     else
-        this->getV(displayTrack)->setStatus(1);
+        this->at(displayTrack)->setStatus(1);
 }
 
 
 void Tab::soloTrack() { //Move into Tab
-    byte curStat = this->getV(displayTrack)->getStatus();
+    byte curStat = this->at(displayTrack)->getStatus();
     if (curStat==2)
-        this->getV(displayTrack)->setStatus(0);
+        this->at(displayTrack)->setStatus(0);
     else
-        this->getV(displayTrack)->setStatus(2);
+        this->at(displayTrack)->setStatus(2);
 }
 
 void Tab::moveCursorInTrackRight() {
-    if (displayBar < getV(0)->len() - 1)
+    if (displayBar < at(0)->len() - 1)
         ++displayBar;
 }
 
@@ -64,32 +64,31 @@ void Tab::moveCursorOfTrackDown() {
 }
 
 
-bool Tab::changeDrumsFlag() {
-    Track* pTrack = this->getV(displayTrack);
+void Tab::changeDrumsFlag() {
+    Track* pTrack = this->at(displayTrack);
     bool drums = pTrack->isDrums();
     drums = !drums;
     pTrack->setDrums(drums);
-    return drums;
 }
 
 
 
 void Tab::changeTrackVolume(int newVol) {
-     getV(currentTrack)->setVolume(newVol);
+     at(currentTrack)->setVolume(newVol);
 }
 
 
 void Tab::changeTrackName(std::string newName) {
-    getV(currentTrack)->setName(newName);
+    at(currentTrack)->setName(newName);
 }
 
 
 void Tab::changeTrackInstrument(int val) {
-    getV(currentTrack)->setInstrument(val);
+    at(currentTrack)->setInstrument(val);
 }
 
 void Tab::changeTrackPanoram(int val) {
-    getV(currentTrack)->setPan(val);
+    at(currentTrack)->setPan(val);
 }
 
 Track* Tab::createNewTrack() { //Move into Tab
@@ -111,7 +110,7 @@ Track* Tab::createNewTrack() { //Move into Tab
     track->tuning.setTune(4,45);
     track->tuning.setTune(5,40);
 
-    for (ul barI=0; barI < pTab->getV(0)->len(); ++barI) {
+    for (ul barI=0; barI < pTab->at(0)->len(); ++barI) {
         Bar *bar=new Bar();
         bar->flush();
         bar->setSignDenum(4); bar->setSignNum(4);
@@ -153,13 +152,13 @@ void Tab::midiPause() {
 
 
 void Tab::setMarker(std::string text) {
-    Bar* fromFirstTrack = getV(0)->getV(currentBar);
+    Bar* fromFirstTrack = at(0)->at(currentBar);
     fromFirstTrack->setGPCOMPMarker(text,0);
 }
 
 
 void Tab::openReprise() {
-    Bar *firstTrackBar = this->getV(0)->getV(currentBar);
+    Bar *firstTrackBar = this->at(0)->at(currentBar);
     byte repeat = firstTrackBar->getRepeat();
     byte repeatOpens = repeat & 1;
     byte repeatCloses = repeat & 2;
@@ -173,7 +172,7 @@ void Tab::openReprise() {
 
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
-    Bar *firstTrackBar = this->getV(0)->getV(currentBar);
+    Bar *firstTrackBar = this->at(0)->at(currentBar);
     byte repeat = firstTrackBar->getRepeat();
     byte repeatOpens = repeat & 1;
     byte repeatCloses = repeat & 2;
@@ -203,24 +202,8 @@ void Tab::saveAs(std::string filename) {
 
 
 void Tab::onTabCommand(TabCommand command) {
-    if (command == TabCommand::Mute)
-        muteTrack();
-    else if (command == TabCommand::Solo)
-        soloTrack();
-    else if (command == TabCommand::MoveRight)
-        moveCursorInTrackRight();
-    else if (command == TabCommand::MoveLeft)
-        moveCursorInTrackLeft();
-    else if (command == TabCommand::MoveUp)
-        moveCursorOfTrackUp();
-    else if (command == TabCommand::MoveDown)
-        moveCursorOfTrackDown();
-    else if (command == TabCommand::Drums)
-        changeDrumsFlag();
-    else if (command == TabCommand::PauseMidi)
-        midiPause();
-    else if (command == TabCommand::OpenReprise)
-        openReprise();
+    if (handlers.count(command))
+        (this->*handlers.at(command))();
 }
 
 //TODO возможно дополнить установку инструмента, панорамы и громкости, чтобы не нужно было обращаться к текущему треку, а использовать "вшитые курсоры"

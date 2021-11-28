@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-#include <memory.h>
-
+#include <memory.h> //TODO remove
+#include <unordered_map>
 //TODO Tab, Track, Bar, Beat, Note - sepparate all the files
 
 #include "abitarray.h"
@@ -200,7 +200,7 @@ public:
     virtual ~Beat()
     {
         for (ul i=0; i < len(); ++i)
-                   delete getV(i);
+                   delete at(i);
     }
     //usually size reserved
 
@@ -331,7 +331,7 @@ protected:
     {
         for (ul i = 0; i < len(); ++i)
         {
-            if (string == getV(i)->getStringNumber())
+            if (string == at(i)->getStringNumber())
             {
                 remove(i);
 
@@ -347,8 +347,8 @@ protected:
     {
         for (ul i = 0; i < len(); ++i)
 
-            if (getV(i)->getStringNumber()==string)
-                return getV(i);
+            if (at(i)->getStringNumber()==string)
+                return at(i);
 
         return 0;
     }
@@ -395,13 +395,13 @@ protected:
 
         for (ul i = 0; i < len(); ++i)
         {
-            if (getV(i)->getStringNumber()==string)
+            if (at(i)->getStringNumber()==string)
             {
-                getV(i)->setFret(fret);
+                at(i)->setFret(fret);
                 return; //function done
             }
 
-            if (getV(i)->getStringNumber() > string)
+            if (at(i)->getStringNumber() > string)
             {
                 Note *newNote=new Note();
                 newNote->setFret(fret);
@@ -416,7 +416,7 @@ protected:
         }
 
 
-        int lastStringN = getV(len()-1)->getStringNumber();
+        int lastStringN = at(len()-1)->getStringNumber();
         if (lastStringN < string)
         {
             Note *newNote=new Note();
@@ -438,9 +438,9 @@ protected:
             return 255;
 
         for (ul i = 0; i < len(); ++i)
-            if (getV(i)->getStringNumber()==string)
+            if (at(i)->getStringNumber()==string)
             {
-                byte fretValue = getV(i)->getFret();
+                byte fretValue = at(i)->getFret();
                 return fretValue; //function done
             }
 
@@ -483,7 +483,7 @@ public:
     virtual ~Bar()
     {
         for (ul i=0; i < len(); ++i)
-                   delete getV(i);
+                   delete at(i);
     }
 
     void printToStream(std::ostream &stream);
@@ -620,7 +620,7 @@ public:
 
     virtual ~Track() {
         for (ul i=0; i < len(); ++i)
-            delete getV(i);
+            delete at(i);
     }
 
     void printToStream(std::ostream &stream);
@@ -733,6 +733,7 @@ public:
     int& digitPress() { return _digitPress; }
 
 
+    //TODO command handler
     void switchEffect(int effIndex);
     void switchBeatEffect(int effIndex);
     void switchNoteState(byte changeState);
@@ -855,7 +856,7 @@ public:
 
     virtual ~Tab() {
         for (ul i=0; i < len(); ++i)
-                   delete getV(i);
+                   delete at(i);
     }
 
     void printToStream(std::ostream &stream);
@@ -866,20 +867,20 @@ public:
 
     void connectTracks(){
         for (ul i = 0; i < len(); ++i)
-        getV(i)->connectAll();
+        at(i)->connectAll();
         createTimeLine();
     }
 
     void postGTP() {
         for (ul i = 0; i < len(); ++i) {
-            ul port = getV(i)->getGPCOMPInts(0);
-            ul chan = getV(i)->getGPCOMPInts(1);
+            ul port = at(i)->getGPCOMPInts(0);
+            ul chan = at(i)->getGPCOMPInts(1);
             ul ind = (chan-1) + (port-1)*16;
             if (ind < 70) {
                 int instr = GpCompMidiChannels[ind].instrument;
                 byte pan = GpCompMidiChannels[ind].balance;
                 byte vol = GpCompMidiChannels[ind].volume;
-                Track *t=getV(i);
+                Track *t=at(i);
                 t->setInstrument(instr);
                 t->setPan(pan);
                 t->setVolume(vol);
@@ -945,7 +946,7 @@ public: //later cover under midlayer TabCommandsHandler
 
     void muteTrack(); //current
     void soloTrack();
-    bool changeDrumsFlag();
+    void changeDrumsFlag();
     void midiPause();
     void openReprise();
     void closeReprise();
@@ -969,6 +970,17 @@ public: //later cover under midlayer TabCommandsHandler
     void closeReprise(size_t count);
 
 
+private:
+    std::unordered_map<TabCommand, void (Tab::*)()> handlers =  {
+        {TabCommand::Mute, &Tab::muteTrack},
+        {TabCommand::Solo, &Tab::soloTrack},
+        {TabCommand::MoveRight, &Tab::moveCursorInTrackRight},
+        {TabCommand::MoveLeft, &Tab::moveCursorInTrackLeft},
+        {TabCommand::MoveUp, &Tab::moveCursorOfTrackUp},
+        {TabCommand::MoveDown, &Tab::moveCursorOfTrackDown},
+        {TabCommand::PauseMidi, &Tab::midiPause},
+        {TabCommand::OpenReprise, &Tab::openReprise},
+        {TabCommand::Drums, &Tab::changeDrumsFlag}};
 };
 
 

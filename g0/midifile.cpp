@@ -95,7 +95,7 @@ ul VariableInt::getValue()
 	for (size_t i = 0; i < length; ++i)
 	{
 		responseValue <<= 7;
-		responseValue += getV(i);
+        responseValue += at(i);
 	}
 
 	return responseValue;
@@ -231,11 +231,11 @@ bool MidiFile::readStream(std::ifstream & ifile)
             // to if (midiLog)  logging
             if (midiLog)  qDebug() << "Reading track " << i;
 
-            ifile.read((char*)getV(i)->trackHeader.chunkId, 4);
-            getV(i)->trackHeader.chunkId[4] = 0;
+            ifile.read((char*)at(i)->trackHeader.chunkId, 4);
+            at(i)->trackHeader.chunkId[4] = 0;
 
             // to if (midiLog)  logging
-            if (midiLog)  qDebug() << "Track " << i << " header " << getV(i)->trackHeader.chunkId;
+            if (midiLog)  qDebug() << "Track " << i << " header " << at(i)->trackHeader.chunkId;
 
 			ul trackSize = 0;
             ifile.read((char*)&trackSize, 4);
@@ -244,7 +244,7 @@ bool MidiFile::readStream(std::ifstream & ifile)
             // to if (midiLog)  logging
             if (midiLog)  qDebug() << "Size of track " << trackSize;
 
-            getV(i)->trackHeader.trackSize = trackSize;
+            at(i)->trackHeader.trackSize = trackSize;
 			//memcpy for header chunkie
 
 			ul totalRead = 0;
@@ -255,7 +255,7 @@ bool MidiFile::readStream(std::ifstream & ifile)
                 MidiSignal *singleSignal=new MidiSignal(); //for those who have troubles in speach
                 ul signalBytesRead = singleSignal->readStream(ifile);
 				totalRead += signalBytesRead;
-                getV(i)->add(singleSignal);
+                at(i)->add(singleSignal);
                 if (midiLog)  qDebug() << "Cycle of events. Read " << totalRead << " of " << trackSize;
 			}
 
@@ -277,7 +277,7 @@ void MidiSignal::printToStream(std::ostream &stream)
 		stream <<"MetaType "<<metaType<<"; MetaLen " <<metaLen;
         for (ul i = 0; i < metaLen; ++i)
         {
-            stream << std::endl<< "Meta byte "<<i<<" = "<<(int) metaStore.bufer.getV(i);
+            stream << std::endl<< "Meta byte "<<i<<" = "<<(int) metaStore.bufer.at(i);
         }
 	}
 	else
@@ -309,7 +309,7 @@ void MidiTrack::printToStream(std::ostream &stream)
 	
 	ul signalsAmount = len();
 	for (ul i = 0; i < signalsAmount; ++i)
-        getV(i)->printToStream(stream);
+        at(i)->printToStream(stream);
 }
 
 void MidiFile::printToStream(std::ostream &stream)
@@ -323,7 +323,7 @@ void MidiFile::printToStream(std::ostream &stream)
 	
 	//then all the tracks
 	for (short i = 0 ; i < midiHeader.nTracks; ++i)
-            getV(i)->printToStream(stream);
+            at(i)->printToStream(stream);
 	
 	stream << "Printing finished for MidiFile" << std::endl;
 }
@@ -340,7 +340,7 @@ ul VariableInt::writeStream(std::ofstream &file)
 	
 	for (size_t i = 0; i < amountOfBytes; ++i)
 	{
-		byteToWrite = getV(i);
+        byteToWrite = at(i);
 
     //    if (midiLog)  qDebug() <<"PRE WrOtE"<<byteToWrite;
 		
@@ -386,7 +386,7 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
 		
 		size_t metaBufLen = metaStore.bufer.len();
 		for (size_t i = 0; i < metaBufLen; ++i)
-            ofile.write((const char*)&metaStore.bufer.getV(i),1);
+            ofile.write((const char*)&metaStore.bufer.at(i),1);
 		
 		bytesWritten += metaBufLen;
 	}
@@ -429,17 +429,17 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 	for (short int i = 0; i < midiHeader.nTracks; ++i)
     {
 
-        ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
-        writeReversedEndian((const char*)&getV(i)->trackHeader.trackSize, 4, ofile);
+        ofile.write((const char*)at(i)->trackHeader.chunkId,4);
+        writeReversedEndian((const char*)&at(i)->trackHeader.trackSize, 4, ofile);
         //reverseEndian(&getV(i)->trackHeader.trackSize, 4);
 		
 		bytesWritten += 8;
 		
-        size_t amountOfEvents = getV(i)->len();
+        size_t amountOfEvents = at(i)->len();
 		
 		for (size_t j = 0; j < amountOfEvents; ++j)
 		{
-            bytesWritten += getV(i)->getV(j)->writeStream(ofile);
+            bytesWritten += at(i)->at(j)->writeStream(ofile);
 		}
 	}
 		
@@ -469,16 +469,16 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
     //don't skip first track ??
     for (short int i = 1; i < 2; ++i) //shit condition
     {
-        ofile.write((const char*)getV(i)->trackHeader.chunkId,4);
-        writeReversedEndian((const char*)&getV(i)->trackHeader.trackSize, 2, ofile);
+        ofile.write((const char*)at(i)->trackHeader.chunkId,4);
+        writeReversedEndian((const char*)&at(i)->trackHeader.trackSize, 2, ofile);
 
         bytesWritten += 8;
 
-        size_t amountOfEvents = getV(i)->len();
+        size_t amountOfEvents = at(i)->len();
 
         for (size_t j = 0; j < amountOfEvents; ++j)
         {
-            bytesWritten += getV(i)->getV(j)->writeStream(ofile,true);
+            bytesWritten += at(i)->at(j)->writeStream(ofile,true);
         }
     }
 
@@ -506,7 +506,7 @@ bool MidiFile::calculateHeader(bool skip)
 
      for (ul i = 0; i < calculatedTracks; ++i)
      {
-        getV(i)->calculateHeader(skip);
+        at(i)->calculateHeader(skip);
      }
 
      return true;
@@ -521,7 +521,7 @@ bool MidiTrack::calculateHeader(bool skip)
     for (ul i =0; i < len(); ++i)
     {
         //seams to be easiest option
-        calculatedSize += getV(i)->calcSize(skip);
+        calculatedSize += at(i)->calcSize(skip);
     }
 
     if (midiLog)  qDebug() <<"Calculating track size : "<<calculatedSize;
@@ -807,8 +807,8 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
 
     for (ul i = 0 ; i < bend->len(); ++i)
     {
-        ul curAbs = bend->getV(i).horizontal;
-        ul curH = bend->getV(i).vertical;
+        ul curAbs = bend->at(i).horizontal;
+        ul curH = bend->at(i).vertical;
 
         ul shiftAbs = curAbs - lastAbs;
         ul shiftH = curH - lastH;
@@ -1093,7 +1093,7 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
 
     for (ul i =0; i < beat->len(); ++i)
     {
-        Note *note = beat->getV(i);
+        Note *note = beat->at(i);
 
         byte fret = note->getFret();
         byte stringN = note->getStringNumber();
@@ -1327,25 +1327,25 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
             for (ul indexChange = 0; indexChange != changes->len(); ++indexChange)
             {
-              if (changes->getV(indexChange).changeType==8)
+              if (changes->at(indexChange).changeType==8)
               {
-                  ul newBPM = changes->getV(indexChange).changeValue;
+                  ul newBPM = changes->at(indexChange).changeValue;
                   //pushChangeBPM(newBPM,accum);
                   //takeAccum();
 
                   //skipped according to time line
               }
 
-              if (changes->getV(indexChange).changeType==1)
+              if (changes->at(indexChange).changeType==1)
               {
-                 ul newInstr = changes->getV(indexChange).changeValue;
+                 ul newInstr = changes->at(indexChange).changeValue;
                  pushChangeInstrument(newInstr,channel,accum);
                  takeAccum();
               }
 
-              if (changes->getV(indexChange).changeType==2)
+              if (changes->at(indexChange).changeType==2)
               {
-                  byte newVol = changes->getV(indexChange).changeValue;
+                  byte newVol = changes->at(indexChange).changeValue;
 
                   byte midiNewVolume = newVol*8;
                   if (midiNewVolume > 127)
@@ -1354,9 +1354,9 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
                   pushChangeVolume(midiNewVolume,channel); //must take accum
               }
 
-              if (changes->getV(indexChange).changeType==3)
+              if (changes->at(indexChange).changeType==3)
               {
-                    byte newPan = changes->getV(indexChange).changeValue;
+                    byte newPan = changes->at(indexChange).changeValue;
 
                     byte midiNewPanoram = newPan*8;
                     if (midiNewPanoram > 127)
@@ -1386,7 +1386,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
             rOffset -= strokeStep;
         }
 
-        Note *note = beat->getV(trueIndex);
+        Note *note = beat->at(trueIndex);
 
 
         addSignalsFromNoteOn(note,channel);
@@ -1413,7 +1413,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
     for (ul i =0; i < beat->len(); ++i)
     {
-        Note *note = beat->getV(i);
+        Note *note = beat->at(i);
         addSignalsFromNoteOff(note,channel);
     }
 }
@@ -1456,7 +1456,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, ul shiftCursorBar)
 
  for (ul i = shiftCursorBar ; i < trackLen; ++i)
  {
-     Bar *bar = track->timeLoop.getV(i);
+     Bar *bar = track->timeLoop.at(i);
 
      //BAR STATUS
      byte completeStatus = bar->getCompleteStatus();
@@ -1477,7 +1477,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, ul shiftCursorBar)
      for (ul j = 0; j < barLen; ++j)
      {
          //if (specialLast)
-        Beat *beat = bar->getV(j);
+        Beat *beat = bar->at(j);
 
          if ((completeStatus == 2) && (j == completeIndex))
          {
@@ -1688,13 +1688,13 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
             MidiTrack *metronomeClickTrack=new MidiTrack();
             bool firstRun = true;
 
-            for (int barI=shiftTheCursor; barI< tab->getV(0)->timeLoop.len(); ++barI)
+            for (int barI=shiftTheCursor; barI< tab->at(0)->timeLoop.len(); ++barI)
             {
 
 
 
                     //for bars
-                    Bar *bar = tab->getV(0)->timeLoop.getV(barI);
+                    Bar *bar = tab->at(0)->timeLoop.at(barI);
 
                     int newDen = bar->getSignDenum(); //nextbar;
 
@@ -1752,7 +1752,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
 
     for (ul trackIndex = 0; trackIndex < tabLen; ++trackIndex)
     {
-        Track *currentTrack = tab->getV(trackIndex);
+        Track *currentTrack = tab->at(trackIndex);
         byte trackStatus = currentTrack->getStatus();
 
         if (trackStatus != 2)
@@ -1775,7 +1775,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
         //qDebug() << "0 Tab is "<<(int)tab;
         //qDebug() <<"pushed "<<tabLen;
 
-        Track *track = tab->getV(i);
+        Track *track = tab->at(i);
 
         byte trackStatus = track->getStatus();
 

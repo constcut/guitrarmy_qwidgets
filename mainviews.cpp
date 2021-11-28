@@ -881,8 +881,8 @@ void BendInput::draw(QPainter *painter)
         changeColor("red", painter);
         for (ul i = 0; i < ptrToBend->len(); ++i)
         {
-            byte vertical = ptrToBend->getV(i).vertical;
-            byte horizontal = ptrToBend->getV(i).horizontal;
+            byte vertical = ptrToBend->at(i).vertical;
+            byte horizontal = ptrToBend->at(i).horizontal;
             //qDebug() << i << ") v= "<<vertical<<"; hor = "<<horizontal;
 
             int localY = vertical*-20; localY += 80+240;
@@ -985,8 +985,8 @@ void BendInput::onclick(int x1, int y1)
         {
             for (ul i = 0; i < ptrToBend->len(); ++i)
             {
-                int pointV= ptrToBend->getV(i).vertical;
-                int pointH= ptrToBend->getV(i).horizontal;
+                int pointV= ptrToBend->at(i).vertical;
+                int pointH= ptrToBend->at(i).horizontal;
 
                 //diff + - 1 ?
 
@@ -1095,9 +1095,9 @@ void ChangesInput::draw(QPainter *painter)
 
                     for (ul i = 0; i < changes->len(); ++i)
                     {
-                        byte changeType = changes->getV(i).changeType;
-                        ul changeValue = changes->getV(i).changeValue;
-                        byte changeCount = changes->getV(i).changeCount;
+                        byte changeType = changes->at(i).changeType;
+                        ul changeValue = changes->at(i).changeValue;
+                        byte changeCount = changes->at(i).changeCount;
 
                         std::string sX = "Type " + std::to_string( changeType ) + "; Value " +
                             std::to_string( changeValue )  + "; count " + std::to_string( changeCount );
@@ -1163,7 +1163,7 @@ void ChangesInput::turnOffChange(std::string combo)
     if (changes)
         for (ul i = 0; i < changes->len(); ++i)
         {
-            if (changes->getV(i).changeType == awaitType)
+            if (changes->at(i).changeType == awaitType)
             {
                 changes->remove(i);
                 if (changes->len() == 0)
@@ -1225,11 +1225,11 @@ void ChangesInput::turnOnChange(std::string combo)
     {
         for (ul i = 0; i < changes->len(); ++i)
         {
-            if (changes->getV(i).changeType == awaitType)
+            if (changes->at(i).changeType == awaitType)
             {
-                changes->getV(i).changeType = awaitType;
-                changes->getV(i).changeValue = changeValue;
-                changes->getV(i).changeCount = changeAfter;
+                changes->at(i).changeType = awaitType;
+                changes->at(i).changeValue = changeValue;
+                changes->at(i).changeCount = changeAfter;
                 return;
             }
         }
@@ -1267,9 +1267,9 @@ void ChangesInput::changeMainValue(int combo, int newValue)
     if (changes)
         for (ul i = 0; i < changes->len(); ++i)
         {
-            if (changes->getV(i).changeType == awaitType)
+            if (changes->at(i).changeType == awaitType)
             {
-                changes->getV(i).changeValue = newValue;
+                changes->at(i).changeValue = newValue;
                 return;
             }
         }
@@ -1296,9 +1296,9 @@ void ChangesInput::changeSubValue(int combo, int newValue)
     if (changes)
         for (ul i = 0; i < changes->len(); ++i)
         {
-            if (changes->getV(i).changeType == awaitType)
+            if (changes->at(i).changeType == awaitType)
             {
-                changes->getV(i).changeCount = newValue;
+                changes->at(i).changeCount = newValue;
                 return;
             }
         }

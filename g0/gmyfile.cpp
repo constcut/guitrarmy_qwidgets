@@ -25,7 +25,7 @@ void writeBendGMY(std::ofstream *file, BendPoints *bend)
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
     {
-        BendPoint *point = &bend->getV(pointInd);
+        BendPoint *point = &bend->at(pointInd);
 
         byte absolutePosition = point->horizontal;
         byte verticalPosition = point->vertical;
@@ -100,7 +100,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     //ChainContainer<byte, Track>
     //ChainContainer<int, Beat>
     ul tracksCount = tab->len();//attention please
-    ul barsCount = tab->getV(0)->len(); //search largerst or not do such thing? refact
+    ul barsCount = tab->at(0)->len(); //search largerst or not do such thing? refact
 
     file->write((char*)&tracksCount,1); //256 tracks are insane
     file->write((char*)&barsCount,2); //65 535 bars are insace
@@ -117,7 +117,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     for (ul i = 0; i < tracksCount; ++i)
     {
         //Each track
-        Track *track = tab->getV(i);
+        Track *track = tab->at(i);
 
         //Name
         std::string trackName = track->getName();
@@ -189,7 +189,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             Bar *bar;
 
             if (j < track->len())
-                bar = track->getV(j);
+                bar = track->at(j);
             else
                 bar = new Bar;
 
@@ -278,7 +278,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             for (ul k = 0; k < bar->len(); ++k)
             {
                 //Each beat
-                Beat *beat = (bar->getV(k));
+                Beat *beat = (bar->at(k));
 
                 bool isPause = beat->getPause();
                 //file->write((char*)&isPause,1);
@@ -338,10 +338,10 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
                         for (ul indexChange=0; indexChange != amountOfChanges; ++indexChange)
                         {
-                            byte changeType = (changes->getV(indexChange)).changeType;
-                            ul changeValue = (changes->getV(indexChange)).changeValue;
+                            byte changeType = (changes->at(indexChange)).changeType;
+                            ul changeValue = (changes->at(indexChange)).changeValue;
 
-                            byte changeDur = (changes->getV(indexChange)).changeCount;
+                            byte changeDur = (changes->at(indexChange)).changeCount;
                             //change count (apply effect on few beats later)
 
                             file->write((char*)&changeType,1);
@@ -361,7 +361,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 //and notes inside
                 for (ul el=0; el < beat->len(); ++el)
                 {
-                    Note *note = beat->getV(el);
+                    Note *note = beat->at(el);
 
                     EffectsPack effPackNote = note->getEffects();                  
 
@@ -664,7 +664,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                //will be erased on time loop
 
                // not 0 bar
-               Bar *ftBar = tab->getV(0)->getV(j); //firstTrackBar
+               Bar *ftBar = tab->at(0)->at(j); //firstTrackBar
                bar->setRepeat(ftBar->getRepeat(),ftBar->getRepeatTimes());
                bar->setSignDenum(ftBar->getSignDenum());
                bar->setSignNum(ftBar->getSignNum());

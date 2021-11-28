@@ -21,7 +21,7 @@ public:
     	//clear - to POLY ! ATTENTION !
     	size_t copyLen = v.len();
     	for (size_t i = 0; i < copyLen; ++i)
-    		add(v.getV(i));	
+            add(v.at(i));
 
         return *this;
     }
@@ -135,7 +135,7 @@ public:
     virtual ~MidiTrack()
     {
         for (ul i=0; i < len(); ++i)
-            delete getV(i);
+            delete at(i);
     }
     
     bool calculateHeader(bool skip=false);
@@ -244,7 +244,7 @@ public:
     virtual ~MidiFile()
     {
         for (ul i=0; i < len(); ++i)
-            delete getV(i);
+            delete at(i);
     }
 
     //bool generateFromAMusic(AMusic &music);

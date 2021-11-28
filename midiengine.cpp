@@ -176,7 +176,7 @@ void MidiEngine::playTrack(MidiTrack *track)
 
     for (int i = 0; i < track->len(); ++i)
     {
-        MidiSignal *sig = track->getV(i);
+        MidiSignal *sig = track->at(i);
 
         ul absValue = 10; //sig->time.getValue()/
         //ul waitTime = absValue
@@ -334,11 +334,11 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     for (int trackI = 0; trackI < midiFile->len(); ++trackI)
     {
-        MidiTrack *track = midiFile->getV(trackI);
+        MidiTrack *track = midiFile->at(trackI);
         ul absTimeShift =0;
         for (int sigI = 0; sigI < track->len(); ++sigI)
         {
-            MidiSignal *sig = track->getV(sigI);
+            MidiSignal *sig = track->at(sigI);
 
             ul signalTimeShift = sig->time.getValue();
             absTimeShift += signalTimeShift;

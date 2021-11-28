@@ -89,14 +89,14 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
     else
         digitPress = digit;
 
-    if ( pTrack->getV(cursor)->len() > cursorBeat ) {
-        byte lastFret = pTrack->getV(cursor)->getV(cursorBeat)->getFret(stringCursor+1);
+    if ( pTrack->at(cursor)->len() > cursorBeat ) {
+        byte lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
 
         SingleCommand command(3,lastFret);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(command);
-        pTrack->getV(cursor)->getV(cursorBeat)->setFret(digitPress,stringCursor+1);
-        Note *inputedNote =  pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1);
+        pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);
+        Note *inputedNote =  pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1);
         byte tune = pTrack->tuning.getTune(stringCursor);
         int chan = 0;
         if (pTrack->isDrums()) {
@@ -128,10 +128,10 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
         //to start not from begin always
         ul shiftTheCursor = 0;
         if (cursor != 0){
-            Bar *barPtr = pTrack->getV(cursor);
+            Bar *barPtr = pTrack->at(cursor);
 
             for (ul i = 0; i < pTrack->timeLoop.len();++i){
-                 if (pTrack->timeLoop.getV(i) == barPtr){
+                 if (pTrack->timeLoop.at(i) == barPtr){
                      shiftTheCursor = i;
                      break;
                  }
@@ -264,7 +264,7 @@ void setBendOnNote(Note* currentNote, MasterView* mw) {
 
 void setTextOnBeat(Track *track) {
     std::string beatText;
-    Beat* beat = track->getV(track->cursor())->getV(track->cursorBeat());
+    Beat* beat = track->at(track->cursor())->at(track->cursorBeat());
     beat->getGPCOMPText(beatText);
 
     bool ok=false;
@@ -329,13 +329,13 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
     else if (command == TrackCommand::Bend)
-        setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
+        setBendOnNote(pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1), getMaster());
     else if (command == TrackCommand::Chord) {
         if (getMaster()) getMaster()->pushForceKey("chord_view"); }
     else if (command == TrackCommand::Text)
         setTextOnBeat(pTrack);
     else if (command == TrackCommand::Changes)
-        setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
+        setChangesOnBeat(pTrack->at(cursor)->at(cursorBeat), getMaster());
     else if (command == TrackCommand::SetBarSign)
         setBarSign(pTrack);
     else
@@ -381,9 +381,9 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
     if (tabView->getPlaying() == false) {
         size_t shiftTheCursor = 0;
         if (currentBar != 0) {
-            Bar *barPtr = pTab->getV(0)->getV(currentBar);
-            for (ul i = 0; i < pTab->getV(0)->timeLoop.len();++i)
-                 if (pTab->getV(0)->timeLoop.getV(i) == barPtr) {
+            Bar *barPtr = pTab->at(0)->at(currentBar);
+            for (ul i = 0; i < pTab->at(0)->timeLoop.len();++i)
+                 if (pTab->at(0)->timeLoop.at(i) == barPtr) {
                      shiftTheCursor = i;
                      break;
                  }
@@ -509,7 +509,7 @@ void setMarker(Tab* pTab) {
 }
 
 void goToBar(Tab* pTab) {
-    size_t trackLen = pTab->getV(0)->len();
+    size_t trackLen = pTab->at(0)->len();
     bool ok=false; //TODO позже разделить Qt запросы и установку параметров
     int newTimes = QInputDialog::getInt(0,"Input",
                          "Bar to jump:", QLineEdit::Normal, 1, trackLen, 1, &ok);
@@ -629,7 +629,7 @@ void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получ
 
 
 void closeReprise(Tab* pTab) { //TODO argument repeat times
-    Bar *firstTrackBar = pTab->getV(0)->getV(pTab->getCurrentBar());
+    Bar *firstTrackBar = pTab->at(0)->at(pTab->getCurrentBar());
     byte repeat = firstTrackBar->getRepeat();
     byte repeatCloses = repeat & 2;
     if (repeatCloses) {
@@ -658,7 +658,7 @@ int changeTrackBpm(Tab* pTab) {
 }
 
 int changeTrackPanoram(Tab* pTab) {
-    Track* pTrack = pTab->getV(pTab->getCurrentTrack());
+    Track* pTrack = pTab->at(pTab->getCurrentTrack());
     bool ok=false;
     QStringList items;
     items.push_back("L 8 - 100%");
@@ -701,7 +701,7 @@ int changeTrackPanoram(Tab* pTab) {
 
 
 int changeTrackInstrument(Tab* pTab) {
-    Track* pTrack = pTab->getV(pTab->getCurrentTrack());
+    Track* pTrack = pTab->at(pTab->getCurrentTrack());
     //TODO отделить запрос от ядра
     std::string instruments[]= { //Move to sepparated file TODO
     "Acoustic Grand Piano",
@@ -895,7 +895,7 @@ void TabView::onTabCommand(TabCommand command) {
         goToBar(pTab);
     //if (press == "alt");//TODO
     else if (command == TabCommand::Tune)
-        setTune(pTab->getV(pTab->getCurrentTrack()));
+        setTune(pTab->at(pTab->getCurrentTrack()));
     else if (command == TabCommand::CloseReprise)
         closeReprise(pTab);
     else
