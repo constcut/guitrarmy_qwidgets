@@ -40,19 +40,17 @@ size_t Track::connectNotes() //for let ring
    if (size() == 0)
        return 0;
 
-   curBar = at(0);
+   curBar = at(0).get();
 
    if (curBar->size())
-   curBeat = curBar->at(0);
-   else
-   {
+    curBeat = curBar->at(0).get();
+   else {
        while (curBar && curBar->size()==0)
             curBar = (Bar*)curBar->getNext();
 
-       if (curBar==0) return 0;
-
-       curBeat = curBar->at(0);
-
+       if (curBar==0)
+            return 0;
+       curBeat = curBar->at(0).get();
    }
 
    Note *ringRay[16] = {0}; //let this remember to set max strings up to 16
@@ -71,7 +69,7 @@ size_t Track::connectNotes() //for let ring
 
        for (size_t noteI=0; noteI < curBeat->size(); ++noteI)
        {
-           Note *curNote = curBeat->at(noteI);
+           Note *curNote = curBeat->at(noteI).get();
 
            std::uint8_t stringN = curNote->getStringNumber();
            Note *prevNote = ringRay[stringN];
@@ -203,7 +201,7 @@ size_t Track::connectBeats()
    if (size() == 0)
        return 0;
 
-   curBar = at(0);
+   curBar = at(0).get();
    size_t trackLen = size();
    size_t fullCount=0;
 
@@ -213,13 +211,13 @@ size_t Track::connectBeats()
 
    for (size_t barI = 0; barI < trackLen; ++barI)
    {
-       curBar = at(barI);
+       curBar = at(barI).get();
 
        if (curBar->size())
        for (size_t beatI = 0; beatI < (curBar->size()-1); ++beatI)
        {
-           curBeat = curBar->at(beatI);
-           Beat *nextBeat = curBar->at(beatI+1);
+           curBeat = curBar->at(beatI).get();
+           Beat *nextBeat = curBar->at(beatI+1).get();
 
            if ((nextBeat)&&(curBeat))
            {
@@ -233,7 +231,7 @@ size_t Track::connectBeats()
 
        if (barI+1 != trackLen)
        { //not the lastBar
-           Bar *nextBar = at(barI+1);
+           Bar *nextBar = at(barI+1).get();
 
            if (nextBar->size()==0)
                continue;
@@ -278,10 +276,10 @@ size_t Track::connectBeats()
            }
            else
            {
-               curBeat = curBar->at(curBar->size()-1);
+               curBeat = curBar->at(curBar->size()-1).get();
            }
 
-           Beat *nextBeat = nextBar->at(0);
+           Beat *nextBeat = nextBar->at(0).get();
 
            if ((nextBeat)&&(curBeat))
            {
@@ -319,8 +317,8 @@ size_t Track::connectBars()
 
     for(size_t barsI=1; barsI < trackLen; ++barsI)
     {
-        at(barsI)->setPrev(at(barsI-1));
-        at(barsI-1)->setNext(at(barsI));
+        at(barsI)->setPrev(at(barsI-1).get());
+        at(barsI-1)->setNext(at(barsI).get());
 
         std::uint8_t thatNum = at(barsI)->getSignNum();
         std::uint8_t thatDen = at(barsI)->getSignDenum();
@@ -352,15 +350,13 @@ size_t Track::connectTimeLoop()
    timeLoopIndexStore.clear();
 
    //FEW WORDS:
-    //in guitar pro only 1 takt works after reprize!
+    //in guitar pro only 1 bar works after reprize!
     //so no need to search for after tail,
     //and only 1 goes fine in the en - so pretail is - the only :|
 
-   Bar* curBar;
-
    size_t lastIndex = size();
    size_t curIndex = 0;
-   curBar = at(0);
+   Bar* curBar = at(0).get();
 
    Bar *lastBeginRepeat = curBar;
 
@@ -380,22 +376,9 @@ size_t Track::connectTimeLoop()
    if (trackLog)
        qDebug() << "Start connecting time-loop ";
 
-   //THERE IS AUTO SET - to check new way of setting tails:
-   /*
-   while (curIndex < lastIndex) // curBar != .end() ?
-   {
-       timeLoop.add(curBar);
-       ++curBar; ++curIndex;
-   }
-   return 0;*/
-   //END OF AUTOSET
-   //now we start change
+   while (curIndex < lastIndex)  {
 
-   while (curIndex < lastIndex) // curBar != .end() ?
-   {
-
-       //minifix attention
-       if (curBar==0)
+       if (curBar==0) //minifix attention
            break;
 
        if (curBar->getRepeat() & 1)
@@ -543,8 +526,8 @@ size_t Track::connectTimeLoop()
 
 
 //REFACT - cover under Track operations
-typedef std::map<std::uint8_t,PolyBar> AltRay;
-typedef std::map<std::uint8_t,std::vector<int> > AltRayInd;
+typedef std::map<std::uint8_t, PolyBar> AltRay;
+typedef std::map<std::uint8_t, std::vector<int> > AltRayInd;
 
 void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t indA, size_t indB)
 {

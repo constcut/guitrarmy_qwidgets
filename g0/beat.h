@@ -15,20 +15,12 @@ class Bar;
 class Beat : public ChainContainer<Note, Bar> {
 
 public:
-    Beat()
-    {}
+    Beat() = default;
+    virtual ~Beat() = default;
 
-    virtual ~Beat()
-    {
-        for (size_t i=0; i < size(); ++i)
-                   delete at(i);
-    }
-    //usually size reserved
+    void printToStream(std::ostream &stream);
 
-     void printToStream(std::ostream &stream);
-
-    struct SingleChange
-    {
+    struct SingleChange {
         std::uint8_t changeType;
         size_t changeValue;
         std::uint8_t changeCount;
@@ -164,12 +156,10 @@ protected:
         }
     }
 
-    Note *getNote(int string)
-    {
+    Note *getNote(int string) {
         for (size_t i = 0; i < size(); ++i)
-
             if (at(i)->getStringNumber()==string)
-                return at(i);
+                return at(i).get();
 
         return 0;
     }
@@ -199,17 +189,12 @@ protected:
     void setFret(std::uint8_t fret, int string)
     {
 
-        if (size() == 0)
-        {
-            //paused
-            Note *newNote = new Note();
+        if (size() == 0) {
+            auto newNote = std::make_unique<Note>();
             newNote->setFret(fret);
             newNote->setStringNumber(string);
             newNote->setState(0);
-
-            //DEFAULT NOTE VALUES??
-            push_back(newNote);
-
+            push_back(std::move(newNote));
             setPause(false);
             return;
         }
@@ -224,13 +209,13 @@ protected:
 
             if (at(i)->getStringNumber() > string)
             {
-                Note *newNote=new Note();
+                auto newNote = std::make_unique<Note>();
                 newNote->setFret(fret);
                 newNote->setStringNumber(string);
                 newNote->setState(0);
 
 
-                insertBefore(newNote,i);
+                insertBefore(std::move(newNote),i);
                 return;
             }
 
@@ -240,13 +225,13 @@ protected:
         int lastStringN = at(size()-1)->getStringNumber();
         if (lastStringN < string)
         {
-            Note *newNote=new Note();
+            auto newNote = std::make_unique<Note>();
             newNote->setFret(fret);
             newNote->setStringNumber(string);
             newNote->setState(0);
 
             //DEFAULT NOTE VALUES??
-            push_back(newNote);
+            push_back(std::move(newNote));
             return;
         }
         //we got here - that means we need insert fret

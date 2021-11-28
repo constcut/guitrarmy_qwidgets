@@ -5,9 +5,9 @@
 
 #include <vector>
 #include <string>
-
 #include <list> 
 #include <iostream>
+#include <memory>
 
 
 int getTime();
@@ -27,12 +27,12 @@ struct is_pointer<T*> { static const bool value = true; };
 template <typename Child, typename Parent> class ChainContainer
 {
 protected:
-    std::vector<Child*> sequence;
+    std::vector<std::unique_ptr<Child>> sequence;
     ChainContainer<Child, Parent> *nextOne;
     ChainContainer<Child, Parent> *prevOne;
     Parent *parent;
 
-    public:
+public:
 
     void setParent(Parent *newPa) { parent = newPa;}
     Parent *getParent() { return parent; }
@@ -68,27 +68,27 @@ protected:
         sequence.reserve(predefinedSize);
     }
 
-    Child* operator[](size_t ind) {
+    std::unique_ptr<Child>& operator[](size_t ind) {
         return sequence[ind];
     }
 
-    virtual void push_back(Child* val) {
-        sequence.push_back(val);
+    virtual void push_back(std::unique_ptr<Child> val) {
+        sequence.push_back(std::move(val));
     }
 
     Child* &back() {
-        return sequence.back();
+        return sequence.back().get();
     }
 
     void pop_back() {
         sequence.pop_back();
     }
 
-    void change(int ind, Child* val) { //TODO remove?
-        sequence[ind] = val;
+    void change(int ind, std::unique_ptr<Child> val) { //TODO remove?
+        sequence[ind] = std::move(val);
     }
 
-    Child* &at(int ind) {
+    std::unique_ptr<Child>& at(int ind) {
        return sequence.at(ind);
     }
 
@@ -100,8 +100,8 @@ protected:
         sequence.clear();
     }
 
-    virtual void insertBefore(Child* val, int index=0) {
-        sequence.insert(sequence.begin()+index, val);
+    virtual void insertBefore(std::unique_ptr<Child> val, int index=0) {
+        sequence.insert(sequence.begin()+index, std::move(val));
     }
 
     void remove(int index) {

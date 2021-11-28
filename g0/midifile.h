@@ -131,13 +131,9 @@ protected:
 
 public:
     midiTrackHeader trackHeader; //think about it!
-    MidiTrack() {} //ou ou..
 
-    virtual ~MidiTrack()
-    {
-        for (size_t i=0; i < size(); ++i)
-            delete at(i);
-    }
+    MidiTrack() = default;
+    virtual ~MidiTrack() = default;
     
     bool calculateHeader(bool skip=false);
 	void printToStream(std::ostream &stream);
@@ -238,15 +234,10 @@ protected:
     
 public:
     //each as track - 0 for defaults signals
-    MidiFile():bpm(120){
+    MidiFile():bpm(120) {}
 
-    }
+    virtual ~MidiFile() = default;
 
-    virtual ~MidiFile()
-    {
-        for (size_t i=0; i < size(); ++i)
-            delete at(i);
-    }
 
     //bool generateFromAMusic(AMusic &music);
     bool fromTab(Tab *tab, size_t shiftTheCursor=0);

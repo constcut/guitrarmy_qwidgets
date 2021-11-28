@@ -19,10 +19,7 @@ public:
     Bar() {
         flush();
     }
-    virtual ~Bar() {
-        for (size_t i=0; i < size(); ++i)
-            delete at(i);
-    }
+    virtual ~Bar() = default;
 
     void printToStream(std::ostream &stream);
 
@@ -40,21 +37,17 @@ public:
         return *this;
     }
 
-    virtual void push_back(Beat *&val)
-    {
-        if (val)
-        {
+    virtual void push_back(std::unique_ptr<Beat> val) { //TODO так же в TAB
+        if (val) {
             val->setParent(this);
-            ChainContainer<Beat, Track>::push_back(val);
+            ChainContainer<Beat, Track>::push_back(std::move(val));
         }
     }
 
-    virtual void insertBefore(Beat* &val, int index=0)
-    {
-        if (val)
-        {
+    virtual void insertBefore(std::unique_ptr<Beat> val, int index=0) {
+        if (val) {
             val->setParent(this);
-            ChainContainer<Beat, Track>::insertBefore(val,index);
+            ChainContainer<Beat, Track>::insertBefore(std::move(val),index);
         }
     }
 

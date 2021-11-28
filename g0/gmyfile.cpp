@@ -106,29 +106,18 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     file->write((char*)&barsCount,2); //65 535 bars are insace
     //first 8 bytes of format
 
-
-    //General tab information
-
     //1 bpm
     size_t bpm = tab->getBPM();
     file->write((char*)&bpm,2); //values more then 10 bits used for the 0.025 of bpm
 
+    for (size_t i = 0; i < tracksCount; ++i) {
 
-    for (size_t i = 0; i < tracksCount; ++i)
-    {
-        //Each track
-        Track *track = tab->at(i);
-
-        //Name
+        Track *track = tab->at(i).get();
         std::string trackName = track->getName();
-        //for Track#1 could be used empty
         saveString(file,trackName);
 
-
-        //strings N
         std::uint8_t stringsCount = track->tuning.getStringsAmount();
         file->write((char*)&stringsCount,1);
-        //tuning
 
         qDebug() << "Write strings count "<<stringsCount;
 
@@ -149,17 +138,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
         qDebug() << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet;
 
-
-        //int portIndex = track->getGPCOMPInts(0);
-        //int channelIndex = track->getGPCOMPInts(1);
-        //int midiChanPortIndex = (portIndex-1)*16 + (channelIndex-1);
-
-        //extract from midi table -
-            /// instrument
-
-            //isDrums
         bool isDrums = track->isDrums();
-
         file->write((char*)&isDrums,1);
 
         int instr = track->getInstrument();
@@ -167,18 +146,14 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
         std::uint8_t vol = track->getVolume();
 
         file->write((char*)&instr,2);
-
         //cover under track functions refact: getVolume getPan GeInstrument
             /// pan
         file->write((char*)&pan,1);
-            /// volume
         file->write((char*)&vol,1);
 
         qDebug() <<"IsD "<<isDrums<<"; instr-"<<
-(int)track->getInstrument()<<
+                (int)track->getInstrument()<<
               "; +2more sets ";
-
-
 
         std::uint8_t lastSignNum = 0;
         std::uint8_t lastSignDen = 0;
@@ -189,9 +164,9 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             Bar *bar;
 
             if (j < track->size())
-                bar = track->at(j);
+                bar = track->at(j).get();
             else
-                bar = new Bar;
+                bar = new Bar; //TODO great attention!!! amybe memleak?
 
 
 
@@ -278,7 +253,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             for (size_t k = 0; k < bar->size(); ++k)
             {
                 //Each beat
-                Beat *beat = (bar->at(k));
+                Beat *beat = (bar->at(k)).get();
 
                 bool isPause = beat->getPause();
                 //file->write((char*)&isPause,1);
@@ -361,51 +336,35 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 //and notes inside
                 for (size_t el=0; el < beat->size(); ++el)
                 {
-                    Note *note = beat->at(el);
-
+                    Note *note = beat->at(el).get();
                     EffectsPack effPackNote = note->getEffects();                  
-
                     std::uint8_t fret = note->getFret();
                     //merge
                     std::uint8_t stringNum = note->getStringNumber();
-
                     std::uint8_t packFret=0;
-
-
-                    if (isDrums)
-                    {
+                    if (isDrums) {
                         fret -= 35;
                         packFret = (fret);
                         std::uint8_t stringSh = stringNum<<5;
                         packFret += stringSh;
                     }
-                    else
-                    {
+                    else {
                        //4bit for fret 0-31 and string num 0-15
                        packFret = (fret);
                        std::uint8_t stringSh = stringNum<<5;
                        packFret += stringSh;
                     }
 
-
-                    //file->write((char*)&fret,1);
-                    //file->write((char*)&stringNum,1);
                     file->write((char*)&packFret,1);
-
                     std::uint8_t noteSpec = 0;
-
                     std::uint8_t vol = note->getVolume();
-                    //file->write((char*)&vol,1);
-
                     std::uint8_t state = note->getState();
                     std::uint8_t effectsPrec = effPackNote.empty() == true ? 0 : 1;
 
                     noteSpec = (vol & 0xF) + ((state&7)<<4) + (effectsPrec<<7);
-
                     file->write((char*)&noteSpec,1);
 
-                    if (effectsPrec)
-                    {
+                    if (effectsPrec) {
                         size_t noteEffValue = effPackNote.takeBits();
                         file->write((char*)&noteEffValue,4);
 
@@ -419,21 +378,16 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 }
                 //data then effects
             }
-
         }
     }
-
 
     return true;
 }
 
 
-bool GmyFile::saveString(std::ofstream *file, std::string &strValue)
-{
+bool GmyFile::saveString(std::ofstream *file, std::string &strValue) {
     size_t stringLen = strValue.size();
-
     file->write((char*)&stringLen,2);
-
     file->write((char*)strValue.c_str(),strValue.size());
     return true;
 }
@@ -516,7 +470,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
     for (size_t i = 0; i < tracksCount; ++i)
     {
         //Each track
-        Track *track=new Track();
+        auto track= std::make_unique<Track>();
         track->setParent(tab);
 
         //Name
@@ -595,7 +549,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
             //Each bar for that track
             //Bar *bar = &(track->getV(i));
 
-            Bar *bar= new Bar();
+            auto bar = std::make_unique<Bar>();
             bar->flush();
 
 
@@ -664,7 +618,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                //will be erased on time loop
 
                // not 0 bar
-               Bar *ftBar = tab->at(0)->at(j); //firstTrackBar
+               Bar *ftBar = tab->at(0)->at(j).get(); //firstTrackBar
                bar->setRepeat(ftBar->getRepeat(),ftBar->getRepeatTimes());
                bar->setSignDenum(ftBar->getSignDenum());
                bar->setSignNum(ftBar->getSignNum());
@@ -679,30 +633,23 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
             if (barLen == 0)
             {
                 qDebug() << "Bars len";
-                Beat *emptyBeat = new Beat();
+                auto emptyBeat = std::make_unique<Beat>();
                 emptyBeat->setPause(true);
                 emptyBeat->setDuration(3);
-                bar->push_back(emptyBeat);
+                bar->push_back(std::move(emptyBeat));
             }
 
             for (size_t k = 0; k < barLen; ++k)
             {
                 //Each beat
                 //Beat *beat = &(bar->getV(k));
-                Beat *beat = new Beat();
-
+                auto beat = std::make_unique<Beat>();
                 bool isPause = false;
-
                 //file->read((char*)&isPause,1);
-
                 std::uint8_t dur =0;
                 //file->read((char*)&dur,1);
-
-
                 std::uint8_t dot = 0;
                 //file->read((char*)&dot,1);
-
-
                 std::uint8_t det = 0;
                 //file->read((char*)&det,1);
 
@@ -789,7 +736,8 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                    // Note *note = &(beat->getV(el));
 
                     // EffectsPack effPackNote = note->getEffects();
-                    Note *note= new Note();
+                    auto note = std::make_unique<Note>();
+
 
                     std::uint8_t fret = 0;
                     //merge
@@ -850,19 +798,15 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                         note->effPack.set(19,false); //turn off tremolo
                     }
 
-                    beat->push_back(note);
+                    beat->push_back(std::move(note));
                 }
-
-                bar->push_back(beat);
-                //data then effects
+                bar->push_back(std::move(beat));
             }
 
-            track->push_back(bar);
-
+            track->push_back(std::move(bar));
         }
 
-        tab->push_back(track);
+        tab->push_back(std::move(track));
     }
-
     return true;
 }

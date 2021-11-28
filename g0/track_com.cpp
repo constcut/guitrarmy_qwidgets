@@ -32,7 +32,7 @@ void Track::switchEffect(int effIndex) {
 
         SingleCommand command(1,effIndex); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
-        commandSequence.push_back(command);
+        commandSequence.push_back(std::move(command));
     }
 }
 
@@ -51,7 +51,7 @@ void Track::switchBeatEffect(int effIndex) {
 
     SingleCommand command(2,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
 }
 
 void Track::switchNoteState(std::uint8_t changeState)
@@ -66,14 +66,14 @@ void Track::switchNoteState(std::uint8_t changeState)
         (this->at(cursor)->at(cursorBeat)->size()==0) ||(note==0)) {
 
         this->at(cursor)->at(cursorBeat)->setPause(false);
-        Note *newNote=new Note();
+        auto newNote = std::make_unique<Note>();
         newNote->setState(changeState);
         newNote->setFret(0);
         newNote->setStringNumber(stringCursor+1);
-        this->at(cursor)->at(cursorBeat)->push_back(newNote);
+        this->at(cursor)->at(cursorBeat)->push_back(std::move(newNote));
         SingleCommand command(3,255);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-        commandSequence.push_back(command);
+        commandSequence.push_back(std::move(command));
         return;
     }
 
@@ -85,11 +85,11 @@ void Track::switchNoteState(std::uint8_t changeState)
 
     SingleCommand command(17,state);
     command.setPosition(0,cursor,cursorBeat,stringCursor+1);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
 }
 
 
-void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->cursor() etc
+void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor() etc
 {
     std::uint8_t type = command.getType();
     std::uint8_t value = command.getValue();
@@ -145,13 +145,11 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
         {
             for (size_t i = 0; i < command.storedNotes->size(); ++i)
             {
-                Note *note = command.storedNotes->operator [](i);
-                this->at(barN)->at(beatN)->push_back(note);
+                auto note = std::move(command.storedNotes->operator [](i));
+                this->at(barN)->at(beatN)->push_back(std::move(note));
             }
 
             this->at(barN)->at(beatN)->setPause(false);
-
-            command.releaseStoredNotes();
         }
     }
 
@@ -159,16 +157,14 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
     {
         if (command.storedNotes) //delete note
         {
-            Note *note = command.storedNotes->operator [](0);
-            this->at(barN)->at(beatN)->push_back(note);
+            auto note = std::move(command.storedNotes->operator [](0));
+            this->at(barN)->at(beatN)->push_back(std::move(note));
 
             this->at(barN)->at(beatN)->setPause(false);
-
-            command.releaseStoredNotes();
         }
         else //deleted beat
         {
-            Beat *beat = new Beat();
+            auto beat = std::make_unique<Beat>();
 
             std::uint8_t dur = value&7;
             std::uint8_t rhythmDetail = value & 0x78; //4 bits after first 3
@@ -181,7 +177,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             beat->setDuration(dur);
             beat->setDurationDetail(rhythmDetail);
 
-            this->at(barN)->insertBefore(beat,beatN);
+            this->at(barN)->insertBefore(std::move(beat),beatN);
             this->connectAll(); //oups?
         }
     }
@@ -418,7 +414,7 @@ void Track::insertBar() {
 
     SingleCommand command(18);
     command.setPosition(0, _cursor, _cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
 }
 
 
@@ -552,7 +548,7 @@ void Track::moveToNextBeat() {
 
                 SingleCommand command(18);
                 command.setPosition(0,_cursor,_cursorBeat);
-                commandSequence.push_back(command);
+                commandSequence.push_back(std::move(command));
 
                 ///ADD COMMAND              - TASK!!!!!!!!!!!!
             }
@@ -577,7 +573,7 @@ void Track::moveToNextBeat() {
 
                     SingleCommand command(16);
                     command.setPosition(0, _cursor+1,0);
-                    commandSequence.push_back(command);
+                    commandSequence.push_back(std::move(command));
 
                     ++_lastSeen;
                     _cursorBeat = 0;
@@ -622,10 +618,10 @@ void Track::setTrackPause() {
     command.setPosition(0, _cursor, _cursorBeat);
     command.requestStoredNotes();
     for (size_t i = 0; i < at(_cursor)->at(_cursorBeat)->size(); ++i) {
-        Note *note = at(_cursor)->at(_cursorBeat)->at(i);
-        command.storedNotes->push_back(note);
+        auto note = std::move(at(_cursor)->at(_cursorBeat)->at(i));
+        command.storedNotes->push_back(std::move(note));
     }
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
     at(_cursor)->at(_cursorBeat)->setPause(true);
     at(_cursor)->at(_cursorBeat)->clear();
     _digitPress = -1;
@@ -635,8 +631,8 @@ void Track::setTrackPause() {
 void Track::deleteBar() {
     SingleCommand command(24);
     command.setPosition(0, _cursor,0);
-    command.outerPtr = at(_cursor);
-    commandSequence.push_back(command);
+    command.outerPtr = at(_cursor).get();
+    commandSequence.push_back(std::move(command));
 
     //attention question for memoryleaks
     remove(_cursor);
@@ -652,9 +648,9 @@ void Track::deleteSelectedBars() {
             --_cursor; //attention
         SingleCommand command(25);
         command.setPosition(0, _selectionBarFirst,0);
-        command.outerPtr = at(_selectionBarFirst);
-        command.outerPtrEnd = at(_selectionBarLast);
-        commandSequence.push_back(command);
+        command.outerPtr = at(_selectionBarFirst).get();
+        command.outerPtrEnd = at(_selectionBarLast).get();
+        commandSequence.push_back(std::move(command));
         for (int i = _selectionBarLast; i >= _selectionBarFirst; --i)
             remove(i);
         connectAll();
@@ -670,10 +666,10 @@ void Track::deleteSelectedBeats() {
         Beat *firstBeat = nullptr, *lastBeat = nullptr;
         SingleCommand command(26);
         command.setPosition(0,_selectionBarFirst,_selectionBeatFirst);
-        command.outerPtr = firstBeat = at(_selectionBarFirst)->at(_selectionBeatFirst);
-        command.outerPtrEnd = lastBeat = at(_selectionBarLast)->at(_selectionBeatLast);
-        at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst));
-        at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast));
+        command.outerPtr = firstBeat = at(_selectionBarFirst)->at(_selectionBeatFirst).get();
+        command.outerPtrEnd = lastBeat = at(_selectionBarLast)->at(_selectionBeatLast).get();
+        at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst).get());
+        at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast).get());
 
         bool wholeFirst = false;
         bool wholeLast = false;
@@ -727,7 +723,7 @@ void Track::deleteSelectedBeats() {
             }
         }
 
-        commandSequence.push_back(command);
+        commandSequence.push_back(std::move(command));
         connectAll();
     }
     _selectionBarFirst=_selectionBarLast=_selectionBeatFirst=_selectionBeatLast=-1;
@@ -745,7 +741,7 @@ void Track::deleteNote() {
         if (note->getFret()!=255) {
             //delete one note
             at(_cursor)->at(_cursorBeat)->deleteNote(_stringCursor+1);//shift from 0 to 1
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
         }
         else
             delete note;
@@ -766,7 +762,7 @@ void Track::deleteNote() {
 
             SingleCommand command(8,packedValue);
             command.setPosition(0,_cursor,_cursorBeat,dot); //wow wow know it
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
 
             if (_cursorBeat)
                 --_cursorBeat;
@@ -782,7 +778,7 @@ void Track::incDuration() {
 
     SingleCommand command(4,beatDur);
     command.setPosition(0,_cursor, _cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
 
     if (beatDur)
      --beatDur;
@@ -795,7 +791,7 @@ void Track::decDuration() {
     std::uint8_t beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
     SingleCommand command(4,beatDur);
     command.setPosition(0, _cursor, _cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
     if (beatDur < 6)
         ++beatDur;
     at(_cursor)->at(_cursorBeat)->setDuration(beatDur);
@@ -816,23 +812,23 @@ void Track::saveFromTrack() {
 
 
 void Track::newBar() {
-    Bar *addition = new Bar();
-    Bar *bOrigin = at(_cursor);
+    auto addition = std::make_unique<Bar>();
+    Bar *bOrigin = at(_cursor).get();
     addition->flush();
     addition->setSignDenum(bOrigin->getSignDenum());
     addition->setSignNum(bOrigin->getSignNum());
 
-    Beat *addBeat=new Beat();
+    auto addBeat = std::make_unique<Beat>();
     addBeat->setDuration(3);
     addBeat->setDotted(0);
     addBeat->setDurationDetail(0);
     addBeat->setPause(true);
-    addition->push_back(addBeat);
+    addition->push_back(std::move(addBeat));
 
     SingleCommand command(16);
     command.setPosition(0,_cursor,0);
-    commandSequence.push_back(command);
-    insertBefore(addition,_cursor);
+    commandSequence.push_back(std::move(command));
+    insertBefore(std::move(addition), _cursor);
     connectAll();
     _cursorBeat = 0;//poits to new
     return;
@@ -840,11 +836,11 @@ void Track::newBar() {
 
 
 void Track::setDotOnBeat() {
-    Beat* beat = at(_cursor)->at(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat).get();
     std::uint8_t dotted = beat->getDotted();
     SingleCommand command(6,dotted);
     command.setPosition(0,_cursor, _cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
     if (dotted & 1)
         beat->setDotted(0);
     else
@@ -853,11 +849,11 @@ void Track::setDotOnBeat() {
 
 
 void Track::setTriolOnBeat() {
-    Beat* beat = at(_cursor)->at(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat).get();
     std::uint8_t curDetail = beat->getDurationDetail();
     SingleCommand command(5,curDetail);
     command.setPosition(0,_cursor,_cursorBeat);
-    commandSequence.push_back(command);
+    commandSequence.push_back(std::move(command));
     if (curDetail == 3)
         beat->setDurationDetail(0);
     else
@@ -866,13 +862,13 @@ void Track::setTriolOnBeat() {
 
 
 void Track::setTextOnBeat(std::string newText) {
-    Beat* beat = at(_cursor)->at(_cursorBeat);
+    Beat* beat = at(_cursor)->at(_cursorBeat).get();
     beat->setGPCOMPText(newText);
 }
 
 
 void Track::clipboardCopyBar() {
-    Bar* bar = at(_cursor);
+    Bar* bar = at(_cursor).get();
     if (_selectionBarFirst == -1) {
         Bar *cloner = new Bar;
         cloner->flush();
@@ -932,7 +928,7 @@ void Track::clipboardCopyBars() {
 
 
 void Track::clipboardCutBar() {
-    Bar* bar = at(_cursor);
+    Bar* bar = at(_cursor).get();
     if (_selectionBarFirst == -1) {
         //int trackInd=tabParrent->getLastOpenedTrack();
         Bar *cloner = new Bar;
@@ -948,34 +944,34 @@ void Track::clipboardCutBar() {
 void Track::clipboardPaste() {
     if (AClipboard::current()->getType() >= 0){
         if (AClipboard::current()->getType()==4) {
-            Bar *addition=new Bar();
+            auto addition = std::make_unique<Bar>();
             Bar *bOrigin=(Bar*)AClipboard::current()->getPtr();
             addition->clone(bOrigin);
-            insertBefore(addition, _cursor);
+            insertBefore(std::move(addition), _cursor);
             connectAll();
             //AClipboard::current()->setType(-1); //refact attention
             SingleCommand command(16);
             command.setPosition(0, _cursor,0);
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
             return;
         }
 
         //TODO tab
         Tab* tab = parent;
-        Track *track = tab->at(AClipboard::current()->getTrackIndex());
+        Track *track = tab->at(AClipboard::current()->getTrackIndex()).get();
 
         if (AClipboard::current()->getType()==0) {
-            Bar *origin = track->at(AClipboard::current()->getBarIndex()); //pTrack->getV(copyIndex);
-            Bar *addition=new Bar();
+            Bar *origin = track->at(AClipboard::current()->getBarIndex()).get(); //pTrack->getV(copyIndex);
+            auto addition = std::make_unique<Bar>();
             addition->clone(origin);
 
-            track->insertBefore(addition, _cursor);
+            track->insertBefore(std::move(addition), _cursor);
             track->connectAll();
             AClipboard::current()->setType(-1); //refact attention
 
             SingleCommand command(16);
             command.setPosition(0, _cursor,0);
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
 
             return;
         }
@@ -995,31 +991,31 @@ void Track::clipboardPaste() {
             */
 
             if (AClipboard::current()->getSecondBarI()==AClipboard::current()->getBarIndex()) {
-                Bar *origin = track->at(AClipboard::current()->getBarIndex());
-                Bar *addition = new Bar();
+                Bar *origin = track->at(AClipboard::current()->getBarIndex()).get();
+                auto addition = std::make_unique<Bar>();
                 addition->setSignDenum(origin->getSignDenum());
                 addition->setSignNum(origin->getSignNum());
 
                 for (int beats = AClipboard::current()->getBeatIndex();
                      beats  <= AClipboard::current()->getSecondBeatI(); ++beats) {
-                    Beat *additionBeat=new Beat();
-                    Beat *beatOrigin = origin->at(beats);
+                    auto additionBeat = std::make_unique<Beat>();
+                    Beat *beatOrigin = origin->at(beats).get();
                     additionBeat->clone(beatOrigin);
-                    addition->push_back(additionBeat);
+                    addition->push_back(std::move(additionBeat));
                 }
 
-                track->insertBefore(addition, _cursor);
+                track->insertBefore(std::move(addition), _cursor);
 
                 SingleCommand command(16);
                 command.setPosition(0, _cursor,0);
-                commandSequence.push_back(command);
+                commandSequence.push_back(std::move(command));
 
             }
             else
             for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
-                Bar *origin = track->at(bars);
-                Bar *addition = new Bar();
+                Bar *origin = track->at(bars).get();
+                auto addition = std::make_unique<Bar>();
                 addition->setSignDenum(origin->getSignDenum());
                 addition->setSignNum(origin->getSignNum());
 
@@ -1028,10 +1024,10 @@ void Track::clipboardPaste() {
                     //last
                     for (int beats = 0; beats <= AClipboard::current()->getSecondBeatI(); ++beats)
                     {
-                        Beat *additionBeat=new Beat();
-                        Beat *beatOrigin = origin->at(beats);
+                        auto additionBeat = std::make_unique<Beat>();
+                        Beat *beatOrigin = origin->at(beats).get();
                         additionBeat->clone(beatOrigin);
-                        addition->push_back(additionBeat);
+                        addition->push_back(std::move(additionBeat));
                     }
                 }
                 else if (bars == AClipboard::current()->getBarIndex())
@@ -1040,10 +1036,10 @@ void Track::clipboardPaste() {
                     for (size_t beats = AClipboard::current()->getBeatIndex();
                          beats < origin->size(); ++beats)
                     {
-                        Beat *additionBeat=new Beat();
-                        Beat *beatOrigin = origin->at(beats);
+                         auto additionBeat = std::make_unique<Beat>();
+                        Beat *beatOrigin = origin->at(beats).get();
                         additionBeat->clone(beatOrigin);
-                        addition->push_back(additionBeat);
+                        addition->push_back(std::move(additionBeat));
                     }
                 }
                 else
@@ -1053,13 +1049,13 @@ void Track::clipboardPaste() {
                 }
 
                 //wrong?
-                track->insertBefore(addition, _cursor);
+                track->insertBefore(std::move(addition), _cursor);
             }
 
             int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
             SingleCommand command(16);
             command.setPosition(0, _cursor,barsRange);
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
             //tricke mech
             //will be able isert many times
             AClipboard::current()->setType(-1); //refact attention
@@ -1069,17 +1065,17 @@ void Track::clipboardPaste() {
         {
             for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
-                Bar *origin = track->at(bars);
-                Bar *addition = new Bar();
+                Bar *origin = track->at(bars).get();
+                auto addition = std::make_unique<Bar>();
                 addition->clone(origin);
 
-                track->insertBefore(addition, _cursor);
+                track->insertBefore(std::move(addition), _cursor);
             }
 
             int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
             SingleCommand command(16);
             command.setPosition(0, _cursor,barsRange+1);
-            commandSequence.push_back(command);
+            commandSequence.push_back(std::move(command));
 
             track->connectAll();
             AClipboard::current()->setType(-1); //refact attention
@@ -1092,9 +1088,9 @@ void Track::clipboardPaste() {
 
 void Track::undoOnTrack() {
     if (commandSequence.size()) {
-        SingleCommand lastCommand = commandSequence[commandSequence.size()-1];
+        SingleCommand lastCommand = std::move(commandSequence[commandSequence.size()-1]);
         commandSequence.pop_back();
-        reverseCommand(lastCommand);
+        reverseCommand(std::move(lastCommand));
     }
 }
 
@@ -1117,7 +1113,7 @@ void Track::changeBarSigns(int newNum, int newDen) {
 
 
 void Track::setBarSign(int newNum, int newDen) {
-    Bar* bar = at(_cursor);
+    Bar* bar = at(_cursor).get();
     std::uint8_t oldDen = bar->getSignDenum();
     std::uint8_t oldNum = bar->getSignNum();
     bar->setSignNum(newNum);
@@ -1128,7 +1124,7 @@ void Track::setBarSign(int newNum, int newDen) {
         command.setPosition(0,_cursor,0);
         command.setValue(oldDen);
         command.setValue2(oldNum);
-        commandSequence.push_back(command);
+        commandSequence.push_back(std::move(command));
     }
 }
 

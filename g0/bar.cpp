@@ -82,11 +82,10 @@ void Bar::clone(Bar *from) {
 
    for (size_t i = 0; i < from->size(); ++i)
    {
-       Beat *beat = from->at(i);
-       Beat *newBeat=new Beat();
-
+       Beat *beat = from->at(i).get();
+       auto newBeat = std::make_unique<Beat>();
        newBeat->clone(beat);
-       push_back(newBeat);
+       push_back(std::move(newBeat));
    }
 }
 

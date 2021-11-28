@@ -34,10 +34,10 @@ void Beat::clone(Beat *from)
 
    for (size_t i = 0; i < from->size(); ++i)
    {
-       Note *note = from->at(i);
-       Note *newNote=new Note();
+       Note *note = from->at(i).get();
+       auto newNote = std::make_unique<Note>();
        newNote->clone(note);
-       push_back(newNote);
+       push_back(std::move(newNote));
    }
 }
 

@@ -65,10 +65,7 @@ public:
 
     std::vector<TimeLineKnot> timeLine;
 
-    virtual ~Tab() {
-        for (size_t i=0; i < size(); ++i)
-                   delete at(i);
-    }
+    virtual ~Tab() = default;
 
     void printToStream(std::ostream &stream);
 
@@ -91,7 +88,7 @@ public:
                 int instr = GpCompMidiChannels[ind].instrument;
                 std::uint8_t pan = GpCompMidiChannels[ind].balance;
                 std::uint8_t vol = GpCompMidiChannels[ind].volume;
-                Track *t=at(i);
+                Track *t = at(i).get();
                 t->setInstrument(instr);
                 t->setPan(pan);
                 t->setVolume(vol);
@@ -153,7 +150,7 @@ public:
     }
 
 public: //later cover under midlayer TabCommandsHandler
-    Track* createNewTrack(); 
+    void createNewTrack();
 
     void muteTrack(); //current
     void soloTrack();

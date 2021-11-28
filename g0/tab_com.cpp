@@ -65,7 +65,7 @@ void Tab::moveCursorOfTrackDown() {
 
 
 void Tab::changeDrumsFlag() {
-    Track* pTrack = this->at(displayTrack);
+    Track* pTrack = this->at(displayTrack).get();
     bool drums = pTrack->isDrums();
     drums = !drums;
     pTrack->setDrums(drums);
@@ -91,9 +91,9 @@ void Tab::changeTrackPanoram(int val) {
     at(currentTrack)->setPan(val);
 }
 
-Track* Tab::createNewTrack() { //Move into Tab
+void Tab::createNewTrack() {
     Tab* pTab = this;
-    Track *track=new Track();
+    auto track = std::make_unique<Track>();
     track->setParent(pTab);
     std::string iName("NewInstrument");
     track->setName(iName);
@@ -111,21 +111,24 @@ Track* Tab::createNewTrack() { //Move into Tab
     track->tuning.setTune(5,40);
 
     for (size_t barI=0; barI < pTab->at(0)->size(); ++barI) {
-        Bar *bar=new Bar();
+
+        auto bar = std::make_unique<Bar>();
+
         bar->flush();
         bar->setSignDenum(4); bar->setSignNum(4);
         bar->setRepeat(0);
-        Beat *beat=new Beat();
+
+        auto beat = std::make_unique<Beat>();
+
         beat->setPause(true);
         beat->setDotted(0);
         beat->setDuration(3);
         beat->setDurationDetail(0);
-        bar->push_back(beat);
-        track->push_back(bar);
+        bar->push_back(std::move(beat));
+        track->push_back(std::move(bar));
     }
-    pTab->push_back(track);
+    pTab->push_back(std::move(track));
     pTab->connectTracks();
-    return track;
 }
 
 
@@ -152,13 +155,13 @@ void Tab::midiPause() {
 
 
 void Tab::setMarker(std::string text) {
-    Bar* fromFirstTrack = at(0)->at(currentBar);
+    Bar* fromFirstTrack = at(0)->at(currentBar).get();
     fromFirstTrack->setGPCOMPMarker(text,0);
 }
 
 
 void Tab::openReprise() {
-    Bar *firstTrackBar = this->at(0)->at(currentBar);
+    Bar *firstTrackBar = this->at(0)->at(currentBar).get();
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;
@@ -172,7 +175,7 @@ void Tab::openReprise() {
 
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
-    Bar *firstTrackBar = this->at(0)->at(currentBar);
+    Bar *firstTrackBar = this->at(0)->at(currentBar).get();
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;

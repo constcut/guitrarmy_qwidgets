@@ -23,7 +23,7 @@ public:
 };
 
 
-class PolyBar : public ChainContainer<Bar, Tab>
+class PolyBar : public std::vector<Bar*>
 {
   public:
     PolyBar()
@@ -48,14 +48,11 @@ public:
         _selectionBeatLast=-1;
     }
 
-    virtual ~Track() {
-        for (size_t i=0; i < size(); ++i)
-            delete at(i);
-    }
+    virtual ~Track() = default;
 
     void printToStream(std::ostream &stream);
 
-    ChainContainer<Bar, Tab> timeLoop; //PolyBar //REFACT access
+    std::vector<Bar*> timeLoop;
     std::vector<size_t> timeLoopIndexStore;
 
     Track &operator=([[maybe_unused]]Track another)
@@ -64,20 +61,18 @@ public:
         return *this;
     }
 
-    virtual void push_back(Bar*& val)
+    virtual void push_back(std::unique_ptr<Bar> val)
     {
         if (val){
             val->setParent(this);
-            ChainContainer<Bar, Tab>::push_back(val);
+            ChainContainer<Bar, Tab>::push_back(std::move(val));
         }
     }
 
-    virtual void insertBefore(Bar* &val, int index=0)
-    {
-        if (val)
-        {
+    virtual void insertBefore(std::unique_ptr<Bar> val, int index=0){
+        if (val){
             val->setParent(this);
-        ChainContainer<Bar, Tab>::insertBefore(val,index);
+            ChainContainer<Bar, Tab>::insertBefore(std::move(val),index);
         }
     }
 
@@ -167,7 +162,7 @@ public:
     void switchEffect(int effIndex);
     void switchBeatEffect(int effIndex);
     void switchNoteState(std::uint8_t changeState);
-    void reverseCommand(SingleCommand &command);
+    void reverseCommand(SingleCommand command);
 
     std::vector<SingleCommand> commandSequence;
 

@@ -157,7 +157,8 @@ class SingleCommand
 public:
 
     //special store
-    std::vector<Note*> *storedNotes;
+    using NotesBuffer = std::vector<std::unique_ptr<Note>>;
+    std::unique_ptr<NotesBuffer> storedNotes;
 
     //REFACT to variable amount and types
     void *outerPtr;
@@ -167,23 +168,17 @@ public:
     Bar *startBar;
     Bar *endBar;
 
-    void requestStoredNotes()
-    {
-        storedNotes = new std::vector<Note*>;
-    }
-
-    void releaseStoredNotes()
-    {
-        delete storedNotes;
+    void requestStoredNotes(){
+        storedNotes = std::make_unique<NotesBuffer>();
     }
 
     SingleCommand():commandType(0),commandValue(0),track(0),bar(0),beat(0),string(0),
-        storedNotes(0),outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
+        outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
     {}
 
     SingleCommand(std::uint8_t newType, std::uint8_t newValue=0):
         commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0),
-        storedNotes(0),outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
+        outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
     {
     }
 
