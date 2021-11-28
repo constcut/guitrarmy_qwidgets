@@ -160,8 +160,7 @@ protected:
         for (size_t i = 0; i < size(); ++i)
             if (at(i)->getStringNumber()==string)
                 return at(i).get();
-
-        return 0;
+        return nullptr;
     }
 
     Note *getNoteInstance(int string)

@@ -112,9 +112,9 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
     for (size_t i = 0; i < tracksCount; ++i) {
 
-        Track *track = tab->at(i).get();
+        auto& track = tab->at(i);
         std::string trackName = track->getName();
-        saveString(file,trackName);
+        saveString(file, trackName);
 
         std::uint8_t stringsCount = track->tuning.getStringsAmount();
         file->write((char*)&stringsCount,1);
@@ -253,7 +253,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             for (size_t k = 0; k < bar->size(); ++k)
             {
                 //Each beat
-                Beat *beat = (bar->at(k)).get();
+                auto& beat = (bar->at(k));
 
                 bool isPause = beat->getPause();
                 //file->write((char*)&isPause,1);
@@ -336,7 +336,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                 //and notes inside
                 for (size_t el=0; el < beat->size(); ++el)
                 {
-                    Note *note = beat->at(el).get();
+                    auto& note = beat->at(el);
                     EffectsPack effPackNote = note->getEffects();                  
                     std::uint8_t fret = note->getFret();
                     //merge
@@ -618,7 +618,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                //will be erased on time loop
 
                // not 0 bar
-               Bar *ftBar = tab->at(0)->at(j).get(); //firstTrackBar
+               auto& ftBar = tab->at(0)->at(j); //firstTrackBar
                bar->setRepeat(ftBar->getRepeat(),ftBar->getRepeatTimes());
                bar->setSignDenum(ftBar->getSignDenum());
                bar->setSignNum(ftBar->getSignNum());
