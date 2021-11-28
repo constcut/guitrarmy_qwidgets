@@ -72,6 +72,8 @@ SOURCES += main.cpp\
     libtim/timidity.c
 
 HEADERS  += mainwindow.h \
+    g0/bar.h \
+    g0/track.h \
     g0/types.h \
     gview.h \
     g0/abitarray.h \
