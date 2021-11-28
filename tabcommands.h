@@ -167,20 +167,18 @@ public:
     std::unique_ptr<Bar> outerBarEnd;
 
     //could be refacted
-    Bar *startBar; //TODO найти разницу с outerBar \ END
-    Bar *endBar;
+    std::unique_ptr<Bar> startBar; //TODO найти разницу с outerBar \ END
+    std::unique_ptr<Bar> endBar;
 
     void requestStoredNotes(){
         storedNotes = std::make_unique<NotesBuffer>();
     }
 
-    SingleCommand():commandType(0),commandValue(0),track(0),bar(0),beat(0),string(0),
-        startBar(0),endBar(0)
+    SingleCommand():commandType(0),commandValue(0),track(0),bar(0),beat(0),string(0)
     {}
 
     SingleCommand(std::uint8_t newType, std::uint8_t newValue=0):
-        commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0),
-        startBar(0),endBar(0)
+        commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0)
     {
     }
 

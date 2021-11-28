@@ -176,7 +176,7 @@ void MidiEngine::playTrack(MidiTrack *track)
 
     for (int i = 0; i < track->size(); ++i)
     {
-        MidiSignal *sig = track->at(i);
+        MidiSignal *sig = track->at(i).get();
 
         size_t absValue = 10; //sig->time.getValue()/
         //ul waitTime = absValue
@@ -334,11 +334,11 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     for (int trackI = 0; trackI < midiFile->size(); ++trackI)
     {
-        MidiTrack *track = midiFile->at(trackI);
+        MidiTrack *track = midiFile->at(trackI).get();
         size_t absTimeShift =0;
         for (int sigI = 0; sigI < track->size(); ++sigI)
         {
-            MidiSignal *sig = track->at(sigI);
+            MidiSignal *sig = track->at(sigI).get();
 
             size_t signalTimeShift = sig->time.getValue();
             absTimeShift += signalTimeShift;
@@ -359,30 +359,20 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
     for (int sigI = allSignals.size()-1; sigI >= 0; --sigI)
     {
             MidiSignal *sig = allSignals[sigI];
-
-
             size_t currentAbs = sig->absValue;
             size_t shift = currentAbs - lastGlobalAbs;
-
-
-            MidiSignal *signalCopy = new MidiSignal(sig->byte0,
+            auto signalCopy = std::make_unique<MidiSignal>(sig->byte0,
                                                     sig->param1,
                                                     sig->param2,shift);
 
             signalCopy->absValue = sig->absValue;
-
             if (sig->byte0==0xff)
                 signalCopy->metaStore = sig->metaStore; //attention
 
-
             lastGlobalAbs = currentAbs;
-
-            result->push_back(signalCopy);
-
+            result->push_back(std::move(signalCopy));
     }
-
     qDebug() << "Produced midi track with "<<(int)result->size()<<" elements";
-
     return result;
 }
 

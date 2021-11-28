@@ -32,7 +32,7 @@ bool tabLog = false;
  {
         for (int i = 0 ; i < size(); ++i)
         {
-            Bar *bar = at(i)->at(barN);
+            Bar *bar = at(i)->at(barN).get();
 
             if (bar->size())
             {

@@ -200,7 +200,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftT
 
         for (size_t beatI = 0; beatI < bar->size(); ++beatI)
         {
-           Beat *beat = bar->at(beatI);
+           Beat *beat = bar->at(beatI).get();
 
            std::uint8_t dur = beat->getDuration();
            std::uint8_t dot = beat->getDotted();
@@ -309,7 +309,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
     for (size_t i = 0; i < curBar->size(); ++i)
     {
-        Beat *beat = curBar->at(i);
+        Beat *beat = curBar->at(i).get();
 
 
         //CHANGE BPM

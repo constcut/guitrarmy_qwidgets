@@ -144,7 +144,7 @@ void TabView::setTab(Tab* point2Tab)
         pTab->getCurrentBar() = 0;
         bpmLabel->setText("bpm=" + std::to_string(pTab->getBPM()));
         for (size_t i = 0; i < pTab->size(); ++i)
-            addSingleTrack(pTab->at(i));
+            addSingleTrack(pTab->at(i).get());
         std::string statusBar1,statusBar2;
         statusBar1 = "Tab Name";
         statusBar2 = "BPM = " + std::to_string(pTab->getBPM());
@@ -279,7 +279,7 @@ void TabView::draw(QPainter *painter)
                 painter->drawText(9,yPos+3,"s");
 
 
-           Track *tr = pTab->at(trackIndex);
+           Track *tr = pTab->at(trackIndex).get();
            for (size_t j = 0 ; j < tr->size(); ++j)
            {
                size_t barIndex = j + pTab->getDisplayBar();
@@ -287,13 +287,13 @@ void TabView::draw(QPainter *painter)
                     break;
 
                std::string sX = std::to_string(barIndex+1);
-               Bar *cB= tr->at(barIndex);
+               Bar *cB= tr->at(barIndex).get();
                if (cB->size() == 1)
                {
-                   Beat *beat = cB->at(0);
+                   Beat *beat = cB->at(0).get();
                    Note *note = 0;
                    if (beat->size())
-                    note = beat->at(0);
+                    note = beat->at(0).get();
                    if (note == 0)
                       sX+="*";
                }
@@ -377,7 +377,7 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
         qDebug() << "Thread "<<i<<" seconds "<<thrLenSeconds;
     }
 
-    Track *pTrack = pTab->at(0);
+    Track *pTrack = pTab->at(0).get();
 
     if (localThr)
     {
@@ -863,7 +863,7 @@ void TrackView::draw(QPainter *painter)
 
     for (size_t i = displayIndex; i < trackLen; ++i) //trackLen
     {
-        Bar *curBar = track1->at(i);
+        Bar *curBar = track1->at(i).get();
 
         std::uint8_t curNum = curBar->getSignNum();
         std::uint8_t curDen = curBar->getSignDenum();
@@ -1481,11 +1481,11 @@ void BarView::draw(QPainter *painter)
         }
 
 
-        Beat *curBeat = bar1->at(i);
+        Beat *curBeat = bar1->at(i).get();
 
         for (size_t j =0; j < curBeat->size(); ++j)
         {
-            Note *curNote = curBeat->at(j);
+            Note *curNote = curBeat->at(j).get();
 
 
 

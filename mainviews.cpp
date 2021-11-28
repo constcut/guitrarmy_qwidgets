@@ -318,11 +318,11 @@ void MainView::keyevent(std::string press)
             {
                 //NEW tab
 
-                Tab *newTab = new Tab();
+                Tab *newTab = new Tab(); //TODO unique тоже
                 newTab->setBPM(120);
 
                 //newTab->connectTracks();
-                Track *track=new Track();
+                auto track = std::make_unique<Track>();
                 track->setParent(newTab);
                 std::string iName("NewInstrument");
                 track->setName(iName);
@@ -340,7 +340,7 @@ void MainView::keyevent(std::string press)
                 track->tuning.setTune(5,40);
 
 
-                Bar *bar=new Bar();
+                auto bar = std::make_unique<Bar>();
                 bar->flush();
                 bar->setSignDenum(4); bar->setSignNum(4);
                 bar->setRepeat(0);
@@ -348,17 +348,17 @@ void MainView::keyevent(std::string press)
 
                 for (int iB=0; iB <4; ++iB)
                 {
-                    Beat *beat=new Beat();
+                    auto beat = std::make_unique<Beat>();
                     beat->setPause(true);
                     beat->setDotted(0);
                     beat->setDuration(3);
                     beat->setDurationDetail(0);
 
-                    bar->push_back(beat);
+                    bar->push_back(std::move(beat));
                 }
 
-                track->push_back(bar);
-                newTab->push_back(track);
+                track->push_back(std::move(bar));
+                newTab->push_back(std::move(track));
                 newTab->connectTracks();
 
                 changeCurrentView(tabsView);

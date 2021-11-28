@@ -102,8 +102,8 @@ public:
 
     bool loadFile(std::string fileName, std::vector<int> *params);
 
-    Track *generateTrack();
-    Bar *generateBar();//short *source, int &cursor);
+    std::unique_ptr<Track> generateTrack();
+    std::unique_ptr<Bar> generateBar();//short *source, int &cursor);
 
 };
 

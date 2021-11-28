@@ -111,14 +111,10 @@ void PatternInput::draw(QPainter *painter)
 
 void PatternInput::createBar()
 {
-
-    if (bar)
-        delete bar;
     if (barView)
         delete barView;
 
-    bar = new Bar;
-
+    bar = std::make_unique<Bar>();
     bar->flush();
 
     int num = atoi(sigNumBut->getText().c_str());
@@ -129,7 +125,7 @@ void PatternInput::createBar()
 
     for (size_t i = 0; i < (checkButtons.size()/4); ++i)
     {
-        Beat *beat=new Beat();
+        auto beat = std::make_unique<Beat>();
 
         beat->setDuration(currentDen);
         beat->setDotted(0);
@@ -143,15 +139,11 @@ void PatternInput::createBar()
             size_t ind = i + iCoef*(checkButtons.size()/4);
             if (checkButtons[ind].isChecked())
             {
-                Note *newNote=new Note();
-
+                auto newNote = std::make_unique<Note>();
                 std::uint8_t localFret = atoi(lineInstrLabels[iCoef].getText().c_str());
-
 
                 if (getMaster())
                     localFret = getMaster()->getComboBoxValue(iCoef)+27;
-
-
                 /*
                 switch (iCoef)
                 {
@@ -161,13 +153,11 @@ void PatternInput::createBar()
                     case 3: localFret = 36; break;
                 }
                 */
-
-
                 newNote->setFret(localFret); //0
                 newNote->setStringNumber(iCoef+1);
                 newNote->setState(0);
                 //newNote.setVolume();
-                beat->push_back(newNote);
+                beat->push_back(std::move(newNote));
                 oneChecked = true;
             }
         }
@@ -175,16 +165,16 @@ void PatternInput::createBar()
         if (oneChecked == false)
             beat->setPause(true);
 
-        bar->push_back(beat);
+        bar->push_back(std::move(beat));
     }
 
 
 
-    barView = new BarView(bar,6);
+    barView = new BarView(bar.get(), 6);
     barView->setShifts(250,300-55-30);
 
 
-    AClipboard::current()->setPtr(bar);
+    AClipboard::current()->setPtr(bar.get());
     AClipboard::current()->setType(4); //ptr
 
 }
@@ -193,14 +183,14 @@ void PatternInput::playBar() {
     //createBar();
 
     Tab patternTab;
-    Track *patternTrack=new Track();
+    auto patternTrack = std::make_unique<Track>();
     patternTrack->setParent(&patternTab);
     patternTrack->setDrums(true);
     patternTrack->setInstrument(0);
     patternTrack->setVolume(15);
     patternTrack->setPan(8);
 
-    AClipboard::current()->setPtr(bar);
+    AClipboard::current()->setPtr(bar->get());
     AClipboard::current()->setType(4); //ptr
 
     if (butRepeat->isChecked())
@@ -209,14 +199,14 @@ void PatternInput::playBar() {
         bar->setRepeat(2,10);
     }
 
-    patternTrack->push_back(bar);
+    patternTrack->push_back(std::move(bar));
 
     patternTrack->tuning.setStringsAmount(6);
 
     for (int ii=0; ii < 7; ++ii)
         patternTrack->tuning.setTune(ii,0);
 
-    patternTab.push_back(patternTrack);
+    patternTab.push_back(std::move(patternTrack));
 
     int patternBPM = atoi(bpmValue->getText().c_str());
     patternTab.setBPM(patternBPM);
@@ -717,13 +707,13 @@ void TapRyView::createBar()
             qDebug() << "hmm";
         }
 
-        Beat *ryBeat=new Beat();
+        auto ryBeat= std::make_unique<Beat>();
         ryBeat->setDuration(dur);
         ryBeat->setDotted(dot);
         ryBeat->setDurationDetail(det);
         ryBeat->setPause(0);
 
-        Note *rNote= new Note();
+        auto rNote= std::make_unique<Note>();
         rNote->setState(0);
 
 
@@ -757,27 +747,27 @@ void TapRyView::createBar()
         }
 
         rNote->setStringNumber(5);
-        ryBeat->push_back(rNote);
+        ryBeat->push_back(std::move(rNote));
 
-        ryBar->push_back(ryBeat);
+        ryBar->push_back(std::move(ryBeat));
     }
 
     //last note thats missing
     if (lastDur < 8)
     {
-        Beat *ryBeat= new Beat();
+        auto ryBeat= std::make_unique<Beat>();
         ryBeat->setDuration(lastDur);
         ryBeat->setDotted(0);
         ryBeat->setDurationDetail(0);
         ryBeat->setPause(0);
 
-        Note *rNote=new Note();
+        auto rNote = std::make_unique<Note>();
         rNote->setState(0);
         rNote->setFret(lastPressInstr);
         rNote->setStringNumber(5);
-        ryBeat->push_back(rNote);
+        ryBeat->push_back(std::move(rNote));
 
-        ryBar->push_back(ryBeat);
+        ryBar->push_back(std::move(ryBeat));
     }
 
 
@@ -795,12 +785,12 @@ void TapRyView::createBar()
     ///if (barView) delete barView;
     if (barView==0)
     {
-        barView = new BarView(ryBar,6);
+        barView = new BarView(ryBar->get(),6);
         barView->setShifts(210,80);
     }
-        else barView->setBar(ryBar);
+        else barView->setBar(ryBar.get());
 
-    AClipboard::current()->setPtr(ryBar);
+    AClipboard::current()->setPtr(ryBar.get());
     AClipboard::current()->setType(4); //ptr
 
 }
@@ -816,29 +806,24 @@ void TapRyView::copyAndPlayBar()
 
     //createBar();
 
-    Bar *bar = ryBar;
 
 
     //copy paste
     Tab patternTab;
-    Track *patternTrack=new Track();
+    auto patternTrack= std::make_unique<Track>();
     patternTrack->setParent(&patternTab);
     patternTrack->setDrums(true);
     patternTrack->setInstrument(0);
     patternTrack->setVolume(15);
     patternTrack->setPan(8);
 
-    //bar->setRepeat(1);
-    //bar->setRepeat(2,2);
-
-    patternTrack->push_back(bar);
-
+    patternTrack->push_back(std::move(ryBar));
     patternTrack->tuning.setStringsAmount(6);
 
     for (int ii=0; ii < 7; ++ii)
         patternTrack->tuning.setTune(ii,0);
 
-    patternTab.push_back(patternTrack);
+    patternTab.push_back(std::move(patternTrack));
     patternTab.setBPM(thatBPM);
     patternTab.connectTracks();
 
@@ -874,10 +859,11 @@ void TapRyView::keyevent(std::string press)
     {
         //info << "Cleaned "<<(int)presses.size()<<" presses;";
         presses.clear();
-        if (ryBar) delete ryBar;
-            ryBar = 0;
-        if (barView) delete barView;
-            barView = 0;
+        if (ryBar)
+            ryBar = nullptr;
+        if (barView)
+            delete barView;
+        barView = nullptr;
         //labStat->setText(info.c_str());
         //getMaster()->pleaseRepaint();
     }
@@ -905,25 +891,25 @@ void TapRyView::keyevent(std::string press)
     if (press == "start metr")
     {
         //START PSEUDO METRONOME
-
-        if (ryBar) delete ryBar;
-        if (barView) delete barView;
+        if (ryBar) ryBar = nullptr;
+        if (barView)
+            delete barView;
         barView=0;
 
-        ryBar = new Bar();
+        ryBar = std::make_unique<Bar>();
         ryBar->flush();
 
         ryBar->setSignDenum(4); ryBar->setSignNum(4);
 
         for (int i =0; i < 4; ++i)
         {
-            Beat *ryBeat= new Beat();
+            auto ryBeat= std::make_unique<Beat>();
             ryBeat->setDuration(2);
             ryBeat->setDotted(0);
             ryBeat->setDurationDetail(0);
             ryBeat->setPause(0);
 
-            Note *rNote=new Note();
+            auto rNote = std::make_unique<Note>();
             rNote->setState(0);
 
             if (i==0)
@@ -932,13 +918,13 @@ void TapRyView::keyevent(std::string press)
                 rNote->setFret(36);
 
             rNote->setStringNumber(5);
-            ryBeat->push_back(rNote);
+            ryBeat->push_back(std::move(rNote));
 
-            ryBar->push_back(ryBeat);
+            ryBar->push_back(std::move(ryBeat));
         }
 
         Tab patternTab;
-        Track *patternTrack=new Track();
+        auto patternTrack= std::make_unique<Track>();
         patternTrack->setParent(&patternTab);
         patternTrack->setDrums(true);
         patternTrack->setInstrument(0);
@@ -948,14 +934,14 @@ void TapRyView::keyevent(std::string press)
         ryBar->setRepeat(1);
         ryBar->setRepeat(2,100);
 
-        patternTrack->push_back(ryBar);
+        patternTrack->push_back(std::move(ryBar));
 
         patternTrack->tuning.setStringsAmount(6);
 
         for (int ii=0; ii < 7; ++ii)
             patternTrack->tuning.setTune(ii,0);
 
-        patternTab.push_back(patternTrack);
+        patternTab.push_back(std::move(patternTrack));
 
         int thatBPM = atoi(bpmLabel->getText().c_str());
         patternTab.setBPM(thatBPM);
@@ -1139,7 +1125,7 @@ void RecordView::loadCurrentFile()
     {
         //need to delete old one
         ///if (barView) delete barView;
-        barView = new BarView(bar,6);
+        barView = new BarView(bar.get(),6);
         barView->setShifts(20,50);
     }
 }

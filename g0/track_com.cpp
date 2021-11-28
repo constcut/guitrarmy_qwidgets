@@ -237,6 +237,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         }
     }
 
+    /*
     if (type == 25)
     {
         auto addition = std::move(command.outerBarEnd);
@@ -364,6 +365,9 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
        //from here till first beat insert at barN
 
     }
+    */
+
+    //TODO 25-26 effect events + all clipboard operations
 }
 
 
@@ -705,11 +709,10 @@ void Track::deleteSelectedBeats() {
             }
 
             ///GET range of bars
-            Bar *lastBarInMiddle = at(_selectionBarLast-1);
-            Bar *firstBarInMiddle = at(_selectionBarFirst+1);
 
-            command.startBar = firstBarInMiddle; //TODO unique?
-            command.endBar = lastBarInMiddle;
+
+            command.startBar = std::move(at(_selectionBarFirst+1));
+            command.endBar = std::move(at(_selectionBarLast-1));
 
             for (int bI = _selectionBarLast-1; bI > _selectionBarFirst; --bI)
                 remove(bI);

@@ -17,7 +17,7 @@ protected:
     std::vector<GCheckButton> checkButtons; //one track
     std::vector<GLabel> lineInstrLabels;
 
-    Bar *bar;
+    std::unique_ptr<Bar> bar;
     BarView *barView;
 
     GLabel *sigNumBut;
@@ -41,7 +41,7 @@ public:
 
     void keyevent(std::string press);
 
-    PatternInput():bar(0),barView(0),currentDen(4)
+    PatternInput():barView(0),currentDen(4)
     {
         sigNumBut = new GLabel(100,330-75,"16");
         //sigNumBut->setH(50);
@@ -123,7 +123,7 @@ protected:
     GRect leftPress;
     GRect rightPress;
 
-    Bar *ryBar;
+    std::unique_ptr<Bar> ryBar;
 
     BarView *barView;
 
@@ -144,8 +144,6 @@ public:
         rightPress(600,280,200,200)
     {
 
-
-        ryBar = 0;
         labA = new GLabel(50,100-80,"Launch pseudo-metronome");
         //labA->setH(40);
         labA->setW(labA->getW() + 20);
@@ -194,7 +192,7 @@ public:
 class MorzeInput : public GView
 {
 protected:
-    Bar *bar;
+    std::unique_ptr<Bar> bar;
     BarView *barView;
     GLabel *createBut;
 
@@ -202,7 +200,7 @@ public:
 
     virtual void setUI();
 
-    MorzeInput():bar(0),barView(0)
+    MorzeInput(): barView(0)
     {
         createBut = new GLabel(100,100,"create tab from text");
     }
@@ -219,7 +217,7 @@ class RecordView : public GView
 {
 protected:
 
-    Bar *bar;
+    std::unique_ptr<Bar> bar;
     BarView *barView;
 
 
@@ -251,7 +249,7 @@ protected:
     GWave waveItself; //move inside
 
 public:
-    RecordView():bar(0),barView(0),wavePosition(0),waveLimit(0),recorderPtr(0)
+    RecordView():barView(0),wavePosition(0),waveLimit(0),recorderPtr(0)
     {
         //status = new GLabel(60,100-55-20,"Record not started");
 

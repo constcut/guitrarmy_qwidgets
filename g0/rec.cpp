@@ -7,23 +7,23 @@
 #include <QFile>
 #include <QDebug>
 
-Track *GWave::generateTrack()
+std::unique_ptr<Track> GWave::generateTrack()
 {
-    Bar *newBar = generateBar(); //rawData,indataCursor);
-    Track *track = new Track;
+    auto newBar = generateBar(); //rawData,indataCursor);
+    auto track = std::make_unique<Track>();
 
     while (newBar != 0)
     {
-        track->push_back(newBar);
+        track->push_back(std::move(newBar));
         newBar = generateBar();//rawData,indataCursor);
     }
 
     return track;
 }
 
-Bar *GWave::generateBar()//short *source, int &cursor)
+std::unique_ptr<Bar> GWave::generateBar()//short *source, int &cursor)
 {
-    Bar *bar = new Bar;
+    auto bar = std::make_unique<Bar>();
     bar->flush();
 
     bar->setSignNum(32);
@@ -70,7 +70,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         if (durNoteValue > 6)
             durNoteValue = 0; // if too long then whole - yet.
 
-        Beat *beat = new Beat();
+        auto beat = std::make_unique<Beat>();
         beat->setDuration(durNoteValue);
         beat->setDurationDetail(0); beat->setDotted(0);
 
@@ -94,13 +94,13 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         std::uint8_t localFret = freqTabResult;
 
         //now add Note itself
-        Note *newNote=new Note();
+        auto newNote = std::make_unique<Note>();
         newNote->setFret(localFret);
         newNote->setStringNumber(6); //string 6
         newNote->setState(0);
 
-        beat->push_back(newNote);
-        bar->push_back(beat);
+        beat->push_back(std::move(newNote));
+        bar->push_back(std::move(beat));
 
         if (noteI != notes.size()-1)
         { //if this is not a last not - search for pause
@@ -132,10 +132,10 @@ Bar *GWave::generateBar()//short *source, int &cursor)
             if (pauseDur > 6)
                 pauseDur = 0;
 
-            Beat *pauseBeat = new Beat();
+            auto pauseBeat = std::make_unique<Beat>();
             pauseBeat->setDuration(pauseDur);
             pauseBeat->setDurationDetail(0); pauseBeat->setDotted(0);
-            bar->push_back(pauseBeat);
+            bar->push_back(std::move(pauseBeat));
         }
 
     }
