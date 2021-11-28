@@ -2,19 +2,10 @@
 #define BAR_H
 
 #include "types.h"
-
-#include <memory.h> //TODO remove
-#include <unordered_map>
-#include "abitarray.h"
-#include "tabcommands.h" //move into g0
-
 #include "beat.h"
 
-class Track;
-class Bar;
-class Beat;
-class Note;
 
+class Track;
 
 class Bar : public ChainContainer<Beat*, Track> {
 

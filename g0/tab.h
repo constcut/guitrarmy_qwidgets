@@ -3,10 +3,7 @@
 
 #include "types.h"
 
-#include <memory.h> //TODO remove
 #include <unordered_map>
-
-#include "abitarray.h"
 #include "tabcommands.h" //move into g0
 
 #include "track.h"

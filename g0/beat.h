@@ -1,28 +1,14 @@
 #ifndef BEAT_H
 #define BEAT_H
 
-
 #include "types.h"
-
-#include <memory.h> //TODO remove
-#include <unordered_map>
-#include "abitarray.h"
-#include "tabcommands.h" //move into g0
-
+#include <memory.h>  //TODO find modern way
 #include "note.h"
 
-
 class Bar;
-class Beat;
-class Note;
 
 
-
-
-//STARTING LARGE REFACTORING OVER THE TAB
-
-class Beat : public ChainContainer<Note*, Bar>
-{
+class Beat : public ChainContainer<Note*, Bar> {
 
 public:
     Beat()

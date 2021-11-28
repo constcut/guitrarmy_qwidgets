@@ -2,7 +2,6 @@
 #define NOTE_H
 
 #include "types.h"
-#include <unordered_map>
 #include "abitarray.h"
 
 class Beat;
