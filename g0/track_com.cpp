@@ -18,7 +18,7 @@ void Track::switchEffect(int effIndex) {
     if (this->getV(_cursor)->getV(_cursorBeat)->len()==0)
         return;
 
-    auto pa = (Tab*) parent; //TODO get rid of every void* void *
+    auto pa = parent; //TODO get rid of every void* void *
     if (pa->playing())
         return;
 
@@ -40,7 +40,7 @@ void Track::switchBeatEffect(int effIndex) {
 
     if (this->getV(_cursor)->getV(_cursorBeat)->getPause())
         return;
-    auto pa = (Tab*) parent; //TODO get rid of every void* void *
+    auto pa = parent; //TODO get rid of every void* void *
     if (pa->playing())
         return;
     int ind = effIndex;
@@ -461,7 +461,7 @@ void Track::moveToPrevPage() {
         _cursorBeat = 0;
         _digitPress = -1;
         //TODO установить в родителя через PA (вначале проверив куда идёт вызов функции ниже)
-        Tab* pTab = (Tab*)parent;
+        Tab* pTab = parent;
         pTab->getCurrentBar() = _cursor; //QT dependency отвязать TODO
     }
 }
@@ -479,14 +479,14 @@ void Track::moveToNextPage() {
 
 
 void Track::moveToNextTrack() {
-    Tab* pTab = (Tab*)parent;
+    Tab* pTab = parent;
     pTab->moveCursorOfTrackDown();
     _digitPress = -1;
 }
 
 
 void Track::moveToPrevTrack() {
-    Tab* pTab = (Tab*)parent;
+    Tab* pTab = parent;
     pTab->moveCursorOfTrackUp();
     _digitPress = -1;
 }
@@ -807,7 +807,7 @@ void Track::saveFromTrack() {
     std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
     std::cerr << "Test loc " << getTestsLocation() << std::endl;
     std::ofstream file(gfilename.c_str());
-    Tab* pTab = (Tab*) parent; //TODO инкапсулировать в обычный класс, а не шаблон
+    Tab* pTab =  parent; //TODO инкапсулировать в обычный класс, а не шаблон
     gmyFile.saveToFile(&file, pTab);
     //TODO just get parent tab
     file.close();
@@ -882,7 +882,7 @@ void Track::clipboardCopyBar() {
         AClipboard::current()->setType(4);
     }
     else {
-        Tab* pTab = (Tab*)parent;
+        Tab* pTab = parent;
         int trackInd = pTab->getLastOpenedTrack();
         AClipboard::current()->setBeginIndexes(trackInd, _selectionBarFirst, _selectionBeatFirst);
         AClipboard::current()->setType(1); //copy single beat
@@ -893,7 +893,7 @@ void Track::clipboardCopyBar() {
 
 
 void Track::clipboarCopyBeat() {
-    Tab* pTab = (Tab*)parent;
+    Tab* pTab = parent;
     int trackInd = pTab->getLastOpenedTrack();
 
     if (_selectionBarFirst == -1)
@@ -914,7 +914,7 @@ void Track::clipboarCopyBeat() {
 
 
 void Track::clipboardCopyBars() {
-    Tab* pTab = (Tab*)parent;
+    Tab* pTab = parent;
     int trackInd = pTab->getLastOpenedTrack();
     //copyIndex = cursor;
     if (_selectionBarFirst == -1) {
@@ -961,7 +961,7 @@ void Track::clipboardPaste() {
         }
 
         //TODO tab
-        Tab* tab = (Tab*) parent;
+        Tab* tab = parent;
         Track *track = tab->getV(AClipboard::current()->getTrackIndex());
 
         if (AClipboard::current()->getType()==0) {

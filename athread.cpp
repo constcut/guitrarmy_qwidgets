@@ -143,7 +143,7 @@ struct BpmWaitNode
 
 void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCursor)
 {
-    Tab *tab=(Tab*)tab_ptr;
+    Tab *tab=(Tab*)tab_ptr; //TODO get rid!
 
     int startBPM = tab->getBPM();
     //beter from timeline

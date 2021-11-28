@@ -38,12 +38,12 @@ protected:
     std::vector<Child> sequence; //Эксперименты и замеры TODO
     ChainContainer<Child, Parent> *nextOne;
     ChainContainer<Child, Parent> *prevOne;
-    void *parent; //TODO ChainContainer too
+    Parent *parent; //TODO ChainContainer too
 
     public:
 
-    void setParent(void *newPa) { parent = newPa;}
-    void *getParent() { return parent; }
+    void setParent(Parent *newPa) { parent = newPa;}
+    Parent *getParent() { return parent; }
 
     void setPrev(ChainContainer<Child, Parent> *prev)
     { prevOne=prev;}
@@ -74,31 +74,17 @@ protected:
         return *this;
     }
 
-    ChainContainer():nextOne(0),prevOne(0),parent(0)
-    {
-    }
+    ChainContainer():nextOne(0),prevOne(0),parent(0){}
 
     ChainContainer(int predefinedSize):nextOne(0),prevOne(0),parent(0) {
         sequence.reserve(predefinedSize); // *=sizeof(CT); //?
     }
 
-    Child& operator[](size_t ind)
-    {
-        //checks
+    Child& operator[](size_t ind) {
         return sequence[ind];
     }
 
-    virtual void add(Child &val)
-    {
-        ChainContainer *is_poly = 0;
-        if (is_pointer<Child>::value == true){
-           // is_poly = dynamic_cast<ChainContainer*>(val);
-        }
-        else
-            is_poly = 0;
-        //dynamic_cast<ChainContainer*>(val);
-        if (is_poly)
-            is_poly->setParent(this);
+    virtual void add(Child &val) {
         sequence.push_back(val);
     }
 
@@ -132,7 +118,6 @@ protected:
 
     void remove(int index) {
         sequence.erase(sequence.begin()+index);
-        //nothig said about parent
     }
 
 };

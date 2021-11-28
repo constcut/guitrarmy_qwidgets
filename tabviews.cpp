@@ -1326,14 +1326,10 @@ BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
 void BarView::draw(QPainter *painter)
 {
     Bar *bar1 = pBar;
-
     int cX = 20+xShift;
     int cY = 20+yShift;
 
-    Track *track = (Track*)bar1->getParent();
-
-
-
+    Track *track = bar1->getParent();
     bool isSelected = false;
 
     if (selectorBegin!=-1)
