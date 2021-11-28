@@ -59,21 +59,8 @@ SOURCES += main.cpp\
     inputviews.cpp \
     midiengine.cpp \
     g0/build.cpp \
-    g0/rec.cpp \
-    libtim/miditopcm.cpp \
-    libtim/common.c \
-    libtim/instrum.c \
-    libtim/instrum_dls.c \
-    libtim/mix.c \
-    libtim/output.c \
-    libtim/playmidi.c \
-    libtim/readmidi.c \
-    libtim/readsbk.c \
-    libtim/resample.c \
-    libtim/sndfont.c \
-    libtim/stream.c \
-    libtim/tables.c \
-    libtim/timidity.c
+    g0/rec.cpp
+
 
 HEADERS  += mainwindow.h \
     g0/bar.h \
@@ -116,28 +103,7 @@ HEADERS  += mainwindow.h \
     qthelper.h \
     inputviews.h \
     midiengine.h \
-    g0/rec.h \
-    libtim/common.h \
-    libtim/dls_compat.h \
-    libtim/dls1.h \
-    libtim/dls2.h \
-    libtim/filenames.h \
-    libtim/instrum.h \
-    libtim/instrum_dls.h \
-    libtim/miditopcm.h \
-    libtim/mix.h \
-    libtim/options.h \
-    libtim/output.h \
-    libtim/playmidi.h \
-    libtim/readmidi.h \
-    libtim/resample.h \
-    libtim/sbk.h \
-    libtim/sflayer.h \
-    libtim/sndfont.h \
-    libtim/tables.h \
-    libtim/timi_endian.h \
-    libtim/timidity.h \
-    libtim/timidity_internal.h
+    g0/rec.h
 
 
 
