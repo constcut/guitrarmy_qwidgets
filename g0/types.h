@@ -10,17 +10,11 @@
 #include <iostream>
 
 
-typedef unsigned int uint;
-
-
-//types checker //TODO Вынести куда-то
-bool check_types();
 int getTime();
 bool testScenario();
 void connectConfigs(void *ptr);
 bool midiPrint(std::string fileName);
 bool greatCheckScenarioCase(int scen, int from, int to, int v);
-
 
 
 template<typename T>
@@ -57,17 +51,13 @@ protected:
 
     virtual ~ChainContainer() {}
 
-    ChainContainer<Child, Parent>& operator=(ChainContainer<Child, Parent> &copy)
-    {
+    ChainContainer<Child, Parent>& operator=(ChainContainer<Child, Parent> &copy) {
         sequence.clear();
         sequence.insert(sequence.begin(),copy.sequence.begin(),copy.sequence.end());
         return *this;
     }
 
-    ChainContainer<Child, Parent>& operator+=(ChainContainer<Child, Parent> &copy)
-    {
-        //check for end
-        //sequence.clear();
+    ChainContainer<Child, Parent>& operator+=(ChainContainer<Child, Parent> &copy) {
         sequence.insert(sequence.begin(),copy.sequence.begin(),copy.sequence.end());
         return *this;
     }

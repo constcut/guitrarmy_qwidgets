@@ -139,14 +139,6 @@ UINT playMIDIFile(HWND hWndNotify, LPSTR lpszMIDIFileName, UINT replay=0)
 }*/
 
 
-void checks()
-{
-    std::cout << "Starting checks function [004]" <<std::endl;
-   // bool typesFine = check_types();
-    //AF ile afi le; //compile check           - no need for output
-    MidiFile mfile;//compile check      - because if failed
-    Tab tablature;
-}
 
 
 bool midiPrint(std::string fileName)
@@ -429,7 +421,6 @@ bool testScenario()
 #else
     logName="scene.txt"; //android
 #endif
-    checks(); //checks first
 
     std::ofstream lofile;
     lofile.open(logName.c_str());
