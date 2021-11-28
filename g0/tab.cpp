@@ -1,17 +1,10 @@
 #include "tab.h"
-
 #include "aexpimp.h"
-
-
 
 bool tabLog = false;
 
 #include <QDebug>
-
-//TODO
-
 #include <algorithm>
-
 #include <map>
 
 //BEND points fun
@@ -36,27 +29,6 @@ void BendPoints::insertNewPoint(BendPoint bendPoint)
 }
 
 
-////////////////////////////////////////////////////////////////////////////
-////EFFECTS SET
-
-
-
-
-void Note::setEffect(byte eff)
-{
-    if (eff==0)
-    {
-        effPack.flush();
-    }
-        else
-    effPack.set(eff,true);
-}
-
-EffectsPack Note::getEffects()
-{
-    return effPack;
-}
-
 //-----------------OUTPUTING TO STREAM--------------------------------
 
  void Tab::printToStream(std::ostream &stream)
@@ -65,43 +37,7 @@ EffectsPack Note::getEffects()
     for (ul ind = 0; ind < len(); ++ind)
             at(ind)->printToStream(stream);
 
-    //as alrternative there
-    //SHOULD APPEAR CLASS
-    //TextTabList
-    //that creates tab lists with numbers
  }
-
-
-
-
-
-
-
- void Note::printToStream(std::ostream &stream)
- {
-    stream << "Fret = " <<(int)this->fret << std::endl;
- }
-
- //----------END-OF------OUTPUTING TO STREAM---------------------------
- ///////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
- //move code to caclCompleteStatus
-
-
-
-
- ///////////////////////////////////////////////////////////////////////
-
-
-
-
- //---------------------------------Chains-----------------------------
-
 
 
 
@@ -269,13 +205,6 @@ EffectsPack Note::getEffects()
 
 
 
- void Note::clone(Note *from)
- {
-     fret = from->fret;
-     volume = from->volume;
-     noteState = from->noteState;
-     stringNumber = from->stringNumber;
-     effPack.mergeWith(from->effPack);
- }
+
 
 
