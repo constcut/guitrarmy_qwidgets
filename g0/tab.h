@@ -657,14 +657,10 @@ protected:
 	ul color;
 	byte pan; //or int??
 	byte volume;
-
     bool drums;
 	//?own temp bpm
-	//GpComp - Port,Channel,ChannelE,Capo
-	ul GpCompInts[4];
-
+    ul GpCompInts[4]; //GpComp - Port,Channel,ChannelE,Capo
     ul beatsAmount;
-
     byte status; //0 - none 1 - mute 2 - soloe
 
 public:
@@ -720,9 +716,8 @@ protected:
     int _selectionBarLast;
     int _selectionBeatFirst;
     int _selectionBeatLast;
-
     int _digitPress;
-    //TODO digit press?
+
 
 public:
     size_t& cursor() { return _cursor; } //TODO после всего рефакторинга обязаны быть const
@@ -748,7 +743,7 @@ public:
     void onTrackCommand(TrackCommand command);
 
     void gotoTrackStart();
-    void changeBarSigns(int num, int denom);
+
     void moveSelectionLeft();
     void moveSelectionRight();
     void insertBar();
@@ -774,8 +769,11 @@ public:
     void setDotOnBeat();
     void setTriolOnBeat();
     //void setBendOnNote(); //TODO
+
     void setTextOnBeat(std::string newText);
     void setBarSign(int num, int denom);
+    void changeBarSigns(int num, int denom);
+
     void clipboarCopyBar(); //refact name
     void clipboarCopyBeat();
     void clipboardCopyBars();

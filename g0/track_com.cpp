@@ -1102,7 +1102,7 @@ void Track::undoOnTrack() {
 
 
 //void setBendOnNote(); //TODO
-void changeBarSigns(int num, int denom);
+void changeBarSignsQt(int num, int denom);
 void setBarSign(int num, int denom); //TODO проверить разницу с выше
 
 void Track::onTrackCommand(TrackCommand command) {
@@ -1213,4 +1213,31 @@ void Track::onTrackCommand(TrackCommand command) {
         clipboardPaste();
     else if (command == TrackCommand::Undo)
         undoOnTrack();
+}
+
+
+void Track::changeBarSigns(int newNum, int newDen) {
+    if ((_selectionBarFirst != -1) && (_selectionBarLast != -1))
+       for (int i = _selectionBarFirst; i <= _selectionBarLast; ++i) {
+           getV(i)->setSignNum(newNum);
+           getV(i)->setSignDenum(newDen);
+           //TODO undo option?
+       }
+}
+
+
+void Track::setBarSign(int newNum, int newDen) {
+    Bar* bar = getV(_cursor);
+    byte oldDen = bar->getSignDenum();
+    byte oldNum = bar->getSignNum();
+    bar->setSignNum(newNum);
+    bar->setSignDenum(newDen);
+    if ((bar->getSignDenum() != oldDen) ||
+        (bar->getSignNum() != oldNum)) {
+        SingleCommand command(19);
+        command.setPosition(0,_cursor,0);
+        command.setValue(oldDen);
+        command.setValue2(oldNum);
+        commandSequence.push_back(command);
+    }
 }

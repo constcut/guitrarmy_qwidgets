@@ -51,7 +51,7 @@ void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView
 
 
 
-void changeBarSigns(Track* pTrack, int&  selectionBarFirst, int& selectionBarLast) {
+void changeBarSignsQt(Track* pTrack, int&  selectionBarFirst, int& selectionBarLast) {
     bool ok=false;
     int newNum = QInputDialog::getInt(0,"Input",
                          "New Num:", QLineEdit::Normal,
@@ -63,11 +63,7 @@ void changeBarSigns(Track* pTrack, int&  selectionBarFirst, int& selectionBarLas
                          "New Denum(1,2,4,8,16):", QLineEdit::Normal,
                          1,128,1,&ok);
     if (ok)
-        if ((selectionBarFirst != -1) && (selectionBarLast != -1))
-           for (int i = selectionBarFirst; i <= selectionBarLast; ++i) {
-               pTrack->getV(i)->setSignNum(newNum);
-               pTrack->getV(i)->setSignDenum(newDen);
-           }
+        pTrack->changeBarSigns(newNum,newDen);
 }
 
 
@@ -269,20 +265,18 @@ void setBendOnNote(Note* currentNote, MasterView* mw) {
         mw->pushForceKey("bend_view");
 }
 
-void setTextOnBeat(Beat *beat) {
+void setTextOnBeat(Track *track) {
     std::string beatText;
+    Beat* beat = track->getV(track->cursor())->getV(track->cursorBeat());
     beat->getGPCOMPText(beatText);
 
     bool ok=false;
     QString newText = QInputDialog::getText(0,"Input",
                      "Input text:", QLineEdit::Normal,beatText.c_str(),&ok);
-    if (ok)
-    {
+    if (ok) {
         beatText = newText.toStdString();
-        beat->setGPCOMPText(beatText);
+        track->setTextOnBeat(beatText);
     }
-
-    return;
 }
 
 
@@ -292,46 +286,22 @@ void setChangesOnBeat(Beat* beat, MasterView* mw) {
         mw->pushForceKey("change_view");
 }
 
-void setBarSign(Bar* bar, size_t cursor, std::vector<SingleCommand>& commandSequence) {
+void setBarSign(Track* pTrack) {
     bool ok=false;
-
-    byte oldDen = bar->getSignDenum();
-    byte oldNum = bar->getSignNum();
-
-    int newNum = QInputDialog::getInt(0,"Input",
-                         "New Num:", QLineEdit::Normal,
-                         1,128,1,&ok);
+    int newNum = QInputDialog::getInt(0,"Input","New Num:",
+                        QLineEdit::Normal,1,128,1,&ok);
 
     bool thereWasChange = false;
-
     if (ok)
-    {
-        bar->setSignNum(newNum);
         thereWasChange = true;
-    }
-
     ok=false;
-
-    //GET ITEM
-    int newDen = QInputDialog::getInt(0,"Input",
-                         "New Denum(1,2,4,8,16):", QLineEdit::Normal,
-                         1,128,1,&ok);
-    if (ok) {
-        bar->setSignDenum(newDen);
+    int newDen = QInputDialog::getInt(0,"Input","New Denum(1,2,4,8,16):",
+                 QLineEdit::Normal,1,128,1,&ok);
+    if (ok)
         thereWasChange = true;
-    }
 
     if (thereWasChange) { //also could set to all here if turned on such flag
-
-        if ((bar->getSignDenum() != oldDen) ||
-            (bar->getSignNum() != oldNum))
-        {
-            SingleCommand command(19);
-            command.setPosition(0,cursor,0);
-            command.setValue(oldDen);
-            command.setValue2(oldNum);
-            commandSequence.push_back(command);
-        }
+        pTrack->setBarSign(newNum, newDen);
     }
 }
 
@@ -356,7 +326,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
         onTabCommand(TabCommand::PlayMidi);
     }
     else if (command == TrackCommand::SetSignForSelected)
-      changeBarSigns(pTrack, selectionBarFirst, selectionBarLast);
+      changeBarSignsQt(pTrack, selectionBarFirst, selectionBarLast);
     else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
         playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
     else if (command == TrackCommand::SaveAsFromTrack)
@@ -396,7 +366,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::Chord) {
         if (getMaster()) getMaster()->pushForceKey("chord_view"); }
     else if (command == TrackCommand::Text)
-        setTextOnBeat(pTrack->getV(cursor)->getV(cursorBeat));
+        setTextOnBeat(pTrack);
     else if (command == TrackCommand::Changes)
         setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
     else if (command == TrackCommand::UpStroke)
@@ -404,7 +374,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::DownStroke)
         pTrack->switchBeatEffect(26);
     else if (command == TrackCommand::SetBarSign)
-        setBarSign(pTrack->getV(cursor), cursor, pTrack->commandSequence);
+        setBarSign(pTrack);
     else
         pTrack->onTrackCommand(command);
 
