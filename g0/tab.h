@@ -5,7 +5,6 @@
 
 #include <memory.h> //TODO remove
 #include <unordered_map>
-//TODO Tab, Track, Bar, Beat, Note - sepparate all the files
 
 #include "abitarray.h"
 #include "tabcommands.h" //move into g0
@@ -204,35 +203,6 @@ private:
 int translateDenum(byte den);
 
 int translaeDuration(byte dur);
-
-
-////////////////////Pack reference - used only for GMY format///////////////////////////
-
-	//pack guide:
-	//fret - 6 bit; volume - 6 bit; fingering - 4 bit; = 2bytes
-	//...on another mind 3 bits could be used as flags - effects,fingering+else
-	//or volume could be packed in smaller distance [0-8] or [0-16]
-    //pack effects into one more byte, and if bend is present, then:
-   
-   // semisemisemi tone (1/8) semisemi tone (1/4) semi tone (1/2) tone (1) double tone (2) - 5 bits for presence of each
-   //duration of point - (double, single, half, 4, 8, 16, 32, 64) - 8 bits
-   //+ 1 bit flag of last point
-   //+ 1 bit flag of not finishing bend
-   //+ 1 bit flag of continued bend
-
-	//So in normal mode minimal note will have 3 bytes; another mode - extra packing
-	//0-31 fret with secial coding (limits amount of frets - but always more then 24)
-	//8 values for volume - forte piano stype - 3 bits 
-	
-	//next byte is really hard but helps compression - 
-	//if hierest bit is == 1 then effects follow
-	//if hierest bit it == 0 then 
-						// if next bit == 1 then we have note of same volume - and fret stored inside;
-						//next note comes in same way
-	//another secret 0-31 for fret and 3 bits for [effects precence1 bit] 2 reserved - volume as duration will store in Beat
-	//change precence - in Beat will show that duration changin, or volume is changing - for extra high packing
-	//NO	MO	MINDS	ANOUT	HIGH	PACK. main ideas stored here now
-
 
 
 
