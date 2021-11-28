@@ -610,7 +610,7 @@ protected:
 public:
 
     Track():timeLoop(),drums(false),status(0),pan(0),_cursor(0),_cursorBeat(0),_stringCursor(0),
-    _displayIndex(0),_lastSeen(0),_selectCursor(-1) { 
+    _displayIndex(0),_lastSeen(0),_selectCursor(-1), _digitPress(-1) {
         GpCompInts[3]=24; //REFACT GCOMP
         _selectionBarFirst=-1;
         _selectionBarLast=-1;
@@ -720,6 +720,8 @@ protected:
     int _selectionBarLast;
     int _selectionBeatFirst;
     int _selectionBeatLast;
+
+    int _digitPress;
     //TODO digit press?
 
 public:
@@ -733,6 +735,8 @@ public:
     int& selectBarLast() { return _selectionBarLast;}
     int& selectBeatFirst() { return _selectionBeatFirst;}
     int& selectBeatLast() { return _selectionBeatLast;}
+    int& digitPress() { return _digitPress; }
+
 
     void switchEffect(int effIndex);
     void switchBeatEffect(int effIndex);
@@ -827,8 +831,8 @@ class Tab : public ChainContainer<Track*>
 {
 public:
 
-    Tab() :isPlaying(false),
-        displayTrack(0),currentTrack(0),currentBar(0),displayBar(0) {}
+    Tab() :isPlaying(false), displayTrack(0), currentTrack(0),
+        currentBar(0), displayBar(0), lastOpenedTrack(0) {}
 
     std::vector<TimeLineKnot> timeLine;
 
@@ -892,7 +896,7 @@ protected: //Move from TabView
     size_t currentTrack;
     size_t currentBar;
     size_t displayBar;
-    //int lastOpenedTrack;
+    int lastOpenedTrack;
 
 public:
     bool playing() {
@@ -915,7 +919,9 @@ public:
     }
     void onTabCommand(TabCommand command);
 
-protected:
+    int& getLastOpenedTrack() {
+        return lastOpenedTrack;
+    }
 
 public: //later cover under midlayer TabCommandsHandler
     Track* createNewTrack(); 

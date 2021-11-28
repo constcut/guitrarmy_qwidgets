@@ -20,7 +20,7 @@ protected:
     GLabel *bpmLabel;
     GTabPannel *pan;
 
-    int lastOpenedTrack; //Подумать, можно ли перенести?
+     //Подумать, можно ли перенести?
     ThreadLocal *localThr; //Возможно тоже если без QT
 
 public:
@@ -38,7 +38,7 @@ public:
     std::vector<TrackView*> tracksView;
 
     int getCurTrack() { return pTab->getCurrentTrack(); }
-    int getLastOpenedTrack() { return lastOpenedTrack; }
+    int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
 
     void setTab(Tab* point2Tab);// {pTab = point2Tab;}
     Tab* getTab() { return pTab; }
@@ -92,8 +92,6 @@ class TrackView : public GView
 protected:
     Track *pTrack;
 
-    int digitPress;
-
     TabView *tabParrent;
     ThreadLocal *localThr;
     ViewPull barsPull;
@@ -104,7 +102,6 @@ protected:
     GClipboardPannel *clipPan;
 
 
-
 public:
 
     Track* getTrack() { return pTrack; }
@@ -112,7 +109,7 @@ public:
     virtual void setUI();
     virtual bool isMovableY() { return true; }
 
-    TrackView(Track *from):pTrack(from),digitPress(-1),localThr(0), pan(0) {
+    TrackView(Track *from):pTrack(from),localThr(0), pan(0) {
 
         trackPan = new GTrackPannel(300,480,800);
         effPan = new GEffectsPannel(300,480,800);

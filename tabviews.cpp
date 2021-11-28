@@ -90,8 +90,7 @@ int scaleCoef = 1;
 
 
 //Tab view
-TabView::TabView():GView(0,0,w,h),pTab(0),
-    lastOpenedTrack(0),localThr(0)
+TabView::TabView():GView(0,0,w,h),pTab(0),localThr(0)
 {
     statusLabel = new GLabel(50,460,"file was loaded.");
     bpmLabel = new GLabel(300,460,"bpm=notsetyet");
@@ -183,7 +182,7 @@ void TabView::onclick(int x1, int y1)
             if (awaitTrack >= 0){
                 if (awaitTrack < pTab->len()) {
                     TrackView *trackView = tracksView[awaitTrack];
-                    lastOpenedTrack = awaitTrack;
+                    pTab->getLastOpenedTrack() = awaitTrack;
                     trackView->setDisplayBar(awaitBar);
                     MainView *mainView = (MainView*)getMaster()->getFirstChild();
                     mainView->changeCurrentView(trackView);
@@ -632,7 +631,7 @@ void TrackView::onclick(int x1, int y1)
             if ((stringClick >= 0) && (stringClick < stringUpperBarrier))
                 stringCursor = stringClick;
 
-            digitPress = -1;
+            pTrack->digitPress() = -1;
 
             tabParrent->setCurrentBar(cursor);
             //getMaster()->pleaseRepaint();

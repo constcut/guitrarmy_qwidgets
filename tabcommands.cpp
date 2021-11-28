@@ -348,10 +348,6 @@ void TrackView::onTrackCommand(TrackCommand command) {
     size_t& cursor = pTrack->cursor(); //TODO get rid slowly
     size_t& cursorBeat = pTrack->cursorBeat();
     size_t& stringCursor = pTrack->stringCursor();
-    size_t& lastSeen = pTrack->lastSeen();
-    size_t& displayIndex = pTrack->displayIndex();
-    int& selectionBeatFirst = pTrack->selectBeatFirst();
-    int& selectionBeatLast = pTrack->selectBeatLast();
     int& selectionBarFirst = pTrack->selectBarFirst();
     int& selectionBarLast = pTrack->selectBarLast();
 
@@ -366,10 +362,10 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
     else if (command == TrackCommand::Leeg) {
-        pTrack->switchNoteState(2); digitPress = -1;
+        pTrack->switchNoteState(2); pTrack->digitPress() = -1;
     }
     else if (command == TrackCommand::Dead) {
-        pTrack->switchNoteState(3); digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
+        pTrack->switchNoteState(3); pTrack->digitPress() = -1;//TODO review old files, maybe there where sometimes no return in the if statement
     }
     else if (command == TrackCommand::Vibrato)
         pTrack->switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
@@ -425,7 +421,7 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
     if (press.substr(0,4)=="com:")
         reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
     else if (isdigit(press[0]))
-        handleKeyInput(press[0]-48, digitPress, pTrack, cursor, cursorBeat, stringCursor, pTrack->commandSequence);
+        handleKeyInput(press[0]-48, pTrack->digitPress(), pTrack, cursor, cursorBeat, stringCursor, pTrack->commandSequence);
     else {
         qDebug() << "Key event falls into TabView from TrackView " << press.c_str();
         tabParrent->keyevent(press); //TODO проверить
@@ -521,7 +517,7 @@ void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, ul di
 
 void TabView::keyevent(std::string press) {
     if (isdigit(*(press.c_str()))) //The only one left here
-        openTrackQt(pTab->len(),lastOpenedTrack, this, press.c_str()[0]-48);
+        openTrackQt(pTab->len(),pTab->getLastOpenedTrack(), this, press.c_str()[0]-48);
 }
 
 //Tab commands area
@@ -955,7 +951,7 @@ void TabView::onTabCommand(TabCommand command) {
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(newBpm));
     }         
     else if (command == TabCommand::OpenTrack)
-        openTrackQt(pTab->len(),lastOpenedTrack, this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
+        openTrackQt(pTab->len(),pTab->getLastOpenedTrack(), this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
     else if (command == TabCommand::NewTrack) {
        pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории

@@ -461,7 +461,8 @@ void Track::moveToPrevPage() {
         _cursorBeat = 0;
         _digitPress = -1;
         //TODO установить в родителя через PA (вначале проверив куда идёт вызов функции ниже)
-        tabView->setCurrentBar(cursor); //QT dependency отвязать TODO
+        Tab* pTab = (Tab*)parent;
+        pTab->getCurrentBar() = _cursor; //QT dependency отвязать TODO
     }
 }
 
@@ -478,25 +479,15 @@ void Track::moveToNextPage() {
 
 
 void Track::moveToNextTrack() {
-    int trackInd = tabParrent->getLastOpenedTrack(); //TODO move it into TAB
-    ++trackInd;
-    char pressImit[2]={0};
-    pressImit[0]=trackInd+49;
-    std::string pressIm = pressImit;
-    //refact for open function
-    tabParrent->keyevent(pressIm); //Move into tab?
+    Tab* pTab = (Tab*)parent;
+    pTab->moveCursorOfTrackDown();
     _digitPress = -1;
 }
 
 
 void Track::moveToPrevTrack() {
-    int trackInd = tabParrent->getLastOpenedTrack();
-    --trackInd;
-    char pressImit[2]={0};
-    pressImit[0]=trackInd+49;
-    std::string pressIm = pressImit;
-    //refact for open function
-    tabParrent->keyevent(pressIm);
+    Tab* pTab = (Tab*)parent;
+    pTab->moveCursorOfTrackUp();
     _digitPress = -1;
 }
 
@@ -518,10 +509,8 @@ void Track::moveToStringDown() {
 
 void Track::moveToPrevBeat() {
     //scrol if out of bar
-    if (_cursorBeat==0)
-    {
-        if (_cursor)
-        {
+    if (_cursorBeat==0) {
+        if (_cursor) {
             --_cursor;
             if (_cursor < _displayIndex)
                 _displayIndex = _cursor;
@@ -540,8 +529,7 @@ void Track::moveToPrevBeat() {
 
 void Track::moveToNextBeat() {
     ++_cursorBeat;
-    if (_cursorBeat >= getV(_cursor)->len())
-    {
+    if (_cursorBeat >= getV(_cursor)->len()) {
         if (1) //pan->isOpenned())
         {
             static int lastDur = 4; //TODO?
@@ -647,7 +635,7 @@ void Track::setTrackPause() {
 void Track::deleteBar() {
     SingleCommand command(24);
     command.setPosition(0, _cursor,0);
-    command.outerPtr = getV(cursor);
+    command.outerPtr = getV(_cursor);
     commandSequence.push_back(command);
 
     //attention question for memoryleaks
@@ -819,7 +807,8 @@ void Track::saveFromTrack() {
     std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
     std::cerr << "Test loc " << getTestsLocation() << std::endl;
     std::ofstream file(gfilename.c_str());
-    gmyFile.saveToFile(&file, tabParent->getTab());
+    Tab* pTab = (Tab*) parent; //TODO инкапсулировать в обычный класс, а не шаблон
+    gmyFile.saveToFile(&file, pTab);
     //TODO just get parent tab
     file.close();
     return;
@@ -893,7 +882,8 @@ void Track::clipboarCopyBar() {
         AClipboard::current()->setType(4);
     }
     else {
-        int trackInd = tw->getLastOpenedTrack(); //TODO from tab
+        Tab* pTab = (Tab*)parent;
+        int trackInd = pTab->getLastOpenedTrack();
         AClipboard::current()->setBeginIndexes(trackInd, _selectionBarFirst, _selectionBeatFirst);
         AClipboard::current()->setType(1); //copy single beat
         AClipboard::current()->setEndIndexes(trackInd, _selectionBarLast, _selectionBeatLast);
@@ -903,7 +893,8 @@ void Track::clipboarCopyBar() {
 
 
 void Track::clipboarCopyBeat() {
-    int trackInd=tw->getLastOpenedTrack();
+    Tab* pTab = (Tab*)parent;
+    int trackInd = pTab->getLastOpenedTrack();
 
     if (_selectionBarFirst == -1)
     {
@@ -923,7 +914,8 @@ void Track::clipboarCopyBeat() {
 
 
 void Track::clipboardCopyBars() {
-    int trackInd=tw->getLastOpenedTrack();
+    Tab* pTab = (Tab*)parent;
+    int trackInd = pTab->getLastOpenedTrack();
     //copyIndex = cursor;
     if (_selectionBarFirst == -1) {
         AClipboard::current()->setBeginIndexes(trackInd, _cursor);
@@ -969,6 +961,7 @@ void Track::clipboardPaste() {
         }
 
         //TODO tab
+        Tab* tab = (Tab*) parent;
         Track *track = tab->getV(AClipboard::current()->getTrackIndex());
 
         if (AClipboard::current()->getType()==0) {
