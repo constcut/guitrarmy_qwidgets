@@ -1,9 +1,10 @@
 #ifndef MIDIFILE_H
 #define MIDIFILE_H
 
-#include "types.h"
-
+#include <vector>
 #include <iostream>
+
+#include "types.h"
 
 class Tab;
 class Track;
@@ -13,7 +14,7 @@ class Note;
 
 
 //protected looks great but should be designed for manual use
-class VariableInt : public ChainContainer<byte, void> //or public, or fullfit
+class VariableInt : public std::vector<byte> //or public, or fullfit
 {
 public:
     VariableInt &operator =(VariableInt &v) 
@@ -51,7 +52,7 @@ struct MidiSignal
 	byte param1; //and for meta event(b0==0xff) here will lay type 
     byte param2;
 
-    class ByteBufer : public ChainContainer<byte, void>
+    class ByteBufer : public std::vector<byte>
 	{
 	};
 
