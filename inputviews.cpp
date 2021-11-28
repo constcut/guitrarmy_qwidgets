@@ -190,7 +190,7 @@ void PatternInput::playBar() {
     patternTrack->setVolume(15);
     patternTrack->setPan(8);
 
-    AClipboard::current()->setPtr(bar->get());
+    AClipboard::current()->setPtr(bar.get());
     AClipboard::current()->setType(4); //ptr
 
     if (butRepeat->isChecked())
@@ -674,10 +674,11 @@ void TapRyView::createBar()
     int thatBPM = atoi(bpmLabel->getText().c_str());
 
 
-    if (ryBar) delete ryBar;
+    if (ryBar)
+        ryBar = nullptr;
 
 
-    ryBar = new Bar();
+    ryBar = std::make_unique<Bar>();
     ryBar->flush();
 
     ryBar->setSignDenum(4); ryBar->setSignNum(8);
@@ -785,7 +786,7 @@ void TapRyView::createBar()
     ///if (barView) delete barView;
     if (barView==0)
     {
-        barView = new BarView(ryBar->get(),6);
+        barView = new BarView(ryBar.get(),6);
         barView->setShifts(210,80);
     }
         else barView->setBar(ryBar.get());
@@ -1503,21 +1504,21 @@ void MorzeInput::playBar()
     if (bar)
     {
         Tab morzeTab;
-        Track *morzeTrack=new Track();
+        auto morzeTrack= std::make_unique<Track>();
         morzeTrack->setParent(&morzeTab);
         morzeTrack->setDrums(true);
         morzeTrack->setInstrument(0);
         morzeTrack->setVolume(15);
         morzeTrack->setPan(8);
 
-        morzeTrack->push_back(bar);
+        morzeTrack->push_back(std::move(bar));
 
         morzeTrack->tuning.setStringsAmount(6);
 
         for (int ii=0; ii < 7; ++ii)
             morzeTrack->tuning.setTune(ii,0);
 
-        morzeTab.push_back(morzeTrack);
+        morzeTab.push_back(std::move(morzeTrack));
         morzeTab.setBPM(120);
         morzeTab.connectTracks();
 
@@ -1569,13 +1570,10 @@ void MorzeInput::onclick(int x1, int y1)
 
         if (ok)
         {
-            if (bar)
-                delete bar;
             if (barView)
                 delete barView;
 
-
-            bar = new Bar;
+            bar = std::make_unique<Bar>();
 
             bar->flush();
             bar->setSignDenum(4); bar->setSignNum(7);
@@ -1600,44 +1598,42 @@ void MorzeInput::onclick(int x1, int y1)
                 else
                     dur2 = 4;
 
-                Beat *ryBeat=new Beat();
+                auto ryBeat = std::make_unique<Beat>();
                 ryBeat->setDuration(dur);
                 ryBeat->setDotted(dot);
                 ryBeat->setDurationDetail(det);
                 ryBeat->setPause(0);
 
-                Beat *ryBeat2=new Beat();
+                auto ryBeat2 = std::make_unique<Beat>();
                 ryBeat2->setDuration(dur2);
                 ryBeat2->setDotted(dot);
                 ryBeat2->setDurationDetail(det);
                 ryBeat2->setPause(0);
 
-                Note *rNote=new Note();
+                auto rNote = std::make_unique<Note>();
                 rNote->setState(0);
                 rNote->setFret(36);
                 rNote->setStringNumber(5);
 
-                Note *rNote2=new Note();
+                auto rNote2 = std::make_unique<Note>();
                 rNote2->setState(0);
                 rNote2->setFret(38);
                 rNote2->setStringNumber(5);
 
-                ryBeat->push_back(rNote);
-                ryBeat2->push_back(rNote2);
+                ryBeat->push_back(std::move(rNote));
+                ryBeat2->push_back(std::move(rNote2));
 
-                bar->push_back(ryBeat); //����� �
-                bar->push_back(ryBeat2);
+                bar->push_back(std::move(ryBeat)); //����� �
+                bar->push_back(std::move(ryBeat2));
 
                 qDebug() << "Added "<<dur<<" "<<dur2<<" beat";
             }
 
 
-            barView = new BarView(bar,6);
+            barView = new BarView(bar.get(),6);
             barView->setShifts(100,200-55);
 
-
-
-            AClipboard::current()->setPtr(bar);
+            AClipboard::current()->setPtr(bar.get());
             AClipboard::current()->setType(4); //ptr
 
             bar->setRepeat(1);
