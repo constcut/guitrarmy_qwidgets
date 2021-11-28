@@ -80,13 +80,13 @@ void Bar::clone(Bar *from) {
    signatureDenum = from->signatureDenum;
    signatureNum = from->signatureNum;
 
-   for (ul i = 0; i < from->len(); ++i)
+   for (ul i = 0; i < from->size(); ++i)
    {
        Beat *beat = from->at(i);
        Beat *newBeat=new Beat();
 
        newBeat->clone(beat);
-       add(newBeat);
+       push_back(newBeat);
    }
 }
 
@@ -119,7 +119,7 @@ byte Bar::getCompleteStatus()
 
     completeIndex = 0;
 
-    ul barSize = len();
+    ul barSize = size();
 
     for (ul i = 0; i < barSize; ++i)
     {
@@ -220,7 +220,7 @@ void Bar::countUsedSigns(byte &numGet, byte &denumGet)
     denum *= 3;//temp action for triplets (for n trumplets better multipleyer must)
     denum *= 2;
 
-    for (ul beatInd = 0; beatInd < len(); ++beatInd)
+    for (ul beatInd = 0; beatInd < size(); ++beatInd)
     {
         ul duration = at(beatInd)->getDuration();
         ul detail = at(beatInd)->getDurationDetail();
@@ -281,7 +281,7 @@ void Bar::countUsedSigns(byte &numGet, byte &denumGet)
 
 void Bar::printToStream(std::ostream &stream)
 {
-    stream << "Outputing #"<<len()<<" Beats."<<std::endl;
-    for (ul ind = 0; ind < len(); ++ind)
+    stream << "Outputing #"<<size()<<" Beats."<<std::endl;
+    for (ul ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 }

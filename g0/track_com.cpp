@@ -15,7 +15,7 @@ void Track::switchEffect(int effIndex) {
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
 
-    if (this->at(_cursor)->at(_cursorBeat)->len()==0)
+    if (this->at(_cursor)->at(_cursorBeat)->size()==0)
         return;
 
     auto pa = parent;
@@ -63,14 +63,14 @@ void Track::switchNoteState(byte changeState)
     Note *note = (this->at(cursor)->at(cursorBeat)->getNote(stringCursor+1));
 
     if ((this->at(cursor)->at(cursorBeat)->getPause()) ||
-        (this->at(cursor)->at(cursorBeat)->len()==0) ||(note==0)) {
+        (this->at(cursor)->at(cursorBeat)->size()==0) ||(note==0)) {
 
         this->at(cursor)->at(cursorBeat)->setPause(false);
         Note *newNote=new Note();
         newNote->setState(changeState);
         newNote->setFret(0);
         newNote->setStringNumber(stringCursor+1);
-        this->at(cursor)->at(cursorBeat)->add(newNote);
+        this->at(cursor)->at(cursorBeat)->push_back(newNote);
         SingleCommand command(3,255);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(command);
@@ -146,7 +146,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
             for (size_t i = 0; i < command.storedNotes->size(); ++i)
             {
                 Note *note = command.storedNotes->operator [](i);
-                this->at(barN)->at(beatN)->add(note);
+                this->at(barN)->at(beatN)->push_back(note);
             }
 
             this->at(barN)->at(beatN)->setPause(false);
@@ -160,7 +160,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
         if (command.storedNotes) //delete note
         {
             Note *note = command.storedNotes->operator [](0);
-            this->at(barN)->at(beatN)->add(note);
+            this->at(barN)->at(beatN)->push_back(note);
 
             this->at(barN)->at(beatN)->setPause(false);
 
@@ -304,7 +304,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
                     {
                         //what is this
                         if(curBar)
-                        curBeat = curBar->at(curBar->len()-1); //issuepossible
+                        curBeat = curBar->at(curBar->size()-1); //issuepossible
                         break;
                     }
                 }
@@ -349,7 +349,7 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
                {
                    this->at(barN)->
                            insertBefore(curBeat,
-                                        this->at(barN)->len()
+                                        this->at(barN)->size()
                                                     -counter);
 
                    ++counter;
@@ -385,7 +385,7 @@ void Track::moveSelectionLeft() {
         if (_selectionBarFirst)
         {
             --_selectionBarFirst;
-            _selectionBeatFirst = at(_selectionBarFirst)->len()-1;
+            _selectionBeatFirst = at(_selectionBarFirst)->size()-1;
         }
     }
 }
@@ -394,10 +394,10 @@ void Track::moveSelectionLeft() {
 void Track::moveSelectionRight() {
     if (_selectionBarLast >= 0)
     {
-        if (_selectionBeatLast < (at(_selectionBarLast)->len()-1)) //TODO лучше способ хранить зоны выделенности (флаг вкюченности и size_t)
+        if (_selectionBeatLast < (at(_selectionBarLast)->size()-1)) //TODO лучше способ хранить зоны выделенности (флаг вкюченности и size_t)
             ++_selectionBeatLast;
         else
-            if (_selectionBarLast < (len()-1))
+            if (_selectionBarLast < (size()-1))
             {
                 ++_selectionBarLast;
                 _selectionBeatLast = 0;
@@ -423,7 +423,7 @@ void Track::insertBar() {
 
 
 void Track::moveToNextBar() {
-    if ((_cursor+1) != len()){
+    if ((_cursor+1) != size()){
         ++_cursor;
         _cursorBeat = 0;
 
@@ -468,7 +468,7 @@ void Track::moveToPrevPage() {
 
 
 void Track::moveToNextPage() {
-    if ((_lastSeen+1) <= len()) {
+    if ((_lastSeen+1) <= size()) {
         _displayIndex = _lastSeen+1;
         _cursor = _displayIndex;
         _cursorBeat = 0;
@@ -514,7 +514,7 @@ void Track::moveToPrevBeat() {
             --_cursor;
             if (_cursor < _displayIndex)
                 _displayIndex = _cursor;
-            _cursorBeat = at(_cursor)->len()-1;
+            _cursorBeat = at(_cursor)->size()-1;
         }
     }
     else
@@ -529,13 +529,13 @@ void Track::moveToPrevBeat() {
 
 void Track::moveToNextBeat() {
     ++_cursorBeat;
-    if (_cursorBeat >= at(_cursor)->len()) {
+    if (_cursorBeat >= at(_cursor)->size()) {
         if (1) //pan->isOpenned())
         {
             static int lastDur = 4; //TODO?
             if (_cursorBeat) {
                 Bar *b = at(_cursor);
-                Beat *beat = b->at(b->len()-1);
+                Beat *beat = b->at(b->size()-1);
                 lastDur = beat->getDuration();
                 //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
                 /// lastDur from prev position
@@ -548,7 +548,7 @@ void Track::moveToNextBeat() {
                 beat->setDuration(lastDur);
                 beat->setDotted(0);
                 beat->setDurationDetail(0);
-                bar->add(beat);
+                bar->push_back(beat);
 
                 SingleCommand command(18);
                 command.setPosition(0,_cursor,_cursorBeat);
@@ -559,7 +559,7 @@ void Track::moveToNextBeat() {
             else //in edit mode - else add new bar
             //scrol if out of bar
             {
-                if ((_cursor+1) == len())
+                if ((_cursor+1) == size())
                 {
                     Bar *newBar = new Bar();
                     newBar->flush();
@@ -572,8 +572,8 @@ void Track::moveToNextBeat() {
                     beat->setDuration(lastDur);
                     beat->setDotted(0);
                     beat->setDurationDetail(0);
-                    newBar->add(beat);
-                    add(newBar);
+                    newBar->push_back(beat);
+                    push_back(newBar);
 
                     SingleCommand command(16);
                     command.setPosition(0, _cursor+1,0);
@@ -585,7 +585,7 @@ void Track::moveToNextBeat() {
                 }
                 else
                 {
-                    if ((_cursor+1) != len()) {
+                    if ((_cursor+1) != size()) {
                         ++_cursor;
                        if (_cursor > (_lastSeen-1))
                             _displayIndex = _cursor;
@@ -598,7 +598,7 @@ void Track::moveToNextBeat() {
         }
         else //TODO view mode maybe remove?
         {
-            if ((_cursor+1) != len())
+            if ((_cursor+1) != size())
               {
                 ++_cursor;
                 if (_cursor > (_lastSeen-1))
@@ -621,7 +621,7 @@ void Track::setTrackPause() {
     SingleCommand command(7);
     command.setPosition(0, _cursor, _cursorBeat);
     command.requestStoredNotes();
-    for (ul i = 0; i < at(_cursor)->at(_cursorBeat)->len(); ++i) {
+    for (ul i = 0; i < at(_cursor)->at(_cursorBeat)->size(); ++i) {
         Note *note = at(_cursor)->at(_cursorBeat)->at(i);
         command.storedNotes->push_back(note);
     }
@@ -680,7 +680,7 @@ void Track::deleteSelectedBeats() {
 
         if (_selectionBeatFirst==0)
             wholeFirst = true;
-        if (_selectionBeatLast == at(_selectionBarLast)->len()-1)
+        if (_selectionBeatLast == at(_selectionBarLast)->size()-1)
             wholeLast = true;
 
         command.setValue(wholeFirst);
@@ -722,7 +722,7 @@ void Track::deleteSelectedBeats() {
                 remove(_selectionBarFirst);
             }
             else {
-                for (int bI = at(_selectionBarFirst)->len()-1; bI >= _selectionBeatFirst; --bI)
+                for (int bI = at(_selectionBarFirst)->size()-1; bI >= _selectionBeatFirst; --bI)
                     at(_selectionBarFirst)->remove(bI);
             }
         }
@@ -735,7 +735,7 @@ void Track::deleteSelectedBeats() {
 
 
 void Track::deleteNote() {
-    if (at(_cursor)->at(_cursorBeat)->len())
+    if (at(_cursor)->at(_cursorBeat)->size())
     {
         SingleCommand command(8);
         command.setPosition(0,_cursor,_cursorBeat);
@@ -752,7 +752,7 @@ void Track::deleteNote() {
     }
     else
     {
-        if (at(_cursor)->len() > 1) {
+        if (at(_cursor)->size() > 1) {
             byte packedValue = 0;
             byte dur = at(_cursor)->at(_cursorBeat)->getDuration();
             byte det =  at(_cursor)->at(_cursorBeat)->getDurationDetail();
@@ -827,7 +827,7 @@ void Track::newBar() {
     addBeat->setDotted(0);
     addBeat->setDurationDetail(0);
     addBeat->setPause(true);
-    addition->add(addBeat);
+    addition->push_back(addBeat);
 
     SingleCommand command(16);
     command.setPosition(0,_cursor,0);
@@ -1005,7 +1005,7 @@ void Track::clipboardPaste() {
                     Beat *additionBeat=new Beat();
                     Beat *beatOrigin = origin->at(beats);
                     additionBeat->clone(beatOrigin);
-                    addition->add(additionBeat);
+                    addition->push_back(additionBeat);
                 }
 
                 track->insertBefore(addition, _cursor);
@@ -1031,19 +1031,19 @@ void Track::clipboardPaste() {
                         Beat *additionBeat=new Beat();
                         Beat *beatOrigin = origin->at(beats);
                         additionBeat->clone(beatOrigin);
-                        addition->add(additionBeat);
+                        addition->push_back(additionBeat);
                     }
                 }
                 else if (bars == AClipboard::current()->getBarIndex())
                 {
                     //first
                     for (size_t beats = AClipboard::current()->getBeatIndex();
-                         beats < origin->len(); ++beats)
+                         beats < origin->size(); ++beats)
                     {
                         Beat *additionBeat=new Beat();
                         Beat *beatOrigin = origin->at(beats);
                         additionBeat->clone(beatOrigin);
-                        addition->add(additionBeat);
+                        addition->push_back(additionBeat);
                     }
                 }
                 else

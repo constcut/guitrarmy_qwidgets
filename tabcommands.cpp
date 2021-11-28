@@ -89,7 +89,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
     else
         digitPress = digit;
 
-    if ( pTrack->at(cursor)->len() > cursorBeat ) {
+    if ( pTrack->at(cursor)->size() > cursorBeat ) {
         byte lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
 
         SingleCommand command(3,lastFret);
@@ -130,7 +130,7 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
         if (cursor != 0){
             Bar *barPtr = pTrack->at(cursor);
 
-            for (ul i = 0; i < pTrack->timeLoop.len();++i){
+            for (ul i = 0; i < pTrack->timeLoop.size();++i){
                  if (pTrack->timeLoop.at(i) == barPtr){
                      shiftTheCursor = i;
                      break;
@@ -382,7 +382,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
         size_t shiftTheCursor = 0;
         if (currentBar != 0) {
             Bar *barPtr = pTab->at(0)->at(currentBar);
-            for (ul i = 0; i < pTab->at(0)->timeLoop.len();++i)
+            for (ul i = 0; i < pTab->at(0)->timeLoop.size();++i)
                  if (pTab->at(0)->timeLoop.at(i) == barPtr) {
                      shiftTheCursor = i;
                      break;
@@ -450,7 +450,7 @@ void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, ul di
 
 void TabView::keyevent(std::string press) {
     if (isdigit(*(press.c_str()))) //The only one left here
-        openTrackQt(pTab->len(),pTab->getLastOpenedTrack(), this, press.c_str()[0]-48);
+        openTrackQt(pTab->size(),pTab->getLastOpenedTrack(), this, press.c_str()[0]-48);
 }
 
 //Tab commands area
@@ -509,7 +509,7 @@ void setMarker(Tab* pTab) {
 }
 
 void goToBar(Tab* pTab) {
-    size_t trackLen = pTab->at(0)->len();
+    size_t trackLen = pTab->at(0)->size();
     bool ok=false; //TODO позже разделить Qt запросы и установку параметров
     int newTimes = QInputDialog::getInt(0,"Input",
                          "Bar to jump:", QLineEdit::Normal, 1, trackLen, 1, &ok);
@@ -884,7 +884,7 @@ void TabView::onTabCommand(TabCommand command) {
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(newBpm));
     }         
     else if (command == TabCommand::OpenTrack)
-        openTrackQt(pTab->len(),pTab->getLastOpenedTrack(), this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
+        openTrackQt(pTab->size(),pTab->getLastOpenedTrack(), this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
     else if (command == TabCommand::NewTrack) {
        pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории

@@ -150,7 +150,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
 
 
     Track *track = (Track*)track_ptr;
-    ul timeLoopLen = track->timeLoop.len();
+    ul timeLoopLen = track->timeLoop.size();
 
     //INCREMENTS set OUTSIDE
     int localWait = 0;
@@ -198,7 +198,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
 
         //addBeatTimes(bar);
 
-        for (ul beatI = 0; beatI < bar->len(); ++beatI)
+        for (ul beatI = 0; beatI < bar->size(); ++beatI)
         {
            Beat *beat = bar->at(beatI);
 
@@ -270,7 +270,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
         addNumDenum(bar->getSignNum(), bar->getSignDenum(), track->timeLoopIndexStore[barI]);
     }
 
-    setLimit(track->timeLoop.len());
+    setLimit(track->timeLoop.size());
 
     //qDebug() << "prepare thread done";
 }
@@ -307,7 +307,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
     //int toNextChange =
 
-    for (ul i = 0; i < curBar->len(); ++i)
+    for (ul i = 0; i < curBar->size(); ++i)
     {
         Beat *beat = curBar->at(i);
 
@@ -321,7 +321,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
             {
                 Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
-                for (ul indexChange=0; indexChange <changes->len(); ++indexChange)
+                for (ul indexChange=0; indexChange < changes->size(); ++indexChange)
                 if (changes->at(indexChange).changeType==8)
                 {
                     ul newBPM = changes->at(indexChange).changeValue;

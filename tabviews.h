@@ -1,12 +1,13 @@
 #ifndef TABVIEWS_H
 #define TABVIEWS_H
 
+#include <vector>
+
 #include "gview.h"
 #include "gpannel.h"
-
 #include "g0/aclipboard.h"
-
 #include "tabcommands.h"
+
 
 class TrackView;
 
@@ -82,7 +83,7 @@ public:
 
 class BarView;
 
-class ViewPull : public ChainContainer<BarView, void>
+class ViewPull : public std::vector<BarView>
 {
     //add len getV delete etc chould be here
 };
@@ -186,7 +187,7 @@ protected:
 
 public:
 
-    int getBarLen() { return nBeats; }
+    int getBarsize() { return nBeats; }
 
     void setSameSign(bool value) {sameSign = value;}
 

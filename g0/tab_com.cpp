@@ -14,7 +14,7 @@
 //They have to be for all possible commands
 
 void Tab::setSignsTillEnd(int num, int denom) {
-    for (size_t i = currentBar; i < this->at(0)->len(); ++i){
+    for (size_t i = currentBar; i < this->at(0)->size(); ++i){
         this->at(0)->at(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
         this->at(0)->at(i)->setSignNum(num);
     }
@@ -38,7 +38,7 @@ void Tab::soloTrack() { //Move into Tab
 }
 
 void Tab::moveCursorInTrackRight() {
-    if (displayBar < at(0)->len() - 1)
+    if (displayBar < at(0)->size() - 1)
         ++displayBar;
 }
 
@@ -56,7 +56,7 @@ void Tab::moveCursorOfTrackUp() {
 }
 
 void Tab::moveCursorOfTrackDown() {
-    if (displayTrack < len()){
+    if (displayTrack < size()){
         ++displayTrack;
         if (currentTrack < displayTrack)
             currentTrack = displayTrack;
@@ -110,7 +110,7 @@ Track* Tab::createNewTrack() { //Move into Tab
     track->tuning.setTune(4,45);
     track->tuning.setTune(5,40);
 
-    for (ul barI=0; barI < pTab->at(0)->len(); ++barI) {
+    for (ul barI=0; barI < pTab->at(0)->size(); ++barI) {
         Bar *bar=new Bar();
         bar->flush();
         bar->setSignDenum(4); bar->setSignNum(4);
@@ -120,10 +120,10 @@ Track* Tab::createNewTrack() { //Move into Tab
         beat->setDotted(0);
         beat->setDuration(3);
         beat->setDurationDetail(0);
-        bar->add(beat);
-        track->add(bar);
+        bar->push_back(beat);
+        track->push_back(bar);
     }
-    pTab->add(track);
+    pTab->push_back(track);
     pTab->connectTracks();
     return track;
 }

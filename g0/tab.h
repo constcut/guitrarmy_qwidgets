@@ -56,7 +56,7 @@ struct TimeLineKnot
 };
 
 
-class Tab : public ChainContainer<Track*, void>
+class Tab : public ChainContainer<Track, void>
 {
 public:
 
@@ -66,7 +66,7 @@ public:
     std::vector<TimeLineKnot> timeLine;
 
     virtual ~Tab() {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
                    delete at(i);
     }
 
@@ -77,13 +77,13 @@ public:
     int getBpmOnBar(ul barN);
 
     void connectTracks(){
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
         at(i)->connectAll();
         createTimeLine();
     }
 
     void postGTP() {
-        for (ul i = 0; i < len(); ++i) {
+        for (ul i = 0; i < size(); ++i) {
             ul port = at(i)->getGPCOMPInts(0);
             ul chan = at(i)->getGPCOMPInts(1);
             ul ind = (chan-1) + (port-1)*16;

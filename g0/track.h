@@ -23,7 +23,7 @@ public:
 };
 
 
-class PolyBar : public ChainContainer<Bar*, Tab>
+class PolyBar : public ChainContainer<Bar, Tab>
 {
   public:
     PolyBar()
@@ -35,7 +35,7 @@ class PolyBar : public ChainContainer<Bar*, Tab>
 };
 
 
-class Track : public ChainContainer<Bar*, Tab>
+class Track : public ChainContainer<Bar, Tab>
 {
 public:
 
@@ -49,13 +49,13 @@ public:
     }
 
     virtual ~Track() {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
             delete at(i);
     }
 
     void printToStream(std::ostream &stream);
 
-    ChainContainer<Bar*, Tab> timeLoop; //PolyBar //REFACT access
+    ChainContainer<Bar, Tab> timeLoop; //PolyBar //REFACT access
     std::vector<ul> timeLoopIndexStore;
 
     Track &operator=([[maybe_unused]]Track another)
@@ -64,11 +64,11 @@ public:
         return *this;
     }
 
-    virtual void add(Bar*& val)
+    virtual void push_back(Bar*& val)
     {
         if (val){
             val->setParent(this);
-            ChainContainer<Bar*, Tab>::add(val);
+            ChainContainer<Bar, Tab>::push_back(val);
         }
     }
 
@@ -77,7 +77,7 @@ public:
         if (val)
         {
             val->setParent(this);
-        ChainContainer<Bar*, Tab>::insertBefore(val,index);
+        ChainContainer<Bar, Tab>::insertBefore(val,index);
         }
     }
 

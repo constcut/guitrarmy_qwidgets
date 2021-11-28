@@ -1,14 +1,18 @@
 #ifndef BEAT_H
 #define BEAT_H
 
-#include "types.h"
 #include <memory.h>  //TODO find modern way
+#include <vector>
+
+#include "types.h"
 #include "note.h"
+
+
 
 class Bar;
 
 
-class Beat : public ChainContainer<Note*, Bar> {
+class Beat : public ChainContainer<Note, Bar> {
 
 public:
     Beat()
@@ -16,7 +20,7 @@ public:
 
     virtual ~Beat()
     {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
                    delete at(i);
     }
     //usually size reserved
@@ -31,7 +35,7 @@ public:
     };
 
     //need inner functions for analtics of packing
-    class ChangesList : public ChainContainer<SingleChange, void>
+    class ChangesList : public std::vector<SingleChange>
     {
     public:
         //search functions
@@ -146,13 +150,13 @@ protected:
 
     void deleteNote(int string)
     {
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
         {
             if (string == at(i)->getStringNumber())
             {
                 remove(i);
 
-                if (len() == 0)
+                if (size() == 0)
                     setPause(true);
 
                 return;
@@ -162,7 +166,7 @@ protected:
 
     Note *getNote(int string)
     {
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
 
             if (at(i)->getStringNumber()==string)
                 return at(i);
@@ -173,7 +177,7 @@ protected:
     Note *getNoteInstance(int string)
     {
         /*
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
 
             if (getV(i).getStringNumber()==string)
                 return getV(i);
@@ -195,7 +199,7 @@ protected:
     void setFret(byte fret, int string)
     {
 
-        if (len() == 0)
+        if (size() == 0)
         {
             //paused
             Note *newNote = new Note();
@@ -204,13 +208,13 @@ protected:
             newNote->setState(0);
 
             //DEFAULT NOTE VALUES??
-            add(newNote);
+            push_back(newNote);
 
             setPause(false);
             return;
         }
 
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
         {
             if (at(i)->getStringNumber()==string)
             {
@@ -233,7 +237,7 @@ protected:
         }
 
 
-        int lastStringN = at(len()-1)->getStringNumber();
+        int lastStringN = at(size()-1)->getStringNumber();
         if (lastStringN < string)
         {
             Note *newNote=new Note();
@@ -242,7 +246,7 @@ protected:
             newNote->setState(0);
 
             //DEFAULT NOTE VALUES??
-            add(newNote);
+            push_back(newNote);
             return;
         }
         //we got here - that means we need insert fret
@@ -251,10 +255,10 @@ protected:
 
     byte getFret(int string)
     {
-        if (len() == 0)
+        if (size() == 0)
             return 255;
 
-        for (ul i = 0; i < len(); ++i)
+        for (ul i = 0; i < size(); ++i)
             if (at(i)->getStringNumber()==string)
             {
                 byte fretValue = at(i)->getFret();

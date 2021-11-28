@@ -35,10 +35,10 @@ struct is_pointer<T*> { static const bool value = true; };
 template <typename Child, typename Parent> class ChainContainer
 {
 protected:
-    std::vector<Child> sequence; //Эксперименты и замеры TODO
+    std::vector<Child*> sequence;
     ChainContainer<Child, Parent> *nextOne;
     ChainContainer<Child, Parent> *prevOne;
-    Parent *parent; //TODO ChainContainer too
+    Parent *parent;
 
     public:
 
@@ -80,31 +80,31 @@ protected:
         sequence.reserve(predefinedSize);
     }
 
-    Child& operator[](size_t ind) {
+    Child* operator[](size_t ind) {
         return sequence[ind];
     }
 
-    virtual void add(Child &val) {
+    virtual void push_back(Child* val) {
         sequence.push_back(val);
     }
 
-    Child &back() {
+    Child* &back() {
         return sequence.back();
     }
 
-    void popb() {
+    void pop_back() {
         sequence.pop_back();
     }
 
-    void change(int ind, Child &val) {
+    void change(int ind, Child* val) { //TODO remove?
         sequence[ind] = val;
     }
 
-    Child &at(int ind) {
+    Child* &at(int ind) {
        return sequence.at(ind);
     }
 
-    size_t len() {
+    size_t size() {
         return sequence.size();
     }
 
@@ -112,8 +112,8 @@ protected:
         sequence.clear();
     }
 
-    virtual void insertBefore(const Child &val, int index=0) {
-        sequence.insert(sequence.begin()+index,val);
+    virtual void insertBefore(Child* val, int index=0) {
+        sequence.insert(sequence.begin()+index, val);
     }
 
     void remove(int index) {

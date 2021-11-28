@@ -10,8 +10,8 @@ bool tabLog = false;
 
  void Tab::printToStream(std::ostream &stream)
  {
-    stream << "Outputing #"<<len()<<" Tracks."<<std::endl;
-    for (ul ind = 0; ind < len(); ++ind)
+    stream << "Outputing #"<<size()<<" Tracks."<<std::endl;
+    for (ul ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 
  }
@@ -30,18 +30,18 @@ bool tabLog = false;
 
  byte Tab::getBPMStatusOnBar(ul barN)
  {
-        for (int i = 0 ; i < len(); ++i)
+        for (int i = 0 ; i < size(); ++i)
         {
             Bar *bar = at(i)->at(barN);
 
-            if (bar->len())
+            if (bar->size())
             {
-                if (bar->at(0)->changes.len())
+                if (bar->at(0)->changes.size())
                 {
                     //bar->getV(0)->changes.getV(0)->changeType;
                 }
             }
-            bar->len();
+            bar->size();
         }
  }
 
@@ -64,21 +64,21 @@ bool tabLog = false;
 
      int lastNumDen=0;
 
-     ul barsAmount = at(0)->timeLoop.len(); //should search longest
+     ul barsAmount = at(0)->timeLoop.size(); //should search longest
      for (ul barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
      {
          std::vector<BpmChangeKnot> timeChanges;
 
-         for (ul tracksI = 0; tracksI < len(); ++tracksI)
+         for (ul tracksI = 0; tracksI < size(); ++tracksI)
          {
             short int localAccumulate = 0;///tracksI
 
-            if (at(tracksI)->timeLoop.len() <= barsI)
+            if (at(tracksI)->timeLoop.size() <= barsI)
                 continue;
 
             Bar *currentBar = at(tracksI)->timeLoop[barsI]; //attention refact fix
 
-            for (ul beatI = 0; beatI < currentBar->len(); ++beatI)
+            for (ul beatI = 0; beatI < currentBar->size(); ++beatI)
             {
                 if (currentBar->at(beatI)->effPack == 28) //changes
                 {
@@ -86,7 +86,7 @@ bool tabLog = false;
                     Package *changePack = currentBar->at(beatI)->effPack.getPack(28);
                     Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
-                    for (ul indexChange = 0; indexChange != changes->len(); ++indexChange)
+                    for (ul indexChange = 0; indexChange != changes->size(); ++indexChange)
                       if (changes->at(indexChange).changeType==8)
                       {
                           ul newBPM = changes->at(indexChange).changeValue;

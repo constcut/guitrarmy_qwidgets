@@ -4,6 +4,8 @@
 #include "types.h"
 #include "abitarray.h"
 
+#include <vector>
+
 class Beat;
 
 
@@ -15,7 +17,7 @@ struct BendPointGPOld
     byte vibratoFlag;
 };
 
-class BendPointsGPOld : public ChainContainer<BendPointGPOld, void>
+class BendPointsGPOld : public std::vector<BendPointGPOld>
 {
 protected:
     ul bendHeight;
@@ -37,7 +39,7 @@ struct BendPoint
     byte vFlag; //:2
 };
 
-class BendPoints : public ChainContainer<BendPoint, void>
+class BendPoints : public std::vector<BendPoint>
 {
 protected:
     byte bendType;

@@ -174,7 +174,7 @@ void MidiEngine::playTrack(MidiTrack *track)
     if (opened==false)
         init();
 
-    for (int i = 0; i < track->len(); ++i)
+    for (int i = 0; i < track->size(); ++i)
     {
         MidiSignal *sig = track->at(i);
 
@@ -332,11 +332,11 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     std::vector<MidiSignal*> allSignals;
 
-    for (int trackI = 0; trackI < midiFile->len(); ++trackI)
+    for (int trackI = 0; trackI < midiFile->size(); ++trackI)
     {
         MidiTrack *track = midiFile->at(trackI);
         ul absTimeShift =0;
-        for (int sigI = 0; sigI < track->len(); ++sigI)
+        for (int sigI = 0; sigI < track->size(); ++sigI)
         {
             MidiSignal *sig = track->at(sigI);
 
@@ -377,11 +377,11 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
             lastGlobalAbs = currentAbs;
 
-            result->add(signalCopy);
+            result->push_back(signalCopy);
 
     }
 
-    qDebug() << "Produced midi track with "<<(int)result->len()<<" elements";
+    qDebug() << "Produced midi track with "<<(int)result->size()<<" elements";
 
     return result;
 }

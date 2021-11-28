@@ -143,7 +143,7 @@ void TabView::setTab(Tab* point2Tab)
         pTab->getCurrentTrack() = 0;
         pTab->getCurrentBar() = 0;
         bpmLabel->setText("bpm=" + std::to_string(pTab->getBPM()));
-        for (ul i = 0; i < pTab->len(); ++i)
+        for (ul i = 0; i < pTab->size(); ++i)
             addSingleTrack(pTab->at(i));
         std::string statusBar1,statusBar2;
         statusBar1 = "Tab Name";
@@ -180,7 +180,7 @@ void TabView::onclick(int x1, int y1)
         if (awaitBar==pTab->getCurrentBar()){
             qDebug() << "Track pressed "<<awaitTrack<<"; Bar "<<awaitBar;
             if (awaitTrack >= 0){
-                if (awaitTrack < pTab->len()) {
+                if (awaitTrack < pTab->size()) {
                     TrackView *trackView = tracksView[awaitTrack];
                     pTab->getLastOpenedTrack() = awaitTrack;
                     trackView->setDisplayBar(awaitBar);
@@ -195,17 +195,17 @@ void TabView::onclick(int x1, int y1)
             }
         }
         else
-            if (awaitBar < pTab->at(0)->len()) {
+            if (awaitBar < pTab->at(0)->size()) {
                 pTab->getCurrentBar() = awaitBar;
                 ul chosenTrack = pTab->getDisplayTrack() + awaitTrack;
-                if ((awaitTrack>=0) && (chosenTrack < pTab->len()))
+                if ((awaitTrack>=0) && (chosenTrack < pTab->size()))
                         pTab->getCurrentTrack() = chosenTrack;
             }
     }
     else {
         ++awaitTrack;
         ul chosenTrack = pTab->getDisplayTrack() + awaitTrack;
-        if ((awaitTrack>=0) && (chosenTrack < pTab->len()))
+        if ((awaitTrack>=0) && (chosenTrack < pTab->size()))
                 pTab->getCurrentTrack() = chosenTrack;
     }
 }
@@ -223,8 +223,8 @@ void TabView::ongesture(int offset, bool horizontal) {
         if (nextCursor<0)
             nextCursor=0;
         else
-            if (nextCursor > pTab->at(0)->len())
-                nextCursor = pTab->at(0)->len()-1;
+            if (nextCursor > pTab->at(0)->size())
+                nextCursor = pTab->at(0)->size()-1;
         pTab->getDisplayBar() = nextCursor;
     }
     else {
@@ -251,10 +251,10 @@ void TabView::draw(QPainter *painter)
         int xLimit = getMaster()->getWidth();
 
         //TrackView should be agregated
-        for (ul i = 0 ; i < pTab->len(); ++i)
+        for (ul i = 0 ; i < pTab->size(); ++i)
         {
            ul trackIndex = i + pTab->getDisplayTrack();
-           if (trackIndex >= pTab->len()) 
+           if (trackIndex >= pTab->size())
             break;
            std::string trackVal = std::to_string(trackIndex+1) +" " + pTab->at(trackIndex)->getName();
            //int pannelShift = getMaster()->getToolBarHeight();
@@ -280,19 +280,19 @@ void TabView::draw(QPainter *painter)
 
 
            Track *tr = pTab->at(trackIndex);
-           for (ul j = 0 ; j < tr->len(); ++j)
+           for (ul j = 0 ; j < tr->size(); ++j)
            {
                ul barIndex = j + pTab->getDisplayBar();
-               if (barIndex >= tr->len()) 
+               if (barIndex >= tr->size())
                     break;
 
                std::string sX = std::to_string(barIndex+1);
                Bar *cB= tr->at(barIndex);
-               if (cB->len() == 1)
+               if (cB->size() == 1)
                {
                    Beat *beat = cB->at(0);
                    Note *note = 0;
-                   if (beat->len())
+                   if (beat->size())
                     note = beat->at(0);
                    if (note == 0)
                       sX+="*";
@@ -338,7 +338,7 @@ void TabView::draw(QPainter *painter)
                     break;
            }
 
-           std::string sX = std::to_string(tr->len());
+           std::string sX = std::to_string(tr->size());
            int border = getMaster()->getWidth()-20;
            painter->drawText(border,10+yPos,sX.c_str());
 
@@ -393,13 +393,13 @@ void TabView::prepareAllThreads(ul shiftTheCursor)
     localThr->setInc(&pTab->getCurrentBar(), nullptr); //oh shhhi 2nd arg
     localThr->setBPM(pTab->getBPM());
 
-    ul timeLoopLen = pTrack->timeLoop.len();
+    ul timeLoopLen = pTrack->timeLoop.size();
     for (ul i = shiftTheCursor; i < timeLoopLen;++i)
     {
         localThr->addNumDenum(pTrack->timeLoop.at(i)->getSignNum(),
         pTrack->timeLoop.at(i)->getSignDenum(), pTrack->timeLoopIndexStore[i]);
     }
-    localThr->setLimit(pTrack->timeLoop.len());
+    localThr->setLimit(pTrack->timeLoop.size());
 
     qDebug() << "All threads prepared";
 }
@@ -490,8 +490,8 @@ void TrackView::ongesture(int offset, bool horizontal)
             int quant = offset/-80;
                 displayIndex = cursor += quant;
             cursorBeat=0;
-            if (displayIndex > pTrack->len())
-                cursor = displayIndex = pTrack->len()-1;
+            if (displayIndex > pTrack->size())
+                cursor = displayIndex = pTrack->size()-1;
             */
 
             int absOffset = -1*offset;
@@ -512,7 +512,7 @@ void TrackView::ongesture(int offset, bool horizontal)
             }
 
 
-            ul trackLen = pTrack->len();
+            ul trackLen = pTrack->size();
             displayIndex = cursor  +=shiftTo;
 
             if (trackLen <= displayIndex){
@@ -591,7 +591,7 @@ void TrackView::onclick(int x1, int y1)
     size_t& displayIndex = pTrack->displayIndex();
 
     //touch and mouse events on first note
-    for (ul i = 0; i < barsPull.len(); ++i)
+    for (ul i = 0; i < barsPull.size(); ++i)
     {
         /*
         log << "Bar "<<i<<" "<<barsPull.getV(i).getX()<<
@@ -617,7 +617,7 @@ void TrackView::onclick(int x1, int y1)
             int stringUpperBarrier = pTrack->tuning.getStringsAmount();
 
             //++beatClick;
-            if (beatClick >= pTrack->at(cursor)->len())
+            if (beatClick >= pTrack->at(cursor)->size())
                 --beatClick;
 
             //log<<"beat click "<<beatClick<<"; stringClick "<<stringClick;
@@ -646,7 +646,7 @@ void TrackView::onclick(int x1, int y1)
 void TrackView::ondblclick(int x1, int y1)
 {
     bool wasPressed = false;
-    for (ul i = 0; i < barsPull.len(); ++i)
+    for (ul i = 0; i < barsPull.size(); ++i)
     {
         /*
         log << "Bar "<<i<<" "<<barsPull.getV(i).getX()<<
@@ -666,7 +666,7 @@ void TrackView::ondblclick(int x1, int y1)
 
             int beatClick = bV->getClickBeat(x1);
             Bar *hitBar = bV->getBar();
-            int fullBar = bV->getBarLen();
+            int fullBar = bV->getBarsize();
 
 
             if (fullBar <= beatClick)
@@ -725,7 +725,7 @@ void TrackView::ondblclick(int x1, int y1)
                             if (i+displayIndex ==selectionBarLast-1)
                             {
                                 //pre last bar
-                                if (addBeat==pTrack->at(i+displayIndex)->len()-1)
+                                if (addBeat==pTrack->at(i+displayIndex)->size()-1)
                                 {
                                     //its last beat
                                     if (selectionBeatLast == 0)
@@ -743,7 +743,7 @@ void TrackView::ondblclick(int x1, int y1)
                                 if (addBeat==0)
                                 {
                                     //its last beat
-                                    if (selectionBeatFirst == pTrack->at(i+displayIndex-1)->len()-1)
+                                    if (selectionBeatFirst == pTrack->at(i+displayIndex-1)->size()-1)
                                     {
                                         //and current beat is irst in last bar
                                         selectionBeatFirst = 0;
@@ -791,7 +791,7 @@ void TrackView::setUI()
 
         std::string trackNames="";
 
-        for (size_t i = 0; i < tabParrent->getTab()->len(); ++i)
+        for (size_t i = 0; i < tabParrent->getTab()->size(); ++i)
         {
           trackNames += tabParrent->getTab()->at(i)->getName();
           trackNames += std::string(";");
@@ -818,7 +818,7 @@ void TrackView::setUI()
 void TrackView::draw(QPainter *painter)
 {
     Track *track1 = pTrack;
-    ul trackLen = track1->len();
+    ul trackLen = track1->size();
     int stringsN = track1->tuning.getStringsAmount();
 
     int pannelShift = getMaster()->getToolBarHeight();
@@ -949,7 +949,7 @@ void TrackView::draw(QPainter *painter)
 
         //if (ySh <= (hLimit))
         {
-            barsPull.add(bView);
+            barsPull.push_back(bView);
         }
 
         if (i == cursor)
@@ -1290,7 +1290,7 @@ BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
 
 
 
-    int barLen = b->len();
+    int barLen = b->size();
     h = stringWidth*(nstr+1); //
 
     if (CONF_PARAM("TrackView.largeNotes")=="1")
@@ -1335,7 +1335,7 @@ void BarView::draw(QPainter *painter)
     if (selectorBegin!=-1)
     {
         int skipFromStart = (selectorBegin)*inbarWidth;
-        int skipFromEnd = (bar1->len() - selectorEnd)*inbarWidth;
+        int skipFromEnd = (bar1->size() - selectorEnd)*inbarWidth;
 
         if (selectorEnd == -1)
         {
@@ -1406,7 +1406,7 @@ void BarView::draw(QPainter *painter)
         painter->drawText(cX+xMiniSHift,cY+15+3,numberLabel.c_str());
     }
 
-    ul barLen = bar1->len();
+    ul barLen = bar1->size();
     int amountStr = nStrings;
 
     if (repBegin)
@@ -1483,7 +1483,7 @@ void BarView::draw(QPainter *painter)
 
         Beat *curBeat = bar1->at(i);
 
-        for (ul j =0; j < curBeat->len(); ++j)
+        for (ul j =0; j < curBeat->size(); ++j)
         {
             Note *curNote = curBeat->at(j);
 

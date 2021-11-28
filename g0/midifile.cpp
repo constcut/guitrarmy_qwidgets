@@ -64,7 +64,7 @@ ul VariableInt::readStream(std::ifstream & ifile)
         ifile.read((char*)&lastByte, 1);
 
 		byte valueByte = lastByte & 127;
-		this->add(valueByte);
+        this->push_back(valueByte);
 
         if (midiLog)  qDebug() << "V[" << totalBytesRead << "] value = " << valueByte;
 
@@ -90,7 +90,7 @@ ul VariableInt::getValue()
 	// collect value from poly
 	ul responseValue = 0;
 
-	size_t length = len();
+    size_t length = size();
 
 	for (size_t i = 0; i < length; ++i)
 	{
@@ -151,7 +151,7 @@ ul MidiSignal::readStream(std::ifstream & ifile)
 		for (ul k = 0; k < bytesToSkip; ++k)
 		{
             ifile.read((char*)&bBufer, 1);
-			this->metaStore.bufer.add(bBufer);
+            this->metaStore.bufer.push_back(bBufer);
 		}
 		
 		totalRead += bytesToSkip;
@@ -211,7 +211,7 @@ bool MidiFile::readStream(std::ifstream & ifile)
 	for (int nT=0; nT < midiHeader.nTracks; ++nT)
 	{
         MidiTrack *midiTrack=new MidiTrack();
-		this->add(midiTrack);
+        this->push_back(midiTrack);
 	}
 	// debug output header
 	// init number of trackds ???
@@ -255,7 +255,7 @@ bool MidiFile::readStream(std::ifstream & ifile)
                 MidiSignal *singleSignal=new MidiSignal(); //for those who have troubles in speach
                 ul signalBytesRead = singleSignal->readStream(ifile);
 				totalRead += signalBytesRead;
-                at(i)->add(singleSignal);
+                at(i)->push_back(singleSignal);
                 if (midiLog)  qDebug() << "Cycle of events. Read " << totalRead << " of " << trackSize;
 			}
 
@@ -307,7 +307,7 @@ void MidiTrack::printToStream(std::ostream &stream)
     //stream << "chunky = " << trackHeader.chunkId <<std::endl;
     stream << "Track Size = " << trackHeader.trackSize << std::endl;
 	
-	ul signalsAmount = len();
+    ul signalsAmount = size();
 	for (ul i = 0; i < signalsAmount; ++i)
         at(i)->printToStream(stream);
 }
@@ -333,7 +333,7 @@ void MidiFile::printToStream(std::ostream &stream)
 
 ul VariableInt::writeStream(std::ofstream &file)
 {
-	size_t amountOfBytes = len();
+    size_t amountOfBytes = size();
 	
 	byte byteToWrite = 0;
 
@@ -384,7 +384,7 @@ ul MidiSignal::writeStream(std::ofstream &ofile,bool skip)
         //ofile.write((const char*)&metaStore.metaType,1);
 		bytesWritten += metaStore.metaLen.writeStream(ofile);
 		
-		size_t metaBufLen = metaStore.bufer.len();
+        size_t metaBufLen = metaStore.bufer.size();
 		for (size_t i = 0; i < metaBufLen; ++i)
             ofile.write((const char*)&metaStore.bufer.at(i),1);
 		
@@ -435,7 +435,7 @@ ul MidiFile::writeStream(std::ofstream &ofile)
 		
 		bytesWritten += 8;
 		
-        size_t amountOfEvents = at(i)->len();
+        size_t amountOfEvents = at(i)->size();
 		
 		for (size_t j = 0; j < amountOfEvents; ++j)
 		{
@@ -474,7 +474,7 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
 
         bytesWritten += 8;
 
-        size_t amountOfEvents = at(i)->len();
+        size_t amountOfEvents = at(i)->size();
 
         for (size_t j = 0; j < amountOfEvents; ++j)
         {
@@ -491,7 +491,7 @@ ul MidiFile::noMetricsTest(std::ofstream &ofile)
 
 bool MidiFile::calculateHeader(bool skip)
 {
-     ul calculatedTracks = this->len();
+     ul calculatedTracks = this->size();
      //NOTE this will work only with previusly loaded file
      if (midiLog)  qDebug() << "Calculating headers "<<calculatedTracks<<"-tracks.";
      midiHeader.nTracks = calculatedTracks; //NOW PUSED
@@ -518,7 +518,7 @@ bool MidiTrack::calculateHeader(bool skip)
 
     ul calculatedSize = 0;
 
-    for (ul i =0; i < len(); ++i)
+    for (ul i =0; i < size(); ++i)
     {
         //seams to be easiest option
         calculatedSize += at(i)->calcSize(skip);
@@ -545,7 +545,7 @@ ul MidiSignal::calcSize(bool skip)
             return 0;
     }
 
-    localSize += time.getLen(); //delta time value
+    localSize += time.getsize(); //delta time value
     localSize += 1; //byte0 always here
 
     if (byte0 != 0xff) //not meta event(normal one)
@@ -564,8 +564,8 @@ ul MidiSignal::calcSize(bool skip)
     {
         //Meta event
         localSize += 1; // meta type
-        localSize += metaStore.metaLen.getLen(); //unhide len?
-        localSize += metaStore.bufer.len();
+        localSize += metaStore.metaLen.getsize(); //unhide len?
+        localSize += metaStore.bufer.size();
     }
 
 
@@ -614,7 +614,7 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, ul timeShift):byte0(b0),param1
     if (timeShift == 0)
     {
         byte noShift = 0;
-        time.add(noShift);
+        time.push_back(noShift);
     }
     else
     {
@@ -633,17 +633,17 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, ul timeShift):byte0(b0),param1
             byte secondB = second;
             byte thirdB = third;
 
-            time.add(firstB);
-            time.add(secondB);
-            time.add(thirdB);
+            time.push_back(firstB);
+            time.push_back(secondB);
+            time.push_back(thirdB);
         }
         else
         {
             byte firstB = first;
             byte secondB = second;
 
-            time.add(firstB);
-            time.add(secondB);
+            time.push_back(firstB);
+            time.push_back(secondB);
         }
     }
 }
@@ -657,14 +657,14 @@ void MidiTrack::pushChangeInstrument(byte newInstr, byte channel, ul timeShift)
 
     MidiSignal *instrumentChange=new MidiSignal(0xC0|channel,newInstr,0,timeShift);
 
-    this->add(instrumentChange);
+    this->push_back(instrumentChange);
 }
 
 void MidiTrack::pushMetrSignature(byte num, byte den,ul timeShift=0, byte metr, byte perQuat)
 {
     MidiSignal *signatureEvent = new MidiSignal(0xff,88,0,timeShift);
 
-    signatureEvent->metaStore.bufer.add(num);
+    signatureEvent->metaStore.bufer.push_back(num);
 
     byte transDur=0;
     switch (den)
@@ -680,14 +680,14 @@ void MidiTrack::pushMetrSignature(byte num, byte den,ul timeShift=0, byte metr, 
         transDur=6;
     }
 
-    signatureEvent->metaStore.bufer.add(transDur);
-    signatureEvent->metaStore.bufer.add(metr);
-    signatureEvent->metaStore.bufer.add(perQuat);
+    signatureEvent->metaStore.bufer.push_back(transDur);
+    signatureEvent->metaStore.bufer.push_back(metr);
+    signatureEvent->metaStore.bufer.push_back(perQuat);
 
     byte metaSize = 4;
-    signatureEvent->metaStore.metaLen.add(metaSize);
+    signatureEvent->metaStore.metaLen.push_back(metaSize);
 
-    add(signatureEvent);
+    push_back(signatureEvent);
 }
 
 void MidiTrack::pushChangeBPM(int bpm, ul timeShift)
@@ -705,18 +705,18 @@ void MidiTrack::pushChangeBPM(int bpm, ul timeShift)
     byte tempB2 = (MCount>>8)&0xff; //0xa1
     byte tempB3 = MCount&0xff; //0x20
 
-    changeTempEvent->metaStore.bufer.add(tempB1);
-    changeTempEvent->metaStore.bufer.add(tempB2);
-    changeTempEvent->metaStore.bufer.add(tempB3);
+    changeTempEvent->metaStore.bufer.push_back(tempB1);
+    changeTempEvent->metaStore.bufer.push_back(tempB2);
+    changeTempEvent->metaStore.bufer.push_back(tempB3);
 
     byte lenMeta = 3;
-    changeTempEvent->metaStore.metaLen.add(lenMeta);
+    changeTempEvent->metaStore.metaLen.push_back(lenMeta);
 
     //byte timeZero = 0;
     //changeTempEvent.param2 = 0;
     //changeTempEvent.time.
 
-    this->add(changeTempEvent);
+    this->push_back(changeTempEvent);
 }
 void MidiTrack::pushChangeVolume(byte newVolume, byte channel)
 {
@@ -728,9 +728,9 @@ void MidiTrack::pushChangeVolume(byte newVolume, byte channel)
     volumeChange->param1 = 7; //volume change
     volumeChange->param2 = newVolume;
     byte timeZero = 0;
-    volumeChange->time.add(timeZero);
+    volumeChange->time.push_back(timeZero);
 
-    this->add(volumeChange);
+    this->push_back(volumeChange);
 }
 void MidiTrack::pushChangePanoram(byte newPanoram, byte channel)
 {
@@ -740,9 +740,9 @@ void MidiTrack::pushChangePanoram(byte newPanoram, byte channel)
     panoramChange->param1 = 0xA; //change panoram
     panoramChange->param2 = newPanoram;
     byte timeZero = 0;
-    panoramChange->time.add(timeZero);
+    panoramChange->time.push_back(timeZero);
 
-    this->add(panoramChange);
+    this->push_back(panoramChange);
 }
 void MidiTrack::pushVibration(byte channel, byte depth, short int step, byte stepsCount)
 {
@@ -754,12 +754,12 @@ void MidiTrack::pushVibration(byte channel, byte depth, short int step, byte ste
     {
          MidiSignal *mSignalVibOn=new MidiSignal(signalKey,0,shiftDown,step);
          MidiSignal *mSignalVibOff=new MidiSignal(signalKey,0,shiftUp,step);
-         this->add(mSignalVibOn);
-         this->add(mSignalVibOff);
+         this->push_back(mSignalVibOn);
+         this->push_back(mSignalVibOff);
     }
 
     MidiSignal *mSignalVibOn=new MidiSignal(signalKey,0,64,0);
-    this->add(mSignalVibOn);
+    this->push_back(mSignalVibOn);
 }
 void MidiTrack::pushSlideUp(byte channel, byte shift, short int step, byte stepsCount)
 {
@@ -769,11 +769,11 @@ void MidiTrack::pushSlideUp(byte channel, byte shift, short int step, byte steps
     for (ul slideInd=0; slideInd <stepsCount; ++slideInd)
     {
          MidiSignal *mSignalSlideOn=new MidiSignal(signalKey,0,pitchShift,step);
-         this->add(mSignalSlideOn);
+         this->push_back(mSignalSlideOn);
          pitchShift+=shift;
     }
     MidiSignal *mSignalSlideOff=new MidiSignal(signalKey,0,64,0);
-    this->add(mSignalSlideOff);
+    this->push_back(mSignalSlideOff);
 }
 
 void MidiTrack::pushSlideDown(byte channel, byte shift, short int step, byte stepsCount)
@@ -784,11 +784,11 @@ void MidiTrack::pushSlideDown(byte channel, byte shift, short int step, byte ste
     for (ul slideInd=0; slideInd <stepsCount; ++slideInd)
     {
          MidiSignal *mSignalSlideOn=new MidiSignal(signalKey,0,pitchShift,step);
-         this->add(mSignalSlideOn);
+         this->push_back(mSignalSlideOn);
          pitchShift-=shift;
     }
     MidiSignal *mSignalSlideOff=new MidiSignal(signalKey,0,64,0);
-    this->add(mSignalSlideOff);
+    this->push_back(mSignalSlideOff);
 }
 
 void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
@@ -805,7 +805,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
 
     //something did changed after moving to more own format of bends
 
-    for (ul i = 0 ; i < bend->len(); ++i)
+    for (ul i = 0 ; i < bend->size(); ++i)
     {
         ul curAbs = bend->at(i).horizontal;
         ul curH = bend->at(i).vertical;
@@ -831,7 +831,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
             qDebug() <<"rStep="<<rhyStep<<"; rAccum="<<rAccum<<"; pSh="<<pitchStep;
 
             MidiSignal *mSignalBendOpen=new MidiSignal(0xE0 |channel,0,lastShift, rAccum);
-            this->add(mSignalBendOpen);
+            this->push_back(mSignalBendOpen);
             rAccum = 0;
 
             double stepsDone = 0.0;
@@ -851,7 +851,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
                 short totalShiftNow = lastShift + shiftDone;
 
                 MidiSignal *mSignalBend=new MidiSignal(0xE0 | channel,0,totalShiftNow,thisROffset);
-                this->add(mSignalBend);
+                this->push_back(mSignalBend);
 
                 if (midiLog)
                 qDebug() <<"rD="<<thisStep<<"; sD="<<thisShift<<" shiftDone="<<shiftDone;
@@ -874,9 +874,9 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
     //last point push
     byte lastShift = 64+(lastH*32)/4; //decreased from 100
     MidiSignal *mSignalBendLast=new MidiSignal(0xE0 | channel,0,lastShift, rAccum);
-    this->add(mSignalBendLast);
+    this->push_back(mSignalBendLast);
     MidiSignal *mSignalBendClose=new MidiSignal(0xE0 | channel,0,64,0);
-    this->add(mSignalBendClose);
+    this->push_back(mSignalBendClose);
 
     if (midiLog)
     qDebug() << "done";
@@ -890,16 +890,16 @@ void MidiTrack::pushTremolo(short int rOffset)
     for (ul slideInd=0; slideInd <10; ++slideInd)
     {
          MidiSignal *mSignalBend=new MidiSignal(0xE1,0,pitchShift,slideStep);
-         this->add(mSignalBend);
+         this->push_back(mSignalBend);
          pitchShift-=3;//calibrate
     }
 
     rOffset -= rOffset/4;
     //last point
     MidiSignal *mSignalBendLast=new MidiSignal(0xE1,0,pitchShift, rOffset);
-    this->add(mSignalBendLast);
+    this->push_back(mSignalBendLast);
     MidiSignal *mSignalBendClose=new MidiSignal(0xE1,0,64,0);
-    this->add(mSignalBendClose);
+    this->push_back(mSignalBendClose);
 }
 
 void MidiTrack::pushFadeIn(short int rOffset, byte channel)
@@ -909,13 +909,13 @@ void MidiTrack::pushFadeIn(short int rOffset, byte channel)
     short int fadeInStep = rOffset/20;
 
     MidiSignal *volumeChangeFirst=new MidiSignal(0xB0 | channel,7,newVolume,0);
-    this->add(volumeChangeFirst);
+    this->push_back(volumeChangeFirst);
 
     for (int i = 0; i < 20; ++i)
     {
         newVolume += 5;
         MidiSignal *volumeChange=new MidiSignal(0xB0 | channel,7,newVolume,fadeInStep);
-        this->add(volumeChange);
+        this->push_back(volumeChange);
 
     }
 }
@@ -936,9 +936,9 @@ void MidiTrack::pushEvent47()
     MidiSignal *event47=new MidiSignal(0xff,47,0,0);
 
     byte lenZero = 0;
-    event47->metaStore.metaLen.add(lenZero);
+    event47->metaStore.metaLen.push_back(lenZero);
 
-    this->add(event47);
+    this->push_back(event47);
 }
 
 //CALC helpers
@@ -1091,7 +1091,7 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
 {
     //POST-effects
 
-    for (ul i =0; i < beat->len(); ++i)
+    for (ul i =0; i < beat->size(); ++i)
     {
         Note *note = beat->at(i);
 
@@ -1127,9 +1127,9 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
                 graceLen = 1;
 
             MidiSignal *mSignalGraceOff=new MidiSignal(0x80  | channel,midiNote+2,80,graceLen-1);
-            add(mSignalGraceOff);
+            push_back(mSignalGraceOff);
             MidiSignal *mSignalOn=new MidiSignal(0x90  | channel,midiNote,midiVelocy,1);
-            add(mSignalOn);
+            push_back(mSignalOn);
             accum -= graceLen;
         }
 
@@ -1184,9 +1184,9 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
             for (int i = 0; i < 3; ++i)
             {
                 MidiSignal *mSignalOff=new MidiSignal(0x80 | channel,midiNote,midiVelocy,tremoloStep);
-                add(mSignalOff);
+                push_back(mSignalOff);
                 MidiSignal *mSignalOn=new MidiSignal(0x90 | channel,midiNote,midiVelocy,0);
-                add(mSignalOn);
+                push_back(mSignalOn);
             }
 
             accum = tremoloStep;
@@ -1199,7 +1199,7 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
             short halfAccum = accum/2;
 
             MidiSignal *mSignalOff=new MidiSignal(0x80 | channel,midiNote,midiVelocy,halfAccum);
-            add(mSignalOff);
+            push_back(mSignalOff);
 
             accum = halfAccum;
         }
@@ -1325,7 +1325,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
         {
             Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
-            for (ul indexChange = 0; indexChange != changes->len(); ++indexChange)
+            for (ul indexChange = 0; indexChange != changes->size(); ++indexChange)
             {
               if (changes->at(indexChange).changeType==8)
               {
@@ -1371,7 +1371,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
     short int strokeStep  = rOffset/12;
 
-    ul beatLen = beat->len();
+    ul beatLen = beat->size();
     for (ul i =0; i < beatLen; ++i)
     {
         //reverse indexation
@@ -1411,7 +1411,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
     addPostEffects(beat,channel);
 
-    for (ul i =0; i < beat->len(); ++i)
+    for (ul i =0; i < beat->size(); ++i)
     {
         Note *note = beat->at(i);
         addSignalsFromNoteOff(note,channel);
@@ -1452,7 +1452,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, ul shiftCursorBar)
  setTunes(theTunes);
 
 
- ul trackLen = track->timeLoop.len();
+ ul trackLen = track->timeLoop.size();
 
  for (ul i = shiftCursorBar ; i < trackLen; ++i)
  {
@@ -1461,7 +1461,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, ul shiftCursorBar)
      //BAR STATUS
      byte completeStatus = bar->getCompleteStatus();
 
-     ul barLen = bar->len();
+     ul barLen = bar->size();
      short specialLast = 0;
      ul completeIndex = 0;
 
@@ -1569,14 +1569,14 @@ void MidiTrack::pushNoteOn(byte midiNote, byte velocity, byte channel)
 {
     MidiSignal *noteOn=new MidiSignal(0x90 | channel, midiNote, velocity,accum);
     takeAccum();
-    add(noteOn);
+    push_back(noteOn);
 }
 
 void MidiTrack::pushNoteOff(byte midiNote, byte velocity, byte channel)
 {
     MidiSignal *noteOn=new MidiSignal(0x80 | channel, midiNote, velocity,accum);
     takeAccum();
-    add(noteOn);
+    push_back(noteOn);
 }
 
 bool MidiTrack::checkForLeegFails()
@@ -1668,7 +1668,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
 
 
         timeLineTrack->pushEvent47();
-        add(timeLineTrack);
+        push_back(timeLineTrack);
 
         //Please note it was debug
         //timeLineTrack->printToStream(std::cout);
@@ -1688,7 +1688,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
             MidiTrack *metronomeClickTrack=new MidiTrack();
             bool firstRun = true;
 
-            for (int barI=shiftTheCursor; barI< tab->at(0)->timeLoop.len(); ++barI)
+            for (int barI=shiftTheCursor; barI< tab->at(0)->timeLoop.size(); ++barI)
             {
 
 
@@ -1721,13 +1721,13 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
                         if (firstRun)
                         {
                             MidiSignal *noteOn=new MidiSignal(0x90 | 9, 33, 127,0);
-                            metronomeClickTrack->add(noteOn);
+                            metronomeClickTrack->push_back(noteOn);
                             firstRun = false;
                         }
                         else
                         {
                             MidiSignal *noteOn=new MidiSignal(0x90 | 9, 33, 127,metronomeClickSize);
-                            metronomeClickTrack->add(noteOn);
+                            metronomeClickTrack->push_back(noteOn);
                         }
                     }
 
@@ -1735,12 +1735,12 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
                     //tlAccum=0;
 
             metronomeClickTrack->pushEvent47();
-            add(metronomeClickTrack);
+            push_back(metronomeClickTrack);
             }
 
     }
 
-    ul tabLen = tab->len();
+    ul tabLen = tab->size();
 
     int drumsTrack=0;
 
@@ -1819,7 +1819,7 @@ bool MidiFile::fromTab(Tab *tab, ul shiftTheCursor)
 
         clock_t afterT3 = getTime();
 
-        add(mTrack);
+        push_back(mTrack);
         clock_t afterT4 = getTime();
 
         int addDiff = afterT4-afterT3;

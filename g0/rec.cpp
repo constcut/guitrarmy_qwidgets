@@ -14,7 +14,7 @@ Track *GWave::generateTrack()
 
     while (newBar != 0)
     {
-        track->add(newBar);
+        track->push_back(newBar);
         newBar = generateBar();//rawData,indataCursor);
     }
 
@@ -99,8 +99,8 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         newNote->setStringNumber(6); //string 6
         newNote->setState(0);
 
-        beat->add(newNote);
-        bar->add(beat);
+        beat->push_back(newNote);
+        bar->push_back(beat);
 
         if (noteI != notes.size()-1)
         { //if this is not a last not - search for pause
@@ -135,7 +135,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
             Beat *pauseBeat = new Beat();
             pauseBeat->setDuration(pauseDur);
             pauseBeat->setDurationDetail(0); pauseBeat->setDotted(0);
-            bar->add(pauseBeat);
+            bar->push_back(pauseBeat);
         }
 
     }

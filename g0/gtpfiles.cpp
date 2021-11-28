@@ -90,7 +90,7 @@ void writeBendGTPOLD(std::ofstream *file, BendPointsGPOld *bend)
     ul bendHeight = bend->getHeight();
     file->write((const char*)&bendHeight,4); //attention again
 
-    ul pointsCount = bend->len();
+    ul pointsCount = bend->size();
     file->write((const char*)&pointsCount,4);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
@@ -118,7 +118,7 @@ void writeBendGTP(std::ofstream *file, BendPoints *bend)
     ///ul bendHeight = bend->getHeight();
     ///file->write((const char*)&bendHeight,4); //attention again
 
-    ul pointsCount = bend->len();
+    ul pointsCount = bend->size();
     file->write((const char*)&pointsCount,4);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
@@ -175,10 +175,10 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
         point.vertical = verticalPosition/25; //25 - 1/12 of 3 tones
         point.horizontal = absolutePosition;
         point.vFlag = vibratoFlag;
-        bend->add(point);
+        bend->push_back(point);
     }
 
-    if (gtpLog)  qDebug() << "Beng if (gtpLog)  logging finished with "<<(int)bend->len();
+    if (gtpLog)  qDebug() << "Beng if (gtpLog)  logging finished with "<<bend->size();
 
     //return bend;
 }
@@ -331,7 +331,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.add(instrCh);
+        cursorBeat->changes.push_back(instrCh);
 
     }
 
@@ -343,7 +343,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.add(volCh);
+        cursorBeat->changes.push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
@@ -354,7 +354,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.add(panCh);
+        cursorBeat->changes.push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
@@ -364,7 +364,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.add(chorusCh);
+        cursorBeat->changes.push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
@@ -374,7 +374,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.add(reverbCh);
+         cursorBeat->changes.push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
@@ -384,7 +384,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.add(phaserCh);
+        cursorBeat->changes.push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
@@ -394,7 +394,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.add(tremoloCh);
+         cursorBeat->changes.push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -408,7 +408,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;
 
-             cursorBeat->changes.add(tempCh);
+             cursorBeat->changes.push_back(tempCh);
 
         }
 
@@ -634,7 +634,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         readBendGTP(&file,bend);
 
         if (gtpLog)
-        qDebug()<< " Bend h "<<"; len "<<(int)bend->len()<<"; type"<<bend->getType();
+        qDebug()<< " Bend h "<<"; len "<<bend->size()<<"; type"<<bend->getType();
 
         newNote->setEffect(17);//first common pattern
         newNote->effPack.addPack(17,2,bend); //type 2 is bend
@@ -847,7 +847,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
 
                 pointx1:
 
-                for (ul strInd = 0; strInd < prevBeat->len(); ++strInd)
+                for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
                     {
                         Note *prevNoteSearch = &prevBeat->getV(strInd);
                         byte prevSNum = prevNoteSearch->getStringNumber();
@@ -896,11 +896,11 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
                 if (cursorBar)
                 {
                      Bar *prevBar = cursorBar - 1;
-                     Beat *prevBeat = &prevBar->getV(prevBar->len()-beatShiftBack);
+                     Beat *prevBeat = &prevBar->getV(prevBar->size()-beatShiftBack);
 
                      pointx0:
 
-                     for (ul strInd = 0; strInd < prevBeat->len(); ++strInd)
+                     for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
                          {
                              Note *prevNoteSearch = &prevBeat->getV(strInd);
                              byte prevSNum = prevNoteSearch->getStringNumber();
@@ -1441,10 +1441,10 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         for (ul j = 0; j < beatsAmount; ++j)
         {
             Bar *newBeatBar=new Bar(); //RESERVATION
-            newTrack->add(newBeatBar);
+            newTrack->push_back(newBeatBar);
         }
 
-        tab->add(newTrack);
+        tab->push_back(newTrack);
     }
 
 
@@ -1463,7 +1463,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     Beat *cursorBeat = 0;
 
-    if (cursorBar->len())
+    if (cursorBar->size())
      cursorBeat =cursorBar->at(0);
 
     if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount;
@@ -1504,7 +1504,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         cursorBar = updatingBar;
         cursorBeat = 0;
 
-        if (cursorBar->len())
+        if (cursorBar->size())
             cursorBeat = cursorBar->at(0);
         //++cursorBar;
         //cursorBeat = &cursorBar->getV(0);
@@ -1512,7 +1512,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         for (ul ind = 0; ind < beatsInPair; ++ind)
         {
             Beat *newOne = new Beat();
-            cursorBar->add(newOne);
+            cursorBar->push_back(newOne);
         }
 
         for (ul j = 0; j < beatsInPair; ++j)
@@ -1534,7 +1534,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
                 //then note follows
                 readNote(file,newNote);
-                cursorBeat->add(newNote);
+                cursorBeat->push_back(newNote);
             }
 
             ++cursorBeat;
@@ -1919,7 +1919,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.add(instrCh);
+        cursorBeat->changes.push_back(instrCh);
 
     }
 
@@ -1931,7 +1931,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.add(volCh);
+        cursorBeat->changes.push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
@@ -1942,7 +1942,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.add(panCh);
+        cursorBeat->changes.push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
@@ -1952,7 +1952,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.add(chorusCh);
+        cursorBeat->changes.push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
@@ -1962,7 +1962,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.add(reverbCh);
+         cursorBeat->changes.push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
@@ -1972,7 +1972,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.add(phaserCh);
+        cursorBeat->changes.push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
@@ -1982,7 +1982,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.add(tremoloCh);
+         cursorBeat->changes.push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -1996,7 +1996,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
          tempCh.changeType = 8;
          tempCh.changeValue = changeStruct.newTempo;
 
-         cursorBeat->changes.add(tempCh);
+         cursorBeat->changes.push_back(tempCh);
 
          if (verInd==1)
          {
@@ -2519,9 +2519,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         for (ul j = 0; j < beatsAmount; ++j)
         {
             Bar *newBeatBar=new Bar(); //RESERVATION
-            newTrack->add(newBeatBar);
+            newTrack->push_back(newBeatBar);
         }
-        tab->add(newTrack);
+        tab->push_back(newTrack);
     }
 
 
@@ -2544,9 +2544,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
     /*
-    qDebug() <<"Tracks "<<(int)tab->len();
+    qDebug() <<"Tracks "<<(int)tab->size();
     qDebug() <<"-";
-    qDebug()<<" in cur "<<(int)tab->getV(0)->len();
+    qDebug()<<" in cur "<<(int)tab->getV(0)->size();
     qDebug() <<"+";
     */
 
@@ -2554,7 +2554,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     Beat *cursorBeat = 0; //cursorBar->getV(0);
 
     if (cursorBar)
-    if (cursorBar->len())
+    if (cursorBar->size())
      cursorBeat =cursorBar->at(0);
 
     if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount ;
@@ -2608,7 +2608,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             cursorBar = updatingBar;
             cursorBeat = 0;
 
-            if (cursorBar->len())
+            if (cursorBar->size())
             cursorBeat = cursorBar->at(0);
             //++cursorBar;
             //cursorBeat = &cursorBar->getV(0);
@@ -2616,7 +2616,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             for (ul ind = 0; ind < beatsInPair; ++ind)
             {
                 Beat *newOne = new Beat();
-                cursorBar->add(newOne);
+                cursorBar->push_back(newOne);
             }
 
             for (ul j = 0; j < beatsInPair; ++j)
@@ -2639,7 +2639,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
                     //then note follows
                     readNote(file,newNote,5); //format 5
-                    cursorBeat->add(newNote);
+                    cursorBeat->push_back(newNote);
                 }
 
                 ++cursorBeat;
@@ -2763,7 +2763,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.add(instrCh);
+        cursorBeat->changes.push_back(instrCh);
 
     }
 
@@ -2775,7 +2775,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.add(volCh);
+        cursorBeat->changes.push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
@@ -2786,7 +2786,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.add(panCh);
+        cursorBeat->changes.push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
@@ -2796,7 +2796,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         Beat::SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.add(chorusCh);
+        cursorBeat->changes.push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
@@ -2806,7 +2806,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
          Beat::SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.add(reverbCh);
+         cursorBeat->changes.push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
@@ -2816,7 +2816,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         Beat::SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.add(phaserCh);
+        cursorBeat->changes.push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
@@ -2826,7 +2826,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
          Beat::SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.add(tremoloCh);
+         cursorBeat->changes.push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -2840,7 +2840,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;
 
-             cursorBeat->changes.add(tempCh);
+             cursorBeat->changes.push_back(tempCh);
 
         }
 
@@ -3144,7 +3144,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
 
                 pointx1:
 
-                for (ul strInd = 0; strInd < prevBeat->len(); ++strInd)
+                for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
                     {
                         Note *prevNoteSearch = &prevBeat->getV(strInd);
                         byte prevSNum = prevNoteSearch->getStringNumber();
@@ -3195,11 +3195,11 @@ void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBa
                 if (cursorBar)
                 {
                      Bar *prevBar = cursorBar - 1;
-                     Beat *prevBeat = &prevBar->getV(prevBar->len()-beatShiftBack);
+                     Beat *prevBeat = &prevBar->getV(prevBar->size()-beatShiftBack);
 
                      pointx0:
 
-                     for (ul strInd = 0; strInd < prevBeat->len(); ++strInd)
+                     for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
                          {
                              Note *prevNoteSearch = &prevBeat->getV(strInd);
                              byte prevSNum = prevNoteSearch->getStringNumber();
@@ -3433,9 +3433,9 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
         for (ul j = 0; j < beatsAmount; ++j) {
             Bar *newBeatBar=new Bar(); //RESERVATION
-            newTrack->add(newBeatBar);
+            newTrack->push_back(newBeatBar);
         }
-        tab->add(newTrack);
+        tab->push_back(newTrack);
     }
 
 
@@ -3453,7 +3453,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     Beat *cursorBeat = 0;
 
     if (cursorBar)
-    if (cursorBar->len())
+    if (cursorBar->size())
      cursorBeat =cursorBar->at(0);
 
 
@@ -3496,7 +3496,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
         if (cursorBar)
         {
-            if (cursorBar->len())
+            if (cursorBar->size())
             cursorBeat = cursorBar->at(0);
             else
                 cursorBeat = 0;
@@ -3507,7 +3507,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         for (ul ind = 0; ind < beatsInPair; ++ind)
         {
             Beat *newOne = new Beat();
-            cursorBar->add(newOne);
+            cursorBar->push_back(newOne);
         }
 
         for (ul j = 0; j < beatsInPair; ++j)
@@ -3531,7 +3531,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
                 //then note follows
                 readNoteGP3(file,newNote,j,cursorBar);
                 //!!! THIS IS SHIT had to be CHANGED
-                cursorBeat->add(newNote);
+                cursorBeat->push_back(newNote);
             }
 
             ++cursorBeat;

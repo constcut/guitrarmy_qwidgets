@@ -19,9 +19,9 @@ public:
     VariableInt &operator =(VariableInt &v) 
     {
     	//clear - to POLY ! ATTENTION !
-    	size_t copyLen = v.len();
+        size_t copyLen = v.size();
     	for (size_t i = 0; i < copyLen; ++i)
-            add(v.at(i));
+            push_back(v.at(i));
 
         return *this;
     }
@@ -29,7 +29,7 @@ public:
     ul readStream(std::ifstream &file); //reads from file and returns amount of bytes stored inside
     ul writeStream(std::ofstream &file);
 	ul getValue();
-    ul getLen() { return this->len(); } //cover
+    ul getsize() { return this->size(); } //cover
 
 	//for future - get extended values for many many parts
 	//for future - ul writeStream(AF ile &file);
@@ -124,7 +124,7 @@ struct midiTrackHeader
     ul trackSize;
 };
 
-class MidiTrack : public ChainContainer<MidiSignal*, void>
+class MidiTrack : public ChainContainer<MidiSignal, void>
 {
 protected:
 
@@ -134,7 +134,7 @@ public:
 
     virtual ~MidiTrack()
     {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
             delete at(i);
     }
     
@@ -226,7 +226,7 @@ public:
 
 };
 
-class MidiFile : public ChainContainer<MidiTrack*, void>
+class MidiFile : public ChainContainer<MidiTrack, void>
 {
 protected:
     struct midiHeader midiHeader;
@@ -243,7 +243,7 @@ public:
 
     virtual ~MidiFile()
     {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
             delete at(i);
     }
 

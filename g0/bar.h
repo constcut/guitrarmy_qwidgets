@@ -13,14 +13,14 @@ int updateDurationWithDetail(byte detail, int base);
 
 class Track;
 
-class Bar : public ChainContainer<Beat*, Track> {
+class Bar : public ChainContainer<Beat, Track> {
 
 public:
     Bar() {
         flush();
     }
     virtual ~Bar() {
-        for (ul i=0; i < len(); ++i)
+        for (ul i=0; i < size(); ++i)
             delete at(i);
     }
 
@@ -40,12 +40,12 @@ public:
         return *this;
     }
 
-    virtual void add(Beat *&val)
+    virtual void push_back(Beat *&val)
     {
         if (val)
         {
             val->setParent(this);
-            ChainContainer<Beat*, Track>::add(val);
+            ChainContainer<Beat, Track>::push_back(val);
         }
     }
 
@@ -54,7 +54,7 @@ public:
         if (val)
         {
             val->setParent(this);
-            ChainContainer<Beat*, Track>::insertBefore(val,index);
+            ChainContainer<Beat, Track>::insertBefore(val,index);
         }
     }
 

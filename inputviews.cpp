@@ -167,7 +167,7 @@ void PatternInput::createBar()
                 newNote->setStringNumber(iCoef+1);
                 newNote->setState(0);
                 //newNote.setVolume();
-                beat->add(newNote);
+                beat->push_back(newNote);
                 oneChecked = true;
             }
         }
@@ -175,7 +175,7 @@ void PatternInput::createBar()
         if (oneChecked == false)
             beat->setPause(true);
 
-        bar->add(beat);
+        bar->push_back(beat);
     }
 
 
@@ -209,14 +209,14 @@ void PatternInput::playBar() {
         bar->setRepeat(2,10);
     }
 
-    patternTrack->add(bar);
+    patternTrack->push_back(bar);
 
     patternTrack->tuning.setStringsAmount(6);
 
     for (int ii=0; ii < 7; ++ii)
         patternTrack->tuning.setTune(ii,0);
 
-    patternTab.add(patternTrack);
+    patternTab.push_back(patternTrack);
 
     int patternBPM = atoi(bpmValue->getText().c_str());
     patternTab.setBPM(patternBPM);
@@ -757,9 +757,9 @@ void TapRyView::createBar()
         }
 
         rNote->setStringNumber(5);
-        ryBeat->add(rNote);
+        ryBeat->push_back(rNote);
 
-        ryBar->add(ryBeat);
+        ryBar->push_back(ryBeat);
     }
 
     //last note thats missing
@@ -775,9 +775,9 @@ void TapRyView::createBar()
         rNote->setState(0);
         rNote->setFret(lastPressInstr);
         rNote->setStringNumber(5);
-        ryBeat->add(rNote);
+        ryBeat->push_back(rNote);
 
-        ryBar->add(ryBeat);
+        ryBar->push_back(ryBeat);
     }
 
 
@@ -831,14 +831,14 @@ void TapRyView::copyAndPlayBar()
     //bar->setRepeat(1);
     //bar->setRepeat(2,2);
 
-    patternTrack->add(bar);
+    patternTrack->push_back(bar);
 
     patternTrack->tuning.setStringsAmount(6);
 
     for (int ii=0; ii < 7; ++ii)
         patternTrack->tuning.setTune(ii,0);
 
-    patternTab.add(patternTrack);
+    patternTab.push_back(patternTrack);
     patternTab.setBPM(thatBPM);
     patternTab.connectTracks();
 
@@ -932,9 +932,9 @@ void TapRyView::keyevent(std::string press)
                 rNote->setFret(36);
 
             rNote->setStringNumber(5);
-            ryBeat->add(rNote);
+            ryBeat->push_back(rNote);
 
-            ryBar->add(ryBeat);
+            ryBar->push_back(ryBeat);
         }
 
         Tab patternTab;
@@ -948,14 +948,14 @@ void TapRyView::keyevent(std::string press)
         ryBar->setRepeat(1);
         ryBar->setRepeat(2,100);
 
-        patternTrack->add(ryBar);
+        patternTrack->push_back(ryBar);
 
         patternTrack->tuning.setStringsAmount(6);
 
         for (int ii=0; ii < 7; ++ii)
             patternTrack->tuning.setTune(ii,0);
 
-        patternTab.add(patternTrack);
+        patternTab.push_back(patternTrack);
 
         int thatBPM = atoi(bpmLabel->getText().c_str());
         patternTab.setBPM(thatBPM);
@@ -1524,14 +1524,14 @@ void MorzeInput::playBar()
         morzeTrack->setVolume(15);
         morzeTrack->setPan(8);
 
-        morzeTrack->add(bar);
+        morzeTrack->push_back(bar);
 
         morzeTrack->tuning.setStringsAmount(6);
 
         for (int ii=0; ii < 7; ++ii)
             morzeTrack->tuning.setTune(ii,0);
 
-        morzeTab.add(morzeTrack);
+        morzeTab.push_back(morzeTrack);
         morzeTab.setBPM(120);
         morzeTab.connectTracks();
 
@@ -1636,11 +1636,11 @@ void MorzeInput::onclick(int x1, int y1)
                 rNote2->setFret(38);
                 rNote2->setStringNumber(5);
 
-                ryBeat->add(rNote);
-                ryBeat2->add(rNote2);
+                ryBeat->push_back(rNote);
+                ryBeat2->push_back(rNote2);
 
-                bar->add(ryBeat); //����� �
-                bar->add(ryBeat2);
+                bar->push_back(ryBeat); //����� �
+                bar->push_back(ryBeat2);
 
                 qDebug() << "Added "<<dur<<" "<<dur2<<" beat";
             }

@@ -20,7 +20,7 @@ void writeBendGMY(std::ofstream *file, BendPoints *bend)
     byte bendType = bend->getType();
     file->write((char*)&bendType,1);
 
-    byte pointsCount = bend->len();
+    byte pointsCount = bend->size();
     file->write((char*)&pointsCount,1);
 
     for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
@@ -66,10 +66,10 @@ void readBendGMY(std::ifstream* file, BendPoints *bend)
         point.vertical = verticalPosition; //25 - 1/12 of 3 tones
         point.horizontal = absolutePosition;
         point.vFlag = vibratoFlag;
-        bend->add(point);
+        bend->push_back(point);
     }
 
-    qDebug() << "Beng if (gtpLog)  logging finished with "<<(int)bend->len();
+    qDebug() << "Beng if (gtpLog)  logging finished with " << bend->size();
 }
 
 
@@ -99,8 +99,8 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
     //ChainContainer<ul, Bar>
     //ChainContainer<byte, Track>
     //ChainContainer<int, Beat>
-    ul tracksCount = tab->len();//attention please
-    ul barsCount = tab->at(0)->len(); //search largerst or not do such thing? refact
+    ul tracksCount = tab->size();//attention please
+    ul barsCount = tab->at(0)->size(); //search largerst or not do such thing? refact
 
     file->write((char*)&tracksCount,1); //256 tracks are insane
     file->write((char*)&barsCount,2); //65 535 bars are insace
@@ -188,7 +188,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             //Each bar for that track
             Bar *bar;
 
-            if (j < track->len())
+            if (j < track->size())
                 bar = track->at(j);
             else
                 bar = new Bar;
@@ -272,10 +272,10 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
             }
 
 
-            ul barLen = bar->len();
+            ul barLen = bar->size();
             file->write((char*)&barLen,1); //more then 256 notes in beat are strange
 
-            for (ul k = 0; k < bar->len(); ++k)
+            for (ul k = 0; k < bar->size(); ++k)
             {
                 //Each beat
                 Beat *beat = (bar->at(k));
@@ -332,7 +332,7 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
                     {
                         Beat::ChangesList *changes = &beat->changes;//(Beat::ChangesList*)changePack->getPointer();
 
-                        ul amountOfChanges = changes->len();
+                        ul amountOfChanges = changes->size();
 
                         file->write((char*)&amountOfChanges,1);
 
@@ -355,11 +355,11 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
 
                 //tremolo, chord etc should be stored here
 
-                ul beatLen = beat->len();
+                ul beatLen = beat->size();
                 file->write((char*)&beatLen,1); //256 notes in beat are too much
 
                 //and notes inside
-                for (ul el=0; el < beat->len(); ++el)
+                for (ul el=0; el < beat->size(); ++el)
                 {
                     Note *note = beat->at(el);
 
@@ -682,7 +682,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                 Beat *emptyBeat = new Beat();
                 emptyBeat->setPause(true);
                 emptyBeat->setDuration(3);
-                bar->add(emptyBeat);
+                bar->push_back(emptyBeat);
             }
 
             for (ul k = 0; k < barLen; ++k)
@@ -772,7 +772,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                         change.changeType = changeType;
                         change.changeValue = changeValue;
 
-                        newChanges->add(change);
+                        newChanges->push_back(change);
                     }
 
                     beat->effPack.addPack(28,1,newChanges);
@@ -850,18 +850,18 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                         note->effPack.set(19,false); //turn off tremolo
                     }
 
-                    beat->add(note);
+                    beat->push_back(note);
                 }
 
-                bar->add(beat);
+                bar->push_back(beat);
                 //data then effects
             }
 
-            track->add(bar);
+            track->push_back(bar);
 
         }
 
-        tab->add(track);
+        tab->push_back(track);
     }
 
     return true;

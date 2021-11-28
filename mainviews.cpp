@@ -354,11 +354,11 @@ void MainView::keyevent(std::string press)
                     beat->setDuration(3);
                     beat->setDurationDetail(0);
 
-                    bar->add(beat);
+                    bar->push_back(beat);
                 }
 
-                track->add(bar);
-                newTab->add(track);
+                track->push_back(bar);
+                newTab->push_back(track);
                 newTab->connectTracks();
 
                 changeCurrentView(tabsView);
@@ -879,7 +879,7 @@ void BendInput::draw(QPainter *painter)
         int prevX = 0; int prevY = 0;
 
         changeColor("red", painter);
-        for (ul i = 0; i < ptrToBend->len(); ++i)
+        for (ul i = 0; i < ptrToBend->size(); ++i)
         {
             byte vertical = ptrToBend->at(i).vertical;
             byte horizontal = ptrToBend->at(i).horizontal;
@@ -983,7 +983,7 @@ void BendInput::onclick(int x1, int y1)
 
         if (ptrToBend)
         {
-            for (ul i = 0; i < ptrToBend->len(); ++i)
+            for (ul i = 0; i < ptrToBend->size(); ++i)
             {
                 int pointV= ptrToBend->at(i).vertical;
                 int pointH= ptrToBend->at(i).horizontal;
@@ -993,7 +993,7 @@ void BendInput::onclick(int x1, int y1)
                 if ((pointV==vertical) && (pointH==horizontal))
                 {
                     qDebug() << "point really hitten";
-                    ptrToBend->remove(i);
+                    ptrToBend->erase(ptrToBend->begin() + i);
                     return;
                 }
             }
@@ -1021,7 +1021,7 @@ void BendInput::fillBend(int type, int height)
         BendPoint p0; p0.vertical = 0; p0.horizontal = 0; p0.vFlag=0;
         BendPoint p1; p1.vertical = height; p1.horizontal = 15; p1.vFlag=0;
         BendPoint p2; p2.vertical = height; p2.horizontal = 60; p2.vFlag=0;
-        ptrToBend->add(p0); ptrToBend->add(p1); ptrToBend->add(p2);
+        ptrToBend->push_back(p0); ptrToBend->push_back(p1); ptrToBend->push_back(p2);
     }
     if (type==1)
     {
@@ -1031,7 +1031,7 @@ void BendInput::fillBend(int type, int height)
         BendPoint p2; p2.vertical = height; p2.horizontal = 20; p2.vFlag=0;
         BendPoint p3; p3.vertical = 0; p3.horizontal = 30; p3.vFlag=0;
         BendPoint p4; p4.vertical = 0; p4.horizontal = 60; p4.vFlag=0;
-        ptrToBend->add(p0); ptrToBend->add(p1); ptrToBend->add(p2); ptrToBend->add(p3); ptrToBend->add(p4);
+        ptrToBend->push_back(p0); ptrToBend->push_back(p1); ptrToBend->push_back(p2); ptrToBend->push_back(p3); ptrToBend->push_back(p4);
     }
     if (type==2)
     {
@@ -1043,15 +1043,15 @@ void BendInput::fillBend(int type, int height)
         BendPoint p4; p4.vertical = 0; p4.horizontal = 40; p4.vFlag=0;
         BendPoint p5; p5.vertical = height; p5.horizontal = 50; p5.vFlag=0;
         BendPoint p6; p6.vertical = height; p6.horizontal = 60; p6.vFlag=0;
-        ptrToBend->add(p0); ptrToBend->add(p1); ptrToBend->add(p2); ptrToBend->add(p3);
-        ptrToBend->add(p4); ptrToBend->add(p5); ptrToBend->add(p6);
+        ptrToBend->push_back(p0); ptrToBend->push_back(p1); ptrToBend->push_back(p2); ptrToBend->push_back(p3);
+        ptrToBend->push_back(p4); ptrToBend->push_back(p5); ptrToBend->push_back(p6);
     }
     if (type==3)
     {
         ptrToBend->clear();
         BendPoint p0; p0.vertical = height; p0.horizontal = 0; p0.vFlag=0;
         BendPoint p1; p1.vertical = height; p1.horizontal = 60; p1.vFlag=0;
-        ptrToBend->add(p0); ptrToBend->add(p1);
+        ptrToBend->push_back(p0); ptrToBend->push_back(p1);
     }
     if (type==4)
     {
@@ -1060,7 +1060,7 @@ void BendInput::fillBend(int type, int height)
         BendPoint p1; p1.vertical = height; p1.horizontal = 15; p1.vFlag=0;
         BendPoint p2; p2.vertical = 0; p2.horizontal = 30; p2.vFlag=0;
         BendPoint p3; p3.vertical = 0; p3.horizontal = 60; p3.vFlag=0;
-        ptrToBend->add(p0); ptrToBend->add(p1); ptrToBend->add(p2);  ptrToBend->add(p3);
+        ptrToBend->push_back(p0); ptrToBend->push_back(p1); ptrToBend->push_back(p2);  ptrToBend->push_back(p3);
     }
 }
 
@@ -1093,7 +1093,7 @@ void ChangesInput::draw(QPainter *painter)
                     getMaster()->setComboBox(11,"changecombo4",550,170,50,40,0);
 
 
-                    for (ul i = 0; i < changes->len(); ++i)
+                    for (ul i = 0; i < changes->size(); ++i)
                     {
                         byte changeType = changes->at(i).changeType;
                         ul changeValue = changes->at(i).changeValue;
@@ -1161,12 +1161,12 @@ void ChangesInput::turnOffChange(std::string combo)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->len(); ++i)
+        for (ul i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
-                changes->remove(i);
-                if (changes->len() == 0)
+                changes->erase(changes->begin() + i);
+                if (changes->size() == 0)
                 {
                     ptrToBeat->effPack.set(28,false);
                 }
@@ -1223,7 +1223,7 @@ void ChangesInput::turnOnChange(std::string combo)
     }
     else
     {
-        for (ul i = 0; i < changes->len(); ++i)
+        for (ul i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
@@ -1241,7 +1241,7 @@ void ChangesInput::turnOnChange(std::string combo)
         newChange.changeType = awaitType;
         newChange.changeValue = changeValue;
         newChange.changeCount = changeAfter;
-        changes->add(newChange);
+        changes->push_back(newChange);
     }
 
 }
@@ -1265,7 +1265,7 @@ void ChangesInput::changeMainValue(int combo, int newValue)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->len(); ++i)
+        for (ul i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
@@ -1294,7 +1294,7 @@ void ChangesInput::changeSubValue(int combo, int newValue)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->len(); ++i)
+        for (ul i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
