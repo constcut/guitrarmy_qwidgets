@@ -231,37 +231,38 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         int len = beatN;
         if (!len)
         {
-            Bar *addition = (Bar*)(command.outerPtr);
-            this->insertBefore(addition,barN);
+            auto addition = std::move(command.outerBar);
+            this->insertBefore(std::move(addition), barN);
             this->connectAll();
         }
     }
 
     if (type == 25)
     {
-        Bar *addition = (Bar*)(command.outerPtrEnd);
-        Bar *firstBar  = (Bar*)(command.outerPtr);
+        auto addition = std::move(command.outerBarEnd);
+        auto firstBar  = std::move(command.outerBar);
         //sicky
-        for (;addition != firstBar; addition=(Bar*)addition->getPrev())
+        for (;addition != firstBar; addition=(Bar*)addition->getPrev()) //TODO big issue :(
         {
             if (addition == 0)
                 break;
 
-            qDebug() << "Addition addr "<<(addition);
+            qDebug() << "Addition addr "<<(addition.get());
 
-            this->insertBefore(addition,barN);
+            this->insertBefore(std::move(addition),barN);
         }
-        this->insertBefore(firstBar,barN);
+        this->insertBefore(std::move(firstBar),barN);
         this->connectAll();
         this->cursor()=barN;
     }
 
     if (type == 26)
     {
-        Beat *firstBeat = (Beat*)(command.outerPtr);
-        Beat *lastBeat  = (Beat*)(command.outerPtrEnd);
-        Bar *firstPa = (Bar*)(firstBeat->getParent());
-        Bar *lastPa = (Bar*)(lastBeat->getParent());//s
+        auto firstBeat = std::move(command.outerBeat);
+        auto lastBeat  = std::move(command.outerBeatEnd);
+
+        Bar *firstPa = (firstBeat->getParent());
+        Bar *lastPa = (lastBeat->getParent());//s
 
         Beat *curBeat = lastBeat;
 
@@ -274,7 +275,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
                 while(curBeat != firstBeat)
                 {
                     this->at(barN)->insertBefore(curBeat,beatN);
-                    curBeat = (Beat*)curBeat->getPrev();
+                    curBeat = (Beat*)curBeat->getPrev(); //TODO make getPrev\next work with uniques too ptr to uniqe probably
                     if (curBeat == 0)
                         break;
                 }
@@ -403,13 +404,13 @@ void Track::moveSelectionRight() {
 
 
 void Track::insertBar() {
-    Beat *beat=new Beat();
+    auto beat = std::make_unique<Beat>();
     beat->setPause(true);
     beat->setDuration(4);
     beat->setDotted(0);
     beat->setDurationDetail(0);
 
-    at(_cursor)->insertBefore(beat, _cursorBeat);
+    at(_cursor)->insertBefore(std::move(beat), _cursorBeat);
     connectAll(); //autochain cries
 
     SingleCommand command(18);
@@ -530,21 +531,21 @@ void Track::moveToNextBeat() {
         {
             static int lastDur = 4; //TODO?
             if (_cursorBeat) {
-                Bar *b = at(_cursor);
-                Beat *beat = b->at(b->size()-1);
+                Bar *b = at(_cursor).get();
+                Beat *beat = b->at(b->size()-1).get();
                 lastDur = beat->getDuration();
                 //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
                 /// lastDur from prev position
             }
             if (at(_cursor)->getCompleteStatus()==1)
             {
-                Bar *bar = at(_cursor);
-                Beat *beat=new Beat();
+                Bar *bar = at(_cursor).get();
+                auto beat = std::make_unique<Beat>();
                 beat->setPause(true);
                 beat->setDuration(lastDur);
                 beat->setDotted(0);
                 beat->setDurationDetail(0);
-                bar->push_back(beat);
+                bar->push_back(std::move(beat));
 
                 SingleCommand command(18);
                 command.setPosition(0,_cursor,_cursorBeat);
@@ -557,19 +558,19 @@ void Track::moveToNextBeat() {
             {
                 if ((_cursor+1) == size())
                 {
-                    Bar *newBar = new Bar();
+                    auto newBar = std::make_unique<Bar>();
                     newBar->flush();
                     newBar->setSignDenum(4);
                     newBar->setSignNum(4);
                     newBar->setRepeat(0);
 
-                    Beat *beat=new Beat();
+                    auto beat = std::make_unique<Beat>();
                     beat->setPause(true);
                     beat->setDuration(lastDur);
                     beat->setDotted(0);
                     beat->setDurationDetail(0);
-                    newBar->push_back(beat);
-                    push_back(newBar);
+                    newBar->push_back(std::move(beat));
+                    push_back(std::move(newBar));
 
                     SingleCommand command(16);
                     command.setPosition(0, _cursor+1,0);
@@ -631,7 +632,7 @@ void Track::setTrackPause() {
 void Track::deleteBar() {
     SingleCommand command(24);
     command.setPosition(0, _cursor,0);
-    command.outerPtr = at(_cursor).get();
+    command.outerBar = std::move(at(_cursor));
     commandSequence.push_back(std::move(command));
 
     //attention question for memoryleaks
@@ -648,8 +649,8 @@ void Track::deleteSelectedBars() {
             --_cursor; //attention
         SingleCommand command(25);
         command.setPosition(0, _selectionBarFirst,0);
-        command.outerPtr = at(_selectionBarFirst).get();
-        command.outerPtrEnd = at(_selectionBarLast).get();
+        command.outerBar = std::move(at(_selectionBarFirst));
+        command.outerBarEnd = std::move(at(_selectionBarLast));
         commandSequence.push_back(std::move(command));
         for (int i = _selectionBarLast; i >= _selectionBarFirst; --i)
             remove(i);
@@ -663,11 +664,10 @@ void Track::deleteSelectedBeats() {
     if (_selectionBarFirst != -1) {
 
         connectAll();
-        Beat *firstBeat = nullptr, *lastBeat = nullptr;
         SingleCommand command(26);
         command.setPosition(0,_selectionBarFirst,_selectionBeatFirst);
-        command.outerPtr = firstBeat = at(_selectionBarFirst)->at(_selectionBeatFirst).get();
-        command.outerPtrEnd = lastBeat = at(_selectionBarLast)->at(_selectionBeatLast).get();
+        command.outerBeat =  std::move(at(_selectionBarFirst)->at(_selectionBeatFirst)); //firstBeat =
+        command.outerBeatEnd  = std::move(at(_selectionBarLast)->at(_selectionBeatLast)); // = lastBeat
         at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst).get());
         at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast).get());
 
@@ -708,7 +708,7 @@ void Track::deleteSelectedBeats() {
             Bar *lastBarInMiddle = at(_selectionBarLast-1);
             Bar *firstBarInMiddle = at(_selectionBarFirst+1);
 
-            command.startBar = firstBarInMiddle;
+            command.startBar = firstBarInMiddle; //TODO unique?
             command.endBar = lastBarInMiddle;
 
             for (int bI = _selectionBarLast-1; bI > _selectionBarFirst; --bI)
@@ -736,15 +736,13 @@ void Track::deleteNote() {
         SingleCommand command(8);
         command.setPosition(0,_cursor,_cursorBeat);
         command.requestStoredNotes();
-        Note *note = at(_cursor)->at(_cursorBeat)->getNoteInstance(_stringCursor+1);
-        command.storedNotes->push_back(note);
+        auto note = std::move(at(_cursor)->at(_cursorBeat)->at(_stringCursor+1));
+        command.storedNotes->push_back(std::move(note));
         if (note->getFret()!=255) {
             //delete one note
             at(_cursor)->at(_cursorBeat)->deleteNote(_stringCursor+1);//shift from 0 to 1
             commandSequence.push_back(std::move(command));
         }
-        else
-            delete note;
     }
     else
     {
@@ -755,7 +753,7 @@ void Track::deleteNote() {
             std::uint8_t dot =  at(_cursor)->at(_cursorBeat)->getDotted();
             packedValue = dur;
             packedValue |= det<<3;
-            Beat *beat = at(_cursor)->at(_cursorBeat);
+            Beat *beat = at(_cursor)->at(_cursorBeat).get();
             at(_cursor)->remove(_cursorBeat);
             connectAll(); //oups?
             delete beat;//cleanup

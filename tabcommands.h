@@ -139,6 +139,7 @@ enum class TrackCommand {
 
 class Note;
 class Bar;
+class Beat;
 
 class SingleCommand
 {
@@ -160,12 +161,13 @@ public:
     using NotesBuffer = std::vector<std::unique_ptr<Note>>;
     std::unique_ptr<NotesBuffer> storedNotes;
 
-    //REFACT to variable amount and types
-    void *outerPtr;
-    void *outerPtrEnd; //TODO убрать эту проблему
+    std::unique_ptr<Beat> outerBeat;
+    std::unique_ptr<Beat> outerBeatEnd;
+    std::unique_ptr<Bar> outerBar;
+    std::unique_ptr<Bar> outerBarEnd;
 
     //could be refacted
-    Bar *startBar;
+    Bar *startBar; //TODO найти разницу с outerBar \ END
     Bar *endBar;
 
     void requestStoredNotes(){
@@ -173,12 +175,12 @@ public:
     }
 
     SingleCommand():commandType(0),commandValue(0),track(0),bar(0),beat(0),string(0),
-        outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
+        startBar(0),endBar(0)
     {}
 
     SingleCommand(std::uint8_t newType, std::uint8_t newValue=0):
         commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0),
-        outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
+        startBar(0),endBar(0)
     {
     }
 
