@@ -412,76 +412,22 @@ void connectConfigs(void *ptr)
 }
 
 
-bool testScenario()
-{ 
-
+bool testScenario() {
+/* //Yet not logs here
     std::string logName; //LOG file name
 #ifdef WIN32
     logName="D:/TestFiles/new/scene.txt";
 #else
     logName="scene.txt"; //android
 #endif
-
     std::ofstream lofile;
     lofile.open(logName.c_str());
-
-
     if (lofile.is_open())
       std::cout << "Log file opened."<<std::endl;
-    else
-    {
+    else {
       std::cout << "Failed to open log out file :("<<std::endl;
       return false;
     }
-
-
-    /////////////////////////////////////////////////////////////////
-    //------------------------------------------------------------//
-    /*/TEST FILE NAME
-    std::string scenarioN = "3.2";
-                             //4.103
-    bool tuxMidi = true;
-    bool useMidi =  false;
-    //TEST OPTIONS FINISHED
-    bool waitAfterMidi = useMidi;
-    /////*////////////////////////
-
-    //Full line check
-    //UPDATE: greatCheck(Scen,start,end); greatestCheck - with all the ranges
-    greatCheck();
-    return false;
-
-
-    //ALT WAY to open)
-    /*
-    std::string testLocation = getTestsLocation();
-    std::string midiTestFile = testLocation + std::string("m/") + scenarioN + std::string(".mid");
-    if (tuxMidi)
-        midiTestFile = testLocation + std::string("m/") + scenarioN + std::string("_tux.mid");
-    std::string gp4TestFile = testLocation + std::string("g4/") + scenarioN + std::string(".gp4");
-    std::string gp5 TestFile = testLocation + std::string("g5/") + scenarioN + std::string(".gp5");
-
-    if (useMidi)
-    if ( testMidi(midiTestFile,"out.mid",log) == false ) return 0;
-
-    if ( waitAfterMidi ) std::cin.get();
-
-    //if ( testGP4 (gp4TestFile,"out2.mid",log, true)  == false ) return 0;
-
-    if (!none.empty())
-     testGP5 (none,"gp5 test.mid",log, true);
-    else
-    if ( testGP5 (gp5 TestFile,"gp5 test.mid",log, true)  == false ) return 0;
-
-    //------------------------------------------------------------//
-
-
-    //playMIDIFile(0,LPSTR("D:/TestFiles/new/gp5 test.mid"));
-    //std::cout << "Press enter to exit";
-    //std::cin.get();
-
-    ///////////////////////////////////////////////////////////////
-
-    return 0; //return a.exec();
-    */
+*/
+    return greatCheck();
 }
