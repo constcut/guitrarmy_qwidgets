@@ -35,7 +35,7 @@ SOURCES += main.cpp\
     g0/tab_com.cpp \
     g0/track.cpp \
     g0/track_com.cpp \
-        mainwindow.cpp \
+    mainwindow.cpp \
     gview.cpp \
     g0/abitarray.cpp \
     g0/aconfig.cpp \
@@ -89,17 +89,6 @@ HEADERS  += mainwindow.h \
     g0/wavefile.h \
     g0/fft.h \
     g0/waveanalys.h \
-    othLibs/ffft/Array.h \
-    othLibs/ffft/Array.hpp \
-    othLibs/ffft/def.h \
-    othLibs/ffft/DynArray.hpp \
-    othLibs/ffft/FFTReal.hpp \
-    othLibs/ffft/FFTRealFixLen.hpp \
-    othLibs/ffft/FFTRealPassDirect.hpp \
-    othLibs/ffft/FFTRealPassInverse.hpp \
-    othLibs/ffft/FFTRealSelect.hpp \
-    othLibs/ffft/FFTRealUseTrigo.hpp \
-    othLibs/ffft/OscSinCos.hpp \
     g0/ptbfile.h \
     android_helper.h \
     centerview.h \
