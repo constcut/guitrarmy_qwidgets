@@ -31,12 +31,12 @@ struct is_pointer { static const bool value = false; };
 template<typename T>
 struct is_pointer<T*> { static const bool value = true; };
 
-template <typename CT> class ChainContainer
+template <typename Child> class ChainContainer
 {
 protected:
-    std::vector<CT> sequence; //Эксперименты и замеры TODO
-    ChainContainer<CT> *nextOne;
-    ChainContainer<CT> *prevOne;
+    std::vector<Child> sequence; //Эксперименты и замеры TODO
+    ChainContainer<Child> *nextOne;
+    ChainContainer<Child> *prevOne;
     void *parent; //TODO ChainContainer too
 
     public:
@@ -44,28 +44,28 @@ protected:
     void setParent(void *newPa) { parent = newPa;}
     void *getParent() { return parent; }
 
-    void setPrev(ChainContainer<CT> *prev)
+    void setPrev(ChainContainer<Child> *prev)
     { prevOne=prev;}
 
-    void setNext(ChainContainer<CT> *next)
+    void setNext(ChainContainer<Child> *next)
     { nextOne=next;}
 
-    ChainContainer<CT> * getPrev()
+    ChainContainer<Child> * getPrev()
     { return prevOne;}
 
-    ChainContainer<CT> * getNext()
+    ChainContainer<Child> * getNext()
     { return nextOne;}
 
     virtual ~ChainContainer() {}
 
-    ChainContainer<CT>& operator=(ChainContainer<CT> &copy)
+    ChainContainer<Child>& operator=(ChainContainer<Child> &copy)
     {
         sequence.clear();
         sequence.insert(sequence.begin(),copy.sequence.begin(),copy.sequence.end());
         return *this;
     }
 
-    ChainContainer<CT>& operator+=(ChainContainer<CT> &copy)
+    ChainContainer<Child>& operator+=(ChainContainer<Child> &copy)
     {
         //check for end
         //sequence.clear();
@@ -81,16 +81,16 @@ protected:
         sequence.reserve(predefinedSize); // *=sizeof(CT); //?
     }
 
-    CT& operator[](size_t ind)
+    Child& operator[](size_t ind)
     {
         //checks
         return sequence[ind];
     }
 
-    virtual void add(CT &val)
+    virtual void add(Child &val)
     {
         ChainContainer *is_poly = 0;
-        if (is_pointer<CT>::value == true){
+        if (is_pointer<Child>::value == true){
            // is_poly = dynamic_cast<ChainContainer*>(val);
         }
         else
@@ -101,7 +101,7 @@ protected:
         sequence.push_back(val);
     }
 
-    CT &back() {
+    Child &back() {
         return sequence.back();
     }
 
@@ -109,11 +109,11 @@ protected:
         sequence.pop_back();
     }
 
-    void change(int ind, CT &val) {
+    void change(int ind, Child &val) {
         sequence[ind] = val;
     }
 
-    CT &getV(int ind) {
+    Child &getV(int ind) {
        return sequence[ind];
     }
 
@@ -125,7 +125,7 @@ protected:
         sequence.clear();
     }
 
-    virtual void insertBefore(const CT &val, int index=0) {
+    virtual void insertBefore(const Child &val, int index=0) {
         sequence.insert(sequence.begin()+index,val);
     }
 
