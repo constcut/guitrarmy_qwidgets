@@ -249,7 +249,7 @@ void AConfig::checkConfig()
 
     addValue("onloadBaseCheck","1");
 
-    addValue("midi.config","/home/punnalyse/dev/tim.cfg");
+    //addValue("midi.config",""); //TODO rename and use for soundfont
 }
 
 

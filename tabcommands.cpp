@@ -7,6 +7,8 @@
 #include "g0/midifile.h"
 #include "g0/aexpimp.h"
 
+#include "midiengine.h"
+
 #include <QInputDialog>
 #include <QMutex>
 #include <QFileDialog>
