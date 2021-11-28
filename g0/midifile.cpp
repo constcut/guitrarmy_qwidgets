@@ -1083,13 +1083,13 @@ bool MidiTrack::addPostEffects(Beat *beat, std::uint8_t channel)
 
     for (size_t i =0; i < beat->size(); ++i)
     {
-        Note *note = beat->at(i).get();
+        auto& note = beat->at(i);
 
         std::uint8_t fret = note->getFret();
         std::uint8_t stringN = note->getStringNumber();
         std::uint8_t midiNote = fret + tunes[stringN-1];
 
-        std::uint8_t volume = note->getVolume();
+        //std::uint8_t volume = note->getVolume();
         std::uint8_t midiVelocy = 95; //calcMidiVolumeGP(volume);
 
 
@@ -1724,7 +1724,7 @@ bool MidiFile::fromTab(Tab *tab, size_t shiftTheCursor)
 
     for (size_t trackIndex = 0; trackIndex < tabLen; ++trackIndex)
     {
-        Track *currentTrack = tab->at(trackIndex).get();
+        auto& currentTrack = tab->at(trackIndex);
         std::uint8_t trackStatus = currentTrack->getStatus();
 
         if (trackStatus != 2)
@@ -1747,7 +1747,7 @@ bool MidiFile::fromTab(Tab *tab, size_t shiftTheCursor)
         //qDebug() << "0 Tab is "<<(int)tab;
         //qDebug() <<"pushed "<<tabLen;
 
-        Track *track = tab->at(i).get();
+        auto& track = tab->at(i);
 
         std::uint8_t trackStatus = track->getStatus();
 
@@ -1781,10 +1781,10 @@ bool MidiFile::fromTab(Tab *tab, size_t shiftTheCursor)
             //if (realInd > 10)
                 //realInd = 10;
 
-            mTrack->fromTrack(track,realInd,startCursorBar);
+            mTrack->fromTrack(track.get(),realInd,startCursorBar);
         }
         else
-            mTrack->fromTrack(track,i,startCursorBar); //1 chan per track
+            mTrack->fromTrack(track.get(),i,startCursorBar); //1 chan per track
 
 
         //clock_t afterT3 = getTime();

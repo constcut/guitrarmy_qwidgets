@@ -76,7 +76,7 @@ public:
         sequence.push_back(std::move(val));
     }
 
-    Child* &back() {
+    Child* back() {
         return sequence.back().get();
     }
 

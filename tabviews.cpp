@@ -279,7 +279,7 @@ void TabView::draw(QPainter *painter)
                 painter->drawText(9,yPos+3,"s");
 
 
-           Track *tr = pTab->at(trackIndex).get();
+           auto& tr = pTab->at(trackIndex);
            for (size_t j = 0 ; j < tr->size(); ++j)
            {
                size_t barIndex = j + pTab->getDisplayBar();
@@ -287,13 +287,13 @@ void TabView::draw(QPainter *painter)
                     break;
 
                std::string sX = std::to_string(barIndex+1);
-               Bar *cB= tr->at(barIndex).get();
+               auto& cB= tr->at(barIndex);
                if (cB->size() == 1)
                {
-                   Beat *beat = cB->at(0).get();
+                   auto& beat = cB->at(0);
                    Note *note = 0;
                    if (beat->size())
-                    note = beat->at(0).get();
+                        note = beat->at(0).get();
                    if (note == 0)
                       sX+="*";
                }
@@ -377,7 +377,7 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
         qDebug() << "Thread "<<i<<" seconds "<<thrLenSeconds;
     }
 
-    Track *pTrack = pTab->at(0).get();
+    auto& pTrack = pTab->at(0);
 
     if (localThr)
     {
@@ -863,7 +863,7 @@ void TrackView::draw(QPainter *painter)
 
     for (size_t i = displayIndex; i < trackLen; ++i) //trackLen
     {
-        Bar *curBar = track1->at(i).get();
+        auto& curBar = track1->at(i);
 
         std::uint8_t curNum = curBar->getSignNum();
         std::uint8_t curDen = curBar->getSignDenum();
@@ -881,7 +881,7 @@ void TrackView::draw(QPainter *painter)
                 lastDen = curDen;
         }
 
-        BarView bView(curBar,stringsN,i);
+        BarView bView(curBar.get(),stringsN,i);
 
         if (selectionBarFirst!=-1)
         {
@@ -1481,11 +1481,11 @@ void BarView::draw(QPainter *painter)
         }
 
 
-        Beat *curBeat = bar1->at(i).get();
+        auto& curBeat = bar1->at(i);
 
         for (size_t j =0; j < curBeat->size(); ++j)
         {
-            Note *curNote = curBeat->at(j).get();
+            auto& curNote = curBeat->at(j);
 
 
 

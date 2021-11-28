@@ -30,9 +30,9 @@ bool tabLog = false;
 
  std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
  {
-        for (int i = 0 ; i < size(); ++i)
+        for (size_t i = 0 ; i < size(); ++i)
         {
-            Bar *bar = at(i)->at(barN).get();
+            auto& bar = at(i)->at(barN);
 
             if (bar->size())
             {

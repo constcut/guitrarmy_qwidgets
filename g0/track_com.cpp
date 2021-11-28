@@ -535,15 +535,15 @@ void Track::moveToNextBeat() {
         {
             static int lastDur = 4; //TODO?
             if (_cursorBeat) {
-                Bar *b = at(_cursor).get();
-                Beat *beat = b->at(b->size()-1).get();
+                auto& bar = at(_cursor);
+                auto& beat = bar->at(bar->size()-1);
                 lastDur = beat->getDuration();
                 //THERE IS A GOOOD CHANCE TO RECOUNT AGAIN
                 /// lastDur from prev position
             }
             if (at(_cursor)->getCompleteStatus()==1)
             {
-                Bar *bar = at(_cursor).get();
+                auto& bar = at(_cursor);
                 auto beat = std::make_unique<Beat>();
                 beat->setPause(true);
                 beat->setDuration(lastDur);
@@ -756,10 +756,10 @@ void Track::deleteNote() {
             std::uint8_t dot =  at(_cursor)->at(_cursorBeat)->getDotted();
             packedValue = dur;
             packedValue |= det<<3;
-            Beat *beat = at(_cursor)->at(_cursorBeat).get();
+            auto& beat = at(_cursor)->at(_cursorBeat);
             at(_cursor)->remove(_cursorBeat);
             connectAll(); //oups?
-            delete beat;//cleanup
+            beat = nullptr  ;//cleanup
 
             SingleCommand command(ReversableCommand::DeleteNote,packedValue);
             command.setPosition(0,_cursor,_cursorBeat,dot); //wow wow know it
@@ -814,7 +814,7 @@ void Track::saveFromTrack() {
 
 void Track::newBar() {
     auto addition = std::make_unique<Bar>();
-    Bar *bOrigin = at(_cursor).get();
+    auto& bOrigin = at(_cursor);
     addition->flush();
     addition->setSignDenum(bOrigin->getSignDenum());
     addition->setSignNum(bOrigin->getSignNum());
@@ -837,7 +837,7 @@ void Track::newBar() {
 
 
 void Track::setDotOnBeat() {
-    Beat* beat = at(_cursor)->at(_cursorBeat).get();
+    auto& beat = at(_cursor)->at(_cursorBeat);
     std::uint8_t dotted = beat->getDotted();
     SingleCommand command(ReversableCommand::SetDot, dotted);
     command.setPosition(0,_cursor, _cursorBeat);
@@ -850,7 +850,7 @@ void Track::setDotOnBeat() {
 
 
 void Track::setTriolOnBeat() {
-    Beat* beat = at(_cursor)->at(_cursorBeat).get();
+    auto& beat = at(_cursor)->at(_cursorBeat);
     std::uint8_t curDetail = beat->getDurationDetail();
     SingleCommand command(ReversableCommand::SetDurationDetail,curDetail);
     command.setPosition(0,_cursor,_cursorBeat);
@@ -863,17 +863,17 @@ void Track::setTriolOnBeat() {
 
 
 void Track::setTextOnBeat(std::string newText) {
-    Beat* beat = at(_cursor)->at(_cursorBeat).get();
+    auto& beat = at(_cursor)->at(_cursorBeat);
     beat->setGPCOMPText(newText);
 }
 
 
 void Track::clipboardCopyBar() {
-    Bar* bar = at(_cursor).get();
+    auto& bar = at(_cursor);
     if (_selectionBarFirst == -1) {
-        Bar *cloner = new Bar;
+        Bar *cloner = new Bar; //TODO memory leak - переделать весь буфер обмена на unique
         cloner->flush();
-        cloner->clone(bar);
+        cloner->clone(bar.get());
 
         AClipboard::current()->setPtr(cloner);
         AClipboard::current()->setType(4);
@@ -929,12 +929,12 @@ void Track::clipboardCopyBars() {
 
 
 void Track::clipboardCutBar() {
-    Bar* bar = at(_cursor).get();
+    auto& bar = at(_cursor);
     if (_selectionBarFirst == -1) {
         //int trackInd=tabParrent->getLastOpenedTrack();
         Bar *cloner = new Bar;
         cloner->flush();
-        cloner->clone(bar);
+        cloner->clone(bar.get());
         AClipboard::current()->setPtr(cloner);
         AClipboard::current()->setType(4);
         deleteBar();
@@ -959,7 +959,7 @@ void Track::clipboardPaste() {
 
         //TODO tab
         Tab* tab = parent;
-        Track *track = tab->at(AClipboard::current()->getTrackIndex()).get();
+        auto& track = tab->at(AClipboard::current()->getTrackIndex());
 
         if (AClipboard::current()->getType()==0) {
             Bar *origin = track->at(AClipboard::current()->getBarIndex()).get(); //pTrack->getV(copyIndex);
@@ -1114,7 +1114,7 @@ void Track::changeBarSigns(int newNum, int newDen) {
 
 
 void Track::setBarSign(int newNum, int newDen) {
-    Bar* bar = at(_cursor).get();
+    auto& bar = at(_cursor);
     std::uint8_t oldDen = bar->getSignDenum();
     std::uint8_t oldNum = bar->getSignNum();
     bar->setSignNum(newNum);

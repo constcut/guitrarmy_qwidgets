@@ -65,7 +65,7 @@ void Tab::moveCursorOfTrackDown() {
 
 
 void Tab::changeDrumsFlag() {
-    Track* pTrack = this->at(displayTrack).get();
+    auto& pTrack = this->at(displayTrack);
     bool drums = pTrack->isDrums();
     drums = !drums;
     pTrack->setDrums(drums);
@@ -155,13 +155,13 @@ void Tab::midiPause() {
 
 
 void Tab::setMarker(std::string text) {
-    Bar* fromFirstTrack = at(0)->at(currentBar).get();
+    auto& fromFirstTrack = at(0)->at(currentBar);
     fromFirstTrack->setGPCOMPMarker(text,0);
 }
 
 
 void Tab::openReprise() {
-    Bar *firstTrackBar = this->at(0)->at(currentBar).get();
+    auto& firstTrackBar = this->at(0)->at(currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;
@@ -175,7 +175,7 @@ void Tab::openReprise() {
 
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
-    Bar *firstTrackBar = this->at(0)->at(currentBar).get();
+    auto& firstTrackBar = this->at(0)->at(currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;

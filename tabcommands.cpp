@@ -263,8 +263,8 @@ void setBendOnNote(Note* currentNote, MasterView* mw) {
 }
 
 void setTextOnBeat(Track *track) {
+    auto& beat = track->at(track->cursor())->at(track->cursorBeat());
     std::string beatText;
-    Beat* beat = track->at(track->cursor())->at(track->cursorBeat()).get();
     beat->getGPCOMPText(beatText);
 
     bool ok=false;
@@ -629,7 +629,7 @@ void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получ
 
 
 void closeReprise(Tab* pTab) { //TODO argument repeat times
-    Bar *firstTrackBar = pTab->at(0)->at(pTab->getCurrentBar()).get();
+    auto& firstTrackBar = pTab->at(0)->at(pTab->getCurrentBar());
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatCloses = repeat & 2;
     if (repeatCloses) {
@@ -658,7 +658,7 @@ int changeTrackBpm(Tab* pTab) {
 }
 
 int changeTrackPanoram(Tab* pTab) {
-    Track* pTrack = pTab->at(pTab->getCurrentTrack()).get();
+    auto& pTrack = pTab->at(pTab->getCurrentTrack());
     bool ok=false;
     QStringList items;
     items.push_back("L 8 - 100%");
@@ -701,7 +701,7 @@ int changeTrackPanoram(Tab* pTab) {
 
 
 int changeTrackInstrument(Tab* pTab) {
-    Track* pTrack = pTab->at(pTab->getCurrentTrack()).get();
+    auto& pTrack = pTab->at(pTab->getCurrentTrack());
     //TODO отделить запрос от ядра
     std::string instruments[]= { //Move to sepparated file TODO
     "Acoustic Grand Piano",
