@@ -28,6 +28,7 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
+    barview.cpp \
     g0/bar.cpp \
     g0/beat.cpp \
     g0/note.cpp \
@@ -59,7 +60,8 @@ SOURCES += main.cpp\
     inputviews.cpp \
     midiengine.cpp \
     g0/build.cpp \
-    g0/rec.cpp
+    g0/rec.cpp \
+    trackview.cpp
 
 
 HEADERS  += mainwindow.h \

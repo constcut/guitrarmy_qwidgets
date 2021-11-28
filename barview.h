@@ -1,12 +1,7 @@
 #ifndef BARVIEW_H
 #define BARVIEW_H
 
-#include <vector>
-
 #include "gview.h"
-#include "gpannel.h"
-#include "g0/aclipboard.h"
-
 
 
 class BarView : public GView

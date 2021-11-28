@@ -5,17 +5,13 @@
 
 #include "gview.h"
 #include "gpannel.h"
-#include "g0/aclipboard.h"
+//#include "g0/aclipboard.h"
 #include "tabcommands.h"
-
 #include "barview.h"
 
-class TabView;
 
-class ViewPull : public std::vector<BarView>
-{
-    //add len getV delete etc chould be here
-};
+class TabView;
+using ViewPull = std::vector<BarView>;
 
 class TrackView : public GView
 {
