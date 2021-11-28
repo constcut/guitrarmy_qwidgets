@@ -1,22 +1,17 @@
 #include "tabviews.h"
 
 #include "g0/tab.h"
-//#include "g0/gtpfiles.h"
 #include "g0/midifile.h"
-
 #include "g0/aconfig.h"
-
 #include "g0/gmyfile.h"
 #include "g0/aexpimp.h" //loader
+#include "midiengine.h"
 
 #include "athread.h"
-
 #include "mainviews.h"
 
 #include <QInputDialog>
 #include <QMessageBox>
-
-#include "midiengine.h"
 
 #include <QDebug>
 
@@ -170,9 +165,9 @@ void TabView::onclick(int x1, int y1)
         return;
     }
 
-    size_t awaitBar = (x1-200)/30;
+    int awaitBar = (x1-200)/30;
     int toolBarHeight = getMaster()->getToolBarHeight();
-    size_t awaitTrack = (y1-toolBarHeight)/30;
+    int awaitTrack = (y1-toolBarHeight)/30;
     awaitTrack-=1;
 
     if (awaitBar >= 0){

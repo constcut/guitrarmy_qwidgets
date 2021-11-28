@@ -55,7 +55,7 @@ public:
     void setX(int newX) { x = newX; }
     void setY(int newY) { y = newY; }
 
-    virtual void draw(QPainter *painter){ not_used(painter);} //virt
+    virtual void draw([[maybe_unused]]QPainter *painter){ } //virt
 
     virtual bool hit(int hX, int hY)
     {
@@ -254,9 +254,8 @@ public:
 
       GView *getFirstChild() { return firstChld; }
 
-      virtual void connectThread(void *localThr){not_used(localThr);}
-      virtual void connectMainThread(void *localThr){not_used(localThr);}
-
+      virtual void connectThread([[maybe_unused]]void *localThr){}
+      virtual void connectMainThread([[maybe_unused]]void *localThr){}
 
       virtual void pleaseRepaint() {}
 

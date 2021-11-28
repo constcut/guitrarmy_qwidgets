@@ -20,13 +20,7 @@
 
 bool gViewLog=false;
 
-void not_used(void *p)
-{
-    if (gViewLog)
-        qDebug() << "Not used ptr " << p;
 
-    //this message must never apear if no errors
-}
 
 
 GView *MasterView::changeChild(GView *newChild)

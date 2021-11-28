@@ -292,15 +292,12 @@ public:
     void setAllButtons()
     {
         int wi = 800;
-        int hi = 480;
-
-        buttons.clear();
-
-        if (mainView->getMaster())
-        {
+        int hi = 480;  
+        if (mainView->getMaster()) {
             wi = mainView->getMaster()->getWidth();
             hi = mainView->getMaster()->getHeight();
         }
+        buttons.clear();
 
         int xSh = 30;
         int ySh = 120-85+30;
@@ -515,7 +512,7 @@ public:
             clock_t now = getTime();
 
             upper.setText("starting 1 pack");
-            //greatCheckScenarioCase(1,1,12,4);
+            greatCheckScenarioCase(1,1,12,4);
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 1; - " + std::to_string(diff) + " ms";;
@@ -526,7 +523,7 @@ public:
             clock_t now = getTime();
 
             upper.setText("starting 2 pack");
-            //greatCheckScenarioCase(2,1,35,4);
+            greatCheckScenarioCase(2,1,35,4);
 
             clock_t after = getTime();
             clock_t diff = after-now;
@@ -539,7 +536,7 @@ public:
             clock_t now = getTime();
 
             upper.setText("starting 3 pack");
-            //greatCheckScenarioCase(3,1,70,4);
+            greatCheckScenarioCase(3,1,70,4);
             upper.setText("pack 3 finished");
 
             clock_t after = getTime();
@@ -554,7 +551,7 @@ public:
             clock_t now = getTime();
 
             upper.setText("starting 4 pack");
-            //greatCheckScenarioCase(4,1,109,4);
+            greatCheckScenarioCase(4,1,109,4);
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 4; - " + std::to_string(diff) + " ms";
