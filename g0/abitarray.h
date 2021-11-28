@@ -40,7 +40,7 @@ public:
 class ABitArray // Vector bool?
 {
 protected:
-    ul bits;
+    size_t bits;
 
 public:
 
@@ -48,8 +48,8 @@ public:
     bool get(byte index);
     void set(byte index, bool value);
 
-    ul takeBits(){ return bits;}
-    void putBits(ul newBits) { bits = newBits; }
+    size_t takeBits(){ return bits;}
+    void putBits(size_t newBits) { bits = newBits; }
 
     bool inRange(byte lowIndex, byte highIndex);
 
@@ -88,13 +88,13 @@ public:
 class EffectsMap
 {
 protected:
-    std::map<ul,EffectsPack> mapOfEffects;
+    std::map<size_t,EffectsPack> mapOfEffects;
 
 public:
 
-    bool isThere(ul index);
-    EffectsPack getEffect(ul index);
-    void setEffect(ul index, EffectsPack eff);
+    bool isThere(size_t index);
+    EffectsPack getEffect(size_t index);
+    void setEffect(size_t index, EffectsPack eff);
 
 };
 

@@ -127,7 +127,7 @@ void PatternInput::createBar()
     bar->setSignDenum(den);
     bar->setSignNum(num);
 
-    for (ul i = 0; i < (checkButtons.size()/4); ++i)
+    for (size_t i = 0; i < (checkButtons.size()/4); ++i)
     {
         Beat *beat=new Beat();
 
@@ -138,9 +138,9 @@ void PatternInput::createBar()
 
         bool oneChecked = false;
 
-        for (ul iCoef = 0; iCoef < 4; ++iCoef)
+        for (size_t iCoef = 0; iCoef < 4; ++iCoef)
         {
-            ul ind = i + iCoef*(checkButtons.size()/4);
+            size_t ind = i + iCoef*(checkButtons.size()/4);
             if (checkButtons[ind].isChecked())
             {
                 Note *newNote=new Note();
@@ -416,7 +416,7 @@ void PatternInput::onclick(int x1, int y1)
         getMaster()->pushForceKey("newDen");
     }
 
-    for (ul i = 0; i < checkButtons.size(); ++i)
+    for (size_t i = 0; i < checkButtons.size(); ++i)
        if  (checkButtons[i].hit(x1,y1))
        {
            checkButtons[i].onclick(x1,y1);
@@ -696,7 +696,7 @@ void TapRyView::createBar()
 
     int lastPressInstr = 0;
 
-    for (ul i = 1; i < presses.size(); ++i)
+    for (size_t i = 1; i < presses.size(); ++i)
     {
         int step = presses[i].first-presses[i-1].first;
         byte dur=0,det=0,dot=0;

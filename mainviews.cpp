@@ -879,7 +879,7 @@ void BendInput::draw(QPainter *painter)
         int prevX = 0; int prevY = 0;
 
         changeColor("red", painter);
-        for (ul i = 0; i < ptrToBend->size(); ++i)
+        for (size_t i = 0; i < ptrToBend->size(); ++i)
         {
             byte vertical = ptrToBend->at(i).vertical;
             byte horizontal = ptrToBend->at(i).horizontal;
@@ -983,7 +983,7 @@ void BendInput::onclick(int x1, int y1)
 
         if (ptrToBend)
         {
-            for (ul i = 0; i < ptrToBend->size(); ++i)
+            for (size_t i = 0; i < ptrToBend->size(); ++i)
             {
                 int pointV= ptrToBend->at(i).vertical;
                 int pointH= ptrToBend->at(i).horizontal;
@@ -1093,10 +1093,10 @@ void ChangesInput::draw(QPainter *painter)
                     getMaster()->setComboBox(11,"changecombo4",550,170,50,40,0);
 
 
-                    for (ul i = 0; i < changes->size(); ++i)
+                    for (size_t i = 0; i < changes->size(); ++i)
                     {
                         byte changeType = changes->at(i).changeType;
-                        ul changeValue = changes->at(i).changeValue;
+                        size_t changeValue = changes->at(i).changeValue;
                         byte changeCount = changes->at(i).changeCount;
 
                         std::string sX = "Type " + std::to_string( changeType ) + "; Value " +
@@ -1161,7 +1161,7 @@ void ChangesInput::turnOffChange(std::string combo)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->size(); ++i)
+        for (size_t i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
@@ -1183,7 +1183,7 @@ void ChangesInput::turnOnChange(std::string combo)
         changes = (Beat::ChangesList *)changePack->getPointer();
 
     byte awaitType = 255;
-    ul changeValue = 0;
+    size_t changeValue = 0;
     byte changeAfter = 0;
 
     if (ptrToBeat->effPack.get(28)==false)
@@ -1223,7 +1223,7 @@ void ChangesInput::turnOnChange(std::string combo)
     }
     else
     {
-        for (ul i = 0; i < changes->size(); ++i)
+        for (size_t i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
@@ -1265,7 +1265,7 @@ void ChangesInput::changeMainValue(int combo, int newValue)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->size(); ++i)
+        for (size_t i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {
@@ -1294,7 +1294,7 @@ void ChangesInput::changeSubValue(int combo, int newValue)
         awaitType = 3;
 
     if (changes)
-        for (ul i = 0; i < changes->size(); ++i)
+        for (size_t i = 0; i < changes->size(); ++i)
         {
             if (changes->at(i).changeType == awaitType)
             {

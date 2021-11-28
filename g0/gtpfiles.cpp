@@ -14,7 +14,7 @@ char miniBufer[20480];
 //Some of the logs disabled yet
 
 
-std::string readString(std::ifstream &file, ul stringLen)
+std::string readString(std::ifstream &file, size_t stringLen)
 {
    //for current max
    //refact dynamic
@@ -31,7 +31,7 @@ std::string readString(std::ifstream &file, ul stringLen)
 
 std::string readString(std::ifstream &file)
 {
-    ul stringLen = 0;
+    size_t stringLen = 0;
     std::string response = "";
 
     file.read((char*)&stringLen,4);
@@ -51,7 +51,7 @@ std::string readString(std::ifstream &file)
 
 std::string readStringShiByte(std::ifstream &file)
 {
-    ul stringLen = 0;
+    size_t stringLen = 0;
     std::string response = "";
 
     file.read((char*)&stringLen,4);
@@ -87,18 +87,18 @@ void writeBendGTPOLD(std::ofstream *file, BendPointsGPOld *bend)
     file->write((const char*)&bendType,1);
 
 
-    ul bendHeight = bend->getHeight();
+    size_t bendHeight = bend->getHeight();
     file->write((const char*)&bendHeight,4); //attention again
 
-    ul pointsCount = bend->size();
+    size_t pointsCount = bend->size();
     file->write((const char*)&pointsCount,4);
 
-    for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
+    for (size_t pointInd=0; pointInd<pointsCount; ++pointInd)
     {
         BendPointGPOld *point = &bend->at(pointInd);
 
-        ul absolutePosition = point->absolutePosition;
-        ul verticalPosition = point->heightPosition;
+        size_t absolutePosition = point->absolutePosition;
+        size_t verticalPosition = point->heightPosition;
         byte vibratoFlag = point->vibratoFlag;
 
         file->write((const char*)&absolutePosition,4);
@@ -118,15 +118,15 @@ void writeBendGTP(std::ofstream *file, BendPoints *bend)
     ///ul bendHeight = bend->getHeight();
     ///file->write((const char*)&bendHeight,4); //attention again
 
-    ul pointsCount = bend->size();
+    size_t pointsCount = bend->size();
     file->write((const char*)&pointsCount,4);
 
-    for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
+    for (size_t pointInd=0; pointInd<pointsCount; ++pointInd)
     {
         BendPoint *point = &bend->at(pointInd);
 
-        ul absolutePosition = point->horizontal;
-        ul verticalPosition = point->vertical*25;
+        size_t absolutePosition = point->horizontal;
+        size_t verticalPosition = point->vertical*25;
         byte vibratoFlag = point->vFlag;
 
         file->write((const char*)&absolutePosition,4);
@@ -141,12 +141,12 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
     byte bendType=0;
     file->read((char*)&bendType,1);
 
-    ul bendHeight = 0;
+    size_t bendHeight = 0;
     file->read((char*)&bendHeight,4); //attention again
     //25 quarter ; 75 - 3 quartes
     //50 half ; 100 - tone
     //... 300 - three tones
-    ul pointsCount = 0;
+    size_t pointsCount = 0;
     file->read((char*)&pointsCount,4);
 
     if (gtpLog)  qDebug()<< "Type "<<bendType<<"; Height "<<bendHeight<<"; N= "<<pointsCount;
@@ -156,10 +156,10 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
     else
         bend->setType(0);
 
-    for (ul pointInd=0; pointInd<pointsCount; ++pointInd)
+    for (size_t pointInd=0; pointInd<pointsCount; ++pointInd)
     {
-        ul absolutePosition = 0;
-        ul verticalPosition = 0;
+        size_t absolutePosition = 0;
+        size_t verticalPosition = 0;
         byte vibratoFlag = 0;
 
         file->read((char*)&absolutePosition,4);
@@ -440,14 +440,14 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
         //ONLY FOR FIRST
         if ((trackIndex==0)||(verInd==0))
         {
-            ul byteZero = 0;
+            size_t byteZero = 0;
             //file.read((char*)&byteZero,4);
 
             file.read((char*)&byteZero,1);
         }
     }
 
-    ul trackNameLen = 0;
+    size_t trackNameLen = 0;
     file.read((char*)&trackNameLen,1);
 
     if (gtpLog)  qDebug() <<"XLENTRACK " <<trackNameLen;
@@ -463,20 +463,20 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
     if (gtpLog)  qDebug() << " Track name '" << trackName << "' ; head = " <<(int)trackHeader;
 
 
-    ul stringsAmount = 0;
+    size_t stringsAmount = 0;
     file.read((char*)&stringsAmount,4);
 
     if (gtpLog)  qDebug() <<"N strings " << (int) stringsAmount;
 
 
-    ul tunes[7] = {0}; //TUNEC!!!
-    for (ul ii = 0; ii < 7; ++ii)
+    size_t tunes[7] = {0}; //TUNEC!!!
+    for (size_t ii = 0; ii < 7; ++ii)
     {
         file.read((char*)&tunes[ii],4);
     }
 
     currentTrack->tuning.setStringsAmount(stringsAmount);
-    for (ul ii = 0; ii < stringsAmount; ++ii)
+    for (size_t ii = 0; ii < stringsAmount; ++ii)
     {
 
         if (gtpLog)  qDebug() << "Tunes for "<<ii<<" is "<<tunes[ii];
@@ -484,7 +484,7 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
     }
 
 
-    ul port=0, chan=0, chanE=0;
+    size_t port=0, chan=0, chanE=0;
     file.read((char*)&port,4);
     file.read((char*)&chan,4);
     file.read((char*)&chanE,4);
@@ -495,14 +495,14 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
 
     if (gtpLog)  qDebug() << "Port " << port << "; chan " <<chan <<"; chanE "<<chanE;
 
-    ul frets=0;
+    size_t frets=0;
     file.read((char*)&frets,4);
-    ul capo=0;
+    size_t capo=0;
     file.read((char*)&capo,4);
 
     if (gtpLog)  qDebug() << "Frets " << frets <<"; capo " << capo;
 
-    ul trackColor=0;
+    size_t trackColor=0;
     file.read((char*)&trackColor,4);
 
     if (gtpLog)  qDebug() << "Color - "<<trackColor;
@@ -520,7 +520,7 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
         if (verInd == 0)
             file.read((char*)toSkip,44);
 
-        ul intLen = 0;
+        size_t intLen = 0;
         byte byteLen = 0;
 
         if (verInd == 1)
@@ -1118,7 +1118,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 
     if (precNTrump)
     {
-        ul trumpletN = 0;
+        size_t trumpletN = 0;
         file.read((char*)&trumpletN,4);
         if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
@@ -1137,7 +1137,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
     {
         if (gtpLog)  qDebug() << "Text";
 
-        ul textLen = 0;
+        size_t textLen = 0;
         file.read((char*)&textLen,4);
 
         byte byteLen = 0;
@@ -1170,12 +1170,12 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
 
 //readGraceNote
 
-ul readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
+size_t readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
 {
     byte stringsFlag = 0;
     file.read((char*)&stringsFlag,1);
 
-    ul totalCountStrings = 0;
+    size_t totalCountStrings = 0;
 
     //attention here was from 7 to 0 now else
     if (stringsFlag&1) polyStrings.push_back(7);//++totalCountStrings;
@@ -1195,9 +1195,9 @@ ul readStringsFlag(std::ifstream &file, std::vector<int> &polyStrings)
 }
 
 
-void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
+void readBar(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index)
 {
-    ul i = index;
+    size_t i = index;
 
     byte beatHeader = 0;
     file.read((char*)&beatHeader,1);
@@ -1217,7 +1217,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
 
 
-    for (ul iTrack = 0; iTrack < tracksAmount; ++iTrack)
+    for (size_t iTrack = 0; iTrack < tracksAmount; ++iTrack)
     {
         Bar *currentBar = tab->at(iTrack)->at(i);
         currentBar->setRepeat(0);
@@ -1226,7 +1226,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
     if (precBegRepeat)
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setRepeat(1); //ow shit - its broken
@@ -1239,7 +1239,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&signNumeration,1);
         if (gtpLog)  qDebug() << "Set num to " <<(int)signNumeration;
 
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignNum(signNumeration);
@@ -1247,7 +1247,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     }
     else
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignNum(0);
@@ -1260,7 +1260,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&signDenumeration,1);
         if (gtpLog)  qDebug() << "Set denum to "	<<(int)signDenumeration;
 
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignDenum(signDenumeration);
@@ -1268,7 +1268,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     }
     else
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignDenum(0);
@@ -1286,7 +1286,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         //attention ! looks like 4 and 5 versions a different
         ++repeatTimes;
 
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setRepeat(2,repeatTimes); //ow shit
@@ -1297,7 +1297,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         byte altEnding = 0;
         file.read((char*)&altEnding,1);
         if (gtpLog)  qDebug() << "AltEnding " << (int)altEnding;
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setAltRepeat(altEnding); //ow shit
@@ -1305,7 +1305,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     }
     if (precMarker)
     {
-        ul unknown = 0;
+        size_t unknown = 0;
         file.read((char*)&unknown,4); //they say its a byte.. fuck them..
 
         byte markerSize;
@@ -1315,13 +1315,13 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)markerBufer,markerSize);
         markerBufer[markerSize] = 0;
 
-        ul markerColor;
+        size_t markerColor;
         file.read((char*)&markerColor,4);
 
         if (gtpLog)  qDebug() << "Marker size "<<markerSize<<" buf "<<markerBufer;
 
         std::string markerBuferStr(markerBufer);
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setGPCOMPMarker(markerBuferStr,markerColor);
@@ -1333,7 +1333,7 @@ void readBar(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&tonality,1); //skip 1!!
         file.read((char*)&tonality,1);
         if (gtpLog)  qDebug() << "Tonality " <<(int)tonality;
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setGPCOMPTonality(tonality);
@@ -1369,14 +1369,14 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     instructions = readString(file);
 
     //notice
-    ul noticeLen = 0;
+    size_t noticeLen = 0;
     file.read((char*)&noticeLen,4);
     if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
         if (gtpLog)  qDebug() << "Read notices ";
-        for (ul i =0 ; i < noticeLen; ++i)
+        for (size_t i =0 ; i < noticeLen; ++i)
             std::string noticeOne = readString(file);
     }
 
@@ -1387,18 +1387,18 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     //refact
     if (gtpLog)  qDebug() << "Triplet feel = " << tripletFeelInt;
 
-    ul lyTrack = 0;
+    size_t lyTrack = 0;
     file.read((char*)&lyTrack,4);
     if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack;
 
     for (int i = 0; i < 5; ++i)
     {
-        ul emWo = 0;
+        size_t emWo = 0;
         file.read((char*)&emWo,4);
         std::string lyricsOne = readString(file);
     }
 
-    ul bpm = 0;
+    size_t bpm = 0;
     int signKey = 0;
     byte octave = 0;
 
@@ -1424,8 +1424,8 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
 
 
-    ul beatsAmount = 0;
-    ul tracksAmount = 0;
+    size_t beatsAmount = 0;
+    size_t tracksAmount = 0;
 
     file.read((char*)&beatsAmount,4);
     file.read((char*)&tracksAmount,4);
@@ -1433,12 +1433,12 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount;
 
 
-    for (ul i = 0;i < tracksAmount; ++i)
+    for (size_t i = 0;i < tracksAmount; ++i)
     {
         Track *newTrack=new Track();
         newTrack->setParent(tab);
 
-        for (ul j = 0; j < beatsAmount; ++j)
+        for (size_t j = 0; j < beatsAmount; ++j)
         {
             Bar *newBeatBar=new Bar(); //RESERVATION
             newTrack->push_back(newBeatBar);
@@ -1448,11 +1448,11 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
 
-    for (ul i = 0; i < beatsAmount; ++i)
+    for (size_t i = 0; i < beatsAmount; ++i)
         readBar(file,tab,tracksAmount,i);
 
 
-    for (ul i = 0; i < tracksAmount; ++i)
+    for (size_t i = 0; i < tracksAmount; ++i)
     {
         Track *currentTrack = tab->at(i);
         readTrack(file,currentTrack);
@@ -1469,11 +1469,11 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount;
 
 
-    ul globalBeatsAmount = beatsAmount*tracksAmount;
-    for (ul i = 0; i < globalBeatsAmount; ++i)
+    size_t globalBeatsAmount = beatsAmount*tracksAmount;
+    for (size_t i = 0; i < globalBeatsAmount; ++i)
     {
 
-        ul beatsInPair = 0;
+        size_t beatsInPair = 0;
         file.read((char*)&beatsInPair,4);
 
         if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair;
@@ -1496,9 +1496,9 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             if (gtpLog)  qDebug() << "Seams to be critical error";
         }
 
-        ul indexOfTrack = i % tracksAmount;
+        size_t indexOfTrack = i % tracksAmount;
         Track *updatingTrack = tab->at(indexOfTrack);
-        ul indexOfBar = i / tracksAmount;
+        size_t indexOfBar = i / tracksAmount;
         Bar *updatingBar = updatingTrack->at(indexOfBar);
 
         cursorBar = updatingBar;
@@ -1509,23 +1509,23 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         //++cursorBar;
         //cursorBeat = &cursorBar->getV(0);
 
-        for (ul ind = 0; ind < beatsInPair; ++ind)
+        for (size_t ind = 0; ind < beatsInPair; ++ind)
         {
             Beat *newOne = new Beat();
             cursorBar->push_back(newOne);
         }
 
-        for (ul j = 0; j < beatsInPair; ++j)
+        for (size_t j = 0; j < beatsInPair; ++j)
         {
             cursorBeat = cursorBar->at(j);
             //Reading beat main
             readBeat(file,cursorBeat);
 
             std::vector<int> polyStrings;
-            ul totalCountStrings = readStringsFlag(file,polyStrings);
+            size_t totalCountStrings = readStringsFlag(file,polyStrings);
 
 
-            for (ul noteInd = 0; noteInd < totalCountStrings; ++noteInd)
+            for (size_t noteInd = 0; noteInd < totalCountStrings; ++noteInd)
             {
                 Note *newNote=new Note();
 
@@ -1557,7 +1557,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 //  ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
 
-void writeString(std::ofstream &file, std::string value, ul stringLen=0)
+void writeString(std::ofstream &file, std::string value, size_t stringLen=0)
 {
     if (stringLen==0)
         stringLen = value.length();
@@ -1573,33 +1573,33 @@ void writeTrack(std::ofstream &file, Track *currentTrack)
     byte trackHeader = 0;
     file.write((const char*)&trackHeader,1);
 
-    ul trackNameLen = 0;
+    size_t trackNameLen = 0;
     file.write((const char*)&trackNameLen,1);
 
     char trackName[40];
     file.write((const char*)trackName,40);
 
-    ul stringsAmount = 0;
+    size_t stringsAmount = 0;
     file.write((const char*)&stringsAmount,4);
 
 
-    ul tunes[7] = {0}; //TUNEC!!!
-    for (ul ii = 0; ii < 7; ++ii)
+    size_t tunes[7] = {0}; //TUNEC!!!
+    for (size_t ii = 0; ii < 7; ++ii)
         file.write((const char*)&tunes[ii],4);
 
 
-    ul port=0, chan=0, chanE=0;
+    size_t port=0, chan=0, chanE=0;
     file.write((const char*)&port,4);
     file.write((const char*)&chan,4);
     file.write((const char*)&chanE,4);
 
-    ul frets=0;
+    size_t frets=0;
     file.write((const char*)&frets,4);
-    ul capo=0;
+    size_t capo=0;
     file.write((const char*)&capo,4);
 
 
-    ul trackColor=0;
+    size_t trackColor=0;
     file.write((const char*)&trackColor,4);
 
 }
@@ -1663,7 +1663,7 @@ void writeBeat(std::ofstream &file, Beat *cursorBeat)
 
     if (precNTrump)
     {
-        ul trumpletN = 0;
+        size_t trumpletN = 0;
         file.write((const char*)&trumpletN,4);
     }
 
@@ -1733,7 +1733,7 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
         file.write((const char*)&markerSize,1);
         char markerBufer[255];
         file.write((const char*)markerBufer,markerSize);
-        ul markerColor;
+        size_t markerColor;
         file.write((const char*)&markerColor,4);
     }
     if (precTonality)  //4?
@@ -1885,7 +1885,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, byte verInd)
     file.read((char*)&changeStruct.newPhaser,1);
     file.read((char*)&changeStruct.newTremolo,1);
 
-    ul strLen  = 0;
+    size_t strLen  = 0;
     file.read((char*)&strLen,4);
     if (strLen > 1)
     {
@@ -2141,7 +2141,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 
     if (precNTrump)
     {
-        ul trumpletN = 0;
+        size_t trumpletN = 0;
         file.read((char*)&trumpletN,4);
         if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
@@ -2160,7 +2160,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
     {
         if (gtpLog)  qDebug() << "TEXT";
 
-        ul textLen = 0;
+        size_t textLen = 0;
         file.read((char*)&textLen,4);
 
         byte byteLen = 0;
@@ -2192,9 +2192,9 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, byte verInd=255)
 
 }
 
-void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
+void readBarGP5(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index)
 {
-    ul i = index;
+    size_t i = index;
 
     byte beatHeader = 0;
     file.read((char*)&beatHeader,1);
@@ -2215,7 +2215,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
 
 
-    for (ul iTrack = 0; iTrack < tracksAmount; ++iTrack)
+    for (size_t iTrack = 0; iTrack < tracksAmount; ++iTrack)
     {
         Bar *currentBar = tab->at(iTrack)->at(i);
         currentBar->setRepeat(0);
@@ -2224,7 +2224,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
     if (precBegRepeat)
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setRepeat(1); //ow shit - its broken
@@ -2237,7 +2237,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&signNumeration,1);
         if (gtpLog)  qDebug() << "Set num to " <<(int)signNumeration;
 
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignNum(signNumeration);
@@ -2245,7 +2245,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     }
     else
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignNum(0);
@@ -2258,7 +2258,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&signDenumeration,1);
         if (gtpLog)  qDebug() << "Set denum to "	<<(int)signDenumeration;
 
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignDenum(signDenumeration);
@@ -2266,7 +2266,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
     }
     else
     {
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setSignDenum(0);
@@ -2280,7 +2280,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         if (gtpLog)  qDebug() << "Repeat times " <<(int)repeatTimes;
         //i'm not sure, but repeat flag appear on next bar
         //maybe its bug or how it used to be on gtp
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setRepeat(2,repeatTimes); //ow shit
@@ -2289,10 +2289,10 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
 
     if (precMarker)
     {
-        ul unknown = 0;
+        size_t unknown = 0;
         file.read((char*)&unknown,4); //they say its a byte.. fuck them..
 
-        ul markerSize=0;
+        size_t markerSize=0;
         file.read((char*)&markerSize,1);
 
         //file.read((char*)&markerSize,4);
@@ -2301,13 +2301,13 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)markerBufer,markerSize);
         markerBufer[markerSize] = 0;
 
-        ul markerColor;
+        size_t markerColor;
         file.read((char*)&markerColor,4);
 
         if (gtpLog)  qDebug() << "Marker size "<<markerSize<<" buf "<<markerBufer;
 
         std::string markerBuferStr(markerBufer);
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setGPCOMPMarker(markerBuferStr,markerColor);
@@ -2319,7 +2319,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         byte altEnding = 0;
         file.read((char*)&altEnding,1);
         if (gtpLog)  qDebug() << "AltEnding " << (int)altEnding;
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setAltRepeat(altEnding); //ow shit
@@ -2332,7 +2332,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, ul tracksAmount, ul index)
         file.read((char*)&tonality,1); //skip 1!!
         file.read((char*)&tonality,1);
         if (gtpLog)  qDebug() << "Tonality " <<(int)tonality;
-        for (ul iTrack = 0;iTrack < tracksAmount; ++iTrack)
+        for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             Bar *currentBar = tab->at(iTrack)->at(i);
             currentBar->setGPCOMPTonality(tonality);
@@ -2409,14 +2409,14 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     instructions = readStringShiByte(file);
 
     //notice
-    ul noticeLen = 0;
+    size_t noticeLen = 0;
     file.read((char*)&noticeLen,4);
     if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
         if (gtpLog)  qDebug() << "Read notices ";
-        for (ul i =0 ; i < noticeLen; ++i)
+        for (size_t i =0 ; i < noticeLen; ++i)
         {
             /*
             ul intLen = 0;
@@ -2434,13 +2434,13 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     //file.read((char*)&tripletFeel,1);
 
 
-    ul lyTrack = 0;
+    size_t lyTrack = 0;
     file.read((char*)&lyTrack,4);
     if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack ;
 
     for (int i = 0; i < 5; ++i)
     {
-        ul emWo = 0;
+        size_t emWo = 0;
         file.read((char*)&emWo,4);
         std::string lyricsOne = readString(file);
     }
@@ -2454,7 +2454,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     for (int i = 0; i < 11; ++i)
     {
-         ul pageInt = 0;
+         size_t pageInt = 0;
          file.read((char*)&pageInt,4);
          byte strLenIn = 0;
          file.read((char*)&strLenIn,1);
@@ -2466,7 +2466,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
 
 
-    ul bpm = 0;
+    size_t bpm = 0;
     int signKey = 0;
     byte octave = 0;
 
@@ -2502,8 +2502,8 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     file.read((char*)placeToSkip,42);
 
 
-    ul beatsAmount = 0;
-    ul tracksAmount = 0;
+    size_t beatsAmount = 0;
+    size_t tracksAmount = 0;
 
     file.read((char*)&beatsAmount,4);
     file.read((char*)&tracksAmount,4);
@@ -2511,12 +2511,12 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount;
 
 
-    for (ul i = 0;i < tracksAmount; ++i)
+    for (size_t i = 0;i < tracksAmount; ++i)
     {
         Track *newTrack=new Track();
         newTrack->setParent(tab);
 
-        for (ul j = 0; j < beatsAmount; ++j)
+        for (size_t j = 0; j < beatsAmount; ++j)
         {
             Bar *newBeatBar=new Bar(); //RESERVATION
             newTrack->push_back(newBeatBar);
@@ -2525,7 +2525,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
 
-    for (ul i = 0; i < beatsAmount; ++i)
+    for (size_t i = 0; i < beatsAmount; ++i)
     {
         byte skipOne=0;
         if (i > 0)
@@ -2537,7 +2537,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
     }
 
-    for (ul i = 0; i < tracksAmount; ++i)
+    for (size_t i = 0; i < tracksAmount; ++i)
     {
         Track *currentTrack = tab->at(i);
         readTrack(file,currentTrack,5,i,versionIndex);//5 is the version
@@ -2571,13 +2571,13 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
 
 
-    ul globalBeatsAmount = beatsAmount*tracksAmount;
-    for (ul i = 0; i < globalBeatsAmount; ++i) //
+    size_t globalBeatsAmount = beatsAmount*tracksAmount;
+    for (size_t i = 0; i < globalBeatsAmount; ++i) //
     {
             //SOMWHERE OVER HERE IN GTP5 lays voices
             //for (int voices=0; voices <2; ++voices)
             {
-            ul beatsInPair = 0;
+            size_t beatsInPair = 0;
             file.read((char*)&beatsInPair,4);
 
             if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair  ;
@@ -2600,9 +2600,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
                 if (gtpLog)  qDebug() << "Seams to be critical error";
             }
 
-            ul indexOfTrack = i % tracksAmount;
+            size_t indexOfTrack = i % tracksAmount;
             Track *updatingTrack = tab->at(indexOfTrack);
-            ul indexOfBar = i / tracksAmount;
+            size_t indexOfBar = i / tracksAmount;
             Bar *updatingBar = updatingTrack->at(indexOfBar);
 
             cursorBar = updatingBar;
@@ -2613,24 +2613,24 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             //++cursorBar;
             //cursorBeat = &cursorBar->getV(0);
 
-            for (ul ind = 0; ind < beatsInPair; ++ind)
+            for (size_t ind = 0; ind < beatsInPair; ++ind)
             {
                 Beat *newOne = new Beat();
                 cursorBar->push_back(newOne);
             }
 
-            for (ul j = 0; j < beatsInPair; ++j)
+            for (size_t j = 0; j < beatsInPair; ++j)
             {
                 cursorBeat = cursorBar->at(j);
                 //Reading beat main
                 readBeatGP5(file,cursorBeat,versionIndex);
 
                 std::vector<int> polyStrings;
-                ul totalCountStrings = readStringsFlag(file,polyStrings);
+                size_t totalCountStrings = readStringsFlag(file,polyStrings);
 
 
                 //first here is fine
-                for (ul noteInd = 0; noteInd < totalCountStrings; ++noteInd)
+                for (size_t noteInd = 0; noteInd < totalCountStrings; ++noteInd)
                 {
                     Note *newNote=new Note();
 
@@ -2663,9 +2663,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         ///ITS A NIGHTMARE
         //God damn skip
 
-      for (ul subvoice=0; subvoice < 1; ++subvoice)
+      for (size_t subvoice=0; subvoice < 1; ++subvoice)
       {
-          ul preReader = 0;
+          size_t preReader = 0;
 
           file.read((char*)&preReader,4);
 
@@ -2674,15 +2674,15 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
           Beat readerBeat;
           //Bar readerBar;
-          for (ul i = 0; i < preReader; ++i)
+          for (size_t i = 0; i < preReader; ++i)
           {
               readBeatGP5(file,&readerBeat,versionIndex);
 
               std::vector<int> polyStrings;
-              ul totalCountStrings = readStringsFlag(file,polyStrings);
+              size_t totalCountStrings = readStringsFlag(file,polyStrings);
 
               //first here is fine
-              for (ul noteInd = 0; noteInd < totalCountStrings; ++noteInd)
+              for (size_t noteInd = 0; noteInd < totalCountStrings; ++noteInd)
               {
                   Note newNote;
                   byte sNum=polyStrings[totalCountStrings-noteInd-1];
@@ -3050,7 +3050,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
     if (precNTrump)
     {
-        ul trumpletN = 0;
+        size_t trumpletN = 0;
         file.read((char*)&trumpletN,4);
         if (gtpLog)  qDebug() <<"Beat tump "<<trumpletN;
         cursorBeat->setDurationDetail(trumpletN);
@@ -3069,7 +3069,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
     {
         if (gtpLog)  qDebug() << "TEXT";
 
-        ul textLen = 0;
+        size_t textLen = 0;
         file.read((char*)&textLen,4);
 
         byte byteLen = 0;
@@ -3100,7 +3100,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
 }
 
-void readNoteGP3(std::ifstream &file, Note *newNote, ul beatIndex, Bar *cursorBar)
+void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *cursorBar)
 {
     byte noteHeader;
     file.read((char*)&noteHeader,1);
@@ -3376,14 +3376,14 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     instructions = readString(file);
 
     //notice
-    ul noticeLen = 0;
+    size_t noticeLen = 0;
     file.read((char*)&noticeLen,4);
     if (gtpLog)  qDebug() << "Notice len is " << (int)noticeLen;
 
     if (noticeLen > 0)
     {
         if (gtpLog)  qDebug() << "Read notices ";
-        for (ul i =0 ; i < noticeLen; ++i)
+        for (size_t i =0 ; i < noticeLen; ++i)
             std::string noticeOne = readString(file);
     }
 
@@ -3395,7 +3395,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
 
 
 
-    ul bpm = 0;
+    size_t bpm = 0;
     int signKey = 0;
 
 
@@ -3418,8 +3418,8 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
 
 
-    ul beatsAmount = 0;
-    ul tracksAmount = 0;
+    size_t beatsAmount = 0;
+    size_t tracksAmount = 0;
 
     file.read((char*)&beatsAmount,4);
     file.read((char*)&tracksAmount,4);
@@ -3427,11 +3427,11 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() << "Beats count " <<beatsAmount<<"; tracks count " <<tracksAmount ;
 
 
-    for (ul i = 0;i < tracksAmount; ++i) {
+    for (size_t i = 0;i < tracksAmount; ++i) {
         Track *newTrack = new Track();
         newTrack->setParent(tab);
 
-        for (ul j = 0; j < beatsAmount; ++j) {
+        for (size_t j = 0; j < beatsAmount; ++j) {
             Bar *newBeatBar=new Bar(); //RESERVATION
             newTrack->push_back(newBeatBar);
         }
@@ -3439,11 +3439,11 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     }
 
 
-    for (ul i = 0; i < beatsAmount; ++i)
+    for (size_t i = 0; i < beatsAmount; ++i)
         readBar(file,tab,tracksAmount,i);
 
 
-    for (ul i = 0; i < tracksAmount; ++i)
+    for (size_t i = 0; i < tracksAmount; ++i)
     {
         Track *currentTrack = tab->at(i);
         readTrack(file,currentTrack);
@@ -3460,11 +3460,11 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
     if (gtpLog)  qDebug() <<"Begining beats amounts "<<beatsAmount;
 
 
-    ul globalBeatsAmount = beatsAmount*tracksAmount;
-    for (ul i = 0; i < globalBeatsAmount; ++i)
+    size_t globalBeatsAmount = beatsAmount*tracksAmount;
+    for (size_t i = 0; i < globalBeatsAmount; ++i)
     {
 
-        ul beatsInPair = 0;
+        size_t beatsInPair = 0;
         file.read((char*)&beatsInPair,4);
 
         if (gtpLog)  qDebug() <<i <<" Beats in pair " <<beatsInPair;
@@ -3487,9 +3487,9 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             if (gtpLog)  qDebug() << "Seams to be critical error";
         }
 
-        ul indexOfTrack = i % tracksAmount;
+        size_t indexOfTrack = i % tracksAmount;
         Track *updatingTrack = tab->at(indexOfTrack);
-        ul indexOfBar = i / tracksAmount;
+        size_t indexOfBar = i / tracksAmount;
         Bar *updatingBar = updatingTrack->at(indexOfBar);
 
         cursorBar = updatingBar;
@@ -3504,13 +3504,13 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
         //++cursorBar;
         //cursorBeat = &cursorBar->getV(0);
 
-        for (ul ind = 0; ind < beatsInPair; ++ind)
+        for (size_t ind = 0; ind < beatsInPair; ++ind)
         {
             Beat *newOne = new Beat();
             cursorBar->push_back(newOne);
         }
 
-        for (ul j = 0; j < beatsInPair; ++j)
+        for (size_t j = 0; j < beatsInPair; ++j)
         {
             cursorBeat = cursorBar->at(j);
             //Reading beat main
@@ -3518,10 +3518,10 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, byte knownVersion)
             //!!! THIS IS SHIT had to be CHANGED
 
             std::vector<int> polyStrings;
-            ul totalCountStrings = readStringsFlag(file,polyStrings);
+            size_t totalCountStrings = readStringsFlag(file,polyStrings);
 
 
-            for (ul noteInd = 0; noteInd < totalCountStrings; ++noteInd)
+            for (size_t noteInd = 0; noteInd < totalCountStrings; ++noteInd)
             {
                 Note *newNote= new Note();
 

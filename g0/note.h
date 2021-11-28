@@ -12,23 +12,23 @@ class Beat;
 //old version of bends used on early moments for
 struct BendPointGPOld
 {
-    ul absolutePosition;
-    ul heightPosition;
+    size_t absolutePosition;
+    size_t heightPosition;
     byte vibratoFlag;
 };
 
 class BendPointsGPOld : public std::vector<BendPointGPOld>
 {
 protected:
-    ul bendHeight;
+    size_t bendHeight;
     byte bendType;
 public:
 
     byte getType() { return bendType; }
     void setType(byte newBendType) { bendType = newBendType; }
 
-    ul getHeight() { return bendHeight; }
-    void setHeight(ul newBendHeight) { bendHeight=newBendHeight;}
+    size_t getHeight() { return bendHeight; }
+    void setHeight(size_t newBendHeight) { bendHeight=newBendHeight;}
 
 };
 

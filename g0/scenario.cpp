@@ -217,7 +217,7 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
     MidiFile f;
     f.fromTab(&tab);
     std::ofstream midiOut(outFileName);
-    ul bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f.writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
@@ -251,7 +251,7 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     MidiFile f;
     f.fromTab(&tab);
     std::ofstream midiOut(outFileName);
-    ul bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f.writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
@@ -285,7 +285,7 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
     MidiFile f;
     f.fromTab(&tab);
     std::ofstream midiOut(outFileName);
-    ul bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f.writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 

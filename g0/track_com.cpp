@@ -621,7 +621,7 @@ void Track::setTrackPause() {
     SingleCommand command(7);
     command.setPosition(0, _cursor, _cursorBeat);
     command.requestStoredNotes();
-    for (ul i = 0; i < at(_cursor)->at(_cursorBeat)->size(); ++i) {
+    for (size_t i = 0; i < at(_cursor)->at(_cursorBeat)->size(); ++i) {
         Note *note = at(_cursor)->at(_cursorBeat)->at(i);
         command.storedNotes->push_back(note);
     }

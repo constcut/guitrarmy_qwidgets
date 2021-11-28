@@ -68,7 +68,7 @@ public:
 
      virtual void ongesture(int offset, bool horizontal);
 
-     void prepareAllThreads(ul shiftTheCursor);
+     void prepareAllThreads(size_t shiftTheCursor);
      void launchAllThreads();
      void stopAllThreads();
 
@@ -147,7 +147,7 @@ public:
 
     void draw(QPainter *painter);
 
-    void prepareThread(ul shiftTheCursor);
+    void prepareThread(size_t shiftTheCursor);
     void launchThread();
     void stopThread();
     void connectThreadSignal(MasterView *masterView);

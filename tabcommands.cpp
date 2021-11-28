@@ -126,11 +126,11 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
 
     if (tabParrent->getPlaying() == false) {
         //to start not from begin always
-        ul shiftTheCursor = 0;
+        size_t shiftTheCursor = 0;
         if (cursor != 0){
             Bar *barPtr = pTrack->at(cursor);
 
-            for (ul i = 0; i < pTrack->timeLoop.size();++i){
+            for (size_t i = 0; i < pTrack->timeLoop.size();++i){
                  if (pTrack->timeLoop.at(i) == barPtr){
                      shiftTheCursor = i;
                      break;
@@ -382,7 +382,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
         size_t shiftTheCursor = 0;
         if (currentBar != 0) {
             Bar *barPtr = pTab->at(0)->at(currentBar);
-            for (ul i = 0; i < pTab->at(0)->timeLoop.size();++i)
+            for (size_t i = 0; i < pTab->at(0)->timeLoop.size();++i)
                  if (pTab->at(0)->timeLoop.at(i) == barPtr) {
                      shiftTheCursor = i;
                      break;
@@ -430,7 +430,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
         qDebug() << "Failed to open out file :(";
         statusLabel->setText("failed to open generated");
     }
-    ul outFileSize2 = generatedMidi.writeStream(outFile2);
+    size_t outFileSize2 = generatedMidi.writeStream(outFile2);
     qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
     outFile2.close();
     generatedMidi.printToStream(std::cout);
@@ -438,7 +438,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
 }
 
 
-void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, ul digit) {
+void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, size_t digit) {
     if (digit && digit <= tracksLen) {
         TrackView *trackView = tabView->tracksView[digit-1]; //А обновление интерфейса в модуль Qt TODO выше
         lastOpenedTrack = digit-1;

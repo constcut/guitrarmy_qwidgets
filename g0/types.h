@@ -12,7 +12,6 @@
 
 typedef unsigned int uint;
 typedef unsigned char byte; //old definition
-typedef unsigned long long ul; //TODO заменить во всем проекте на стандартные типы
 
 
 //types checker //TODO Вынести куда-то

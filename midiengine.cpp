@@ -178,7 +178,7 @@ void MidiEngine::playTrack(MidiTrack *track)
     {
         MidiSignal *sig = track->at(i);
 
-        ul absValue = 10; //sig->time.getValue()/
+        size_t absValue = 10; //sig->time.getValue()/
         //ul waitTime = absValue
 
         //need right time
@@ -317,8 +317,8 @@ int MidiEngine::getVolume()
 
 bool midiAbsSortFunction(MidiSignal *a, MidiSignal *b)
 {
-    ul timeA = a->absValue; //GET ABS!!
-    ul timeB = b->absValue;
+    size_t timeA = a->absValue; //GET ABS!!
+    size_t timeB = b->absValue;
 
     return timeA>timeB;
 }
@@ -335,12 +335,12 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
     for (int trackI = 0; trackI < midiFile->size(); ++trackI)
     {
         MidiTrack *track = midiFile->at(trackI);
-        ul absTimeShift =0;
+        size_t absTimeShift =0;
         for (int sigI = 0; sigI < track->size(); ++sigI)
         {
             MidiSignal *sig = track->at(sigI);
 
-            ul signalTimeShift = sig->time.getValue();
+            size_t signalTimeShift = sig->time.getValue();
             absTimeShift += signalTimeShift;
 
             sig->absValue = absTimeShift;
@@ -355,14 +355,14 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     MidiTrack *result = new MidiTrack();
 
-    ul lastGlobalAbs = 0;
+    size_t lastGlobalAbs = 0;
     for (int sigI = allSignals.size()-1; sigI >= 0; --sigI)
     {
             MidiSignal *sig = allSignals[sigI];
 
 
-            ul currentAbs = sig->absValue;
-            ul shift = currentAbs - lastGlobalAbs;
+            size_t currentAbs = sig->absValue;
+            size_t shift = currentAbs - lastGlobalAbs;
 
 
             MidiSignal *signalCopy = new MidiSignal(sig->byte0,

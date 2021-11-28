@@ -110,7 +110,7 @@ Track* Tab::createNewTrack() { //Move into Tab
     track->tuning.setTune(4,45);
     track->tuning.setTune(5,40);
 
-    for (ul barI=0; barI < pTab->at(0)->size(); ++barI) {
+    for (size_t barI=0; barI < pTab->at(0)->size(); ++barI) {
         Bar *bar=new Bar();
         bar->flush();
         bar->setSignDenum(4); bar->setSignNum(4);

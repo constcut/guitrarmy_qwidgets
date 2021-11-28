@@ -27,10 +27,10 @@ public:
         return *this;
     }
 
-    ul readStream(std::ifstream &file); //reads from file and returns amount of bytes stored inside
-    ul writeStream(std::ofstream &file);
-	ul getValue();
-    ul getsize() { return this->size(); } //cover
+    size_t readStream(std::ifstream &file); //reads from file and returns amount of bytes stored inside
+    size_t writeStream(std::ofstream &file);
+    size_t getValue();
+    size_t getsize() { return this->size(); } //cover
 
 	//for future - get extended values for many many parts
 	//for future - ul writeStream(AF ile &file);
@@ -43,7 +43,7 @@ struct MidiSignal
 {
 	//for each of type
     VariableInt time;
-    ul absValue;
+    size_t absValue;
     //for each of type
 	//byte type; //replace with getEventType()
     //byte channel; //replace with getChannel()
@@ -67,8 +67,8 @@ struct MidiSignal
 	
 	//system events should lay simmiliar as meta ones
 
-	ul readStream(std::ifstream &ifile);
-    ul writeStream(std::ofstream &ofile, bool skip=false);
+    size_t readStream(std::ifstream &ifile);
+    size_t writeStream(std::ofstream &ofile, bool skip=false);
     bool skipThat();
 		
 	byte getEventType()
@@ -97,9 +97,9 @@ struct MidiSignal
 	}
 	
 	void printToStream(std::ostream &stream);
-    ul calcSize(bool skip=false);
+    size_t calcSize(bool skip=false);
 
-    MidiSignal(byte b0, byte b1, byte b2, ul timeShift);
+    MidiSignal(byte b0, byte b1, byte b2, size_t timeShift);
     MidiSignal(){absValue=0;}
 
 protected:
@@ -122,7 +122,7 @@ struct midiHeader
 struct midiTrackHeader
 {
     char chunkId[5];
-    ul trackSize;
+    size_t trackSize;
 };
 
 class MidiTrack : public ChainContainer<MidiSignal, void>
@@ -135,7 +135,7 @@ public:
 
     virtual ~MidiTrack()
     {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
             delete at(i);
     }
     
@@ -145,19 +145,19 @@ public:
 	//ul writeStream(AF ile &ofile);
 	//ul readStream(AF ile &ifile); //missing from refactoing
 
-    bool fromTrack(Track *track, byte channel=0, ul shiftCursorBar=0);
+    bool fromTrack(Track *track, byte channel=0, size_t shiftCursorBar=0);
 
     //void add(MidiSignal &val);
 
     //HELPERS functions from AMUSIC generation
 
     //no time versions
-    void pushChangeInstrument(byte newInstr, byte channel, ul timeShift=0);
-    void pushChangeBPM(int bpm, ul timeShift=0); //same way others
+    void pushChangeInstrument(byte newInstr, byte channel, size_t timeShift=0);
+    void pushChangeBPM(int bpm, size_t timeShift=0); //same way others
     void pushChangeVolume(byte newVolume, byte channel);
     void pushChangePanoram(byte newPanoram, byte channel);
 
-    void pushMetrSignature(byte num, byte den, ul timeShift, byte metr=24, byte perQuat=8);
+    void pushMetrSignature(byte num, byte den, size_t timeShift, byte metr=24, byte perQuat=8);
 
     void pushVibration(byte channel, byte depth, short int step, byte stepsCount=3);
     void pushSlideUp(byte channel, byte shift, short int step, byte stepsCount=8);
@@ -244,12 +244,12 @@ public:
 
     virtual ~MidiFile()
     {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
             delete at(i);
     }
 
     //bool generateFromAMusic(AMusic &music);
-    bool fromTab(Tab *tab, ul shiftTheCursor=0);
+    bool fromTab(Tab *tab, size_t shiftTheCursor=0);
 
     //calculation helpers
 
@@ -260,9 +260,9 @@ public:
     void printToStream(std::ostream &stream);
 
     bool readStream(std::ifstream &ifile);
-    ul writeStream(std::ofstream &ofile);
+    size_t writeStream(std::ofstream &ofile);
 
-    ul noMetricsTest(std::ofstream &ofile);
+    size_t noMetricsTest(std::ofstream &ofile);
 
     //set get
     void setBPM(int bpmNew) { bpm = bpmNew; }

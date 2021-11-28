@@ -55,9 +55,9 @@ public:
    void setInc(size_t *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
    //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
 
-   void setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCursor);
+   void setupValues(void *tab_ptr, void *track_ptr, size_t shiftTheCursor);
 
-   void addNumDenum(byte nu, byte de, ul nextIndex);
+   void addNumDenum(byte nu, byte de, size_t nextIndex);
 
    void addBeatTimes(void *bar);
 
@@ -73,7 +73,7 @@ class WaveMoveThr: public AThread
 {
 protected:
     int *incrementA;
-    ul *incrementB;
+    size_t *incrementB;
 
     int limit;
     //MasterView *mv;
@@ -90,7 +90,7 @@ public:
    int getStatus() { return status; }
 
    void setLimit(int max) { limit = max; }
-   void setInc(int *ptrA, ul *ptrB) { incrementA = ptrA; incrementB = ptrB; }
+   void setInc(int *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
    //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
 
 

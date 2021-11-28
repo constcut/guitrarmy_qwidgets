@@ -43,17 +43,17 @@ void EffectsPack::mergeWith(EffectsPack &addition)
 
 //....................EffectsMap....................................
 
-bool EffectsMap::isThere(ul index)
+bool EffectsMap::isThere(size_t index)
 {
-    std::map<ul,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
+    std::map<size_t,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
     if (effIterator == mapOfEffects.end())
         return false;
     return true;
 }
 
-EffectsPack EffectsMap::getEffect(ul index)
+EffectsPack EffectsMap::getEffect(size_t index)
 {
-    std::map<ul,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
+    std::map<size_t,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
     if (effIterator == mapOfEffects.end())
     {
         EffectsPack emptyPack;
@@ -62,7 +62,7 @@ EffectsPack EffectsMap::getEffect(ul index)
     return effIterator->second;
 }
 
-void EffectsMap::setEffect(ul index, EffectsPack eff)
+void EffectsMap::setEffect(size_t index, EffectsPack eff)
 {
     mapOfEffects[index] = eff;
 }
@@ -75,7 +75,7 @@ ABitArray::ABitArray():bits(0)
 
 bool ABitArray::get(byte index)
 {
-    ul maskValue = 1;
+    size_t maskValue = 1;
     maskValue <<= (index-1); //-1
 
     if (index == 1)
@@ -106,7 +106,7 @@ void ABitArray::flush()
 
 void ABitArray::set(byte index, bool value)
 {
-    ul maskValue = 1;
+    size_t maskValue = 1;
     maskValue <<= (index-1); //-1
 
     if (value==true)
@@ -115,7 +115,7 @@ void ABitArray::set(byte index, bool value)
     }
     else
     { //turn off
-        ul antiMask = 0;
+        size_t antiMask = 0;
         --antiMask;
 
         antiMask -= maskValue;

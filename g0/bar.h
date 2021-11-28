@@ -20,7 +20,7 @@ public:
         flush();
     }
     virtual ~Bar() {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
             delete at(i);
     }
 
@@ -71,11 +71,11 @@ protected:
     //GP comp - marker, tonality
     byte gpCompTonality;
     std::string markerText;
-    ul markerColor; //white byte == 1 if empty
+    size_t markerColor; //white byte == 1 if empty
 
     byte completeStatus;
     short completeAbs;
-    ul completeIndex;
+    size_t completeIndex;
 
     public:
     //SET GET operations
@@ -91,7 +91,7 @@ protected:
 
     byte getCompleteStatus();
     double getCompleteAbs();
-    ul   getCompleteIndex();
+    size_t   getCompleteIndex();
 
     void setRepeat(byte rValue, byte times=0)
     {
@@ -108,8 +108,8 @@ protected:
     void setGPCOMPTonality(byte tValue) { gpCompTonality = tValue; }
     byte getGPCOMPTonality() { return gpCompTonality; }
 
-    void setGPCOMPMarker(std::string &text, ul color) { markerText = text; markerColor = color; }
-    void getGPCOMPMarker(std::string &text, ul &color) { text = markerText; color = markerColor; }
+    void setGPCOMPMarker(std::string &text, size_t color) { markerText = text; markerColor = color; }
+    void getGPCOMPMarker(std::string &text, size_t &color) { text = markerText; color = markerColor; }
 
     //pack function
      void clone(Bar *from);

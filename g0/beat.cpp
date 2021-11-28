@@ -3,7 +3,7 @@
 
 void BendPoints::insertNewPoint(BendPoint bendPoint)
 {
-    for (ul i = 0; i < size()-1; ++i)
+    for (size_t i = 0; i < size()-1; ++i)
     {
         if (at(i).horizontal < bendPoint.horizontal)
             if (at(i+1).horizontal > bendPoint.horizontal)
@@ -32,7 +32,7 @@ void Beat::clone(Beat *from)
 
    bookmarkName = from->bookmarkName;
 
-   for (ul i = 0; i < from->size(); ++i)
+   for (size_t i = 0; i < from->size(); ++i)
    {
        Note *note = from->at(i);
        Note *newNote=new Note();
@@ -45,7 +45,7 @@ void Beat::clone(Beat *from)
 void Beat::printToStream(std::ostream &stream)
 {
     stream << "Outputing #"<<size()<<" Notes."<<std::endl;
-    for (ul ind = 0; ind < size(); ++ind)
+    for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 }
 

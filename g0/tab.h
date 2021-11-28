@@ -66,27 +66,27 @@ public:
     std::vector<TimeLineKnot> timeLine;
 
     virtual ~Tab() {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
                    delete at(i);
     }
 
     void printToStream(std::ostream &stream);
 
-    void createTimeLine(ul shiftTheCursor=0);
-    byte getBPMStatusOnBar(ul barN);
-    int getBpmOnBar(ul barN);
+    void createTimeLine(size_t shiftTheCursor=0);
+    byte getBPMStatusOnBar(size_t barN);
+    int getBpmOnBar(size_t barN);
 
     void connectTracks(){
-        for (ul i = 0; i < size(); ++i)
+        for (size_t i = 0; i < size(); ++i)
         at(i)->connectAll();
         createTimeLine();
     }
 
     void postGTP() {
-        for (ul i = 0; i < size(); ++i) {
-            ul port = at(i)->getGPCOMPInts(0);
-            ul chan = at(i)->getGPCOMPInts(1);
-            ul ind = (chan-1) + (port-1)*16;
+        for (size_t i = 0; i < size(); ++i) {
+            size_t port = at(i)->getGPCOMPInts(0);
+            size_t chan = at(i)->getGPCOMPInts(1);
+            size_t ind = (chan-1) + (port-1)*16;
             if (ind < 70) {
                 int instr = GpCompMidiChannels[ind].instrument;
                 byte pan = GpCompMidiChannels[ind].balance;

@@ -49,14 +49,14 @@ public:
     }
 
     virtual ~Track() {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
             delete at(i);
     }
 
     void printToStream(std::ostream &stream);
 
     ChainContainer<Bar, Tab> timeLoop; //PolyBar //REFACT access
-    std::vector<ul> timeLoopIndexStore;
+    std::vector<size_t> timeLoopIndexStore;
 
     Track &operator=([[maybe_unused]]Track another)
     {
@@ -83,37 +83,37 @@ public:
 
 protected:
     std::string name;
-    ul instrument;
-    ul color;
+    size_t instrument;
+    size_t color;
     byte pan; //or int??
     byte volume;
     bool drums;
     //?own temp bpm
-    ul GpCompInts[4]; //GpComp - Port,Channel,ChannelE,Capo
-    ul beatsAmount;
+    size_t GpCompInts[4]; //GpComp - Port,Channel,ChannelE,Capo
+    size_t beatsAmount;
     byte status; //0 - none 1 - mute 2 - soloe
 
 public:
     GuitarTuning tuning;
 
-    ul connectBars();
-    ul connectBeats();
-    ul connectNotes(); //for let ring
-    ul connectTimeLoop();
+    size_t connectBars();
+    size_t connectBeats();
+    size_t connectNotes(); //for let ring
+    size_t connectTimeLoop();
     void connectAll();
 
     void pushReprise(Bar *beginRepeat, Bar *endRepeat,
-                     Bar *preTail, Bar *tailBegin, Bar *tailEnd, ul beginIndex, ul endIndex,
-                     ul preTailIndex=0, ul tailBeginIndex=0, ul tailEndIndex=0);
+                     Bar *preTail, Bar *tailBegin, Bar *tailEnd, size_t beginIndex, size_t endIndex,
+                     size_t preTailIndex=0, size_t tailBeginIndex=0, size_t tailEndIndex=0);
 
     void setName( std::string &nValue) { name = nValue; }
     std::string getName() { return name; } //or return?
 
-    void setInstrument(ul iValue) { instrument = iValue;}
-    ul getInstrument() { return instrument; }
+    void setInstrument(size_t iValue) { instrument = iValue;}
+    size_t getInstrument() { return instrument; }
 
-    void setColor(ul cValue) { color = cValue; }
-    ul getColor() { return color; }
+    void setColor(size_t cValue) { color = cValue; }
+    size_t getColor() { return color; }
 
     void setPan(byte pValue) { pan = pValue; }
     byte getPan() { return pan; }
@@ -122,8 +122,8 @@ public:
     byte getVolume() { return volume; }
 
 
-    void setGPCOMPInts(size_t index, ul value) { GpCompInts[index] = value; }
-    ul getGPCOMPInts(size_t index) { return GpCompInts[index]; } //TODO get rid
+    void setGPCOMPInts(size_t index, size_t value) { GpCompInts[index] = value; }
+    size_t getGPCOMPInts(size_t index) { return GpCompInts[index]; } //TODO get rid
 
     void setDrums(bool newDrums) {
         drums = newDrums;

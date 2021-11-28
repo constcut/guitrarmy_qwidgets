@@ -11,7 +11,7 @@ bool tabLog = false;
  void Tab::printToStream(std::ostream &stream)
  {
     stream << "Outputing #"<<size()<<" Tracks."<<std::endl;
-    for (ul ind = 0; ind < size(); ++ind)
+    for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 
  }
@@ -28,7 +28,7 @@ bool tabLog = false;
 
 
 
- byte Tab::getBPMStatusOnBar(ul barN)
+ byte Tab::getBPMStatusOnBar(size_t barN)
  {
         for (int i = 0 ; i < size(); ++i)
         {
@@ -45,7 +45,7 @@ bool tabLog = false;
         }
  }
 
- int Tab::getBpmOnBar(ul barN)
+ int Tab::getBpmOnBar(size_t barN)
  {
     int bpmTrace = bpmTemp;
     for (int i = 0; i < timeLine.size(); ++i){
@@ -53,7 +53,7 @@ bool tabLog = false;
     }
  }
 
- void Tab::createTimeLine(ul shiftTheCursor)
+ void Tab::createTimeLine(size_t shiftTheCursor)
  {
      timeLine.clear();
 
@@ -64,12 +64,12 @@ bool tabLog = false;
 
      int lastNumDen=0;
 
-     ul barsAmount = at(0)->timeLoop.size(); //should search longest
-     for (ul barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
+     size_t barsAmount = at(0)->timeLoop.size(); //should search longest
+     for (size_t barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
      {
          std::vector<BpmChangeKnot> timeChanges;
 
-         for (ul tracksI = 0; tracksI < size(); ++tracksI)
+         for (size_t tracksI = 0; tracksI < size(); ++tracksI)
          {
             short int localAccumulate = 0;///tracksI
 
@@ -78,7 +78,7 @@ bool tabLog = false;
 
             Bar *currentBar = at(tracksI)->timeLoop[barsI]; //attention refact fix
 
-            for (ul beatI = 0; beatI < currentBar->size(); ++beatI)
+            for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
             {
                 if (currentBar->at(beatI)->effPack == 28) //changes
                 {
@@ -86,10 +86,10 @@ bool tabLog = false;
                     Package *changePack = currentBar->at(beatI)->effPack.getPack(28);
                     Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
-                    for (ul indexChange = 0; indexChange != changes->size(); ++indexChange)
+                    for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
                       if (changes->at(indexChange).changeType==8)
                       {
-                          ul newBPM = changes->at(indexChange).changeValue;
+                          size_t newBPM = changes->at(indexChange).changeValue;
 
                           BpmChangeKnot newChangeBpm(newBPM,localAccumulate);
 

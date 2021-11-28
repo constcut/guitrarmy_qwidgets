@@ -80,7 +80,7 @@ void Bar::clone(Bar *from) {
    signatureDenum = from->signatureDenum;
    signatureNum = from->signatureNum;
 
-   for (ul i = 0; i < from->size(); ++i)
+   for (size_t i = 0; i < from->size(); ++i)
    {
        Beat *beat = from->at(i);
        Beat *newBeat=new Beat();
@@ -90,7 +90,7 @@ void Bar::clone(Bar *from) {
    }
 }
 
-ul Bar::getCompleteIndex()
+size_t Bar::getCompleteIndex()
 {
    return completeIndex;
 }
@@ -119,9 +119,9 @@ byte Bar::getCompleteStatus()
 
     completeIndex = 0;
 
-    ul barSize = size();
+    size_t barSize = size();
 
-    for (ul i = 0; i < barSize; ++i)
+    for (size_t i = 0; i < barSize; ++i)
     {
        byte beatDur = at(i)->getDuration();
        byte durDetail = at(i)->getDurationDetail();
@@ -214,18 +214,18 @@ byte Bar::getCompleteStatus()
 
 void Bar::countUsedSigns(byte &numGet, byte &denumGet)
 {
-    ul num = 0;
-    ul denum = 32;
+    size_t num = 0;
+    size_t denum = 32;
 
     denum *= 3;//temp action for triplets (for n trumplets better multipleyer must)
     denum *= 2;
 
-    for (ul beatInd = 0; beatInd < size(); ++beatInd)
+    for (size_t beatInd = 0; beatInd < size(); ++beatInd)
     {
-        ul duration = at(beatInd)->getDuration();
-        ul detail = at(beatInd)->getDurationDetail();
+        size_t duration = at(beatInd)->getDuration();
+        size_t detail = at(beatInd)->getDurationDetail();
 
-        ul addition = 0;
+        size_t addition = 0;
 
         switch (duration)
         { //remember 8 is 8
@@ -282,6 +282,6 @@ void Bar::countUsedSigns(byte &numGet, byte &denumGet)
 void Bar::printToStream(std::ostream &stream)
 {
     stream << "Outputing #"<<size()<<" Beats."<<std::endl;
-    for (ul ind = 0; ind < size(); ++ind)
+    for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 }

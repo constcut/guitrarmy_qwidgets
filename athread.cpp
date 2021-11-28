@@ -60,7 +60,7 @@ void PlayAnimationThr::threadRun()
    status = 0;
 
    //while ((*increment +1) < limit)
-   for (ul i = 0 ; i < waitTimes.size(); ++i)
+   for (size_t i = 0 ; i < waitTimes.size(); ++i)
    {
          (*incrementA) = waitIndexes[indexWait];
          int nowWait = waitTimes[indexWait];
@@ -79,7 +79,7 @@ void PlayAnimationThr::threadRun()
 
 
          if (beatTimes.size() > i)
-         for(ul j = 0; j < beatTimes[i].size(); ++j)
+         for(size_t j = 0; j < beatTimes[i].size(); ++j)
          {
              int beatWait = beatTimes[i][j];
 
@@ -141,7 +141,7 @@ struct BpmWaitNode
 };
 
 
-void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCursor)
+void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftTheCursor)
 {
     Tab *tab=(Tab*)tab_ptr; //TODO get rid!
 
@@ -150,7 +150,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
 
 
     Track *track = (Track*)track_ptr;
-    ul timeLoopLen = track->timeLoop.size();
+    size_t timeLoopLen = track->timeLoop.size();
 
     //INCREMENTS set OUTSIDE
     int localWait = 0;
@@ -191,14 +191,14 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
     std::vector<int> barMoments;
 
     //MAIN CYCLE
-    for (ul barI = shiftTheCursor; barI < timeLoopLen; ++barI)
+    for (size_t barI = shiftTheCursor; barI < timeLoopLen; ++barI)
     {
         Bar *bar = track->timeLoop.at(barI);
         barMoments.clear();
 
         //addBeatTimes(bar);
 
-        for (ul beatI = 0; beatI < bar->size(); ++beatI)
+        for (size_t beatI = 0; beatI < bar->size(); ++beatI)
         {
            Beat *beat = bar->at(beatI);
 
@@ -275,7 +275,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, ul shiftTheCu
     //qDebug() << "prepare thread done";
 }
 
-void PlayAnimationThr::addNumDenum(byte nu, byte de, ul nextIndex)
+void PlayAnimationThr::addNumDenum(byte nu, byte de, size_t nextIndex)
 {
     int fullNote = 240000/bpm;
     int waitValue = (fullNote/de)*nu;
@@ -287,7 +287,7 @@ void PlayAnimationThr::addNumDenum(byte nu, byte de, ul nextIndex)
 
 int PlayAnimationThr::calculateSeconds()
 {
-    ul totalSumm = 0;
+    size_t totalSumm = 0;
 
     for (int i = 0; i < waitTimes.size(); ++i)
     {
@@ -307,7 +307,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
     //int toNextChange =
 
-    for (ul i = 0; i < curBar->size(); ++i)
+    for (size_t i = 0; i < curBar->size(); ++i)
     {
         Beat *beat = curBar->at(i);
 
@@ -321,10 +321,10 @@ void PlayAnimationThr::addBeatTimes(void *bar)
             {
                 Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
-                for (ul indexChange=0; indexChange < changes->size(); ++indexChange)
+                for (size_t indexChange=0; indexChange < changes->size(); ++indexChange)
                 if (changes->at(indexChange).changeType==8)
                 {
-                    ul newBPM = changes->at(indexChange).changeValue;
+                    size_t newBPM = changes->at(indexChange).changeValue;
 
                     //CHANGING BPM from mix table!
 

@@ -20,7 +20,7 @@ public:
 
     virtual ~Beat()
     {
-        for (ul i=0; i < size(); ++i)
+        for (size_t i=0; i < size(); ++i)
                    delete at(i);
     }
     //usually size reserved
@@ -30,7 +30,7 @@ public:
     struct SingleChange
     {
         byte changeType;
-        ul changeValue;
+        size_t changeValue;
         byte changeCount;
     };
 
@@ -54,8 +54,8 @@ public:
         byte minMaj;
         byte steps9x;
 
-        ul bass;
-        ul deminush;
+        size_t bass;
+        size_t deminush;
 
         byte add;
         char name[20];
@@ -65,8 +65,8 @@ public:
 
         byte s5,s9,s11;
 
-        ul baseFrets;
-        ul frets[7];
+        size_t baseFrets;
+        size_t frets[7];
 
         byte baresNum;
         byte fretBare[5];
@@ -91,7 +91,7 @@ public:
        byte newReverb;
        byte newPhaser; //6 total + 4
        byte newTremolo;
-       ul newTempo; //OR IT IS INT?
+       size_t newTempo; //OR IT IS INT?
        //10
        byte instrDur;
        byte volumeDur;
@@ -150,7 +150,7 @@ protected:
 
     void deleteNote(int string)
     {
-        for (ul i = 0; i < size(); ++i)
+        for (size_t i = 0; i < size(); ++i)
         {
             if (string == at(i)->getStringNumber())
             {
@@ -166,7 +166,7 @@ protected:
 
     Note *getNote(int string)
     {
-        for (ul i = 0; i < size(); ++i)
+        for (size_t i = 0; i < size(); ++i)
 
             if (at(i)->getStringNumber()==string)
                 return at(i);
@@ -214,7 +214,7 @@ protected:
             return;
         }
 
-        for (ul i = 0; i < size(); ++i)
+        for (size_t i = 0; i < size(); ++i)
         {
             if (at(i)->getStringNumber()==string)
             {
@@ -258,7 +258,7 @@ protected:
         if (size() == 0)
             return 255;
 
-        for (ul i = 0; i < size(); ++i)
+        for (size_t i = 0; i < size(); ++i)
             if (at(i)->getStringNumber()==string)
             {
                 byte fretValue = at(i)->getFret();
