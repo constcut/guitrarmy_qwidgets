@@ -19,8 +19,7 @@ class Note;
 
 
 
-class GuitarTuning
-{
+class GuitarTuning {
     byte stringsAmount;
     byte tunes[10]; //as a maximum, mind later is it usefull to try set more or less by container?
     //set it to byte - in fact int would be 128 values of std midi - next could be used as quatones

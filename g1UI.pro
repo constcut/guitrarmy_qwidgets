@@ -73,6 +73,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     g0/bar.h \
+    g0/beat.h \
+    g0/note.h \
     g0/track.h \
     g0/types.h \
     gview.h \
