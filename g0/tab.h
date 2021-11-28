@@ -800,6 +800,54 @@ public:
     void UpStroke();
     void DownStroke();
 
+private:
+    //TODO внимательно проверить
+    std::unordered_map<TrackCommand, void (Track::*)()> handlers =  {
+        {TrackCommand::GotoStart, &Track::gotoTrackStart},
+        {TrackCommand::SelectionExpandLeft, &Track::moveSelectionLeft},
+        {TrackCommand::SelectionExpandRight, &Track::moveSelectionRight},
+        {TrackCommand::InsertBar, &Track::insertBar},
+        {TrackCommand::NextBar, &Track::moveToNextBar},
+        {TrackCommand::PrevBar, &Track::moveToPrevBar},
+        {TrackCommand::PrevPage, &Track::moveToPrevPage},
+        {TrackCommand::NextTrack, &Track::moveToNextTrack},
+        {TrackCommand::PrevTrack, &Track::moveToPrevTrack},
+        {TrackCommand::StringDown, &Track::moveToStringDown},
+        {TrackCommand::StringUp, &Track::moveToStringUp},
+        {TrackCommand::PrevBeat, &Track::moveToPrevBeat},
+        {TrackCommand::NextBeat, &Track::moveToNextBeat},
+        {TrackCommand::SetPause, &Track::setTrackPause},
+        {TrackCommand::DeleteBar, &Track::deleteBar},
+        {TrackCommand::DeleteSelectedBars, &Track::deleteSelectedBars},
+        {TrackCommand::DeleteSelectedBeats, &Track::deleteSelectedBeats},
+        {TrackCommand::IncDuration, &Track::incDuration},
+        {TrackCommand::DecDuration, &Track::decDuration},
+        {TrackCommand::NewBar, &Track::newBar},
+        {TrackCommand::SetDot, &Track::setDotOnBeat},
+        {TrackCommand::SetTriole, &Track::setTriolOnBeat},
+        {TrackCommand::Leeg, &Track::LeegNote},
+        {TrackCommand::Dead, &Track::DeadNote},
+        {TrackCommand::Vibrato, &Track::Vibratto},
+        {TrackCommand::Slide, &Track::Slide},
+        {TrackCommand::Hammer, &Track::Hammer},
+        {TrackCommand::LetRing, &Track::LetRing},
+        {TrackCommand::PalmMute, &Track::PalmMute},
+        {TrackCommand::Harmonics, &Track::Harmonics},
+        {TrackCommand::TremoloPickings, &Track::TremoloPicking},
+        {TrackCommand::Trill, &Track::Trill},
+        {TrackCommand::Stokatto, &Track::Stokatto},
+        {TrackCommand::FadeIn, &Track::FadeIn},
+        {TrackCommand::Accent, &Track::Accent},
+        {TrackCommand::HeaveAccent, &Track::HeavyAccent},
+        {TrackCommand::UpStroke, &Track::UpStroke},
+        {TrackCommand::DownStroke, &Track::DownStroke},
+        {TrackCommand::Cut, &Track::clipboardCutBar},
+        {TrackCommand::Copy, &Track::clipboardCopyBar},
+        {TrackCommand::CopyBeat, &Track::clipboarCopyBeat},
+        {TrackCommand::CopyBars, &Track::clipboardCopyBars},
+        {TrackCommand::Past, &Track::clipboardPaste},
+        {TrackCommand::Undo, &Track::undoOnTrack},
+        {TrackCommand::SaveFile, &Track::saveFromTrack}};
 };
 
 //here would lay Guitar Pro header comptibilator
