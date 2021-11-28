@@ -33,10 +33,10 @@ static void sendSignalShortWin(DWORD signal);
     ~MidiEngine();
 
     static void sendSignal(MidiSignal *signal);
-    static void sendSignalShort(byte status, int byte1=-1, int byte2=-1);
+    static void sendSignalShort(std::uint8_t status, int byte1=-1, int byte2=-1);
     static void sendSignalLong(MidiSignal *signal);
 
-    static void sendSignalShortDelay(int msdelay, byte status, int byte1=-1, int byte2=-1);
+    static void sendSignalShortDelay(int msdelay, std::uint8_t status, int byte1=-1, int byte2=-1);
 
     static void setVolume(int vol);
     static int getVolume();

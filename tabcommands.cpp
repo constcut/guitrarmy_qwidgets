@@ -90,20 +90,20 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
         digitPress = digit;
 
     if ( pTrack->at(cursor)->size() > cursorBeat ) {
-        byte lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
+        std::uint8_t lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
 
         SingleCommand command(3,lastFret);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(command);
         pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);
         Note *inputedNote =  pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1);
-        byte tune = pTrack->tuning.getTune(stringCursor);
+        std::uint8_t tune = pTrack->tuning.getTune(stringCursor);
         int chan = 0;
         if (pTrack->isDrums()) {
             chan = 9; //tune to 0 attention refact error
             tune = 0;
         }
-        byte midiNote = inputedNote->getMidiNote(tune);
+        std::uint8_t midiNote = inputedNote->getMidiNote(tune);
         MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
         ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
         //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
@@ -630,8 +630,8 @@ void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получ
 
 void closeReprise(Tab* pTab) { //TODO argument repeat times
     Bar *firstTrackBar = pTab->at(0)->at(pTab->getCurrentBar());
-    byte repeat = firstTrackBar->getRepeat();
-    byte repeatCloses = repeat & 2;
+    std::uint8_t repeat = firstTrackBar->getRepeat();
+    std::uint8_t repeatCloses = repeat & 2;
     if (repeatCloses) {
         pTab->closeReprise(0);
     }

@@ -210,10 +210,10 @@ public:
     int getClickString(int y1);
     int getClickBeat(int x1);
 
-    void drawNote(QPainter *painter, byte noteDur, byte dotted, byte durDet,
+    void drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet,
                   int x1, int y1);
 
-    void drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
+    void drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
                       int x1, int y1);
 
     void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff);

@@ -145,7 +145,7 @@ void PatternInput::createBar()
             {
                 Note *newNote=new Note();
 
-                byte localFret = atoi(lineInstrLabels[iCoef].getText().c_str());
+                std::uint8_t localFret = atoi(lineInstrLabels[iCoef].getText().c_str());
 
 
                 if (getMaster())
@@ -516,7 +516,7 @@ void TapRyView::setUI()
 
 void TapRyView::draw(QPainter *painter)
 {
-    static byte firstDraw = 1;
+    static std::uint8_t firstDraw = 1;
 
     int fullW = getMaster()->getWidth();
     int fullH = getMaster()->getHeight();
@@ -553,7 +553,7 @@ void TapRyView::draw(QPainter *painter)
 
 
 //THIS function had to be optimized - refact
-void findClosestRhythm(short absValue, byte &durGet, byte &detGet, byte &dotGet, int thatBPM)
+void findClosestRhythm(short absValue, std::uint8_t &durGet, std::uint8_t &detGet, std::uint8_t &dotGet, int thatBPM)
 {
    short pabsValue = absValue;
 
@@ -565,7 +565,7 @@ void findClosestRhythm(short absValue, byte &durGet, byte &detGet, byte &dotGet,
    // lo = 1; hi=0; then dot(easiear to write); then 4b trum;
    // 1 0 0;  1 1 11;  0 0 7;  1 1 5;  0 0 13;  0 0 3; 0 0 11; 0 0 5; 0 1 7;  0 0 9; 0 1 13; 0 0 0;
 
-   byte widePrepare[13][3] = { {1,0,0}, {1,1,11}, {0,0,7}, {1,1,5}, {0,0,13}, {0,0,3}, {0,0,11}, {1,1,0},
+   std::uint8_t widePrepare[13][3] = { {1,0,0}, {1,1,11}, {0,0,7}, {1,1,5}, {0,0,13}, {0,0,3}, {0,0,11}, {1,1,0},
                                {0,0,5}, {0,1,7}, {0,0,9}, {0,1,13}, {0,0,0}};
 
    //if (pabsValue > 4000)
@@ -692,14 +692,14 @@ void TapRyView::createBar()
 
     ryBar->setSignDenum(4); ryBar->setSignNum(8);
 
-    byte lastDur = 0;
+    std::uint8_t lastDur = 0;
 
     int lastPressInstr = 0;
 
     for (size_t i = 1; i < presses.size(); ++i)
     {
         int step = presses[i].first-presses[i-1].first;
-        byte dur=0,det=0,dot=0;
+        std::uint8_t dur=0,det=0,dot=0;
         findClosestRhythm(step,dur,det,dot,thatBPM);
 
         --dur;
@@ -1600,8 +1600,8 @@ void MorzeInput::onclick(int x1, int y1)
 
             for (size_t i=0; i <stdMorze.size(); ++i)
             {
-                byte dur=0,det=0,dot=0;
-                byte dur2=0;
+                std::uint8_t dur=0,det=0,dot=0;
+                std::uint8_t dur2=0;
                 char currentChar = stdMorze[i];
 
                 if (currentChar%2)

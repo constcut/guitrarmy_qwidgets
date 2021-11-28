@@ -28,7 +28,7 @@ bool tabLog = false;
 
 
 
- byte Tab::getBPMStatusOnBar(size_t barN)
+ std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
  {
         for (int i = 0 ; i < size(); ++i)
         {
@@ -99,9 +99,9 @@ bool tabLog = false;
 
                 }
 
-                byte beatDur = currentBar->at(beatI)->getDuration();
-                byte durDetail = currentBar->at(beatI)->getDurationDetail();
-                byte isDotted = currentBar->at(beatI)->getDotted();
+                std::uint8_t beatDur = currentBar->at(beatI)->getDuration();
+                std::uint8_t durDetail = currentBar->at(beatI)->getDurationDetail();
+                std::uint8_t isDotted = currentBar->at(beatI)->getDotted();
 
                 int localAbs = translaeDuration(beatDur);
 
@@ -123,8 +123,8 @@ bool tabLog = false;
 
 
          //NOT POLY YET
-         byte thatNum = at(0)->timeLoop.at(barsI)->getSignNum();
-         byte thatDen = at(0)->timeLoop.at(barsI)->getSignDenum();
+         std::uint8_t thatNum = at(0)->timeLoop.at(barsI)->getSignNum();
+         std::uint8_t thatDen = at(0)->timeLoop.at(barsI)->getSignDenum();
 
 
          int packedMeter=0;

@@ -207,7 +207,7 @@ void MidiEngine::sendSignal(MidiSignal *signal)
     }
 }
 
-void MidiEngine::sendSignalShort(byte status, int byte1, int byte2)
+void MidiEngine::sendSignalShort(std::uint8_t status, int byte1, int byte2)
 {
     if (opened==false)
         init();
@@ -261,7 +261,7 @@ void MidiEngine::sendSignalShortWin(DWORD signal)
 
 #endif
 
-void MidiEngine::sendSignalShortDelay( int msdelay, byte status, int byte1, int byte2)
+void MidiEngine::sendSignalShortDelay( int msdelay, std::uint8_t status, int byte1, int byte2)
 {
     if (opened==false)
         init();

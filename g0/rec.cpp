@@ -59,7 +59,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         //hot fix end
 
 
-        byte durNoteValue=6;
+        std::uint8_t durNoteValue=6;
         //First need to calculate the rest - not just throw it away
         while (noteLength >= 2)
         {
@@ -91,7 +91,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         else
             freqTabResult = 0;
 
-        byte localFret = freqTabResult;
+        std::uint8_t localFret = freqTabResult;
 
         //now add Note itself
         Note *newNote=new Note();
@@ -106,7 +106,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
         { //if this is not a last not - search for pause
 
             int pauseLen = notes[noteI+1].noteBegin-notes[noteI].noteEnd;
-            byte pauseDur = 6;
+            std::uint8_t pauseDur = 6;
             //hot fix - aproximator
             if (pauseLen > 32)
                 pauseLen += 16;
@@ -144,7 +144,7 @@ Bar *GWave::generateBar()//short *source, int &cursor)
 }
 
 
-byte GWave::runRythmicAnalyse()
+std::uint8_t GWave::runRythmicAnalyse()
 {
     int fullLen = origin.size()/2; //16 bit only? yep
     short *rawData = (short*)(origin.data());
@@ -153,7 +153,7 @@ byte GWave::runRythmicAnalyse()
     //rAn.findNotesPositions(energyLevels,energyTypes,&notes,0);
 }
 
-byte GWave::runMelodicAnalyse()
+std::uint8_t GWave::runMelodicAnalyse()
 {
     short *rawData = (short*)(origin.data());
 

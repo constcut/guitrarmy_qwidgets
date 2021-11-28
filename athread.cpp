@@ -202,9 +202,9 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftT
         {
            Beat *beat = bar->at(beatI);
 
-           byte dur = beat->getDuration();
-           byte dot = beat->getDotted();
-           byte det = beat->getDurationDetail();
+           std::uint8_t dur = beat->getDuration();
+           std::uint8_t dot = beat->getDotted();
+           std::uint8_t det = beat->getDurationDetail();
 
 
            int beatAbs = translaeDuration(dur);
@@ -275,7 +275,7 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftT
     //qDebug() << "prepare thread done";
 }
 
-void PlayAnimationThr::addNumDenum(byte nu, byte de, size_t nextIndex)
+void PlayAnimationThr::addNumDenum(std::uint8_t nu, std::uint8_t de, size_t nextIndex)
 {
     int fullNote = 240000/bpm;
     int waitValue = (fullNote/de)*nu;
@@ -337,9 +337,9 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
         int noteTime = 2400000/bpm; //full note
 
-        byte dur = beat->getDuration();
-        byte dot = beat->getDotted();
-        byte det = beat->getDurationDetail();
+        std::uint8_t dur = beat->getDuration();
+        std::uint8_t dot = beat->getDotted();
+        std::uint8_t det = beat->getDurationDetail();
 
         if (dot == 1)
         {

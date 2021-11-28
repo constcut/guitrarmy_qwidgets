@@ -58,12 +58,12 @@ size_t VariableInt::readStream(std::ifstream & ifile)
 {
     size_t totalBytesRead = 0;
 
-	byte lastByte = 0;
+    std::uint8_t lastByte = 0;
 	do
 	{
         ifile.read((char*)&lastByte, 1);
 
-		byte valueByte = lastByte & 127;
+        std::uint8_t valueByte = lastByte & 127;
         this->push_back(valueByte);
 
         if (midiLog)  qDebug() << "V[" << totalBytesRead << "] value = " << valueByte;
@@ -112,9 +112,9 @@ size_t MidiSignal::readStream(std::ifstream & ifile)
 
 	totalRead += varIntBytesRead;
 
-	byte p00 = 0;				// 2 parts of 4bit params
-	byte p1 = 0;				// param 1
-	byte p2 = 0;				// param 2;
+    std::uint8_t p00 = 0;				// 2 parts of 4bit params
+    std::uint8_t p1 = 0;				// param 1
+    std::uint8_t p2 = 0;				// param 2;
 
     ifile.read((char*)&p00, 1);
 	totalRead += 1;
@@ -129,7 +129,7 @@ size_t MidiSignal::readStream(std::ifstream & ifile)
 	{
         if (midiLog)  qDebug() << "This is a meta event! " ;
 
-		byte metaType;
+        std::uint8_t metaType;
         ifile.read((char*)&metaType, 1);
 		int metaEvType = metaType;
 		totalRead += 1;
@@ -146,7 +146,7 @@ size_t MidiSignal::readStream(std::ifstream & ifile)
 
         if (midiLog)  qDebug() << "Meta type = " << metaEvType << " to skip - " << bytesToSkip;
 
-		byte bBufer;
+        std::uint8_t bBufer;
 
         for (size_t k = 0; k < bytesToSkip; ++k)
 		{
@@ -335,7 +335,7 @@ size_t VariableInt::writeStream(std::ofstream &file)
 {
     size_t amountOfBytes = size();
 	
-	byte byteToWrite = 0;
+    std::uint8_t byteToWrite = 0;
 
 	
 	for (size_t i = 0; i < amountOfBytes; ++i)
@@ -392,7 +392,7 @@ size_t MidiSignal::writeStream(std::ofstream &ofile,bool skip)
 	}
 	else
     { //normal event
-        byte eventType = getEventType();
+        std::uint8_t eventType = getEventType();
         if ((eventType != 0xC) && (eventType != 0xD))
 		{
               ofile.write((const char*)&param2,1);
@@ -579,7 +579,7 @@ size_t MidiSignal::calcSize(bool skip)
 
 bool MidiSignal::skipThat()
 {
-    byte evT = getEventType();
+    std::uint8_t evT = getEventType();
 
 
     if (byte0 == 0xff)
@@ -608,12 +608,12 @@ bool MidiSignal::skipThat()
     return true;
 }
 
-MidiSignal::MidiSignal(byte b0, byte b1, byte b2, size_t timeShift):byte0(b0),param1(b1),param2(b2)
+MidiSignal::MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2, size_t timeShift):byte0(b0),param1(b1),param2(b2)
 {
     absValue=0;
     if (timeShift == 0)
     {
-        byte noShift = 0;
+        std::uint8_t noShift = 0;
         time.push_back(noShift);
     }
     else
@@ -629,9 +629,9 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, size_t timeShift):byte0(b0),pa
             second = (timeShift / 128) % 128;
             third = timeShift % 128;
 
-            byte firstB = first;
-            byte secondB = second;
-            byte thirdB = third;
+            std::uint8_t firstB = first;
+            std::uint8_t secondB = second;
+            std::uint8_t thirdB = third;
 
             time.push_back(firstB);
             time.push_back(secondB);
@@ -639,8 +639,8 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, size_t timeShift):byte0(b0),pa
         }
         else
         {
-            byte firstB = first;
-            byte secondB = second;
+            std::uint8_t firstB = first;
+            std::uint8_t secondB = second;
 
             time.push_back(firstB);
             time.push_back(secondB);
@@ -651,7 +651,7 @@ MidiSignal::MidiSignal(byte b0, byte b1, byte b2, size_t timeShift):byte0(b0),pa
 
 //HELPERS BEGIN
 
-void MidiTrack::pushChangeInstrument(byte newInstr, byte channel, size_t timeShift)
+void MidiTrack::pushChangeInstrument(std::uint8_t newInstr, std::uint8_t channel, size_t timeShift)
 {
     if (midiLog)  qDebug() << "Change instrument "<<newInstr<<" on CH "<<channel;
 
@@ -660,13 +660,13 @@ void MidiTrack::pushChangeInstrument(byte newInstr, byte channel, size_t timeShi
     this->push_back(instrumentChange);
 }
 
-void MidiTrack::pushMetrSignature(byte num, byte den,size_t timeShift=0, byte metr, byte perQuat)
+void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t timeShift=0, std::uint8_t metr, std::uint8_t perQuat)
 {
     MidiSignal *signatureEvent = new MidiSignal(0xff,88,0,timeShift);
 
     signatureEvent->metaStore.bufer.push_back(num);
 
-    byte transDur=0;
+    std::uint8_t transDur=0;
     switch (den)
     {
         case 1: transDur = 0; break;
@@ -684,7 +684,7 @@ void MidiTrack::pushMetrSignature(byte num, byte den,size_t timeShift=0, byte me
     signatureEvent->metaStore.bufer.push_back(metr);
     signatureEvent->metaStore.bufer.push_back(perQuat);
 
-    byte metaSize = 4;
+    std::uint8_t metaSize = 4;
     signatureEvent->metaStore.metaLen.push_back(metaSize);
 
     push_back(signatureEvent);
@@ -701,15 +701,15 @@ void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
 
     size_t MCount = 60000000/bpm;
 
-    byte tempB1 = (MCount>>16)&0xff; //0x7
-    byte tempB2 = (MCount>>8)&0xff; //0xa1
-    byte tempB3 = MCount&0xff; //0x20
+    std::uint8_t tempB1 = (MCount>>16)&0xff; //0x7
+    std::uint8_t tempB2 = (MCount>>8)&0xff; //0xa1
+    std::uint8_t tempB3 = MCount&0xff; //0x20
 
     changeTempEvent->metaStore.bufer.push_back(tempB1);
     changeTempEvent->metaStore.bufer.push_back(tempB2);
     changeTempEvent->metaStore.bufer.push_back(tempB3);
 
-    byte lenMeta = 3;
+    std::uint8_t lenMeta = 3;
     changeTempEvent->metaStore.metaLen.push_back(lenMeta);
 
     //byte timeZero = 0;
@@ -718,7 +718,7 @@ void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
 
     this->push_back(changeTempEvent);
 }
-void MidiTrack::pushChangeVolume(byte newVolume, byte channel)
+void MidiTrack::pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel)
 {
     MidiSignal *volumeChange=new MidiSignal;
 
@@ -727,28 +727,28 @@ void MidiTrack::pushChangeVolume(byte newVolume, byte channel)
     volumeChange->byte0 = 0xB0 | channel;
     volumeChange->param1 = 7; //volume change
     volumeChange->param2 = newVolume;
-    byte timeZero = 0;
+    std::uint8_t timeZero = 0;
     volumeChange->time.push_back(timeZero);
 
     this->push_back(volumeChange);
 }
-void MidiTrack::pushChangePanoram(byte newPanoram, byte channel)
+void MidiTrack::pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel)
 {
     MidiSignal *panoramChange=new MidiSignal;
 
     panoramChange->byte0 = 0xB0 | channel;
     panoramChange->param1 = 0xA; //change panoram
     panoramChange->param2 = newPanoram;
-    byte timeZero = 0;
+    std::uint8_t timeZero = 0;
     panoramChange->time.push_back(timeZero);
 
     this->push_back(panoramChange);
 }
-void MidiTrack::pushVibration(byte channel, byte depth, short int step, byte stepsCount)
+void MidiTrack::pushVibration(std::uint8_t channel, std::uint8_t depth, short int step, std::uint8_t stepsCount)
 {
-    byte shiftDown = 64-depth;
-    byte shiftUp = 64+depth;
-    byte signalKey = 0xE0 + channel;
+    std::uint8_t shiftDown = 64-depth;
+    std::uint8_t shiftUp = 64+depth;
+    std::uint8_t signalKey = 0xE0 + channel;
 
     for (size_t vibroInd=0; vibroInd <stepsCount; ++vibroInd)
     {
@@ -761,10 +761,10 @@ void MidiTrack::pushVibration(byte channel, byte depth, short int step, byte ste
     MidiSignal *mSignalVibOn=new MidiSignal(signalKey,0,64,0);
     this->push_back(mSignalVibOn);
 }
-void MidiTrack::pushSlideUp(byte channel, byte shift, short int step, byte stepsCount)
+void MidiTrack::pushSlideUp(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount)
 {
-    byte pitchShift = 64;
-    byte signalKey = 0xE0 + channel;
+    std::uint8_t pitchShift = 64;
+    std::uint8_t signalKey = 0xE0 + channel;
 
     for (size_t slideInd=0; slideInd <stepsCount; ++slideInd)
     {
@@ -776,10 +776,10 @@ void MidiTrack::pushSlideUp(byte channel, byte shift, short int step, byte steps
     this->push_back(mSignalSlideOff);
 }
 
-void MidiTrack::pushSlideDown(byte channel, byte shift, short int step, byte stepsCount)
+void MidiTrack::pushSlideDown(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount)
 {
-    byte pitchShift = 64;
-    byte signalKey = 0xE0 + channel;
+    std::uint8_t pitchShift = 64;
+    std::uint8_t signalKey = 0xE0 + channel;
 
     for (size_t slideInd=0; slideInd <stepsCount; ++slideInd)
     {
@@ -791,7 +791,7 @@ void MidiTrack::pushSlideDown(byte channel, byte shift, short int step, byte ste
     this->push_back(mSignalSlideOff);
 }
 
-void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
+void MidiTrack::pushBend(short rOffset, void *bendP, std::uint8_t channel)
 {
     BendPoints *bend = (BendPoints*)bendP;
 
@@ -818,8 +818,8 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
 
         if (shiftH != 0)
         {
-            byte lastShift = 64+(lastH*32)/4; //decreased from 100 to 4
-            byte curShift = 64+(curH*32)/4; //next
+            std::uint8_t lastShift = 64+(lastH*32)/4; //decreased from 100 to 4
+            std::uint8_t curShift = 64+(curH*32)/4; //next
 
             if (midiLog)
             qDebug() <<"lastShiftPitch="<<lastShift<<"; curShiftPitch="<<curShift;
@@ -872,7 +872,7 @@ void MidiTrack::pushBend(short rOffset, void *bendP, byte channel)
     }
 
     //last point push
-    byte lastShift = 64+(lastH*32)/4; //decreased from 100
+    std::uint8_t lastShift = 64+(lastH*32)/4; //decreased from 100
     MidiSignal *mSignalBendLast=new MidiSignal(0xE0 | channel,0,lastShift, rAccum);
     this->push_back(mSignalBendLast);
     MidiSignal *mSignalBendClose=new MidiSignal(0xE0 | channel,0,64,0);
@@ -886,7 +886,7 @@ void MidiTrack::pushTremolo(short int rOffset)
 {
     short int slideStep = rOffset/40; //10 steps of 1/4
 
-    byte pitchShift = 64;
+    std::uint8_t pitchShift = 64;
     for (size_t slideInd=0; slideInd <10; ++slideInd)
     {
          MidiSignal *mSignalBend=new MidiSignal(0xE1,0,pitchShift,slideStep);
@@ -902,10 +902,10 @@ void MidiTrack::pushTremolo(short int rOffset)
     this->push_back(mSignalBendClose);
 }
 
-void MidiTrack::pushFadeIn(short int rOffset, byte channel)
+void MidiTrack::pushFadeIn(short int rOffset, std::uint8_t channel)
 {
 
-    byte newVolume = 27;
+    std::uint8_t newVolume = 27;
     short int fadeInStep = rOffset/20;
 
     MidiSignal *volumeChangeFirst=new MidiSignal(0xB0 | channel,7,newVolume,0);
@@ -935,14 +935,14 @@ void MidiTrack::pushEvent47()
 
     MidiSignal *event47=new MidiSignal(0xff,47,0,0);
 
-    byte lenZero = 0;
+    std::uint8_t lenZero = 0;
     event47->metaStore.metaLen.push_back(lenZero);
 
     this->push_back(event47);
 }
 
 //CALC helpers
-short int MidiTrack::calcRhythmDetail(byte RDValue, short int rhythmOffset)
+short int MidiTrack::calcRhythmDetail(std::uint8_t RDValue, short int rhythmOffset)
 {
     short int rOffset = rhythmOffset;
     if (RDValue == 3) //truplet
@@ -979,28 +979,28 @@ short int MidiTrack::calcRhythmDetail(byte RDValue, short int rhythmOffset)
     return rOffset;
 }
 
-byte MidiTrack::calcMidiPanoramGP(byte pan)
+std::uint8_t MidiTrack::calcMidiPanoramGP(std::uint8_t pan)
 {
     if (midiLog)  qDebug() << "Panoram value = "<<pan;
-    byte midiPanoram = pan*8;
+    std::uint8_t midiPanoram = pan*8;
     if (midiPanoram>=128) midiPanoram=128;
     return midiPanoram;
 }
-byte MidiTrack::calcMidiVolumeGP(byte vol)
+std::uint8_t MidiTrack::calcMidiVolumeGP(std::uint8_t vol)
 {
     if (midiLog)  qDebug() <<"Volume is "<<vol;
-    byte midiVolume = vol*8;
+    std::uint8_t midiVolume = vol*8;
     if (midiVolume >= 128) midiVolume=128;
     return midiVolume;
 }
-byte MidiTrack::calcPalmMuteVelocy(byte vel)
+std::uint8_t MidiTrack::calcPalmMuteVelocy(std::uint8_t vel)
 {
-    byte outputVelocy = vel;
-    byte decreaceVelocy = vel/5;
+    std::uint8_t outputVelocy = vel;
+    std::uint8_t decreaceVelocy = vel/5;
     outputVelocy -= decreaceVelocy;
     return outputVelocy;
 }
-byte MidiTrack::calcLeggatoVelocy(byte vel)
+std::uint8_t MidiTrack::calcLeggatoVelocy(std::uint8_t vel)
 {
     return calcPalmMuteVelocy(vel);//for possible difference
 }
@@ -1017,9 +1017,9 @@ void MidiTrack::add(MidiSignal &val)
 */
 
 
-bool MidiTrack::addSignalsFromNoteOn(Note *note, byte channel)
+bool MidiTrack::addSignalsFromNoteOn(Note *note, std::uint8_t channel)
 {
-    byte noteState = note->getState();
+    std::uint8_t noteState = note->getState();
 
     if ((noteState==Note::leegNote) ||
             (noteState==Note::leegedLeeg))
@@ -1029,14 +1029,14 @@ bool MidiTrack::addSignalsFromNoteOn(Note *note, byte channel)
     }
 
 
-    byte fret = note->getFret();
-    byte stringN = note->getStringNumber();
-    byte midiNote = fret + tunes[stringN-1];
+    std::uint8_t fret = note->getFret();
+    std::uint8_t stringN = note->getStringNumber();
+    std::uint8_t midiNote = fret + tunes[stringN-1];
 
-    byte volume = note->getVolume();
-    byte midiVelocy = volume*15; //calcMidiVolumeGP(volume);
+    std::uint8_t volume = note->getVolume();
+    std::uint8_t midiVelocy = volume*15; //calcMidiVolumeGP(volume);
 
-    byte lastVelocy = 95; //not real last one yet
+    std::uint8_t lastVelocy = 95; //not real last one yet
 
     if (midiVelocy > 127)
         midiVelocy = 127;
@@ -1087,7 +1087,7 @@ bool MidiTrack::addSignalsFromNoteOn(Note *note, byte channel)
     return true;
 }
 
-bool MidiTrack::addPostEffects(Beat *beat, byte channel)
+bool MidiTrack::addPostEffects(Beat *beat, std::uint8_t channel)
 {
     //POST-effects
 
@@ -1095,15 +1095,15 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
     {
         Note *note = beat->at(i);
 
-        byte fret = note->getFret();
-        byte stringN = note->getStringNumber();
-        byte midiNote = fret + tunes[stringN-1];
+        std::uint8_t fret = note->getFret();
+        std::uint8_t stringN = note->getStringNumber();
+        std::uint8_t midiNote = fret + tunes[stringN-1];
 
-        byte volume = note->getVolume();
-        byte midiVelocy = 95; //calcMidiVolumeGP(volume);
+        std::uint8_t volume = note->getVolume();
+        std::uint8_t midiVelocy = 95; //calcMidiVolumeGP(volume);
 
 
-        byte noteState = note->getState();
+        std::uint8_t noteState = note->getState();
 
         if (noteState == Note::deadNote) //dead note
         {
@@ -1217,14 +1217,14 @@ bool MidiTrack::addPostEffects(Beat *beat, byte channel)
     }
 }
 
-bool MidiTrack::addSignalsFromNoteOff(Note *note, byte channel)
+bool MidiTrack::addSignalsFromNoteOff(Note *note, std::uint8_t channel)
 {
     if (note->effPack.get(18)) //let ring
         //skip let ring
         return false;
 
 
-    byte noteState = note->getState();
+    std::uint8_t noteState = note->getState();
 
     if ((noteState == Note::leegedLeeg)||
             (noteState == Note::leegedNormal)) //refact note stat
@@ -1239,12 +1239,12 @@ bool MidiTrack::addSignalsFromNoteOff(Note *note, byte channel)
 
 
 
-    byte fret = note->getFret();
-    byte stringN = note->getStringNumber();
-    byte midiNote = fret + tunes[stringN-1];
+    std::uint8_t fret = note->getFret();
+    std::uint8_t stringN = note->getStringNumber();
+    std::uint8_t midiNote = fret + tunes[stringN-1];
 
-    byte volume = note->getVolume();
-    byte midiVelocy = 80; //calcMidiVolumeGP(volume);
+    std::uint8_t volume = note->getVolume();
+    std::uint8_t midiVelocy = 80; //calcMidiVolumeGP(volume);
 
 
     if (note->effPack.inRange(11,16))
@@ -1268,9 +1268,9 @@ bool MidiTrack::addSignalsFromNoteOff(Note *note, byte channel)
     return true;
 }
 
-bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
+bool MidiTrack::addSignalsFromBeat(Beat *beat, std::uint8_t channel, short specialR)
 {
-    byte dur,det,dot; //rhythm value
+    std::uint8_t dur,det,dot; //rhythm value
 
     dur = beat->getDuration();
     det = beat->getDurationDetail();
@@ -1281,7 +1281,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
     int rOffset = 0;
     if (specialR == 0)
     {
-      byte powOfTwo = 6 - dur;
+      std::uint8_t powOfTwo = 6 - dur;
        short int power2 = 2<<(powOfTwo-1);//-1 because 2 is 1 pow itself
         rOffset = baseAmount*power2/4;
 
@@ -1345,9 +1345,9 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
               if (changes->at(indexChange).changeType==2)
               {
-                  byte newVol = changes->at(indexChange).changeValue;
+                  std::uint8_t newVol = changes->at(indexChange).changeValue;
 
-                  byte midiNewVolume = newVol*8;
+                  std::uint8_t midiNewVolume = newVol*8;
                   if (midiNewVolume > 127)
                       midiNewVolume = 127;
 
@@ -1356,9 +1356,9 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
 
               if (changes->at(indexChange).changeType==3)
               {
-                    byte newPan = changes->at(indexChange).changeValue;
+                    std::uint8_t newPan = changes->at(indexChange).changeValue;
 
-                    byte midiNewPanoram = newPan*8;
+                    std::uint8_t midiNewPanoram = newPan*8;
                     if (midiNewPanoram > 127)
                         midiNewPanoram = 127;
 
@@ -1418,7 +1418,7 @@ bool MidiTrack::addSignalsFromBeat(Beat *beat, byte channel, short specialR)
     }
 }
 
-bool MidiTrack::fromTrack(Track *track, byte channel, size_t shiftCursorBar)
+bool MidiTrack::fromTrack(Track *track, std::uint8_t channel, size_t shiftCursorBar)
 {
  //FIRST SET instruments pan volume
 
@@ -1434,15 +1434,15 @@ bool MidiTrack::fromTrack(Track *track, byte channel, size_t shiftCursorBar)
  }
  */
 
- byte midiPan = calcMidiPanoramGP(track->getPan());
- byte midiVol = calcMidiVolumeGP(track->getVolume());
+ std::uint8_t midiPan = calcMidiPanoramGP(track->getPan());
+ std::uint8_t midiVol = calcMidiVolumeGP(track->getVolume());
 
  //byte channel = 0;
  pushChangeInstrument(instrument,channel);
  pushChangePanoram(midiPan,channel);
  pushChangeVolume(midiVol,channel);
 
- byte theTunes[11];
+ std::uint8_t theTunes[11];
  for (int i = 0; i < 10; ++i)
      if (track->isDrums())
          theTunes[i] = 0;
@@ -1459,7 +1459,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, size_t shiftCursorBar)
      Bar *bar = track->timeLoop.at(i);
 
      //BAR STATUS
-     byte completeStatus = bar->getCompleteStatus();
+     std::uint8_t completeStatus = bar->getCompleteStatus();
 
      size_t barLen = bar->size();
      short specialLast = 0;
@@ -1505,7 +1505,7 @@ bool MidiTrack::fromTrack(Track *track, byte channel, size_t shiftCursorBar)
 }
 
 //new fun
-void MidiTrack::closeLetRings(byte channel)
+void MidiTrack::closeLetRings(std::uint8_t channel)
 {
     for (int i = 0; i < 10; ++i)
     {
@@ -1516,7 +1516,7 @@ void MidiTrack::closeLetRings(byte channel)
     }
 }
 
-void MidiTrack::closeLetRing(byte stringN, byte channel)
+void MidiTrack::closeLetRing(std::uint8_t stringN, std::uint8_t channel)
 {
     if (stringN > 8)
     {
@@ -1524,17 +1524,17 @@ void MidiTrack::closeLetRing(byte stringN, byte channel)
         return;
     }
 
-    byte ringNote = ringRay[stringN];
+    std::uint8_t ringNote = ringRay[stringN];
     ringRay[stringN]=255;
 
-    byte ringVelocy=80;
+    std::uint8_t ringVelocy=80;
 
     if (ringNote != 255)
     pushNoteOff(ringNote,ringVelocy,channel);
 
 }
 
-void MidiTrack::openLetRing(byte stringN, byte midiNote, byte velocity, byte channel)
+void MidiTrack::openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
 {
     if (stringN > 8)
     {
@@ -1565,14 +1565,14 @@ void MidiTrack::finishIncomplete(short specialR)
     accumulate(preRValue);
 }
 
-void MidiTrack::pushNoteOn(byte midiNote, byte velocity, byte channel)
+void MidiTrack::pushNoteOn(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
 {
     MidiSignal *noteOn=new MidiSignal(0x90 | channel, midiNote, velocity,accum);
     takeAccum();
     push_back(noteOn);
 }
 
-void MidiTrack::pushNoteOff(byte midiNote, byte velocity, byte channel)
+void MidiTrack::pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
 {
     MidiSignal *noteOn=new MidiSignal(0x80 | channel, midiNote, velocity,accum);
     takeAccum();
@@ -1583,11 +1583,11 @@ bool MidiTrack::checkForLeegFails()
 {
 }
 
-void MidiTrack::startLeeg(byte stringN, byte channel)
+void MidiTrack::startLeeg(std::uint8_t stringN, std::uint8_t channel)
 {
 }
 
-void MidiTrack::stopLeeg(byte stringN, byte channel)
+void MidiTrack::stopLeeg(std::uint8_t stringN, std::uint8_t channel)
 {
 }
 
@@ -1753,7 +1753,7 @@ bool MidiFile::fromTab(Tab *tab, size_t shiftTheCursor)
     for (size_t trackIndex = 0; trackIndex < tabLen; ++trackIndex)
     {
         Track *currentTrack = tab->at(trackIndex);
-        byte trackStatus = currentTrack->getStatus();
+        std::uint8_t trackStatus = currentTrack->getStatus();
 
         if (trackStatus != 2)
             indecesToSkip.push_back(trackIndex);
@@ -1777,7 +1777,7 @@ bool MidiFile::fromTab(Tab *tab, size_t shiftTheCursor)
 
         Track *track = tab->at(i);
 
-        byte trackStatus = track->getStatus();
+        std::uint8_t trackStatus = track->getStatus();
 
         if (trackStatus==1) //mute
             continue;

@@ -19,7 +19,7 @@ EffectsPack Note::getEffects()
     return effPack;
 }
 
-void Note::setEffect(byte eff)
+void Note::setEffect(std::uint8_t eff)
 {
     if (eff==0)
     {

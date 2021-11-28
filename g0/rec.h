@@ -97,8 +97,8 @@ public:
     Bar *innerBar;
 
 
-    byte runRythmicAnalyse();
-    byte runMelodicAnalyse();
+    std::uint8_t runRythmicAnalyse();
+    std::uint8_t runMelodicAnalyse();
 
     bool loadFile(std::string fileName, std::vector<int> *params);
 

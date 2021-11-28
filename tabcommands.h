@@ -142,17 +142,17 @@ class Bar;
 
 class SingleCommand
 {
-    byte commandType;
+    std::uint8_t commandType;
 
-    byte commandValue;
-    byte commandValue2;
+    std::uint8_t commandValue;
+    std::uint8_t commandValue2;
     //position
 
     //yet set exceed - optimize to file format
-    byte track;
+    std::uint8_t track;
     int bar;
     int beat;
-    byte string; //note
+    std::uint8_t string; //note
 
 public:
 
@@ -181,23 +181,23 @@ public:
         storedNotes(0),outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
     {}
 
-    SingleCommand(byte newType, byte newValue=0):
+    SingleCommand(std::uint8_t newType, std::uint8_t newValue=0):
         commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0),
         storedNotes(0),outerPtr(0),outerPtrEnd(0),startBar(0),endBar(0)
     {
     }
 
-    void setType(byte newType) { commandType = newType; }
-    byte getType() { return commandType; }
+    void setType(std::uint8_t newType) { commandType = newType; }
+    std::uint8_t getType() { return commandType; }
 
-    void setValue(byte newValue) { commandValue = newValue; }
-    byte getValue() { return commandValue; }
+    void setValue(std::uint8_t newValue) { commandValue = newValue; }
+    std::uint8_t getValue() { return commandValue; }
 
-    void setValue2(byte newValue) { commandValue2 = newValue; }
-    byte getValue2() { return commandValue2; }
+    void setValue2(std::uint8_t newValue) { commandValue2 = newValue; }
+    std::uint8_t getValue2() { return commandValue2; }
 
 
-    void setPosition(byte trackN, int barN, int beatN, byte stringN=255)
+    void setPosition(std::uint8_t trackN, int barN, int beatN, std::uint8_t stringN=255)
     {
         track = trackN;
         bar = barN;
@@ -205,10 +205,10 @@ public:
         string = stringN;
     }
 
-    byte getTrackNum() { return track; }
+    std::uint8_t getTrackNum() { return track; }
     int getBarNum() { return bar; }
     int getBeatNum() { return beat; }
-    byte getStringNum() { return string; }
+    std::uint8_t getStringNum() { return string; }
 
 };
 

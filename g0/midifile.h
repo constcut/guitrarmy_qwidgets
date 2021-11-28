@@ -14,7 +14,7 @@ class Note;
 
 
 //protected looks great but should be designed for manual use
-class VariableInt : public std::vector<byte> //or public, or fullfit
+class VariableInt : public std::vector<std::uint8_t> //or public, or fullfit
 {
 public:
     VariableInt &operator =(VariableInt &v) 
@@ -47,12 +47,12 @@ struct MidiSignal
     //for each of type
 	//byte type; //replace with getEventType()
     //byte channel; //replace with getChannel()
-	byte byte0;
+    std::uint8_t byte0;
 	//for the normal events
-	byte param1; //and for meta event(b0==0xff) here will lay type 
-    byte param2;
+    std::uint8_t param1; //and for meta event(b0==0xff) here will lay type
+    std::uint8_t param2;
 
-    class ByteBufer : public std::vector<byte>
+    class ByteBufer : public std::vector<std::uint8_t>
 	{
 	};
 
@@ -71,16 +71,16 @@ struct MidiSignal
     size_t writeStream(std::ofstream &ofile, bool skip=false);
     bool skipThat();
 		
-	byte getEventType()
+    std::uint8_t getEventType()
 	{
-        byte eventType = byte0 & (0xf0);	// (16 + 32 + 64 + 128);
+        std::uint8_t eventType = byte0 & (0xf0);	// (16 + 32 + 64 + 128);
 		eventType >>= 4;
 		return eventType;
 	}
 	
-	byte getChannel()
+    std::uint8_t getChannel()
 	{
-		byte midiChannel = byte0 & (0xf);	// (0x1 + 0x2 + 0x4 + 0x8)
+        std::uint8_t midiChannel = byte0 & (0xf);	// (0x1 + 0x2 + 0x4 + 0x8)
 		return midiChannel;
 	}
 	
@@ -99,7 +99,7 @@ struct MidiSignal
 	void printToStream(std::ostream &stream);
     size_t calcSize(bool skip=false);
 
-    MidiSignal(byte b0, byte b1, byte b2, size_t timeShift);
+    MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2, size_t timeShift);
     MidiSignal(){absValue=0;}
 
 protected:
@@ -145,66 +145,66 @@ public:
 	//ul writeStream(AF ile &ofile);
 	//ul readStream(AF ile &ifile); //missing from refactoing
 
-    bool fromTrack(Track *track, byte channel=0, size_t shiftCursorBar=0);
+    bool fromTrack(Track *track, std::uint8_t channel=0, size_t shiftCursorBar=0);
 
     //void add(MidiSignal &val);
 
     //HELPERS functions from AMUSIC generation
 
     //no time versions
-    void pushChangeInstrument(byte newInstr, byte channel, size_t timeShift=0);
+    void pushChangeInstrument(std::uint8_t newInstr, std::uint8_t channel, size_t timeShift=0);
     void pushChangeBPM(int bpm, size_t timeShift=0); //same way others
-    void pushChangeVolume(byte newVolume, byte channel);
-    void pushChangePanoram(byte newPanoram, byte channel);
+    void pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel);
+    void pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel);
 
-    void pushMetrSignature(byte num, byte den, size_t timeShift, byte metr=24, byte perQuat=8);
+    void pushMetrSignature(std::uint8_t num, std::uint8_t den, size_t timeShift, std::uint8_t metr=24, std::uint8_t perQuat=8);
 
-    void pushVibration(byte channel, byte depth, short int step, byte stepsCount=3);
-    void pushSlideUp(byte channel, byte shift, short int step, byte stepsCount=8);
-    void pushSlideDown(byte channel, byte shift, short int step, byte stepsCount=8);
+    void pushVibration(std::uint8_t channel, std::uint8_t depth, short int step, std::uint8_t stepsCount=3);
+    void pushSlideUp(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
+    void pushSlideDown(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
 
-    void pushBend(short int rOffset, void *bendP, byte channel); //yet deadcoded one
+    void pushBend(short int rOffset, void *bendP, std::uint8_t channel); //yet deadcoded one
     void pushTremolo(short int rOffset); //yet deadcoded one
 
-    void pushFadeIn(short int rOffset, byte channel);
+    void pushFadeIn(short int rOffset, std::uint8_t channel);
 
 
     void pushEvent47();
 
     //END of HELPERS
 
-    short int calcRhythmDetail(byte RDValue, short int rhythmOffset);
-    byte calcMidiPanoramGP(byte pan); //GUITAR P OPTION
-    byte calcMidiVolumeGP(byte vol); //GUITAR P OPTION
-    byte calcPalmMuteVelocy(byte vel);
-    byte calcLeggatoVelocy(byte vel);
+    short int calcRhythmDetail(std::uint8_t RDValue, short int rhythmOffset);
+    std::uint8_t calcMidiPanoramGP(std::uint8_t pan); //GUITAR P OPTION
+    std::uint8_t calcMidiVolumeGP(std::uint8_t vol); //GUITAR P OPTION
+    std::uint8_t calcPalmMuteVelocy(std::uint8_t vel);
+    std::uint8_t calcLeggatoVelocy(std::uint8_t vel);
 
 protected:
 
     int accum;
-    byte tunes[10];
-    byte ringRay[10];
+    std::uint8_t tunes[10];
+    std::uint8_t ringRay[10];
 
     ///! CHENNELS FOR RING RAY
 
-    bool addSignalsFromNoteOn(Note *note, byte channel);
-    bool addSignalsFromNoteOff(Note *note, byte channel);
+    bool addSignalsFromNoteOn(Note *note, std::uint8_t channel);
+    bool addSignalsFromNoteOff(Note *note, std::uint8_t channel);
 
-    bool addPostEffects(Beat *beat, byte channel);
+    bool addPostEffects(Beat *beat, std::uint8_t channel);
 
-    bool addSignalsFromBeat(Beat *beat, byte channel, short specialR=0);
+    bool addSignalsFromBeat(Beat *beat, std::uint8_t channel, short specialR=0);
 
-    void closeLetRings(byte channel);		//-
-    void openLetRing(byte stringN, byte midiNote, byte velocity, byte channel); //-
-    void closeLetRing(byte stringN, byte channel);  //-
+    void closeLetRings(std::uint8_t channel);		//-
+    void openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
+    void closeLetRing(std::uint8_t stringN, std::uint8_t channel);  //-
 
     void finishIncomplete(short specialR); //-
 
-    void pushNoteOn(byte midiNote, byte velocity, byte channel); //acummulated already inside
-    void pushNoteOff(byte midiNote, byte velocity, byte channel); //-
+    void pushNoteOn(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //acummulated already inside
+    void pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
 
-    void startLeeg(byte stringN, byte channel);
-    void stopLeeg(byte stringN, byte channel);
+    void startLeeg(std::uint8_t stringN, std::uint8_t channel);
+    void stopLeeg(std::uint8_t stringN, std::uint8_t channel);
 
     bool checkForLeegFails(); //-
 
@@ -214,9 +214,9 @@ public:
     int getAccum() { return accum; }
     void takeAccum() { accum=0; }
 
-    void setTunes(byte *from)
+    void setTunes(std::uint8_t *from)
     {
-        for (byte i=0; i < 10; ++i)
+        for (std::uint8_t i=0; i < 10; ++i)
         {
             tunes[i]=from[i];
             ringRay[i]=255;

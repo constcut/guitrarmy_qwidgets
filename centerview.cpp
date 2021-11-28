@@ -1215,7 +1215,7 @@ void CenterView::pushForceKey(std::string keyevent)
             fileHead[4] == 'H')
             {
                 //gtp 2-3-4-5
-                byte version = fileHead[21]-48;
+                std::uint8_t version = fileHead[21]-48;
                 QString tail = "TP";
 
                 if (version==3) tail += "3";

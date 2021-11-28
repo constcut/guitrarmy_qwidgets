@@ -271,7 +271,7 @@ void TabView::draw(QPainter *painter)
            if (trackIndex == pTab->getCurrentTrack())
                changeColor(CONF_PARAM("colors.default"), painter);
 
-           byte trackStat = pTab->at(trackIndex)->getStatus();
+           std::uint8_t trackStat = pTab->at(trackIndex)->getStatus();
            if (trackStat==1)
             painter->drawText(9,yPos+3,"m");
            else
@@ -316,7 +316,7 @@ void TabView::draw(QPainter *painter)
                            rep = "|:";
                        if (reprize == 2)
                        {
-                           byte repTimes = cB->getRepeatTimes();
+                           std::uint8_t repTimes = cB->getRepeatTimes();
                            if (repTimes != 2)
                                rep += std::to_string(repTimes);
 
@@ -343,18 +343,18 @@ void TabView::draw(QPainter *painter)
            painter->drawText(border,10+yPos,sX.c_str());
 
            sX.clear();
-           byte vol =  tr->getVolume();//pTab->GpCompMidiChannels[port*chan].volume; //tr->getVolume();
+           std::uint8_t vol =  tr->getVolume();//pTab->GpCompMidiChannels[port*chan].volume; //tr->getVolume();
            sX = "vol " + std::to_string(vol);
            painter->drawText(70,10+yPos,sX.c_str());
 
            sX.clear();
-           byte pan =  tr->getPan();//pTab->GpCompMidiChannels[port*chan].balance;//tr->getPan();
+           std::uint8_t pan =  tr->getPan();//pTab->GpCompMidiChannels[port*chan].balance;//tr->getPan();
            int intPan = pan - 7;
            sX = "pan " + std::to_string(intPan);
            painter->drawText(110,10+yPos,sX.c_str());
 
            sX.clear();
-           byte ins =  tr->getInstrument();//pTab->GpCompMidiChannels[port*chan].instrument;//tr->getPan();
+           std::uint8_t ins =  tr->getInstrument();//pTab->GpCompMidiChannels[port*chan].instrument;//tr->getPan();
 
            if (tr->isDrums() == false)
             sX = std::to_string(ins) + "i";
@@ -806,7 +806,7 @@ void TrackView::setUI()
         tabParrent->getMaster()->SetButton(3,"open tab view",640+butShift,20,90,15,"tabview");
         tabParrent->getMaster()->SetButton(4,"play",570+butShift,20,45,15,"playMidi");
 
-        byte soloMute = pTrack->getStatus();
+        std::uint8_t soloMute = pTrack->getStatus();
         tabParrent->getMaster()->setComboBox(5,"mutesolo",510+centerX,5,50,30,soloMute);
 
         tabParrent->getMaster()->setComboBox(6,"pan",570+centerX,5,50,30,pTrack->getPan());
@@ -852,8 +852,8 @@ void TrackView::draw(QPainter *painter)
 
     barsPull.clear(); //not always - to optimize
 
-    byte lastNum = 0;
-    byte lastDen = 0;
+    std::uint8_t lastNum = 0;
+    std::uint8_t lastDen = 0;
 
     if (pTrack->isDrums())
     {
@@ -865,8 +865,8 @@ void TrackView::draw(QPainter *painter)
     {
         Bar *curBar = track1->at(i);
 
-        byte curNum = curBar->getSignNum();
-        byte curDen = curBar->getSignDenum();
+        std::uint8_t curNum = curBar->getSignNum();
+        std::uint8_t curDen = curBar->getSignDenum();
         bool sameSign = true;
 
         static bool alwaysShowSign = CONF_PARAM("TrackView.alwaysShowBarSign") == "1";
@@ -925,7 +925,7 @@ void TrackView::draw(QPainter *painter)
         }
 
         bView.setShifts(xSh,ySh);
-        byte barCompleteStatus = curBar->getCompleteStatus(); //avoid recalculations
+        std::uint8_t barCompleteStatus = curBar->getCompleteStatus(); //avoid recalculations
 
         if ( i == cursor ) {
             changeColor(CONF_PARAM("colors.curBar"), painter);
@@ -992,7 +992,7 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 
 
 ///////////Bars------------------------------
-void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte durDet, int midiNote,
+void BarView::drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
                   int x1, int y1)
 {
     int xPoint = x1;
@@ -1192,7 +1192,7 @@ void BarView::drawMidiNote(QPainter *painter, byte noteDur, byte dotted, byte du
 }
 
 
-void BarView::drawNote(QPainter *painter, byte noteDur, byte dotted, byte durDet,
+void BarView::drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet,
                        int x1, int y1)
 {
     int xPoint = x1;
@@ -1528,7 +1528,7 @@ void BarView::draw(QPainter *painter)
 
                 std::string noteVal;
 
-                byte noteState = curNote->getState();
+                std::uint8_t noteState = curNote->getState();
 
                 if (noteState != 3) //not x note
                 {
@@ -1646,7 +1646,7 @@ void BarView::draw(QPainter *painter)
         if (curBeat->getDotted())
             durVal += ".";
 
-        byte trump = curBeat->getDurationDetail();
+        std::uint8_t trump = curBeat->getDurationDetail();
         if (trump)
             durVal += "[" + std::to_string( trump );
 

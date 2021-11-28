@@ -5,7 +5,7 @@
 bool barLog = false;
 
 
-int translateDenum(byte den) //TODO static?
+int translateDenum(std::uint8_t den) //TODO static?
 {
     switch (den)
     {
@@ -20,7 +20,7 @@ int translateDenum(byte den) //TODO static?
     return 0;
 }
 
-int translaeDuration(byte dur)
+int translaeDuration(std::uint8_t dur)
 {
     switch (dur)
     {
@@ -35,7 +35,7 @@ int translaeDuration(byte dur)
     return 0;
 }
 
-int updateDurationWithDetail(byte detail, int base)
+int updateDurationWithDetail(std::uint8_t detail, int base)
 {
     int result = base;
 
@@ -105,12 +105,12 @@ double Bar::getCompleteAbs()
 //REPLACE with name CALCULATE COMPLETE status
 //and add just getCompleteStatus
 
-byte Bar::getCompleteStatus()
+std::uint8_t Bar::getCompleteStatus()
 {
-    byte completeStatus = 255; //calculation failed
+    std::uint8_t completeStatus = 255; //calculation failed
 
-    byte thatNum = getSignNum();
-    byte thatDen = getSignDenum();
+    std::uint8_t thatNum = getSignNum();
+    std::uint8_t thatDen = getSignDenum();
 
     int barAbs = translateDenum(thatDen)*thatNum;
 
@@ -123,9 +123,9 @@ byte Bar::getCompleteStatus()
 
     for (size_t i = 0; i < barSize; ++i)
     {
-       byte beatDur = at(i)->getDuration();
-       byte durDetail = at(i)->getDurationDetail();
-       byte isDotted = at(i)->getDotted();
+       std::uint8_t beatDur = at(i)->getDuration();
+       std::uint8_t durDetail = at(i)->getDurationDetail();
+       std::uint8_t isDotted = at(i)->getDotted();
 
        int localAbs = translaeDuration(beatDur);
 
@@ -212,7 +212,7 @@ byte Bar::getCompleteStatus()
 
 ////////////Count bar operations ///////////////////////////////////
 
-void Bar::countUsedSigns(byte &numGet, byte &denumGet)
+void Bar::countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet)
 {
     size_t num = 0;
     size_t denum = 32;

@@ -73,7 +73,7 @@ size_t Track::connectNotes() //for let ring
        {
            Note *curNote = curBeat->at(noteI);
 
-           byte stringN = curNote->getStringNumber();
+           std::uint8_t stringN = curNote->getStringNumber();
            Note *prevNote = ringRay[stringN];
            size_t prevInd = indRay[stringN];
 
@@ -122,7 +122,7 @@ size_t Track::connectNotes() //for let ring
 
 
 
-           byte noteState = curNote->getState();
+           std::uint8_t noteState = curNote->getState();
 
            if (noteState == 2)
            if (prevNote)
@@ -131,7 +131,7 @@ size_t Track::connectNotes() //for let ring
                    curNote->setState(3); //dead it
                else
                {
-                   byte prevFret = prevNote->getFret();
+                   std::uint8_t prevFret = prevNote->getFret();
                    if (trackLog)
                    qDebug() << "Prev found "<<prevNote->getStringNumber()<<
                           " "<<prevFret;
@@ -158,8 +158,8 @@ size_t Track::connectNotes() //for let ring
            else
                curNote->setState(3); //dead it
 
-           byte newNoteState = curNote->getState();
-           byte nowFret = curNote->getFret();
+           std::uint8_t newNoteState = curNote->getState();
+           std::uint8_t nowFret = curNote->getFret();
            if (nowFret == 63)
                curNote->setState(3); //dead it
 
@@ -311,8 +311,8 @@ size_t Track::connectBars()
     if (size() == 0)
         return 0;
 
-    byte currentNum = at(0)->getSignNum();
-    byte currentDen = at(0)->getSignDenum();
+    std::uint8_t currentNum = at(0)->getSignNum();
+    std::uint8_t currentDen = at(0)->getSignDenum();
 
 
     size_t trackLen = size();
@@ -322,8 +322,8 @@ size_t Track::connectBars()
         at(barsI)->setPrev(at(barsI-1));
         at(barsI-1)->setNext(at(barsI));
 
-        byte thatNum = at(barsI)->getSignNum();
-        byte thatDen = at(barsI)->getSignDenum();
+        std::uint8_t thatNum = at(barsI)->getSignNum();
+        std::uint8_t thatDen = at(barsI)->getSignDenum();
 
         if (thatNum==0)
             at(barsI)->setSignNum(currentNum);
@@ -543,13 +543,13 @@ size_t Track::connectTimeLoop()
 
 
 //REFACT - cover under Track operations
-typedef std::map<byte,PolyBar> AltRay;
-typedef std::map<byte,std::vector<int> > AltRayInd;
+typedef std::map<std::uint8_t,PolyBar> AltRay;
+typedef std::map<std::uint8_t,std::vector<int> > AltRayInd;
 
 void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t indA, size_t indB)
 {
     //possible we will need value for the default repeat
-    byte currentAlt = 0;
+    std::uint8_t currentAlt = 0;
 
     //int normalW = (int)b - (int)a;
     //int backW = (int)a - (int)b;
@@ -565,8 +565,8 @@ void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t i
        if (barI->getAltRepeat() != 0)
            currentAlt = barI->getAltRepeat();
 
-       for (byte i=0; i < 8; ++i) {
-           byte altMaskI = currentAlt & (1<<i);
+       for (std::uint8_t i=0; i < 8; ++i) {
+           std::uint8_t altMaskI = currentAlt & (1<<i);
            if (altMaskI) {
                altRay[i].push_back(barI);
                //altRayInd[i].push_back()
@@ -576,8 +576,8 @@ void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t i
     }
 
     currentAlt=b->getAltRepeat();
-    for (byte i=0; i < 8; ++i) {
-        byte altMaskI = currentAlt & (1<<i);
+    for (std::uint8_t i=0; i < 8; ++i) {
+        std::uint8_t altMaskI = currentAlt & (1<<i);
         if (altMaskI) {
                altRay[i].push_back(b);
                altRayInd[i].push_back(indB);
@@ -605,7 +605,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
     { //no alt ending in begin-end
         if (tailBegin == 0)
         { //no alt at all
-            for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
+            for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
             {
                 size_t localIndex = 0;
                 for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
@@ -624,7 +624,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
            createAltRay(altRay, altRayInd, tailBegin,tailEnd,tailBeginIndex,tailEndIndex);
            //there is a tail after
 
-           for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
+           for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
            {
                size_t localIndex = 0;
                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
@@ -670,7 +670,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
            createAltRay(altRay, altRayInd, preTail,tailEnd,preTailIndex,tailEndIndex);
        }
 
-           for (byte i = 0; i < endRepeat->getRepeatTimes(); ++i)
+           for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
            {
                size_t localIndex = 0;
                for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext())

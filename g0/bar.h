@@ -5,9 +5,9 @@
 #include "beat.h"
 
 
-int translateDenum(byte den);
-int translaeDuration(byte dur);
-int updateDurationWithDetail(byte detail, int base);
+int translateDenum(std::uint8_t den);
+int translaeDuration(std::uint8_t dur);
+int updateDurationWithDetail(std::uint8_t detail, int base);
 
 
 
@@ -61,52 +61,52 @@ public:
 
 protected:
 
-    byte signatureNum;
-    byte signatureDenum;
+    std::uint8_t signatureNum;
+    std::uint8_t signatureDenum;
 
-    byte repeat;//reprease options
-    byte repeatTimes;
-    byte altRepeat;
+    std::uint8_t repeat;//reprease options
+    std::uint8_t repeatTimes;
+    std::uint8_t altRepeat;
 
     //GP comp - marker, tonality
-    byte gpCompTonality;
+    std::uint8_t gpCompTonality;
     std::string markerText;
     size_t markerColor; //white byte == 1 if empty
 
-    byte completeStatus;
+    std::uint8_t completeStatus;
     short completeAbs;
     size_t completeIndex;
 
     public:
     //SET GET operations
 
-    void setSignNum(byte num) { signatureNum = num; }
-    void setSignDenum(byte denum) { signatureDenum = denum; }
+    void setSignNum(std::uint8_t num) { signatureNum = num; }
+    void setSignDenum(std::uint8_t denum) { signatureDenum = denum; }
 
-    byte getSignNum() { return signatureNum; }
-    byte getSignDenum() { return signatureDenum; }
+    std::uint8_t getSignNum() { return signatureNum; }
+    std::uint8_t getSignDenum() { return signatureDenum; }
 
     //!completeStatus !!! that should go private and opt
-    void countUsedSigns(byte &numGet, byte &denumGet);
+    void countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet);
 
-    byte getCompleteStatus();
+    std::uint8_t getCompleteStatus();
     double getCompleteAbs();
     size_t   getCompleteIndex();
 
-    void setRepeat(byte rValue, byte times=0)
+    void setRepeat(std::uint8_t rValue, std::uint8_t times=0)
     {
         if (rValue == 0) repeat = 0;
         else repeat |= rValue;
         if(times) repeatTimes=times;
     }
-    byte getRepeat() { return repeat; }
-    byte getRepeatTimes() { return repeatTimes; }
+    std::uint8_t getRepeat() { return repeat; }
+    std::uint8_t getRepeatTimes() { return repeatTimes; }
 
-    void setAltRepeat(byte number) { altRepeat = number; }
-    byte getAltRepeat() { return altRepeat; }
+    void setAltRepeat(std::uint8_t number) { altRepeat = number; }
+    std::uint8_t getAltRepeat() { return altRepeat; }
 
-    void setGPCOMPTonality(byte tValue) { gpCompTonality = tValue; }
-    byte getGPCOMPTonality() { return gpCompTonality; }
+    void setGPCOMPTonality(std::uint8_t tValue) { gpCompTonality = tValue; }
+    std::uint8_t getGPCOMPTonality() { return gpCompTonality; }
 
     void setGPCOMPMarker(std::string &text, size_t color) { markerText = text; markerColor = color; }
     void getGPCOMPMarker(std::string &text, size_t &color) { text = markerText; color = markerColor; }

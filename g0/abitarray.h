@@ -9,7 +9,7 @@ class Package //TODO review
 {
 protected:
 
-    byte type;
+    std::uint8_t type;
     void *point;
 
 public:
@@ -17,8 +17,8 @@ public:
     Package();//:type(0),point(0){}
 
 
-    void setType(byte newType);// { type = newType; }
-    byte getType();// { return type; }
+    void setType(std::uint8_t newType);// { type = newType; }
+    std::uint8_t getType();// { return type; }
 
     void setPointer(void *newPoint);// { point = newPoint; }
     void *getPointer();// { return point; }
@@ -45,20 +45,20 @@ protected:
 public:
 
     ABitArray();
-    bool get(byte index);
-    void set(byte index, bool value);
+    bool get(std::uint8_t index);
+    void set(std::uint8_t index, bool value);
 
     size_t takeBits(){ return bits;}
     void putBits(size_t newBits) { bits = newBits; }
 
-    bool inRange(byte lowIndex, byte highIndex);
+    bool inRange(std::uint8_t lowIndex, std::uint8_t highIndex);
 
     void logIt();
 
     bool empty();
 
-    bool operator==(byte index);// { return get(index); }
-    bool operator!=(byte index);//
+    bool operator==(std::uint8_t index);// { return get(index); }
+    bool operator!=(std::uint8_t index);//
 
     void flush();
 
@@ -69,13 +69,13 @@ class EffectsPack : public ABitArray
 {
 protected:
 
-    std::map<byte,Package> packMap;
+    std::map<std::uint8_t,Package> packMap;
 
 public:
 
-    void addPack(byte index, byte type, void *point);
-    void addPack(byte index, Package pack);
-    Package* getPack(byte index);
+    void addPack(std::uint8_t index, std::uint8_t type, void *point);
+    void addPack(std::uint8_t index, Package pack);
+    Package* getPack(std::uint8_t index);
 
     //operator +=
     void mergeWith(EffectsPack &addition);

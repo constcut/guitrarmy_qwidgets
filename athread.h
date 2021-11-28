@@ -57,7 +57,7 @@ public:
 
    void setupValues(void *tab_ptr, void *track_ptr, size_t shiftTheCursor);
 
-   void addNumDenum(byte nu, byte de, size_t nextIndex);
+   void addNumDenum(std::uint8_t nu, std::uint8_t de, size_t nextIndex);
 
    void addBeatTimes(void *bar);
 

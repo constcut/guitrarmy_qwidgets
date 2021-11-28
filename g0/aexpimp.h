@@ -18,7 +18,7 @@ public:
     Tab *getTab() {return tab;} //some attention here posible leak if use mindless
 
 protected:
-    byte type; //0-10 for gmy
+    std::uint8_t type; //0-10 for gmy
     //10 ptb
     //11 gp1 12 gp2 13 gp3
     //14 ptb5 16 gpx

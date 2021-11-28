@@ -66,7 +66,7 @@ bool GTabLoader::open(std::string fileName)
                     file.read(skip,1);
             }
 
-            byte versionIndex = version[0]-48;
+            std::uint8_t versionIndex = version[0]-48;
             if (version[1]!='0')
             {
                 versionIndex *= 10;

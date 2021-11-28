@@ -10,16 +10,16 @@ class Tab;
 
 
 class GuitarTuning {
-    byte stringsAmount;
-    byte tunes[10]; //as a maximum, mind later is it usefull to try set more or less by container?
+    std::uint8_t stringsAmount;
+    std::uint8_t tunes[10]; //as a maximum, mind later is it usefull to try set more or less by container?
     //set it to byte - in fact int would be 128 values of std midi - next could be used as quatones
 
 public:
 
-    void setStringsAmount(byte amount) { stringsAmount = amount; }
-    byte getStringsAmount() { return stringsAmount; }
-    void setTune(byte index, byte value) { if (index <= 10) tunes[index] = value; } //(index >= 0) &&
-    byte getTune(byte index) { if (index <= 10) return tunes[index]; return 0; }
+    void setStringsAmount(std::uint8_t amount) { stringsAmount = amount; }
+    std::uint8_t getStringsAmount() { return stringsAmount; }
+    void setTune(std::uint8_t index, std::uint8_t value) { if (index <= 10) tunes[index] = value; } //(index >= 0) &&
+    std::uint8_t getTune(std::uint8_t index) { if (index <= 10) return tunes[index]; return 0; }
 };
 
 
@@ -85,13 +85,13 @@ protected:
     std::string name;
     size_t instrument;
     size_t color;
-    byte pan; //or int??
-    byte volume;
+    std::uint8_t pan; //or int??
+    std::uint8_t volume;
     bool drums;
     //?own temp bpm
     size_t GpCompInts[4]; //GpComp - Port,Channel,ChannelE,Capo
     size_t beatsAmount;
-    byte status; //0 - none 1 - mute 2 - soloe
+    std::uint8_t status; //0 - none 1 - mute 2 - soloe
 
 public:
     GuitarTuning tuning;
@@ -115,11 +115,11 @@ public:
     void setColor(size_t cValue) { color = cValue; }
     size_t getColor() { return color; }
 
-    void setPan(byte pValue) { pan = pValue; }
-    byte getPan() { return pan; }
+    void setPan(std::uint8_t pValue) { pan = pValue; }
+    std::uint8_t getPan() { return pan; }
 
-    void setVolume(byte vValue) { volume = vValue; }
-    byte getVolume() { return volume; }
+    void setVolume(std::uint8_t vValue) { volume = vValue; }
+    std::uint8_t getVolume() { return volume; }
 
 
     void setGPCOMPInts(size_t index, size_t value) { GpCompInts[index] = value; }
@@ -132,8 +132,8 @@ public:
 
     bool isDrums() { return drums; }
 
-    byte getStatus() { return status; } //refact name
-    void setStatus(byte newStat) { status = newStat; }
+    std::uint8_t getStatus() { return status; } //refact name
+    void setStatus(std::uint8_t newStat) { status = newStat; }
 
 protected:
     size_t _cursor;
@@ -166,7 +166,7 @@ public:
     //TODO command handler
     void switchEffect(int effIndex);
     void switchBeatEffect(int effIndex);
-    void switchNoteState(byte changeState);
+    void switchNoteState(std::uint8_t changeState);
     void reverseCommand(SingleCommand &command);
 
     std::vector<SingleCommand> commandSequence;

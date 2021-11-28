@@ -881,8 +881,8 @@ void BendInput::draw(QPainter *painter)
         changeColor("red", painter);
         for (size_t i = 0; i < ptrToBend->size(); ++i)
         {
-            byte vertical = ptrToBend->at(i).vertical;
-            byte horizontal = ptrToBend->at(i).horizontal;
+            std::uint8_t vertical = ptrToBend->at(i).vertical;
+            std::uint8_t horizontal = ptrToBend->at(i).horizontal;
             //qDebug() << i << ") v= "<<vertical<<"; hor = "<<horizontal;
 
             int localY = vertical*-20; localY += 80+240;
@@ -977,8 +977,8 @@ void BendInput::onclick(int x1, int y1)
 
     if ((localX < 480) & (localY < 240))
     {
-        byte vertical = localY/20;
-        byte horizontal = localX/8;
+        std::uint8_t vertical = localY/20;
+        std::uint8_t horizontal = localX/8;
         qDebug() << "hit "<<vertical<<"; "<<horizontal;
 
         if (ptrToBend)
@@ -1095,9 +1095,9 @@ void ChangesInput::draw(QPainter *painter)
 
                     for (size_t i = 0; i < changes->size(); ++i)
                     {
-                        byte changeType = changes->at(i).changeType;
+                        std::uint8_t changeType = changes->at(i).changeType;
                         size_t changeValue = changes->at(i).changeValue;
-                        byte changeCount = changes->at(i).changeCount;
+                        std::uint8_t changeCount = changes->at(i).changeCount;
 
                         std::string sX = "Type " + std::to_string( changeType ) + "; Value " +
                             std::to_string( changeValue )  + "; count " + std::to_string( changeCount );
@@ -1149,7 +1149,7 @@ void ChangesInput::turnOffChange(std::string combo)
     if (changePack)
         changes = (Beat::ChangesList*)changePack->getPointer();
 
-    byte awaitType = 255;
+    std::uint8_t awaitType = 255;
 
     if (combo=="2")
         awaitType = 1;
@@ -1182,9 +1182,9 @@ void ChangesInput::turnOnChange(std::string combo)
     if (changePack)
         changes = (Beat::ChangesList *)changePack->getPointer();
 
-    byte awaitType = 255;
+    std::uint8_t awaitType = 255;
     size_t changeValue = 0;
-    byte changeAfter = 0;
+    std::uint8_t changeAfter = 0;
 
     if (ptrToBeat->effPack.get(28)==false)
         ptrToBeat->effPack.set(28,true);
@@ -1253,7 +1253,7 @@ void ChangesInput::changeMainValue(int combo, int newValue)
     if (changePack)
         changes = (Beat::ChangesList *)changePack->getPointer();
 
-    byte awaitType = 255;
+    std::uint8_t awaitType = 255;
 
     if (combo==0)
         awaitType = 1;
@@ -1282,7 +1282,7 @@ void ChangesInput::changeSubValue(int combo, int newValue)
     if (changePack)
         changes = (Beat::ChangesList *)changePack->getPointer();
 
-    byte awaitType = 255;
+    std::uint8_t awaitType = 255;
 
     if (combo==0)
         awaitType = 1;

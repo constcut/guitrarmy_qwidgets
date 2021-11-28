@@ -11,7 +11,6 @@
 
 
 typedef unsigned int uint;
-typedef unsigned char byte; //old definition
 
 
 //types checker //TODO Вынести куда-то

@@ -8,7 +8,7 @@
 
 #include "track.h"
 
-int updateDurationWithDetail(byte detail, int base);
+int updateDurationWithDetail(std::uint8_t detail, int base);
 
 class Track;
 
@@ -18,21 +18,21 @@ struct MidiChannelInfo
 {
     unsigned int instrument; //refact types
 
-	byte volume;
-	byte balance;
-	byte chorus;
-	byte reverb;
+    std::uint8_t volume;
+    std::uint8_t balance;
+    std::uint8_t chorus;
+    std::uint8_t reverb;
 
-	byte phaser;
-	byte tremolo;
-	byte blank1;
-	byte blank2;
+    std::uint8_t phaser;
+    std::uint8_t tremolo;
+    std::uint8_t blank1;
+    std::uint8_t blank2;
 };
 
 
 struct VariableString
 {
-	byte lineType;
+    std::uint8_t lineType;
 	std::string name;
 	
 	std::list<std::string> v;
@@ -49,10 +49,10 @@ class VariableStrings : public ChainContainer<VariableString, void>
 
 struct TimeLineKnot
 {
-    byte type;
+    std::uint8_t type;
     int value;
 
-    TimeLineKnot(byte newType, int newValue):type(newType),value(newValue){}
+    TimeLineKnot(std::uint8_t newType, int newValue):type(newType),value(newValue){}
 };
 
 
@@ -73,7 +73,7 @@ public:
     void printToStream(std::ostream &stream);
 
     void createTimeLine(size_t shiftTheCursor=0);
-    byte getBPMStatusOnBar(size_t barN);
+    std::uint8_t getBPMStatusOnBar(size_t barN);
     int getBpmOnBar(size_t barN);
 
     void connectTracks(){
@@ -89,8 +89,8 @@ public:
             size_t ind = (chan-1) + (port-1)*16;
             if (ind < 70) {
                 int instr = GpCompMidiChannels[ind].instrument;
-                byte pan = GpCompMidiChannels[ind].balance;
-                byte vol = GpCompMidiChannels[ind].volume;
+                std::uint8_t pan = GpCompMidiChannels[ind].balance;
+                std::uint8_t vol = GpCompMidiChannels[ind].volume;
                 Track *t=at(i);
                 t->setInstrument(instr);
                 t->setPan(pan);
@@ -109,9 +109,9 @@ protected:
     int bpmTemp;
 	//version control flag
 	std::string origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style	
-	byte GpCompSignKey;
-    byte GpCompSignOctave; //TODO get rid
-	byte GpCompTripletFeel;
+    std::uint8_t GpCompSignKey;
+    std::uint8_t GpCompSignOctave; //TODO get rid
+    std::uint8_t GpCompTripletFeel;
 
 public:
     VariableStrings variableInforation;
@@ -197,9 +197,9 @@ private:
 
 //some usefull
 
-int translateDenum(byte den);
+int translateDenum(std::uint8_t den);
 
-int translaeDuration(byte dur);
+int translaeDuration(std::uint8_t dur);
 
 
 

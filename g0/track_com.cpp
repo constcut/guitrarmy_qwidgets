@@ -54,7 +54,7 @@ void Track::switchBeatEffect(int effIndex) {
     commandSequence.push_back(command);
 }
 
-void Track::switchNoteState(byte changeState)
+void Track::switchNoteState(std::uint8_t changeState)
 {
     size_t& cursor = this->cursor(); //TODO _
     size_t& cursorBeat = this->cursorBeat();
@@ -77,7 +77,7 @@ void Track::switchNoteState(byte changeState)
         return;
     }
 
-    byte state = note->getState();
+    std::uint8_t state = note->getState();
     if (state == changeState)
         note->setState(0);
     else
@@ -91,13 +91,13 @@ void Track::switchNoteState(byte changeState)
 
 void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->cursor() etc
 {
-    byte type = command.getType();
-    byte value = command.getValue();
-    byte value2 = command.getValue2();
+    std::uint8_t type = command.getType();
+    std::uint8_t value = command.getValue();
+    std::uint8_t value2 = command.getValue2();
 
     int barN = command.getBarNum();
     int beatN = command.getBeatNum();
-    byte stringN = command.getStringNum();
+    std::uint8_t stringN = command.getStringNum();
 
     if (type == 1) //eff
     {
@@ -170,11 +170,11 @@ void Track::reverseCommand(SingleCommand &command) //TODO get rid of this->curso
         {
             Beat *beat = new Beat();
 
-            byte dur = value&7;
-            byte rhythmDetail = value & 0x78; //4 bits after first 3
+            std::uint8_t dur = value&7;
+            std::uint8_t rhythmDetail = value & 0x78; //4 bits after first 3
             rhythmDetail>>=3;
 
-            byte dotAppear = stringN & 3; //wow
+            std::uint8_t dotAppear = stringN & 3; //wow
 
             beat->setPause(true);
             beat->setDotted(dotAppear);
@@ -753,10 +753,10 @@ void Track::deleteNote() {
     else
     {
         if (at(_cursor)->size() > 1) {
-            byte packedValue = 0;
-            byte dur = at(_cursor)->at(_cursorBeat)->getDuration();
-            byte det =  at(_cursor)->at(_cursorBeat)->getDurationDetail();
-            byte dot =  at(_cursor)->at(_cursorBeat)->getDotted();
+            std::uint8_t packedValue = 0;
+            std::uint8_t dur = at(_cursor)->at(_cursorBeat)->getDuration();
+            std::uint8_t det =  at(_cursor)->at(_cursorBeat)->getDurationDetail();
+            std::uint8_t dot =  at(_cursor)->at(_cursorBeat)->getDotted();
             packedValue = dur;
             packedValue |= det<<3;
             Beat *beat = at(_cursor)->at(_cursorBeat);
@@ -778,7 +778,7 @@ void Track::deleteNote() {
 
 
 void Track::incDuration() {
-    byte beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
+    std::uint8_t beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
 
     SingleCommand command(4,beatDur);
     command.setPosition(0,_cursor, _cursorBeat);
@@ -792,7 +792,7 @@ void Track::incDuration() {
 
 
 void Track::decDuration() {
-    byte beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
+    std::uint8_t beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
     SingleCommand command(4,beatDur);
     command.setPosition(0, _cursor, _cursorBeat);
     commandSequence.push_back(command);
@@ -841,7 +841,7 @@ void Track::newBar() {
 
 void Track::setDotOnBeat() {
     Beat* beat = at(_cursor)->at(_cursorBeat);
-    byte dotted = beat->getDotted();
+    std::uint8_t dotted = beat->getDotted();
     SingleCommand command(6,dotted);
     command.setPosition(0,_cursor, _cursorBeat);
     commandSequence.push_back(command);
@@ -854,7 +854,7 @@ void Track::setDotOnBeat() {
 
 void Track::setTriolOnBeat() {
     Beat* beat = at(_cursor)->at(_cursorBeat);
-    byte curDetail = beat->getDurationDetail();
+    std::uint8_t curDetail = beat->getDurationDetail();
     SingleCommand command(5,curDetail);
     command.setPosition(0,_cursor,_cursorBeat);
     commandSequence.push_back(command);
@@ -1118,8 +1118,8 @@ void Track::changeBarSigns(int newNum, int newDen) {
 
 void Track::setBarSign(int newNum, int newDen) {
     Bar* bar = at(_cursor);
-    byte oldDen = bar->getSignDenum();
-    byte oldNum = bar->getSignNum();
+    std::uint8_t oldDen = bar->getSignDenum();
+    std::uint8_t oldNum = bar->getSignNum();
     bar->setSignNum(newNum);
     bar->setSignDenum(newDen);
     if ((bar->getSignDenum() != oldDen) ||

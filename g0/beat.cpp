@@ -54,7 +54,7 @@ EffectsPack Beat::getEffects()
     return effPack;
 }
 
-void Beat::setEffects(byte eValue)
+void Beat::setEffects(std::uint8_t eValue)
 {
     if (eValue==0)
     {

@@ -19,14 +19,14 @@ class Gp3Import
 {
 
 public:
-    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion=0);
 };
 
 
 class Gp4Import //:TODO public Gp3Import
 {
 public:
-    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion=0);
 
     //readString
     //readBend
@@ -48,7 +48,7 @@ public:
 class Gp5Import //:TODO public Gp4Import
 {
 public:
-    bool import(std::ifstream &file, Tab *tab, byte knownVersion=0);
+    bool import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion=0);
 
     //readString
     //readBend

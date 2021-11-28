@@ -21,7 +21,7 @@ void Tab::setSignsTillEnd(int num, int denom) {
 }
 
 void Tab::muteTrack() { //Move into Tab
-    byte curStat = this->at(displayTrack)->getStatus();
+    std::uint8_t curStat = this->at(displayTrack)->getStatus();
     if (curStat==1)
         this->at(displayTrack)->setStatus(0);
     else
@@ -30,7 +30,7 @@ void Tab::muteTrack() { //Move into Tab
 
 
 void Tab::soloTrack() { //Move into Tab
-    byte curStat = this->at(displayTrack)->getStatus();
+    std::uint8_t curStat = this->at(displayTrack)->getStatus();
     if (curStat==2)
         this->at(displayTrack)->setStatus(0);
     else
@@ -159,9 +159,9 @@ void Tab::setMarker(std::string text) {
 
 void Tab::openReprise() {
     Bar *firstTrackBar = this->at(0)->at(currentBar);
-    byte repeat = firstTrackBar->getRepeat();
-    byte repeatOpens = repeat & 1;
-    byte repeatCloses = repeat & 2;
+    std::uint8_t repeat = firstTrackBar->getRepeat();
+    std::uint8_t repeatOpens = repeat & 1;
+    std::uint8_t repeatCloses = repeat & 2;
     if (repeatOpens){
         firstTrackBar->setRepeat(0); //flush
         firstTrackBar->setRepeat(repeatCloses);
@@ -173,9 +173,9 @@ void Tab::openReprise() {
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
     Bar *firstTrackBar = this->at(0)->at(currentBar);
-    byte repeat = firstTrackBar->getRepeat();
-    byte repeatOpens = repeat & 1;
-    byte repeatCloses = repeat & 2;
+    std::uint8_t repeat = firstTrackBar->getRepeat();
+    std::uint8_t repeatOpens = repeat & 1;
+    std::uint8_t repeatCloses = repeat & 2;
     if (repeatCloses) {
         firstTrackBar->setRepeat(0); //flush
         firstTrackBar->setRepeat(repeatOpens);

@@ -14,18 +14,18 @@ struct BendPointGPOld
 {
     size_t absolutePosition;
     size_t heightPosition;
-    byte vibratoFlag;
+    std::uint8_t vibratoFlag;
 };
 
 class BendPointsGPOld : public std::vector<BendPointGPOld>
 {
 protected:
     size_t bendHeight;
-    byte bendType;
+    std::uint8_t bendType;
 public:
 
-    byte getType() { return bendType; }
-    void setType(byte newBendType) { bendType = newBendType; }
+    std::uint8_t getType() { return bendType; }
+    void setType(std::uint8_t newBendType) { bendType = newBendType; }
 
     size_t getHeight() { return bendHeight; }
     void setHeight(size_t newBendHeight) { bendHeight=newBendHeight;}
@@ -34,18 +34,18 @@ public:
 
 struct BendPoint
 {
-    byte vertical; //:4
-    byte horizontal; //:5
-    byte vFlag; //:2
+    std::uint8_t vertical; //:4
+    std::uint8_t horizontal; //:5
+    std::uint8_t vFlag; //:2
 };
 
 class BendPoints : public std::vector<BendPoint>
 {
 protected:
-    byte bendType;
+    std::uint8_t bendType;
 public:
-    byte getType() { return bendType; }
-    void setType(byte newBendType) { bendType = newBendType; }
+    std::uint8_t getType() { return bendType; }
+    void setType(std::uint8_t newBendType) { bendType = newBendType; }
 
     void insertNewPoint(BendPoint bendPoint);
 };
@@ -91,16 +91,16 @@ class Note
 
     protected:
     //[BASE]
-    byte fret; //[0-63]; some last values used for special coding {pause, empty, leege note... ghost note(x)}
-    byte volume;//[0-64]]-1);  values less than 14 used for ppp pp p m f ff fff - before -is precents for 2 per step
-    byte fingering; //store information about finger to play - //fingers {none, L1,L2,L3,L4,L5, R1,R2,R3,R4,R5 +(12)(13)(14)(15)(16) ) - pressure hand for another there
+    std::uint8_t fret; //[0-63]; some last values used for special coding {pause, empty, leege note... ghost note(x)}
+    std::uint8_t volume;//[0-64]]-1);  values less than 14 used for ppp pp p m f ff fff - before -is precents for 2 per step
+    std::uint8_t fingering; //store information about finger to play - //fingers {none, L1,L2,L3,L4,L5, R1,R2,R3,R4,R5 +(12)(13)(14)(15)(16) ) - pressure hand for another there
     ///are pick effects
 
-    byte noteState;//NoteState
+    std::uint8_t noteState;//NoteState
 
 
-    byte effectsA; // inEffects:[slide in up\down; grace; none] outEffects:[side out up\down; legato; bend; ghost; ] [let ring] [palm mute] [vibro]
-    byte effectsB; // picking [tap slap pop up down stoks and non] [trill 0 2 4 8]
+    std::uint8_t effectsA; // inEffects:[slide in up\down; grace; none] outEffects:[side out up\down; legato; bend; ghost; ] [let ring] [palm mute] [vibro]
+    std::uint8_t effectsB; // picking [tap slap pop up down stoks and non] [trill 0 2 4 8]
 
     //moved to set get
    //short int *bendPoints;
@@ -108,11 +108,11 @@ class Note
 
 
     //to set sure  - if possible escape - then do it
-    byte GpCompFing1;
-    byte GpCompFing2;
+    std::uint8_t GpCompFing1;
+    std::uint8_t GpCompFing2;
 
 
-    byte stringNumber;
+    std::uint8_t stringNumber;
 
     Note *prevNote;
     Note *nextNote;
@@ -128,18 +128,18 @@ class Note
     //For GP Compatibility left:
     //Grace note - 4bytes
     bool graceIsHere;
-    byte graceNote[4];//compitability with guitar pro requires later migration
+    std::uint8_t graceNote[4];//compitability with guitar pro requires later migration
 
     BendPoints bend;
     //[EFFECTS]
     EffectsPack effPack;
 
     //SET GET operations
-    void setStringNumber(byte num) {stringNumber = num;}
-    byte getStringNumber() { return stringNumber; }
+    void setStringNumber(std::uint8_t num) {stringNumber = num;}
+    std::uint8_t getStringNumber() { return stringNumber; }
 
-    void setFret(byte fValue) { fret = fValue; }
-    byte getFret() { return fret; }
+    void setFret(std::uint8_t fValue) { fret = fValue; }
+    std::uint8_t getFret() { return fret; }
 
 
     int getMidiNote(int tune=0) //get tune from tracks hard chain
@@ -147,17 +147,17 @@ class Note
         return fret + tune;
     }
 
-    void setState(byte nState) { noteState = nState; }
+    void setState(std::uint8_t nState) { noteState = nState; }
     void signStateLeeged() { if (noteState<=1) noteState=4; if (noteState==2) noteState=6; }
-    byte getState() { return noteState;}
+    std::uint8_t getState() { return noteState;}
 
-    void setVolume(byte vValue) { volume = vValue; }
-    byte getVolume() { return volume; }
+    void setVolume(std::uint8_t vValue) { volume = vValue; }
+    std::uint8_t getVolume() { return volume; }
 
-    void setFingering(byte fValue) {fingering = fValue;}
-    byte getFingering() { return fingering; }
+    void setFingering(std::uint8_t fValue) {fingering = fValue;}
+    std::uint8_t getFingering() { return fingering; }
 
-    void setEffect(byte eff);// { effectsA = eff; }
+    void setEffect(std::uint8_t eff);// { effectsA = eff; }
     EffectsPack getEffects();// { return effectsA; }
     void addEffects(EffectsPack &append) { effPack.mergeWith(append); }
 
@@ -165,14 +165,14 @@ class Note
     //MISSING
     //INCLUDING	BEND
 
-    void setGPCOMPFing1(byte fValue) { GpCompFing1 = fValue; }
-    void setGPCOMPFing2(byte fValue) { GpCompFing2 = fValue; }
-    byte getGPCOMPFing1() { return GpCompFing1;}
-    byte getGPCOMPFing2() { return GpCompFing2;}
+    void setGPCOMPFing1(std::uint8_t fValue) { GpCompFing1 = fValue; }
+    void setGPCOMPFing2(std::uint8_t fValue) { GpCompFing2 = fValue; }
+    std::uint8_t getGPCOMPFing1() { return GpCompFing1;}
+    std::uint8_t getGPCOMPFing2() { return GpCompFing2;}
 
     //NO	CHECK	REMINDS	ABOUT	FUTURE	CHANGES
-    void setGPCOMPGrace(size_t index, byte gValue) { graceNote[index] = gValue;}
-    byte getGPCOMPGrace(size_t index) { return graceNote[index]; }
+    void setGPCOMPGrace(size_t index, std::uint8_t gValue) { graceNote[index] = gValue;}
+    std::uint8_t getGPCOMPGrace(size_t index) { return graceNote[index]; }
 
     void clone(Note *from);
     //pack function
