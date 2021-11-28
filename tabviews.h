@@ -82,7 +82,7 @@ public:
 
 class BarView;
 
-class ViewPull : public ChainContainer<BarView>
+class ViewPull : public ChainContainer<BarView, void>
 {
     //add len getV delete etc chould be here
 };

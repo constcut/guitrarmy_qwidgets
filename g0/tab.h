@@ -12,6 +12,12 @@
 
 int updateDurationWithDetail(byte detail, int base);
 
+class Tab;
+class Track;
+class Bar;
+class Beat;
+class Note;
+
 //old version of bends used on early moments for
 struct BendPointGPOld
 {
@@ -20,7 +26,7 @@ struct BendPointGPOld
     byte vibratoFlag;
 };
 
-class BendPointsGPOld : public ChainContainer<BendPointGPOld>
+class BendPointsGPOld : public ChainContainer<BendPointGPOld, void>
 {
 protected:
     ul bendHeight;
@@ -42,7 +48,7 @@ struct BendPoint
     byte vFlag; //:2
 };
 
-class BendPoints : public ChainContainer<BendPoint>
+class BendPoints : public ChainContainer<BendPoint, void>
 {
 protected:
     byte bendType;
@@ -184,7 +190,7 @@ class Note
 
 //STARTING LARGE REFACTORING OVER THE TAB
 
-class Beat : public ChainContainer<Note*>
+class Beat : public ChainContainer<Note*, Bar>
 {
 		
 public:
@@ -208,7 +214,7 @@ public:
 	};
 
 	//need inner functions for analtics of packing	
-	class ChangesList : public ChainContainer<SingleChange>
+    class ChangesList : public ChainContainer<SingleChange, void>
 	{
     public:
         //search functions
@@ -467,7 +473,7 @@ protected:
     void clone(Beat *from);
 };
 
-class Bar : public ChainContainer<Beat*>
+class Bar : public ChainContainer<Beat*, Track>
 {
 	
 public:
@@ -501,7 +507,7 @@ public:
         if (val)
         {
             val->setParent(this);
-            ChainContainer<Beat*>::add(val);
+            ChainContainer<Beat*, Track>::add(val);
         }
     }
 
@@ -510,7 +516,7 @@ public:
         if (val)
         {
             val->setParent(this);
-            ChainContainer<Beat*>::insertBefore(val,index);
+            ChainContainer<Beat*, Track>::insertBefore(val,index);
         }
     }
 
@@ -587,7 +593,7 @@ class GuitarTuning
 };
 
 
-class PolyBar : public ChainContainer<Bar*>
+class PolyBar : public ChainContainer<Bar*, Tab>
 {
   public:
     PolyBar()
@@ -599,11 +605,11 @@ class PolyBar : public ChainContainer<Bar*>
 };
 
 
-class Track : public ChainContainer<Bar*>
+class Track : public ChainContainer<Bar*, Tab>
 {
 public:
 
-    Track():timeLoop(),drums(false),status(0),pan(0),_cursor(0),_cursorBeat(0),_stringCursor(0),
+    Track():timeLoop(),pan(0),drums(false),status(0), _cursor(0),_cursorBeat(0),_stringCursor(0),
     _displayIndex(0),_lastSeen(0),_selectCursor(-1), _digitPress(-1) {
         GpCompInts[3]=24; //REFACT GCOMP
         _selectionBarFirst=-1;
@@ -619,7 +625,7 @@ public:
 
     void printToStream(std::ostream &stream);
 
-    ChainContainer<Bar*> timeLoop; //PolyBar //REFACT access
+    ChainContainer<Bar*, Tab> timeLoop; //PolyBar //REFACT access
     std::vector<ul> timeLoopIndexStore;
 
     Track &operator=([[maybe_unused]]Track another)
@@ -632,7 +638,7 @@ public:
     {
         if (val){
             val->setParent(this);
-            ChainContainer<Bar*>::add(val);
+            ChainContainer<Bar*, Tab>::add(val);
         }
     }
 
@@ -641,7 +647,7 @@ public:
         if (val)
         {
             val->setParent(this);
-        ChainContainer<Bar*>::insertBefore(val,index);
+        ChainContainer<Bar*, Tab>::insertBefore(val,index);
         }
     }
 
@@ -823,7 +829,7 @@ struct VariableString
 	VariableString(std::string stringName, std::list<std::string> stringsValues) : lineType(1), name(stringName) { v = stringsValues; }
 };
 
-class VariableStrings : public ChainContainer<VariableString>
+class VariableStrings : public ChainContainer<VariableString, void>
 {
 	//search options
 };
@@ -838,7 +844,7 @@ struct TimeLineKnot
 };
 
 
-class Tab : public ChainContainer<Track*>
+class Tab : public ChainContainer<Track*, void>
 {
 public:
 

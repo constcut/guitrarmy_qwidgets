@@ -31,12 +31,13 @@ struct is_pointer { static const bool value = false; };
 template<typename T>
 struct is_pointer<T*> { static const bool value = true; };
 
-template <typename Child> class ChainContainer
+
+template <typename Child, typename Parent> class ChainContainer
 {
 protected:
     std::vector<Child> sequence; //Эксперименты и замеры TODO
-    ChainContainer<Child> *nextOne;
-    ChainContainer<Child> *prevOne;
+    ChainContainer<Child, Parent> *nextOne;
+    ChainContainer<Child, Parent> *prevOne;
     void *parent; //TODO ChainContainer too
 
     public:
@@ -44,28 +45,28 @@ protected:
     void setParent(void *newPa) { parent = newPa;}
     void *getParent() { return parent; }
 
-    void setPrev(ChainContainer<Child> *prev)
+    void setPrev(ChainContainer<Child, Parent> *prev)
     { prevOne=prev;}
 
-    void setNext(ChainContainer<Child> *next)
+    void setNext(ChainContainer<Child, Parent> *next)
     { nextOne=next;}
 
-    ChainContainer<Child> * getPrev()
+    ChainContainer<Child, Parent> * getPrev()
     { return prevOne;}
 
-    ChainContainer<Child> * getNext()
+    ChainContainer<Child, Parent> * getNext()
     { return nextOne;}
 
     virtual ~ChainContainer() {}
 
-    ChainContainer<Child>& operator=(ChainContainer<Child> &copy)
+    ChainContainer<Child, Parent>& operator=(ChainContainer<Child, Parent> &copy)
     {
         sequence.clear();
         sequence.insert(sequence.begin(),copy.sequence.begin(),copy.sequence.end());
         return *this;
     }
 
-    ChainContainer<Child>& operator+=(ChainContainer<Child> &copy)
+    ChainContainer<Child, Parent>& operator+=(ChainContainer<Child, Parent> &copy)
     {
         //check for end
         //sequence.clear();
