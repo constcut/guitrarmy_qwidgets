@@ -871,7 +871,7 @@ void Track::setTextOnBeat(std::string newText) {
 }
 
 
-void Track::clipboarCopyBar() {
+void Track::clipboardCopyBar() {
     Bar* bar = getV(_cursor);
     if (_selectionBarFirst == -1) {
         Bar *cloner = new Bar;
@@ -1107,16 +1107,6 @@ void setBarSign(int num, int denom); //TODO проверить разницу с
 
 void Track::onTrackCommand(TrackCommand command) {
 
-    size_t& cursor = this->cursor();
-    size_t& cursorBeat = this->cursorBeat();
-    size_t& stringCursor = this->stringCursor();
-    size_t& lastSeen = this->lastSeen();
-    size_t& displayIndex = this->displayIndex();
-    int& selectionBeatFirst = this->selectBeatFirst();
-    int& selectionBeatLast = this->selectBeatLast();
-    int& selectionBarFirst = this->selectBarFirst();
-    int& selectionBarLast = this->selectBarLast();
-
     if (command == TrackCommand::GotoStart)
         gotoTrackStart();
     else if (command == TrackCommand::SelectionExpandLeft)
@@ -1165,46 +1155,42 @@ void Track::onTrackCommand(TrackCommand command) {
         setDotOnBeat();
     else if (command == TrackCommand::SetTriole)
         setTriolOnBeat();
-    else if (command == TrackCommand::Leeg) {
-        switchNoteState(2); _digitPress = -1;
-    }
-    else if (command == TrackCommand::Dead) {
-        switchNoteState(3); _digitPress = -1; //TODO review old files, maybe there where sometimes no return in the if statement
-    }
+    else if (command == TrackCommand::Leeg)
+        LeegNote();
+    else if (command == TrackCommand::Dead)
+        DeadNote();
     else if (command == TrackCommand::Vibrato)
-        switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
+        Vibratto();
     else if (command == TrackCommand::Slide)
-        switchEffect(4); //TODO cover on new abstraction level tabs-core
+        Slide();
     else if (command == TrackCommand::Hammer)
-        switchEffect(10);
+        Hammer();
     else if (command == TrackCommand::LetRing)
-        switchEffect(18);
+        LetRing();
     else if (command == TrackCommand::PalmMute)
-        switchEffect(2);
+        PalmMute();
     else if (command == TrackCommand::Harmonics)
-        switchEffect(14);
+        Harmonics();
     else if (command == TrackCommand::TremoloPickings)
-        switchEffect(24); //tremlo picking
+        TremoloPicking();
     else if (command == TrackCommand::Trill)
-        switchEffect(24);
+        Trill();
     else if (command == TrackCommand::Stokatto)
-        switchEffect(23);
+        Stokatto();
     else if (command == TrackCommand::FadeIn) //TODO fade out
-        switchBeatEffect(20);
+        FadeIn();
     else if (command == TrackCommand::Accent)
-        switchEffect(27);
+        Accent();
     else if (command == TrackCommand::HeaveAccent)
-        switchEffect(27); ///should be another TODO
-    else if (command == TrackCommand::UpStroke) //TODO text on beat needs setter from TrackView
-        switchBeatEffect(25);
+        HeavyAccent(); ///should be another TODO
+    else if (command == TrackCommand::UpStroke)
+        UpStroke();
     else if (command == TrackCommand::DownStroke)
-        switchBeatEffect(26);
-    //else if (command == TrackCommand::SetBarSign)
-        //setBarSign();
+        DownStroke();
     else if (command == TrackCommand::Cut) //oups - yet works only without selection for 1 bar
         clipboardCutBar();
     else if (command == TrackCommand::Copy) //1 bar
-        clipboarCopyBar();
+        clipboardCopyBar();
     else if (command == TrackCommand::CopyBeat)
         clipboarCopyBeat();
     else if (command == TrackCommand::CopyBars)
@@ -1213,6 +1199,8 @@ void Track::onTrackCommand(TrackCommand command) {
         clipboardPaste();
     else if (command == TrackCommand::Undo)
         undoOnTrack();
+    else if (command == TrackCommand::SaveFile)
+        saveFromTrack(); //quick save
 }
 
 
@@ -1240,4 +1228,55 @@ void Track::setBarSign(int newNum, int newDen) {
         command.setValue2(oldNum);
         commandSequence.push_back(command);
     }
+}
+
+void Track::LeegNote() {
+    switchNoteState(2); //TODO enum
+    _digitPress = -1;
+}
+void Track::DeadNote() {
+    switchNoteState(3);
+    _digitPress = -1;
+}
+void Track::Vibratto() {
+    switchEffect(1);
+}
+void Track::Slide() {
+    switchEffect(4);
+}
+void Track::Hammer() {
+    switchEffect(10);
+}
+void Track::LetRing() {
+    switchEffect(18);
+}
+void Track::PalmMute() {
+    switchEffect(2);
+}
+void Track::Harmonics() {
+    switchEffect(14);
+}
+void Track::TremoloPicking() {
+    switchEffect(24); //tremlo picking
+}
+void Track::Trill() {
+    switchEffect(24);
+}
+void Track::Stokatto() {
+    switchEffect(23);
+}
+void Track::FadeIn() {
+    switchBeatEffect(20);
+} //Todo fade out
+void Track::Accent() {
+    switchEffect(27);
+}
+void Track::HeavyAccent() {
+    switchEffect(27); //TODO real & new
+}
+void Track::UpStroke() {
+    switchBeatEffect(25);
+}
+void Track::DownStroke() {
+    switchBeatEffect(26);
 }

@@ -114,11 +114,9 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
 
 void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
 
-    if (tabParrent->getPlaying()==true)
-    {
+    if (tabParrent->getPlaying()==true) {
         if (localThr)
-           if (localThr->getStatus())
-            {
+           if (localThr->getStatus()) {
                 //animation stopped
                 tabParrent->setPlaying(false);
                 //cursor = displayIndex; //auto repeat from page
@@ -126,8 +124,7 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
             }
     }
 
-    if (tabParrent->getPlaying() == false)
-    {
+    if (tabParrent->getPlaying() == false) {
         //to start not from begin always
         ul shiftTheCursor = 0;
         if (cursor != 0){
@@ -331,36 +328,6 @@ void TrackView::onTrackCommand(TrackCommand command) {
         playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
-    else if (command == TrackCommand::Leeg) {
-        pTrack->switchNoteState(2); pTrack->digitPress() = -1;
-    }
-    else if (command == TrackCommand::Dead) {
-        pTrack->switchNoteState(3); pTrack->digitPress() = -1;//TODO review old files, maybe there where sometimes no return in the if statement
-    }
-    else if (command == TrackCommand::Vibrato)
-        pTrack->switchEffect(1); //TODO move under common core engine (edit, clipboard, navigation)
-    else if (command == TrackCommand::Slide)
-        pTrack->switchEffect(4); //TODO cover on new abstraction level tabs-core
-    else if (command == TrackCommand::Hammer)
-        pTrack->switchEffect(10);
-    else if (command == TrackCommand::LetRing)
-        pTrack->switchEffect(18);
-    else if (command == TrackCommand::PalmMute)
-        pTrack->switchEffect(2);
-    else if (command == TrackCommand::Harmonics)
-        pTrack->switchEffect(14);
-    else if (command == TrackCommand::TremoloPickings)
-        pTrack->switchEffect(24); //tremlo picking
-    else if (command == TrackCommand::Trill)
-        pTrack->switchEffect(24);
-    else if (command == TrackCommand::Stokatto)
-        pTrack->switchEffect(23);
-    else if (command == TrackCommand::FadeIn) //TODO fade out
-        pTrack->switchBeatEffect(20);
-    else if (command == TrackCommand::Accent)
-        pTrack->switchEffect(27);
-    else if (command == TrackCommand::HeaveAccent)
-        pTrack->switchEffect(27); ///should be another TODO
     else if (command == TrackCommand::Bend)
         setBendOnNote(pTrack->getV(cursor)->getV(cursorBeat)->getNote(stringCursor+1), getMaster());
     else if (command == TrackCommand::Chord) {
@@ -369,10 +336,6 @@ void TrackView::onTrackCommand(TrackCommand command) {
         setTextOnBeat(pTrack);
     else if (command == TrackCommand::Changes)
         setChangesOnBeat(pTrack->getV(cursor)->getV(cursorBeat), getMaster());
-    else if (command == TrackCommand::UpStroke)
-        pTrack->switchBeatEffect(25);
-    else if (command == TrackCommand::DownStroke)
-        pTrack->switchBeatEffect(26);
     else if (command == TrackCommand::SetBarSign)
         setBarSign(pTrack);
     else

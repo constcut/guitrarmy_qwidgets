@@ -5,7 +5,7 @@
 
 //#include "g0/tab.h"
 
-enum TabCommand {
+enum class TabCommand {
     SetSignTillEnd,
     SaveAs,
     Mute,
@@ -33,7 +33,7 @@ enum TabCommand {
     Tune
 };
 
-enum TrackCommand {
+enum class TrackCommand {
     PlayFromStart,
     GotoStart,
     SetSignForSelected,

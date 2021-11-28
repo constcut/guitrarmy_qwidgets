@@ -768,18 +768,37 @@ public:
     void newBar();
     void setDotOnBeat();
     void setTriolOnBeat();
-    //void setBendOnNote(); //TODO
+    //void setBendOnNote(); //TODO + changes + chord
 
     void setTextOnBeat(std::string newText);
     void setBarSign(int num, int denom);
     void changeBarSigns(int num, int denom);
 
-    void clipboarCopyBar(); //refact name
+    void clipboardCopyBar(); //refact name
     void clipboarCopyBeat();
     void clipboardCopyBars();
-    void clipboardCutBar(); //Вызов команды функцией
+    void clipboardCutBar();
     void clipboardPaste();
     void undoOnTrack();
+
+
+    void LeegNote();
+    void DeadNote();
+    void Vibratto();
+    void Slide();
+    void Hammer();
+    void LetRing();
+    void PalmMute();
+    void Harmonics();
+    void TremoloPicking();
+    void Trill();
+    void Stokatto();
+    void FadeIn(); //Todo fade out
+    void Accent();
+    void HeavyAccent();
+    void UpStroke();
+    void DownStroke();
+
 };
 
 //here would lay Guitar Pro header comptibilator
