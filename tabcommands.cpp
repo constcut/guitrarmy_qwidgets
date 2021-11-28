@@ -92,7 +92,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
     if ( pTrack->at(cursor)->size() > cursorBeat ) {
         std::uint8_t lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
 
-        SingleCommand command(3,lastFret);
+        SingleCommand command(ReversableCommand::SetFret,lastFret);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(std::move(command));
         pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);

@@ -102,7 +102,6 @@ enum class TrackCommand {
 
 
 //Comand types:
-
 //0 - empty
 //1 - switch effect note
 //2 - switch effect beat
@@ -137,13 +136,45 @@ enum class TrackCommand {
 //24 - delete bar
 //25 - delete range of bars (could be groupped but yet no reason)
 
+enum class ReversableCommand { //Если будет конфликт имён убрать в клас хранитель
+    Empty = 0,
+    SwitchEffectNote,
+    SwitchEffectBeat,
+    SetFret,
+    SetDuration,
+    SetDurationDetail,
+    SetDot,
+    SetPause,
+    DeleteNote,
+    Pasty,
+    Cut,
+    Intrument,
+    Pan,
+    Volume,
+    Drums,
+    Bpm,
+    InsertNewBar,
+    ChangeNoteState,
+    InsertNewPause,
+    SetSign,
+    InsertBeat,
+    DeleteBar,
+    DeleteRangeOfBars,
+    DeleteRangeOfBeats
+};
+
+
+//      ReversableCommand::
+
+
+
 class Note;
 class Bar;
 class Beat;
 
 class SingleCommand
 {
-    std::uint8_t commandType;
+    ReversableCommand commandType;
 
     std::uint8_t commandValue;
     std::uint8_t commandValue2;
@@ -174,16 +205,16 @@ public:
         storedNotes = std::make_unique<NotesBuffer>();
     }
 
-    SingleCommand():commandType(0),commandValue(0),track(0),bar(0),beat(0),string(0)
+    SingleCommand():commandType(ReversableCommand::Empty),commandValue(0),track(0),bar(0),beat(0),string(0)
     {}
 
-    SingleCommand(std::uint8_t newType, std::uint8_t newValue=0):
+    SingleCommand(ReversableCommand newType, std::uint8_t newValue=0):
         commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0)
     {
     }
 
-    void setType(std::uint8_t newType) { commandType = newType; }
-    std::uint8_t getType() { return commandType; }
+    void setType(ReversableCommand newType) { commandType = newType; }
+    ReversableCommand getType() { return commandType; }
 
     void setValue(std::uint8_t newValue) { commandValue = newValue; }
     std::uint8_t getValue() { return commandValue; }
