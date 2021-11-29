@@ -5,6 +5,8 @@
 
 #include "inputviews.h"
 
+#include <memory>
+
 
 class TabView;
 class TestsView;
@@ -28,26 +30,25 @@ class MainView : public GView
 {
 protected:
 
-    TabView *tabsView;
-    TestsView *testsView;
-    ConfigView *configView;
-    TapRyView *tapRyView;
-    PatternInput *patternInp;
+    std::unique_ptr<TabView> tabsView;
+    std::unique_ptr<TestsView> testsView;
+    std::unique_ptr<ConfigView> configView;
+    std::unique_ptr<TapRyView> tapRyView;
+    std::unique_ptr<PatternInput> patternInp;
 
-    InfoView *infView;
-    MorzeInput *morzeInp;
-    RecordView *recordView;
+    std::unique_ptr<InfoView> infView;
+    std::unique_ptr<MorzeInput> morzeInp;
+    std::unique_ptr<RecordView> recordView;
 
-    BendInput *bendInp;
-    ChangesInput *chanInp;
-    ChordInput *chordInp;
+    std::unique_ptr<BendInput> bendInp;
+    std::unique_ptr<ChangesInput> chanInp;
+    std::unique_ptr<ChordInput> chordInp;
 
-    WelcomeView *welcome;
+    std::unique_ptr<WelcomeView> welcome;
 
-    GStickPannel *pan;
+    std::unique_ptr<GStickPannel> pan;
 
     GView *currentView;
-
     std::vector<GView*> lastViews;
 
 

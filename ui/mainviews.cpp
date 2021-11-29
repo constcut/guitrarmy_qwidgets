@@ -48,7 +48,7 @@ void ChangesInput::setPtrBeat(Beat *beatPtr)
 
 void MainView::setTabLoaded(Tab *tab)
 {
-    changeCurrentView( tabsView );
+    changeCurrentView( tabsView.get() );
 
     tabsView->setTab(tab);
     //getMaster()->changeChild(tabsView);
@@ -93,22 +93,22 @@ void MainView::keyevent(std::string press)
 {
     if (press=="welcome")
     {
-        changeCurrentView(welcome);
+        changeCurrentView(welcome.get());
         return;
     }
     if (press=="bend_view")
     {
-        changeCurrentView(bendInp);
+        changeCurrentView(bendInp.get());
         return;
     }
     if (press=="chord_view")
     {
-        changeCurrentView(chordInp);
+        changeCurrentView(chordInp.get());
         return;
     }
     if (press=="change_view")
     {
-        changeCurrentView(chanInp);
+        changeCurrentView(chanInp.get());
         return;
     }
 
@@ -132,53 +132,11 @@ void MainView::keyevent(std::string press)
                 }
             }
 
-
-
-        /* //code for debuggig
-        if ((press == "q")||(press == "w")||(press =="e"))
-        {
-            return; //skip this commands for release
-            std::string fileName = getTestsLocation();
-
-            if (press == "q")
-                fileName += "g4/3.52cut.gp4"; //3.4
-
-            if (press == "w")
-                fileName  +=  "g4/3.29cut_.gp4";
-
-            if (press == "e")
-                fileName += "g4/3.58cut.gp4";
-
-
-             file;
-            file.open(fileName);
-
-            Tab *forLoad=new Tab();
-            Gp4Import importer;
-            importer.import(file,*forLoad);
-
-
-            forLoad->postGTP();
-            forLoad->connectTracks();
-            log << "file v 4 was opened"<<fileName.c_str();
-
-
-            changeCurrentView(tabsView);
-
-            tabsView->setTab(forLoad);   
-            //getMaster()->changeChild(tabsView);
-        }
-        */
-
         if (press == "esc")
-        {
             changeViewToLast();
-        }
 
         if (press == "rec")
-        {
-            changeCurrentView(recordView);
-        }
+            changeCurrentView(recordView.get());
 
         if ((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen"))
         {
@@ -196,7 +154,7 @@ void MainView::keyevent(std::string press)
 
                     newTab->connectTracks();
 
-                    changeCurrentView(tabsView);
+                    changeCurrentView(tabsView.get());
                     tabsView->setTab(newTab);
                     if (CONF_PARAM("skipTabView")=="1")
                     tabsView->onTabCommand(TabCommand::OpenTrack);
@@ -245,7 +203,7 @@ void MainView::keyevent(std::string press)
                 GTabLoader tabLoader;
                 if  (tabLoader.open(s.toStdString()))
                 {
-                    changeCurrentView(tabsView);
+                    changeCurrentView(tabsView.get());
                     tabsView->setTab(tabLoader.getTab());
                     if (CONF_PARAM("skipTabView")=="1")
                     tabsView->onTabCommand(TabCommand::OpenTrack);
@@ -264,13 +222,13 @@ void MainView::keyevent(std::string press)
         if (press == "tests")
         {
             //getMaster()->changeChild(testsView);
-             changeCurrentView(testsView);
+             changeCurrentView(testsView.get());
         }
 
         if ((press == "config")) //sepparate to log view
         {
                 //getMaster()->changeChild(configView);
-                 changeCurrentView(configView);
+                 changeCurrentView(configView.get());
         }
 
         if (press == "tap")
@@ -278,19 +236,19 @@ void MainView::keyevent(std::string press)
             //tap Ry
              //getMaster()->changeChild(tapRyView);
              tapRyView->measureTime();
-             changeCurrentView(tapRyView);
+             changeCurrentView(tapRyView.get());
         }
 
         if (press == "pattern")
         {
             //pattern input
             //getMaster()->changeChild(patternInp);
-             changeCurrentView(patternInp);
+             changeCurrentView(patternInp.get());
         }
 
         if (press == "tabview")
         {
-             changeCurrentView(tabsView);
+             changeCurrentView(tabsView.get());
              //tabsView->keyevent("track");
         }
 
@@ -301,12 +259,12 @@ void MainView::keyevent(std::string press)
 
         if (press == "info")
         {
-            changeCurrentView(infView);
+            changeCurrentView(infView.get());
         }
 
         if (press == "morze")
         {
-            changeCurrentView(morzeInp);
+            changeCurrentView(morzeInp.get());
         }
 
         if (press == "newtab")
@@ -358,7 +316,7 @@ void MainView::keyevent(std::string press)
                 newTab->push_back(std::move(track));
                 newTab->connectTracks();
 
-                changeCurrentView(tabsView);
+                changeCurrentView(tabsView.get());
                 tabsView->setTab(newTab);
                 if (CONF_PARAM("skipTabView")=="1")
                 tabsView->onTabCommand(TabCommand::OpenTrack); // keyevent("opentrack");
@@ -417,21 +375,21 @@ void MainView::setMaster(MasterView *mast)
 MainView::MainView():GView(0,0,800,480), currentView(0)
 {
     slave=false;
-    tabsView = new TabView();
-    configView = new ConfigView();
-    tapRyView = new TapRyView();
-    testsView = new TestsView(this, tabsView);
-    patternInp = new PatternInput();
+    tabsView = std::make_unique<TabView>();
+    configView = std::make_unique<ConfigView>();
+    tapRyView = std::make_unique<TapRyView>();
+    testsView = std::make_unique<TestsView>(this, tabsView.get());
+    patternInp = std::make_unique<PatternInput>();
 
-    infView = new InfoView();
-    morzeInp = new MorzeInput();
-    recordView = new RecordView();
+    infView = std::make_unique<InfoView>();
+    morzeInp = std::make_unique<MorzeInput>();
+    recordView = std::make_unique<RecordView>();
 
-    welcome = new WelcomeView();
+    welcome = std::make_unique<WelcomeView>();
 
-    bendInp= new BendInput();
-    chanInp = new ChangesInput();
-    chordInp = new ChordInput();
+    bendInp = std::make_unique<BendInput>();
+    chanInp = std::make_unique<ChangesInput>();
+    chordInp = std::make_unique<ChordInput>();
 
     /*
     chBut = new GCheckButton(500,200,30,30);
@@ -445,9 +403,9 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
     */
 
     //set up
-    currentView  =  welcome; //testsView;
+    currentView  =  welcome.get(); //testsView;
 
-    pan = new GStickPannel(0,60,800);
+    pan = std::make_unique<GStickPannel>(0,60,800);
     pan->setPressView(this);
     pan->setNoOpenButton();
 
