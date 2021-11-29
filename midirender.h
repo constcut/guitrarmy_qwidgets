@@ -11,7 +11,7 @@
 
 #include "g0/midifile.h"
 
-/*
+
 
 class MidiRender
 {
@@ -71,7 +71,6 @@ protected:
     qint64 totalMsSpent;
 };
 
-*/
 
 
 #endif // MIDIRENDER_H
