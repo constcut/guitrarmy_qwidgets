@@ -126,7 +126,7 @@ struct midiTrackHeader
     size_t trackSize;
 };
 
-class MidiTrack : public ChainContainer<MidiSignal, void>
+class MidiTrack : public std::vector<std::unique_ptr<MidiSignal>>
 {
 protected:
 
@@ -224,7 +224,7 @@ public:
 
 };
 
-class MidiFile : public ChainContainer<MidiTrack, void>
+class MidiFile : public std::vector<std::unique_ptr<MidiTrack>>
 {
 protected:
     struct midiHeader midiHeader;
