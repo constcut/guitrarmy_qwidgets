@@ -42,7 +42,7 @@ SOURCES += main.cpp\
     tab/track.cpp \
     tab/track_com.cpp \
     libs/sf/tsf.cpp \
-    mainwindow.cpp \
+    ui/mainwindow.cpp \
     ui/gview.cpp \
     tab/gmyfile.cpp \
     tab/gtpfiles.cpp \
@@ -60,7 +60,6 @@ SOURCES += main.cpp\
     g0/waveanalys.cpp \
     android_helper.cpp \
     ui/centerview.cpp \
-    qthelper.cpp \
     ui/inputviews.cpp \
     midi/midiengine.cpp \
     g0/build.cpp \
@@ -68,7 +67,7 @@ SOURCES += main.cpp\
     ui/trackview.cpp
 
 
-HEADERS  += mainwindow.h \
+HEADERS  += ui/mainwindow.h \
     g0/config.h \
     tab/effects.h \
     tab/tabclipboard.h \
@@ -99,7 +98,6 @@ HEADERS  += mainwindow.h \
     g0/waveanalys.h \
     android_helper.h \
     ui/centerview.h \
-    qthelper.h \
     ui/inputviews.h \
     midi/midiengine.h \
     g0/rec.h \
@@ -119,7 +117,6 @@ DISTFILES += \
     android/gradlew.bat \
     libs/sf/LICENSE \
     libs/sf/README.md \
-    othLibs/ffft/readme.txt \
     android/src/in/guitarmy/app/AndroidHelper.java
 
 INSTALLS += target

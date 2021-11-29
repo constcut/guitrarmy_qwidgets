@@ -713,6 +713,30 @@ void TestsView::onclick(int x1, int y1)
 
 //MORZE
 
+
+QByteArray alphaCut(QByteArray &src)
+{
+    QByteArray newBytes;
+    for (int i = 0; i < src.size(); ++i)
+    {
+        int letter = src.at(i)+128;
+        int hi = letter / 16;
+        int lo = letter % 16;
+
+        char valueHi = 97 + hi;
+        char valueLo = 97 + lo;
+        newBytes.append(valueHi);
+        newBytes.append(valueLo);
+
+       // std::cout << "B1 = " << valueHi <<" "<<int(valueHi)<<"; B2 = "<<valueLo<<" "<<int(valueLo)<<"; SOurce value ="<<letter<<std::endl;
+    }
+
+    char endingZero = 0;
+    newBytes.append(endingZero);
+    return newBytes;
+}
+
+
 //ABOUT QT PLATFOR DEP
 void InfoView::onclick(int x1, int y1)
 {

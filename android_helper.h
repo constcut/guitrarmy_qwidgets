@@ -7,8 +7,12 @@ class android_helper
 public:
     android_helper();
 
-    void setPortrait();
-    void setLandscape();
+    static void setPortrait();
+    static void setLandscape();
+
+    static void notifyAndroid();
 };
+
+
 
 #endif // ANDROID_HELPER_H

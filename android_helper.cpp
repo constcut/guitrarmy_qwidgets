@@ -13,6 +13,22 @@
 #endif
 
 
+
+
+void android_helper::notifyAndroid()
+{
+    #ifdef __ANDROID_API__
+
+QString m_notification = "Olololo? Lolololo!";
+QAndroidJniObject javaNotification = QAndroidJniObject::fromString(m_notification);
+QAndroidJniObject::callStaticMethod<void>("in/guitarmy/app/AndroidHelper",
+                                   "notify",
+                                   "(Ljava/lang/String;)V",
+                                   javaNotification.object<jstring>());
+#endif
+}
+
+
 android_helper::android_helper()
 {
 
