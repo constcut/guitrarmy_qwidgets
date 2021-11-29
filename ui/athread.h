@@ -67,6 +67,7 @@ protected:
    virtual void sleepThread(int ms)=0;
 };
 
+
 class WaveMoveThr: public AThread
 {
 protected:
@@ -113,21 +114,22 @@ public:
         threadRun();
     }
 
-    void noticeFinished()
+    void noticeFinished() override
     {
         emit nowFinished();
     }
 
-    void callUpdate() {
+    void callUpdate() override {
         emit updateUI();
     }
 
-    void sleepThread(int ms) {
+    void sleepThread(int ms) override {
         msleep(ms);
     }
 };
 
-class ThreadWave : public QThread ,public WaveMoveThr
+
+class ThreadWave : public QThread, public WaveMoveThr
 {
     Q_OBJECT
 signals:

@@ -375,12 +375,15 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
 
     if (localThr)
     {
+        //qDebug() << "Removing old thread ";
         localThr->requestStop();
         localThr->terminate();
         if (CONF_PARAM("crashOnPlayHotFix") != "1")
         localThr->deleteLater();
         //delete localThr;
     }
+
+    //qDebug() << "Creating new thread";
 
     localThr = new ThreadLocal;
 
