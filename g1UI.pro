@@ -29,6 +29,7 @@ win32:LIBS += -lWinMM
 
 SOURCES += main.cpp\
     g0/config.cpp \
+    midi/miditrack.cpp \
     tab/effects.cpp \
     tab/tabclipboard.cpp \
     tab/tabloader.cpp \
@@ -69,6 +70,7 @@ SOURCES += main.cpp\
 
 HEADERS  += ui/mainwindow.h \
     g0/config.h \
+    midi/miditrack.h \
     tab/effects.h \
     tab/tabclipboard.h \
     tab/tabloader.h \

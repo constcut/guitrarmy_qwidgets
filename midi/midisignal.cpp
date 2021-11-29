@@ -267,7 +267,7 @@ std::string MidiSignal::nameController(std::uint8_t controllerNumber)
                                {91, "Effects Level"},
                                {92, "Tremulo Level"},
                                {93, "Chorus Level"},
-                               {94, "Celeste Level"},
+                               {94, "Celes			te Level"},
                                {95, "Phaser Level"},
                                {96, "Data Button increment"},
                                {97, "Data Button decrement"},
