@@ -206,13 +206,13 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
     importer.import(itfile,&tab);
     tab.connectTracks(); //new for chains refact
 
-    std::cout << "All information about readin is in log"<<std::endl;
+    //std::cout << "All information about readin is in log"<<std::endl;
 
     auto f = exportMidi(&tab);
     std::ofstream midiOut(outFileName);
     size_t bytesWritten = f->writeStream(midiOut);
 
-    std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
+    qDebug() << "Bytes midi written " << bytesWritten << " to " << outFileName.c_str();
 
     return true;
 }
@@ -347,7 +347,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/";
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
-            std::string gp3File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
+            std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
 
             std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
             std::string outGp4 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
@@ -365,7 +365,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             {
                 if ( testGP4 (gp4File,outGp4,doTheLogs) == false )
                   log <<"Test gp4 "<<newLine.c_str()<<" failed";
-
+                /*
                 GTabLoader loader;
                 //HERE IS LEAK
                 if (loader.open(gp4File) == false)
@@ -378,12 +378,12 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
                     log <<"failed to open for output "<<outGp4plus.c_str();
                 mid->writeStream(outMidiFile);
                 outMidiFile.close();
-
+                */
             }
 
             if (v==3)
-            if ( testGP3 (gp3File,outGp3,doTheLogs) == false )
-                log <<"Test gp3 "<<newLine.c_str()<<" failed";
+                if ( testGP3 (gp3File,outGp3,doTheLogs) == false )
+                    log <<"Test gp3 "<<newLine.c_str()<<" failed";
 
             //std::cout << "test file done"<<std::endl;
         }
