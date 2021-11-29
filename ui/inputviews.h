@@ -7,6 +7,7 @@
 #include "g0/rec.h"
 
 #include <QStringList>
+#include <QAudioRecorder>
 
 class BarView;
 
@@ -165,6 +166,8 @@ public:
 };
 
 
+
+
 class RecordView : public GView
 {
 protected:
@@ -183,7 +186,7 @@ protected:
     int wavePosition;
 
     int waveLimit;
-    void *recorderPtr = nullptr;
+    std::unique_ptr<QAudioRecorder> recorderPtr;
 
     bool recording;
     bool playing;
@@ -201,7 +204,7 @@ protected:
     GWave waveItself; //move inside
 
 public:
-    RecordView():wavePosition(0),waveLimit(0),recorderPtr(0) {
+    RecordView():wavePosition(0),waveLimit(0) {
         recording = 0;
         playing = 0;
         zoom = std::make_unique<GLabel>(20,100-55-20,"10");

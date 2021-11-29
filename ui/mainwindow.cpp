@@ -348,21 +348,15 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
 
     QToolBar *men2 = 0;
 
-    int middleBreak = pan->buttons.size()/2;
+    size_t middleBreak = pan->buttons.size()/2;
 
     if (middleBreak < 10)
-    {
         middleBreak = 4;
-    }
 
     if (CONF_PARAM("pannels")=="oneline")
-    {
         middleBreak = 100; //force one line
-    }
 
     for (size_t i =0 ;i < pan->buttons.size(); ++i)
-    {
-
         if (i > middleBreak) //16?
         {
             if (men2 == 0)
@@ -386,7 +380,6 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
         {   //first
             addToolButton(men,pan->buttons[i].getText(),pan->buttons[i].getPressSyn());
         }
-    }
 
     dockTab->resize(dockTab->minimumSizeHint());
     dockTab->setWidget(dockWin);
@@ -485,21 +478,16 @@ void MainWindow::createUI()
     win->addItem("welcome");
 
     if (CONF_PARAM("")=="1")
-    win->addItem("tabview"); //tab
+        win->addItem("tabview"); //tab
 
     win->addItem("trackview");
-    //win->addItem("track");
     win->addItem("tap");
     win->addItem("rec");
     win->addItem("pattern");
     win->addItem("tests");
     win->addItem("config");
     win->addItem("info");
-    //win->addItem("bend_view");
-    //win->addItem("change_view");
-    //win->addItem("chord_view");
-    //win->addItem("openPannel");
-    //our new more
+
     win->setElementNum(0);
 
 
@@ -535,13 +523,6 @@ void MainWindow::createUI()
         centerScroll = new QScrollArea(this);
 
     centerScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//refact - could be styled
-    /*
-   QString style = "QScrollBar:vertical {\
-            width: 45px;\
-            margin: 21px 0 21px 0;}";
-    centerScroll->setStyleSheet(style);
-    */
 
     center->setFatherScroll(centerScroll);
 

@@ -937,7 +937,7 @@ void Track::clipboardCutBar() {
         Bar *cloner = new Bar;
         cloner->flush();
         cloner->clone(bar.get());
-        AClipboard::current()->setPtr(cloner);
+        AClipboard::current()->setPtr(cloner); //TODO move - иначе утечка
         AClipboard::current()->setType(4);
         deleteBar();
     }

@@ -399,7 +399,7 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 ConfigView::ConfigView():GView()
 {
-    AConfig *confValues = new AConfig();
+    AConfig *confValues = new AConfig(); //TODO перенести внутрь
     connectConfigs(confValues);
 
     configPointer = confValues;
@@ -408,11 +408,6 @@ ConfigView::ConfigView():GView()
         std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
     labA = std::make_unique<GLabel>(20,80+200-55,sP.c_str());
 
-        /*
-    sP = confValues->logsNames[1] + " " +
-        std::to_string((int)*(confValues->logs[1]))  + " press 1 to chng";
-    labB = new GLabel(20,120+200-55,sP.c_str());*/
-
     sP = confValues->logsNames[2] + " " +
         std::to_string((int)*(confValues->logs[2]))  + " press 1 to chng";
     labC = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
@@ -420,9 +415,6 @@ ConfigView::ConfigView():GView()
     sP = confValues->logsNames[3] + " " +
         std::to_string((int)*(confValues->logs[3]))  + " press 1 to chng";
     labD = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
-
-    //labScaleMinus = new GLabel(20,80-55,"zoomOut");
-    //labScalePlus = new GLabel(20,150-55,"zoomIn");
 }
 
 void ConfigView::keyevent(std::string press)

@@ -1329,7 +1329,7 @@ void RecordView::onclick(int x1, int y1)
 
             if (recorderPtr==0)
             {
-                QAudioRecorder *recorder = new QAudioRecorder();
+                recorderPtr = std::make_unique<QAudioRecorder>();
 
                 QAudioEncoderSettings audioSettings;
                 audioSettings.setCodec("audio/pcm");
@@ -1341,22 +1341,16 @@ void RecordView::onclick(int x1, int y1)
                 //audioSettings.setEncodingMode(QMultimedia::ConstantQualityEncoding);
 
                 QString container = "audio/x-wav";
-                recorder->setEncodingSettings(audioSettings,QVideoEncoderSettings(), container);
+                recorderPtr->setEncodingSettings(audioSettings,QVideoEncoderSettings(), container);
 
                 std::string wavePath = std::string(getTestsLocation()) + std::string("rec.wav");
-                recorder->setOutputLocation(QUrl::fromLocalFile(wavePath.c_str()));
-
-                recorderPtr = recorder;
+                recorderPtr->setOutputLocation(QUrl::fromLocalFile(wavePath.c_str()));
             }
 
             if (recorderPtr)
             {
-                QAudioRecorder *recorder  = (QAudioRecorder*)recorderPtr;
-                recorder->record();
-
+                recorderPtr->record();
                 //status->setText("Record started");
-
-
                 QAudioFormat m_format;
                 m_format.setSampleRate(8000);
                 m_format.setChannelCount(1);
@@ -1412,12 +1406,7 @@ void RecordView::onclick(int x1, int y1)
 
         #else
             if (recorderPtr)
-            {
-                QAudioRecorder *recorder  = (QAudioRecorder*)recorderPtr;
-                recorder->stop();
-
-                //status->setText("Record finished");
-            }
+                recorderPtr->stop();
         #endif
     }
 }

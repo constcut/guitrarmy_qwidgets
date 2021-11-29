@@ -1580,7 +1580,7 @@ void CenterView::mouseDoubleClickEvent( QMouseEvent * event )
     checkView();
     ondblclick(xPress,yPress);
     checkView();
-     }
+}
 
 void CenterView::keyPressEvent ( QKeyEvent * event )
 {
