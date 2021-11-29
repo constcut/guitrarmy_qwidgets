@@ -160,6 +160,8 @@ bool midiPrint(std::string fileName)
     midiFile.printToStream(std::cout);
 }
 
+
+
 bool testMidi(std::string fileName, std::string outFileName)
 {
     std::ifstream ifile(fileName.c_str(),std::ifstream::binary);
@@ -314,7 +316,7 @@ bool greatCheck()
             std::string midiFile = testLocation + std::string("m/") +std::string(newLine.c_str()) + std::string(".mid");
             std::string outMid = std::string("all_out/") + std::string(newLine.c_str()) + std::string("_amid.mid");
 
-            log<<"TestFile "<<gp3File.c_str();
+            //log<<"TestFile "<<gp3File.c_str();
             //if ( testMidi(midiFile,outMid,log) == false ) return 0;
             if ( testGP3 (gp3File,outGp3,doTheLogs)  == false ) return 0; //last true - no out
             if ( testGP4 (gp4File,outGp4,doTheLogs)  == false ) return 0; //last true - no out
@@ -342,11 +344,10 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = getTestsLocation();
+            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //TODO repair getTestsLocation();
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
             std::string gp3File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
-
 
             std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
             std::string outGp4 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
@@ -354,10 +355,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
 
 
-            std::string midiFile = testLocation + std::string("m/") +std::string(newLine.c_str()) + std::string(".mid");
-            std::string outMid = std::string("all_out/") + std::string(newLine.c_str()) + std::string("_amid.mid");
-
-            log<<"TestFile "<<newLine.c_str();
+            //log<<"TestFile "<<newLine.c_str();
 
             if (v==5)
             if ( testGP5 (gp5File,outGp5,doTheLogs) == false )
@@ -387,7 +385,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
             if ( testGP3 (gp3File,outGp3,doTheLogs) == false )
                 log <<"Test gp3 "<<newLine.c_str()<<" failed";
 
-            std::cout << "test file done"<<std::endl;
+            //std::cout << "test file done"<<std::endl;
         }
         catch(...)
         {

@@ -14,12 +14,12 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
     {
         auto timeLineTrack = std::make_unique<MidiTrack>();
         tab->createTimeLine(shiftTheCursor);
-        std::cout << tab->timeLine.size() << " is size of timeLine" <<std::endl;
+        //std::cout << tab->timeLine.size() << " is size of timeLine" <<std::endl;
         size_t tlAccum = 0;
         for (size_t i = 0; i < tab->timeLine.size(); ++i) {
             if (tab->timeLine[i].type==1) {
                 //changing bpm
-                std::cout << "Push bpm to "<<tab->timeLine[i].value<<std::endl;
+                //std::cout << "Push bpm to "<<tab->timeLine[i].value<<std::endl;
                 //refact to cover under another layer
                 short int rhyBase = 120;
                 short int power2 = 2<<(3);
@@ -128,7 +128,7 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
 
     clock_t after2T = getTime();
     int diffT = after2T - afterT;
-    qDebug() <<"File pre-generation "<<diffT;
+    //qDebug() <<"File pre-generation "<<diffT;
 
     //Main generation
 

@@ -1359,7 +1359,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     std::string title,subtitle,interpret,albumn,author,copyright,tabAuthor,instructions;
 
     title = readString(file);
-    std::cerr << "title " << title << std::endl;
+    //std::cerr << "title " << title << std::endl;
     subtitle = readString(file);
     interpret = readString(file);
     albumn = readString(file);

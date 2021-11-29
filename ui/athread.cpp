@@ -94,7 +94,7 @@ void PlayAnimationThr::threadRun()
              }
 
              if (beatWait > 0)
-                sleepThread(beatWait);
+                sleepThread(beatWait); //Thread may have issues TODO review stop when waits
 
              (*incrementB) = (*incrementB) +1;
              callUpdate();
@@ -106,13 +106,10 @@ void PlayAnimationThr::threadRun()
          //d) decreace nowWait
          //e) escape nowWaite
 
-         if (nowWait>0)
-         {
-             if (incrementB != 0)
-             {
-             (*incrementB) = (*incrementB) - 1;
-
-             callUpdate();
+         if (nowWait>0) {
+             if (incrementB != 0) {
+                (*incrementB) = (*incrementB) - 1;
+                callUpdate();
              }
              sleepThread(nowWait);
          }

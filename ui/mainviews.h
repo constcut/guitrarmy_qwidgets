@@ -376,16 +376,22 @@ public:
 
     void ondblclick(int x1, int y1)
     {
-        if (upper.hit(x1,y1))
+        if (bottom.hit(x1,y1))
         {
-            fastTestAll();
-            //keyevent("1");
-            //getMaster()->pleaseRepaint();
-            //keyevent("2");
-            //getMaster()->pleaseRepaint();
-            //keyevent("3");
-            //getMaster()->pleaseRepaint();
+            //fastTestAll();
+            keyevent("1");
+            getMaster()->pleaseRepaint();
+            keyevent("2");
+            getMaster()->pleaseRepaint();
+            keyevent("3");
+            getMaster()->pleaseRepaint();
+            keyevent("4");
+            getMaster()->pleaseRepaint();
 
+        }
+        if (upper.hit(x1,y1)) {
+            keyevent("playlist");
+            getMaster()->pleaseRepaint();
         }
     }
 
@@ -400,7 +406,7 @@ public:
         {
             //Start the playlist
 
-            for (size_t i = 51; i < buttons.size(); ++i)
+            for (size_t i = 1; i < buttons.size(); ++i) //48- start of 3?
             {
                 std::string onText = "on:" + std::to_string(i);
                 std::vector<std::string> playlistElement;
@@ -450,51 +456,51 @@ public:
         {
             clock_t now = getTime();
 
-            upper.setText("starting 1 pack");
+            bottom.setText("starting 1 pack");
             greatCheckScenarioCase(1,1,12,4);
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 1; - " + std::to_string(diff) + " ms";;
-            upper.setText(sX.c_str());
+            bottom.setText(sX.c_str());
         }
         if (press == "2")
         {
             clock_t now = getTime();
 
-            upper.setText("starting 2 pack");
+            bottom.setText("starting 2 pack");
             greatCheckScenarioCase(2,1,35,4);
 
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 2; - " + std::to_string(diff) + " ms";
-            upper.setText(sX.c_str());
+            bottom.setText(sX.c_str());
 
         }
         if (press == "3")
         {
             clock_t now = getTime();
 
-            upper.setText("starting 3 pack");
+            bottom.setText("starting 3 pack");
             greatCheckScenarioCase(3,1,70,4);
-            upper.setText("pack 3 finished");
+            bottom.setText("pack 3 finished");
 
             clock_t after = getTime();
             clock_t diff = after-now;
 
             std::string sX = "TIme spent for pack 3; - " + std::to_string(diff) + " ms";
 
-            upper.setText(sX.c_str());
+            bottom.setText(sX.c_str());
         }
         if (press == "4")
         {
             clock_t now = getTime();
 
-            upper.setText("starting 4 pack");
+            bottom.setText("starting 4 pack");
             greatCheckScenarioCase(4,1,109,4);
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 4; - " + std::to_string(diff) + " ms";
-            upper.setText(sX.c_str());
+            bottom.setText(sX.c_str());
         }
         if (press=="m")
         {
