@@ -1,13 +1,9 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
 
-
-#include <map> //TODO uo
-#include <memory>
-
 #include "types.h"
 
-class BendPoints;
+#include <map>
 
 class Package //TODO review
 {
@@ -15,8 +11,6 @@ protected:
 
     std::uint8_t type;
     void *point;
-
-    //std::unique_ptr<BendPoints> bend;
 
 public:
 
@@ -80,6 +74,7 @@ protected:
 public:
 
     void addPack(std::uint8_t index, std::uint8_t type, void *point);
+    void addPack(std::uint8_t index, Package pack);
     Package* getPack(std::uint8_t index);
 
     //operator +=

@@ -319,7 +319,7 @@ void PlayAnimationThr::addBeatTimes(void *bar)
 
             if (changePack)
             {
-                ChangesList *changes = (ChangesList*)changePack->getPointer();
+                Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
                 for (size_t indexChange=0; indexChange < changes->size(); ++indexChange)
                 if (changes->at(indexChange).changeType==8)
