@@ -11,12 +11,12 @@
 
 #include <vector>
 
-#include "gview.h"
+#include "ui/gview.h"
 
 //ONLY FOR GESTURES
 //and recog
-#include "mainviews.h"
-#include "tabviews.h"
+#include "ui/mainviews.h"
+#include "ui/tabviews.h"
 
 #include <QTapAndHoldGesture>
 #include <QTapGesture>
@@ -47,7 +47,7 @@
 
 #include <QMenuBar>
 
-#include "gpannel.h"
+#include "ui/gpannel.h"
 
 #include <QScroller>
 #include <QTapAndHoldGesture>

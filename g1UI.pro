@@ -28,7 +28,7 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
-    barview.cpp \
+    ui/barview.cpp \
     tab/bar.cpp \
     tab/beat.cpp \
     midi/midiexport.cpp \
@@ -39,7 +39,7 @@ SOURCES += main.cpp\
     tab/track_com.cpp \
     libs/sf/tsf.cpp \
     mainwindow.cpp \
-    gview.cpp \
+    ui/gview.cpp \
     tab/abitarray.cpp \
     g0/aconfig.cpp \
     tab/aexpimp.cpp \
@@ -48,35 +48,35 @@ SOURCES += main.cpp\
     midi/midifile.cpp \
     g0/scenario.cpp \
     tab/tab.cpp \
-    athread.cpp \
-    gpannel.cpp \
-    mainviews.cpp \
+    ui/athread.cpp \
+    ui/gpannel.cpp \
+    ui/mainviews.cpp \
     midi/midirender.cpp \
-    tabviews.cpp \
+    ui/tabviews.cpp \
     tab/aclipboard.cpp \
-    tabcommands.cpp \
+    ui/tabcommands.cpp \
     g0/wavefile.cpp \
     g0/fft.cpp \
     g0/waveanalys.cpp \
     android_helper.cpp \
-    centerview.cpp \
+    ui/centerview.cpp \
     qthelper.cpp \
-    inputviews.cpp \
+    ui/inputviews.cpp \
     midi/midiengine.cpp \
     g0/build.cpp \
     g0/rec.cpp \
-    trackview.cpp
+    ui/trackview.cpp
 
 
 HEADERS  += mainwindow.h \
-    barview.h \
+    ui/barview.h \
     tab/bar.h \
     tab/beat.h \
     midi/midisignal.h \
     tab/note.h \
     tab/track.h \
     tab/types.h \
-    gview.h \
+    ui/gview.h \
     tab/abitarray.h \
     g0/aconfig.h \
     tab/aexpimp.h \
@@ -84,26 +84,26 @@ HEADERS  += mainwindow.h \
     tab/gtpfiles.h \
     midi/midifile.h \
     tab/tab.h \
-    athread.h \
+    ui/athread.h \
     g0/buildheader.h \
     gpannel.h \
     libs/sf/tml.h \
     libs/sf/tsf.h \
-    mainviews.h \
-    midirender.h \
-    tabviews.h \
+    ui/mainviews.h \
+    midi/midirender.h \
+    ui/tabviews.h \
     tab/aclipboard.h \
-    tabcommands.h \
+    tab/tabcommands.h \
     g0/wavefile.h \
     g0/fft.h \
     g0/waveanalys.h \
     android_helper.h \
-    centerview.h \
+    ui/centerview.h \
     qthelper.h \
-    inputviews.h \
+    ui/inputviews.h \
     midi/midiengine.h \
     g0/rec.h \
-    trackview.h
+    ui/trackview.h
 
 
 

@@ -1,7 +1,7 @@
-#include "mainwindow.h"
+#include "ui/mainwindow.h"
 #include <QApplication>
 
-#include "mainviews.h"
+#include "ui/mainviews.h"
 
 #include "g0/aconfig.h"
 

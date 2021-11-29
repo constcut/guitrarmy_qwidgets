@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "athread.h"
+#include "ui/athread.h"
 
 #include <QLabel>
 #include <QProgressBar>
@@ -18,7 +18,7 @@
 
 #include <QStyle>
 
-#include "centerview.h"
+#include "ui/centerview.h"
 
 #include <QScrollArea>
 
@@ -73,7 +73,7 @@ public:
     bool eventFilter(QObject *object, QEvent *e);
 
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    virtual ~MainWindow();
 
    QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
 
