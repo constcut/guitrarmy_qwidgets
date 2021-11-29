@@ -420,7 +420,7 @@ ConfigView::ConfigView():GView()
 
     std::string sP = confValues->logsNames[0] + " " +
         std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
-    labA = new GLabel(20,80+200-55,sP.c_str());
+    labA = std::make_unique<GLabel>(20,80+200-55,sP.c_str());
 
         /*
     sP = confValues->logsNames[1] + " " +
@@ -429,11 +429,11 @@ ConfigView::ConfigView():GView()
 
     sP = confValues->logsNames[2] + " " +
         std::to_string((int)*(confValues->logs[2]))  + " press 1 to chng";
-    labC = new GLabel(20,120+200-55,sP.c_str());
+    labC = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
 
     sP = confValues->logsNames[3] + " " +
         std::to_string((int)*(confValues->logs[3]))  + " press 1 to chng";
-    labD = new GLabel(20,120+200-55,sP.c_str());
+    labD = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
 
     //labScaleMinus = new GLabel(20,80-55,"zoomOut");
     //labScalePlus = new GLabel(20,150-55,"zoomIn");

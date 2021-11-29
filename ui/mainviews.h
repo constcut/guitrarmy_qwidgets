@@ -111,29 +111,25 @@ protected:
 class WelcomeView : public GView
 {
 protected:
-    GLabel *top;
-    GLabel *mid;
-    GLabel *bot;
+    std::unique_ptr<GLabel> top;
+    std::unique_ptr<GLabel> mid;
+    std::unique_ptr<GLabel> bot;
 
 public:
     WelcomeView()
     {
-        top = new GLabel(50,100,"Guitarmy - tablature compose tool","",false);
-        mid = new GLabel(50,150,"This is early beta version - thank you for download","",false);
-        bot = new GLabel(50,200,";)","",false);
+        top = std::make_unique<GLabel>(50,100,"Guitarmy - tablature compose tool","",false);
+        mid = std::make_unique<GLabel>(50,150,"This is early beta version - thank you for download","",false);
+        bot = std::make_unique<GLabel>(50,200,";)","",false);
     }
-
     void draw(QPainter *painter)
     {
         top->draw(painter);
         mid->draw(painter);
         bot->draw(painter);
     }
-
     void onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
-    {
-        //MainWindow
-    }
+    {}
 };
 
 
@@ -143,10 +139,11 @@ class ConfigView : public GView
 {
 protected:
     AConfig *configPointer;
-    GLabel *labA,*labB;
-    GLabel *labC,*labD;
 
-    GLabel *labScalePlus, *labScaleMinus;
+    std::unique_ptr<GLabel> labA, labB;
+    std::unique_ptr<GLabel> labC, labD;
+
+    std::unique_ptr<GLabel> labScalePlus, labScaleMinus;
 public:
     ConfigView();
     //~ConfigView(){}
@@ -155,6 +152,7 @@ public:
     virtual void keyevent(std::string press);
 
 };
+
 
 class InfoView : public GView
 {
