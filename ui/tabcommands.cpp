@@ -346,7 +346,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SetSignForSelected)
       changeBarSignsQt(pTrack, selectionBarFirst, selectionBarLast);
     else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
-        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
+        playTrack(tabParrent, localThr.get(), cursorBeat, cursor, pTrack, getMaster());
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
     else if (command == TrackCommand::Bend)
@@ -907,7 +907,7 @@ void TabView::onTabCommand(TabCommand command) {
     else if (command == TabCommand::NewTrack) {
        pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
-        playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
+        playPressedQt(pTab, localThr.get(), pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
         generateMidiQt(pTab, statusLabel.get());
     else if (command == TabCommand::GotoBar)

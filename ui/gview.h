@@ -231,6 +231,8 @@ public:
 
 
 
+class ThreadLocal;
+
 class MasterView
 {
 protected:
@@ -252,8 +254,8 @@ public:
 
       GView *getFirstChild() { return firstChld; }
 
-      virtual void connectThread([[maybe_unused]]void *localThr){}
-      virtual void connectMainThread([[maybe_unused]]void *localThr){}
+      virtual void connectThread([[maybe_unused]]ThreadLocal *localThr){}
+      virtual void connectMainThread([[maybe_unused]]ThreadLocal *localThr){}
 
       virtual void pleaseRepaint() {}
 

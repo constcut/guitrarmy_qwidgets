@@ -5,27 +5,21 @@
 void TrackView::launchThread()
 {
     if (localThr)
-    localThr->start();
+        localThr->start();
 }
 
 void TrackView::stopThread()
 {
-    if (localThr)
-    {
+    if (localThr) {
         localThr->requestStop();
-        //localThr->quit();
         localThr->wait();
-        delete localThr;
-        localThr = nullptr;
     }
 }
 
 void TrackView::connectThreadSignal(MasterView *masterView)
 {
-    masterView->connectThread(localThr);
+    masterView->connectThread(localThr.get());
 }
-
-
 
 
 
@@ -535,15 +529,10 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 
     if (localThr) {
         localThr->requestStop();
-        //localThr->quit();
         localThr->wait();
-        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
-            //localThr->deleteLater();
-        delete localThr;
-        localThr = nullptr;
     }
 
-    localThr = new ThreadLocal;
+    localThr = std::make_unique<ThreadLocal>();
 
     size_t& cursor = pTrack->cursor();
     size_t& cursorBeat = pTrack->cursorBeat();

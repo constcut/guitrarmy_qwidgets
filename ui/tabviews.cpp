@@ -84,7 +84,7 @@ int scaleCoef = 1;
 
 
 //Tab view
-TabView::TabView():GView(0,0,0,0),pTab(0),localThr(0)
+TabView::TabView():GView(0,0,0,0),pTab(0)
 {
     statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
     bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
@@ -373,20 +373,12 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
 
     auto& pTrack = pTab->at(0);
 
-    if (localThr)
-    {
+    if (localThr) {
         localThr->requestStop();
-        //localThr->quit();
         localThr->wait();
-        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
-            //localThr->deleteLater();
-        delete localThr;
-        localThr = nullptr;
     }
 
-
-    localThr = new ThreadLocal;
-
+    localThr = std::make_unique<ThreadLocal>();
     localThr->setInc(&pTab->getCurrentBar(), nullptr); //oh shhhi 2nd arg
     localThr->setBPM(pTab->getBPM());
 
@@ -419,15 +411,9 @@ void TabView::stopAllThreads()
     for (size_t i = 0; i <tracksView.size(); ++i)
         tracksView[i]->stopThread();
 
-    if (localThr)
-    {
+    if (localThr) {
         localThr->requestStop();
-        //localThr->quit();
         localThr->wait();
-        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
-            //localThr->deleteLater();
-        delete localThr;
-        localThr = nullptr;
     }
 }
 
@@ -438,7 +424,7 @@ void TabView::connectAllThreadsSignal(MasterView *masterView)
 
    // masterView->connectThread(localThr);
 
-   masterView->connectMainThread(localThr);
+   masterView->connectMainThread(localThr.get());
 }
 
 
@@ -448,7 +434,7 @@ void TabView::connectAllThreadsSignal(MasterView *masterView)
 
 bool TabView::gotChanges()
 {
-    for (int i = 0; i < tracksView.size(); ++i)
+    for (size_t i = 0; i < tracksView.size(); ++i)
         if (tracksView[i]->gotChanges())
         {
             //REQUEST DIALOG - if no then return true

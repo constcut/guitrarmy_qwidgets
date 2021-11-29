@@ -19,7 +19,7 @@ protected:
     Track *pTrack;
 
     TabView *tabParrent;
-    ThreadLocal *localThr; //Подумать над хранением, возможно удастся спрятать?
+    std::unique_ptr<ThreadLocal> localThr; //Подумать над хранением, возможно удастся спрятать?
 
     ViewPull barsPull;
 
@@ -36,7 +36,7 @@ public:
     virtual void setUI();
     virtual bool isMovableY() { return true; }
 
-    TrackView(Track *from):pTrack(from),localThr(0), pan(0) {
+    TrackView(Track *from):pTrack(from), pan(0) {
         trackPan = std::make_unique<GTrackPannel>(300,480,800);
         effPan = std::make_unique<GEffectsPannel>(300,480,800);
         clipPan = std::make_unique<GClipboardPannel>(300,480,800);

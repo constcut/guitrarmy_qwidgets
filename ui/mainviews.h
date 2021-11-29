@@ -443,6 +443,7 @@ public:
 
                 getMaster()->addToPlaylist(playlistElement);
             }
+            qDebug() << "Playlist configured of " << buttons.size() << " entries ";
 
             getMaster()->goOnPlaylist();
         }

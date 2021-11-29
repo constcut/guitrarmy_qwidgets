@@ -29,7 +29,7 @@ protected:
     std::unique_ptr<GTabPannel> pan;
 
 
-    ThreadLocal *localThr; //Подумать, можно ли перенести?
+    std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
 
 public:
 

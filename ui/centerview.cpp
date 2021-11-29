@@ -893,25 +893,18 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
     };
 }
 
-void CenterView::connectThread(void *localThr)
-{
-    ThreadLocal *threadLocal = (ThreadLocal*)localThr;
-
-
+void CenterView::connectThread(ThreadLocal *localThr) {
     this->connect(
-        threadLocal,
+        localThr,
         SIGNAL(updateUI()),
         SLOT(update()),
         Qt::QueuedConnection);
 }
 
-void CenterView::connectMainThread(void *localThr)
-{
-    ThreadLocal *threadLocal = (ThreadLocal*)localThr;
-
+void CenterView::connectMainThread(ThreadLocal *localThr) {
 
     this->connect(
-        threadLocal,
+        localThr,
         SIGNAL(nowFinished()),
         SLOT(threadFinished()),
         Qt::QueuedConnection);
