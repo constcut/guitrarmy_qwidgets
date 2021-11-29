@@ -63,7 +63,7 @@ static void sendSignalShortWin(DWORD signal);
     /////////////////// Transform functions
     */
 
-    static MidiTrack *uniteFileToTrack(MidiFile *midiFile);
+    static std::unique_ptr<MidiTrack> uniteFileToTrack(MidiFile *midiFile);
 };
 
 #endif // MIDIENGINE_H

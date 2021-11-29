@@ -170,7 +170,7 @@ std::uint8_t Bar::getCompleteStatus()
                lastAbs = newNoteAbs;
            else
            {
-              --completeIndex; //to small for new note
+              --completeIndex; //to small for n ew note
                //qDebug() <<"SHIFTBACK"; //ATT
            }
 

@@ -108,7 +108,6 @@ HEADERS  += ui/mainwindow.h \
 
 
 DISTFILES += \
-    g0/actionPlan.txt \
     g0/todo.txt \
     android/AndroidManifest.xml \
     android/gradle/wrapper/gradle-wrapper.jar \

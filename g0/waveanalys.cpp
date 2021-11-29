@@ -715,9 +715,6 @@ int signMF(long mass)
 
  void LocalFreqTable::voteFor(double freq, double voteValue)
  {
-         //search for vote
-             //if found  - append value
-             //else - add new value
 
      for (size_t i = 0; i < votes.size(); ++i)
      {
@@ -903,14 +900,12 @@ int signMF(long mass)
          {
              QSharedPointer<FFT> four(new FFT(8192));
 
-             //fourier = new FFT(8192);
              four->transform(&zeroPoint[startInSamples]);
              four->countDecibels();
              four->countAmplitude();
              four->findPeaks();
 
              QSharedPointer<LocalFreqTable> localFreq(new LocalFreqTable());
-             //lft = new LocalFreqTable();
              localFreq->addPeaks(four->getPeaks());
              localFreq->sortPeaks();
              localFreq->recountHarmonicalUnion();
@@ -948,14 +943,12 @@ int signMF(long mass)
          {
              QSharedPointer<FFT> four(new FFT(8192));
 
-             //fourier = new FFT(8192);
              four->transform(&zeroPoint[startInSamples]);
              four->countDecibels();
              four->countAmplitude();
              four->findPeaks();
 
              QSharedPointer<LocalFreqTable> localFreq(new LocalFreqTable());
-             //lft = new LocalFreqTable();
              localFreq->addPeaks(four->getPeaks());
              localFreq->sortPeaks();
              localFreq->recountHarmonicalUnion();

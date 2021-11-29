@@ -29,7 +29,7 @@ MidiEngine *MidiEngine::inst=0;
 
 
 #ifndef WIN32
-QMediaPlayer *midiPlayer=0;
+std::unique_ptr<QMediaPlayer> midiPlayer;
 
 #endif
 
@@ -84,8 +84,8 @@ void MidiEngine::openDefaultFile()
 #else
     //midiPlayer.setMedia(QUrl::fromLocalFile("/sdcard/p/tests/midiOutput.mid"));
 
-    if (midiPlayer==0)
-        midiPlayer = new QMediaPlayer();
+    if (midiPlayer==nullptr)
+        midiPlayer = std::make_unique<QMediaPlayer>();
 
     std::string command = std::string(getTestsLocation()) + "midiOutput.mid";
     QString playerPath = command.c_str(); // "/sdcard/p/tests/midiOutput.mid";
@@ -323,7 +323,7 @@ bool midiAbsSortFunction(MidiSignal *a, MidiSignal *b)
     return timeA>timeB;
 }
 
-MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
+std::unique_ptr<MidiTrack> MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 {
     //1 makes all signals global counters apended ul(eats mem but helps alot)
     //2 put all together
@@ -353,7 +353,7 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
 
     //repair local position from abs
 
-    MidiTrack *result = new MidiTrack();
+    auto result = std::make_unique<MidiTrack>();
 
     size_t lastGlobalAbs = 0;
     for (int sigI = allSignals.size()-1; sigI >= 0; --sigI)

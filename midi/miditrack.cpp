@@ -228,11 +228,11 @@ void MidiTrack::pushEvent47()
 
 #ifdef WIN32
 /* terrible fix :)
-    MidiSignal *trickA = new MidiSignal(0x90 , 64, 3 ,240);
-    MidiSignal *trickB = new MidiSignal(0x80 , 64, 3 ,240);
+    auto trickA = std::make_unique<MidiSignal>(0x90 , 64, 3 ,240);
+    auto trickB = std::make_unique<MidiSignal>(0x80 , 64, 3 ,240);
 //THERE IS SMALL FIX FOR WINDOWS PLAY MACHINE
-    add(trickA);
-    add(trickB);*/
+    add(std::move(trickA));
+    add(std::move(trickB));*/
 #endif
 
     auto event47 = std::make_unique<MidiSignal>(0xff,47,0,0);

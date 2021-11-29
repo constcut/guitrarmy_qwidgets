@@ -163,27 +163,6 @@ protected:
         return nullptr;
     }
 
-    Note *getNoteInstance(int string)
-    {
-        /*
-        for (ul i = 0; i < size(); ++i)
-
-            if (getV(i).getStringNumber()==string)
-                return getV(i);
-        */
-
-        Note *notePtr = getNote(string);
-        if (notePtr)
-        {
-            Note *theClone = new Note();
-            theClone->clone(notePtr);
-            return theClone;
-        }
-
-        Note *emptyNote = new Note;
-        emptyNote->setFret(255);
-        return emptyNote;
-    }
 
     void setFret(std::uint8_t fret, int string)
     {

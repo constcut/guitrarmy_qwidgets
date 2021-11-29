@@ -29,7 +29,7 @@ class WaveFile
 {
     WaveHeader header;
 
-    char *rawData;
+    char *rawData; //TODO vector<char>
 
 public:
     WaveFile():rawData(0)

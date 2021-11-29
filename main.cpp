@@ -239,15 +239,14 @@ int main(int argc, char *argv[])
     if (globals.platform == "windows")
         MidiEngine midInit;
 
-    MainView *mw = new MainView();
+    auto mw = std::make_unique<MainView>();
     mw->setMaster(w.getCenterView());
-    w.getCenterView()->changeChild(mw);
+    w.getCenterView()->changeChild(mw.get());
     w.getCenterView()->setStatusSetter(&w);
-
-    MainView *m2 = new MainView();
+    auto m2 = std::make_unique<MainView>();
     m2->setSlave();
-    w.getCenterView()->ownChild = new CenterView(w.getCenterView());
-    w.getCenterView()->ownChild ->changeChild(m2);
+    w.getCenterView()->ownChild = new CenterView(w.getCenterView()); //Немного криповый участок :( TODO
+    w.getCenterView()->ownChild ->changeChild(m2.get());
 
     w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());
 
@@ -312,7 +311,6 @@ int main(int argc, char *argv[])
         //crash log saver
     }
 
-    delete mw;
     qDebug() << "Main function done" ;
     std::cout << "Main end reached"<<std::endl;
 
