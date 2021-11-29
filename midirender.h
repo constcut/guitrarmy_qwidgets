@@ -35,11 +35,6 @@ public:
     QByteArray renderFromMemoryShort(MidiTrack &track); //yet trying to make per track generation
     QByteArray renderFromMemoryFloat(MidiTrack &track); //at least it could be mixed and also generated in append mode
 
-    ///QByteArray renderShort(MidiFile *mid);
-    ///QByteArray renderFloat(MidiFile *mid);
-
-    QByteArray renderFromClass(void *midiClass){} //TO DO LATER - sepparate Midi implementation from renderer
-
     bool openMidiFile(QString midiFilename);
     bool openSoundFont(QString sfFilename);
 

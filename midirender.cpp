@@ -93,6 +93,7 @@ QByteArray MidiRender::renderShort(QString midiFilename, QString sfFilename)
     return renderShort(midiFilename);
 }
 
+
 QByteArray MidiRender::renderFloat(QString midiFilename, QString sfFilename)
 {
     if ((openSoundFont(sfFilename)==false))
@@ -100,6 +101,7 @@ QByteArray MidiRender::renderFloat(QString midiFilename, QString sfFilename)
 
     return renderFloat(midiFilename);
 }
+
 
 QByteArray MidiRender::renderShortNext(int len)
 {
@@ -118,18 +120,12 @@ QByteArray MidiRender::renderShortNext(int len)
         for (msRendered += SampleBlock * (1000.0 / freq); g_MidiMessage && msRendered>= g_MidiMessage->time; g_MidiMessage = g_MidiMessage->next)
         {
 
-            //qDebug() << "Render message time "<<g_MidiMessage->time;
-
-
             switch (g_MidiMessage->type)
             {
-                //WHAT forgoten - oh alot
-                //pan volume ?
-                //bpm does it changes?
+                //TODO check other file like awake there are missin volume, panoram anf some other things
 
-                //WHEEL isn't here as I know
-
-
+                //Возможно проблема в ситуациях, когда инструмент не устанавливается изначально
+                //Вести логи - изучить. По крайней мере многие клавиши у нас работают
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
                     g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex((tsf*)soundFont, 0, g_MidiMessage->program);
                     if (g_MidiChannelPreset[g_MidiMessage->channel] < 0) g_MidiChannelPreset[g_MidiMessage->channel] = 0;
@@ -149,6 +145,7 @@ QByteArray MidiRender::renderShortNext(int len)
 
    return result;
 }
+
 
 QByteArray MidiRender::renderFloatNext(int len)
 {
