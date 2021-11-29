@@ -165,7 +165,7 @@ void MainView::keyevent(std::string press)
         if (press == CONF_PARAM("Main.open")) {
 
             if (tabsView->gotChanges()==false) {
-                QFileDialog *fd = new QFileDialog;
+                auto fd = std::make_unique<QFileDialog>();
 
 
                 fd->setStyleSheet("QScrollBar:horizontal {\
@@ -195,8 +195,6 @@ void MainView::keyevent(std::string press)
                         //fd->getOpenFileName(0, QString::fromLocal8Bit("�������"),
                          //            getTestsLocation(),
                                   //   "Gx files (*.g*)");
-
-                delete fd;
 
                 clock_t afterT = getTime();
 

@@ -228,7 +228,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
 
 
 void saveAsFromTrack(TabView* tabParent) {
-    QFileDialog *fd = new QFileDialog;
+    auto fd = std::make_unique<QFileDialog>();
 
     fd->setStyleSheet("QScrollBar:horizontal {\
                         border: 2px solid grey;\
@@ -250,7 +250,6 @@ void saveAsFromTrack(TabView* tabParent) {
 #endif
 
     QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
-    delete fd;
     GmyFile gmyFile;
     std::string  gfileName = saveFileName.toStdString();
     std::ofstream file(gfileName);
@@ -619,7 +618,7 @@ void setTune(Track* pTrack) {
 
 void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получения имени файла)
 
-    QFileDialog *fd = new QFileDialog;
+    auto fd = std::make_unique<QFileDialog>();
     fd->setStyleSheet("QScrollBar:horizontal {\
                       border: 2px solid grey;\
                       background: #32CC99;\
@@ -640,8 +639,6 @@ void saveAs(Tab* pTab) { //Move into Tab (но на этапе уже получ
 #endif
 
     QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
-    delete fd; //TODO изучить возможность переиспользования
-
     std::string  gfileName = saveFileName.toStdString();
     pTab->saveAs(gfileName);
 }

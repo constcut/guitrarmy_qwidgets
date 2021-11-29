@@ -95,7 +95,7 @@ TabView::TabView():GView(0,0,0,0),pTab(0)
 
 void TabView::addSingleTrack(Track *track)
 {
-    TrackView *tV = new TrackView(track);
+    TrackView *tV = new TrackView(track); //TODO unique
     tV->setPa(this);
 
     int wSet = getMaster()->getWidth();
