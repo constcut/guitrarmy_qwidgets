@@ -10,7 +10,7 @@ Yet this repo is closed, but it would be open a little later
 
 
 
-#Personal Histroy
+# Personal Histroy
 
 First signs of this project appeared in 2009, when I wrote and built Sony PSP homebrew application, that was capable to read and write GP4 file. Playback was very laggy but some of file worked just fine.
 

@@ -533,7 +533,7 @@ public:
     }
 };
 
-/// New inputs
+/// N ew inputs
 ///
 
 

@@ -1535,11 +1535,11 @@ void CenterView::paintEvent(QPaintEvent *event)
 
         if (tabV->tracksView.size())
         {
-            TrackView *trackV = tabV->tracksView[tabV->getCurTrack()];
+            auto& trackV = tabV->tracksView[tabV->getCurTrack()];
             trackV->setMaster(mw->getMaster());
 
             MainView *mw2 =  (MainView *)ownChild->getFirstChild();
-            mw2->changeCurrentView(trackV);
+            mw2->changeCurrentView(trackV.get());
         }
 
 

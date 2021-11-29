@@ -690,6 +690,6 @@ void pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t channe
 
     if (midiExportLog)
     qDebug() << "done";
-} //TODO void* на этапе рефакторинга эффектов
+}
 
 

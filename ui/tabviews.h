@@ -43,7 +43,7 @@ public:
 
     TabView();
 
-    std::vector<TrackView*> tracksView;
+    std::vector<std::unique_ptr<TrackView>> tracksView;
 
     int getCurTrack() { return pTab->getCurrentTrack(); }
     int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }

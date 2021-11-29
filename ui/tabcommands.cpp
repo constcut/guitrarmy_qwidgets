@@ -458,7 +458,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
 
 void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, size_t digit) {
     if (digit && digit <= tracksLen) {
-        TrackView *trackView = tabView->tracksView[digit-1]; //А обновление интерфейса в модуль Qt TODO выше
+        TrackView *trackView = tabView->tracksView[digit-1].get(); //А обновление интерфейса в модуль Qt TODO выше
         lastOpenedTrack = digit-1;
         MainView *mainView = (MainView*)tabView->getMaster()->getFirstChild();
         mainView->changeCurrentView(trackView);

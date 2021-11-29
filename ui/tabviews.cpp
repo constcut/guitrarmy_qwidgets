@@ -95,7 +95,7 @@ TabView::TabView():GView(0,0,0,0),pTab(0)
 
 void TabView::addSingleTrack(Track *track)
 {
-    TrackView *tV = new TrackView(track); //TODO unique
+    auto tV = std::make_unique<TrackView>(track); //TODO unique
     tV->setPa(this);
 
     int wSet = getMaster()->getWidth();
@@ -104,7 +104,7 @@ void TabView::addSingleTrack(Track *track)
     tV->setH(hSet);
     tV->setW(wSet);
 
-    tracksView.push_back(tV);
+    tracksView.push_back(std::move(tV));
 }
 
 void TabView::setUI()
@@ -124,10 +124,6 @@ void TabView::setTab(Tab* point2Tab)
     MidiEngine::stopDefaultFile();
     stopAllThreads();
     setPlaying(false);
-
-    if (tracksView.empty() == false)
-        for (size_t i = 0; i <tracksView.size(); ++i)
-            delete tracksView[i];
 
     tracksView.clear();
 
@@ -164,22 +160,22 @@ void TabView::onclick(int x1, int y1)
         return;
     }
 
-    int awaitBar = (x1-200)/30;
+    int awaitBar = (x1-200)/30; //TODO size_t и дополнительные рассчёты, т.к. -1 всё равно не вариант
     int toolBarHeight = getMaster()->getToolBarHeight();
     int awaitTrack = (y1-toolBarHeight)/30;
     awaitTrack-=1;
 
     if (awaitBar >= 0){
         awaitBar += pTab->getDisplayBar();
-        if (awaitBar==pTab->getCurrentBar()){
+        if (awaitBar == pTab->getCurrentBar()){
             qDebug() << "Track pressed "<<awaitTrack<<"; Bar "<<awaitBar;
             if (awaitTrack >= 0){
                 if (awaitTrack < pTab->size()) {
-                    TrackView *trackView = tracksView[awaitTrack];
+                    auto& trackView = tracksView[awaitTrack];
                     pTab->getLastOpenedTrack() = awaitTrack;
                     trackView->setDisplayBar(awaitBar);
                     MainView *mainView = (MainView*)getMaster()->getFirstChild();
-                    mainView->changeCurrentView(trackView);
+                    mainView->changeCurrentView(trackView.get());
                     std::string statusBar1,statusBar2;
                     statusBar1 = pTab->at(awaitTrack)->getName();
                     statusBar2 = "bar " + std::to_string( pTab->getCurrentBar() );

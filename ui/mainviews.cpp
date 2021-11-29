@@ -252,7 +252,7 @@ void MainView::keyevent(std::string press)
 
         if (press == "trackview")
         {
-            changeCurrentView(tabsView->tracksView[tabsView->getLastOpenedTrack()]);
+            changeCurrentView(tabsView->tracksView[tabsView->getLastOpenedTrack()].get());
         }
 
         if (press == "info")
