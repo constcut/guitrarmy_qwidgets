@@ -375,15 +375,15 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
 
     if (localThr)
     {
-        //qDebug() << "Removing old thread ";
         localThr->requestStop();
-        localThr->terminate();
-        if (CONF_PARAM("crashOnPlayHotFix") != "1")
-        localThr->deleteLater();
-        //delete localThr;
+        //localThr->quit();
+        localThr->wait();
+        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
+            //localThr->deleteLater();
+        delete localThr;
+        localThr = nullptr;
     }
 
-    //qDebug() << "Creating new thread";
 
     localThr = new ThreadLocal;
 
@@ -421,10 +421,13 @@ void TabView::stopAllThreads()
 
     if (localThr)
     {
-        localThr->terminate();
-#ifdef __ANDROID_API__
-         localThr->requestStop();
-#endif
+        localThr->requestStop();
+        //localThr->quit();
+        localThr->wait();
+        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
+            //localThr->deleteLater();
+        delete localThr;
+        localThr = nullptr;
     }
 }
 

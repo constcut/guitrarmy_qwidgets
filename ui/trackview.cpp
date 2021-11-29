@@ -12,11 +12,11 @@ void TrackView::stopThread()
 {
     if (localThr)
     {
-        localThr->terminate();
-
-#ifdef __ANDROID_API__
-      localThr->requestStop();
-#endif
+        localThr->requestStop();
+        //localThr->quit();
+        localThr->wait();
+        delete localThr;
+        localThr = nullptr;
     }
 }
 
@@ -535,10 +535,12 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 
     if (localThr) {
         localThr->requestStop();
-        localThr->terminate();
-        if (CONF_PARAM("crashOnPlayHotFix") != "1")
-        localThr->deleteLater();
-        //local
+        //localThr->quit();
+        localThr->wait();
+        //if (CONF_PARAM("crashOnPlayHotFix") != "1") //TODO above
+            //localThr->deleteLater();
+        delete localThr;
+        localThr = nullptr;
     }
 
     localThr = new ThreadLocal;

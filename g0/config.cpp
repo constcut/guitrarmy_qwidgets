@@ -216,7 +216,7 @@ void AConfig::checkConfig()
     addValue("statusBar","1");
     addValue("metronome","0");
 
-    addValue("crashOnPlayHotFix","1"); //to remember the leak
+    //addValue("crashOnPlayHotFix","1"); //to remember the leak
     //if not found sepparae buttons
 
     addValue("logs.tab","0");

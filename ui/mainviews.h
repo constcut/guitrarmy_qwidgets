@@ -431,7 +431,7 @@ public:
         if (press=="playlist")
         {
             //Start the playlist
-
+            //Try from 1?
             for (size_t i = 1; i < buttons.size(); ++i) //48- start of 3?
             {
                 std::string onText = "on:" + std::to_string(i);

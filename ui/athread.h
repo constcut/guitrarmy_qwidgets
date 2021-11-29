@@ -141,16 +141,16 @@ public:
         threadRun();
     }
 
-    void callUpdate() {
+    void callUpdate() override {
         emit updateUI();
     }
 
-    void noticeFinished()
+    void noticeFinished() override
     {
         emit nowFinished();
     }
 
-    void sleepThread(int ms) {
+    void sleepThread(int ms) override {
         msleep(ms);
     }
 };
