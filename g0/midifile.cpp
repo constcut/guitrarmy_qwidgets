@@ -45,147 +45,6 @@ void writeReversedEndian(const char* in, size_t len, std::ofstream& file) {
 
 
 
-size_t VariableInt::readStream(std::ifstream & ifile)
-{
-    size_t totalBytesRead = 0;
-
-    std::uint8_t lastByte = 0;
-	do
-	{
-        ifile.read((char*)&lastByte, 1);
-
-        std::uint8_t valueByte = lastByte & 127;
-        this->push_back(valueByte);
-
-        if (midiLog)  qDebug() << "V[" << totalBytesRead << "] value = " << valueByte;
-
-		if (lastByte & 128)
-        {
-            if (midiLog)  qDebug() << " not last! " ;
-        }
-		else
-            if (midiLog)  qDebug() << " last one!" ;
-
-		// end of debugging
-
-		++totalBytesRead;
-
-	}
-	while (lastByte & 128);
-
-	return totalBytesRead;
-}
-
-size_t VariableInt::getValue()
-{
-	// collect value from poly
-    size_t responseValue = 0;
-
-    size_t length = size();
-
-	for (size_t i = 0; i < length; ++i)
-	{
-		responseValue <<= 7;
-        responseValue += at(i);
-	}
-
-	return responseValue;
-}
-
-size_t MidiSignal::readStream(std::ifstream & ifile)
-{
-    size_t totalRead = 0;
-
-	// main place for current refactoring
-	// move into signal
-	VariableInt varInt;
-    size_t varIntBytesRead = varInt.readStream(ifile);
-
-	totalRead += varIntBytesRead;
-
-    std::uint8_t p00 = 0;				// 2 parts of 4bit params
-    std::uint8_t p1 = 0;				// param 1
-    std::uint8_t p2 = 0;				// param 2;
-
-    ifile.read((char*)&p00, 1);
-	totalRead += 1;
-
-	//first fill the structure
-	this->byte0 = p00; //channel + event type
-	this->time = varInt;
-
-	// debuging
-
-	if (p00 == 0xff)
-	{
-        if (midiLog)  qDebug() << "This is a meta event! " ;
-
-        std::uint8_t metaType;
-        ifile.read((char*)&metaType, 1);
-		int metaEvType = metaType;
-		totalRead += 1;
-
-		//or in own place?
-		this->param1 = metaType;
-
-		VariableInt metaLength;
-        size_t mLenBytesRead = metaLength.readStream(ifile);
-		totalRead += mLenBytesRead;
-        size_t bytesToSkip = metaLength.getValue();
-
-		this->metaStore.metaLen = metaLength;
-
-        if (midiLog)  qDebug() << "Meta type = " << metaEvType << " to skip - " << bytesToSkip;
-
-        std::uint8_t bBufer;
-
-        for (size_t k = 0; k < bytesToSkip; ++k)
-		{
-            ifile.read((char*)&bBufer, 1);
-            this->metaStore.bufer.push_back(bBufer);
-		}
-		
-		totalRead += bytesToSkip;
-
-	}
-	else
-	{
-
-		int evValue = p00;
-        if (midiLog)  qDebug() << "Not meta event. value = " << evValue;
-
-        ifile.read((char*)&p1, 1);
-		totalRead += 1;
-		
-		this->param1 = p1;
-
-		//CLEAN THIS	MARKER	ONLY	AFTER	FILLING	FUNCTIONS
-		int midiChannel = p00 & (0xf);	// (0x1 + 0x2 + 0x4 + 0x8)
-        int eventType = p00 & (0xf0);	// (16 + 32 + 64 + 128);
-		eventType >>= 4;
-		//JUST OUTPUT	FOR	HERE, BUT ALWAYS	FOR	FUNCTIONS
-
-		if ((eventType != 0xC) && (eventType != 0xD))
-		{
-            ifile.read((char*)&p2, 1);
-			totalRead += 1;
-			this->param2 = p2;
-
-		}
-
-		int param1 = p1;
-		int param2 = p2;
-
-        if (midiLog)  qDebug() << " Event# " << eventType << "; midiChan# "
-            << midiChannel << "; p1 = " << param1 << "; p2 = " << param2;
-
-        //if (eventType == 0) ; //just a reminder of system events
-
-	}
-
-	return totalRead;
-}
-
 bool MidiFile::readStream(std::ifstream & ifile)
 {
     ifile.read((char*)midiHeader.chunkId, 4);
@@ -257,40 +116,6 @@ bool MidiFile::readStream(std::ifstream & ifile)
     return true;
 }
 
-//Here appear stream printing operaions
-// PRINT BEGIN
-void MidiSignal::printToStream(std::ostream &stream)
-{
-	if (byte0 == 0xff)
-	{
-		int metaType = param1;
-        size_t metaLen = metaStore.metaLen.getValue();
-		stream <<"MetaType "<<metaType<<"; MetaLen " <<metaLen;
-        for (size_t i = 0; i < metaLen; ++i)
-        {
-            stream << std::endl<< "Meta byte "<<i<<" = "<<(int) metaStore.bufer.at(i);
-        }
-	}
-	else
-	{
-		int midiChannel = byte0 & (0xf);
-        int eventType = byte0 & (0xf0);
-		eventType >>= 4;
-        stream <<"EventType "<<eventType<<"("<<(int)byte0<<"); channel "<<midiChannel<<"; abs="<<absValue;
-
-		int p1 = param1; //its shame to output this way, must correct this
-		int p2 = param2;
-	
-		stream << "; p1 " << p1;
-	
-		if ((eventType != 0xC) && (eventType != 0xD))
-			stream << "; p2 " << p2;		
-	}
-	
-    size_t time = this->time.getValue();
-	stream <<"; t " <<time<<std::endl;
-}
-
 
 void MidiTrack::printToStream(std::ostream &stream)
 {
@@ -298,9 +123,9 @@ void MidiTrack::printToStream(std::ostream &stream)
     //stream << "chunky = " << trackHeader.chunkId <<std::endl;
     stream << "Track Size = " << trackHeader.trackSize << std::endl;
 	
-    size_t signalsAmount = size();
-    for (size_t i = 0; i < signalsAmount; ++i)
-        at(i)->printToStream(stream);
+    //size_t signalsAmount = size();
+    //for (size_t i = 0; i < signalsAmount; ++i)
+        //at(i)->printToStream(stream); //message printing diabled
 }
 
 void MidiFile::printToStream(std::ostream &stream)
@@ -321,80 +146,6 @@ void MidiFile::printToStream(std::ostream &stream)
 //PRINT END
 
 //WRITE STREAMS
-
-size_t VariableInt::writeStream(std::ofstream &file)
-{
-    size_t amountOfBytes = size();
-	
-    std::uint8_t byteToWrite = 0;
-
-	
-	for (size_t i = 0; i < amountOfBytes; ++i)
-	{
-        byteToWrite = at(i);
-
-    //    if (midiLog)  qDebug() <<"PRE WrOtE"<<byteToWrite;
-		
-        if (i != (amountOfBytes - 1))
-				byteToWrite |= 128;	
-		
-        file.write((const char*)&byteToWrite,1);
-
-      // if (midiLog)  qDebug() <<"V WROTE "<<byteToWrite;
-    }
-						
-	return amountOfBytes;	
-}
-
-size_t MidiSignal::writeStream(std::ofstream &ofile,bool skip)
-{
-    size_t bytesWritten = 0;
-
-    if (skip)
-    {
-        if (skipThat())
-            return 0;
-    }
-	
-    bytesWritten += time.writeStream(ofile); //CHECK 0
-    ofile.write((const char*)&byte0,1);
-    //if (midiLog)  qDebug() <<"WROTE "<<byte0;
-
-    //int zFuck = 00; //check???? OUPS
-    //ofile.write((const char*)&zFuck,1);
-    ofile.write((const char*)&param1,1);
-    //if (midiLog)  qDebug() <<"WROTE "<<param1;
-
-	bytesWritten += 2;
-	//ATTENTION finish bytes written
-
-	if (isMetaEvent())
-    {
-        //if (midiLog)  qDebug() << "META EVENT WROTEN!";
-
-        //ofile.write((const char*)&metaStore.metaType,1);
-		bytesWritten += metaStore.metaLen.writeStream(ofile);
-		
-        size_t metaBufLen = metaStore.bufer.size();
-		for (size_t i = 0; i < metaBufLen; ++i)
-            ofile.write((const char*)&metaStore.bufer.at(i),1);
-		
-		bytesWritten += metaBufLen;
-	}
-	else
-    { //normal event
-        std::uint8_t eventType = getEventType();
-        if ((eventType != 0xC) && (eventType != 0xD))
-		{
-              ofile.write((const char*)&param2,1);
-              //if (midiLog)  qDebug() <<"WROTE "<<param2;
-              bytesWritten += 1;
-        }
-	}
-									
-	return bytesWritten;	
-}
-
 
 
 
@@ -512,7 +263,7 @@ bool MidiTrack::calculateHeader(bool skip)
     for (size_t i =0; i < size(); ++i)
     {
         //seams to be easiest option
-        calculatedSize += at(i)->calcSize(skip);
+        calculatedSize += at(i)->calculateSize(skip);
     }
 
     if (midiLog)  qDebug() <<"Calculating track size : "<<calculatedSize;
@@ -526,118 +277,7 @@ bool MidiTrack::calculateHeader(bool skip)
     return true;
 }
 
-size_t MidiSignal::calcSize(bool skip)
-{
-    size_t localSize = 0;
-
-    if (skip)
-    {
-        if (skipThat())
-            return 0;
-    }
-
-    localSize += time.getsize(); //delta time value
-    localSize += 1; //byte0 always here
-
-    if (byte0 != 0xff) //not meta event(normal one)
-    {
-        //DEPENDS ON BYTE0 type stored
-        localSize += 1;
-        int eventType = byte0; //get FROM BYTE0 !!
-        eventType &= 0xf0;
-        eventType >>= 4;
-
-        if ((eventType != 0xC) && (eventType != 0xD))
-            localSize += 1;
-
-    }
-    else
-    {
-        //Meta event
-        localSize += 1; // meta type
-        localSize += metaStore.metaLen.getsize(); //unhide len?
-        localSize += metaStore.bufer.size();
-    }
-
-
-
-    return localSize;
-}
-
-//RECOUNTERS END
-
 ///GENERATOR begin
-
-bool MidiSignal::skipThat()
-{
-    std::uint8_t evT = getEventType();
-
-
-    if (byte0 == 0xff)
-    {
-        //GET meta type
-
-        //3 or 47???  SKIP NAME attempt
-        if (param1 == 47)
-        return false; //stay for meta event
-
-        if (param1 == 81) //change tempo
-           return false;
-            //255 (0xFF) 	81 (0x51) 	3
-    }
-
-    //if (evT == 12) return false; //and skip value key (instrument type)
-
-    if (evT == 8) return false; //note on
-    if (evT == 9) return false; //note off
-
-
-
-    //if (byte0 == 176) return true; //fine for smalles
-    //if (byte0 == 177) return true; //fine for smalles
-
-    return true;
-}
-
-MidiSignal::MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2, size_t timeShift):byte0(b0),param1(b1),param2(b2)
-{
-    absValue=0;
-    if (timeShift == 0)
-    {
-        std::uint8_t noShift = 0;
-        time.push_back(noShift);
-    }
-    else
-    {
-        //attention - cover ander variableInt class
-        short int first = timeShift / 128;
-        short int second =  timeShift % 128;
-        short int third = 0;
-        //HERE ATTENTION
-        if(first > 127)
-        {
-            first = (timeShift / 128) / 128;
-            second = (timeShift / 128) % 128;
-            third = timeShift % 128;
-
-            std::uint8_t firstB = first;
-            std::uint8_t secondB = second;
-            std::uint8_t thirdB = third;
-
-            time.push_back(firstB);
-            time.push_back(secondB);
-            time.push_back(thirdB);
-        }
-        else
-        {
-            std::uint8_t firstB = first;
-            std::uint8_t secondB = second;
-
-            time.push_back(firstB);
-            time.push_back(secondB);
-        }
-    }
-}
 
 
 //HELPERS BEGIN
@@ -653,7 +293,7 @@ void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t time
 {
     auto signatureEvent  = std::make_unique<MidiSignal>(0xff,88,0,timeShift);
 
-    signatureEvent->metaStore.bufer.push_back(num);
+    signatureEvent->metaBufer.push_back(num);
 
     std::uint8_t transDur=0;
     switch (den)
@@ -669,12 +309,12 @@ void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t time
         transDur=6;
     }
 
-    signatureEvent->metaStore.bufer.push_back(transDur);
-    signatureEvent->metaStore.bufer.push_back(metr);
-    signatureEvent->metaStore.bufer.push_back(perQuat);
+    signatureEvent->metaBufer.push_back(transDur);
+    signatureEvent->metaBufer.push_back(metr);
+    signatureEvent->metaBufer.push_back(perQuat);
 
     std::uint8_t metaSize = 4;
-    signatureEvent->metaStore.metaLen.push_back(metaSize);
+    signatureEvent->metaLen.push_back(metaSize);
 
     push_back(std::move(signatureEvent));
 }
@@ -694,12 +334,12 @@ void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
     std::uint8_t tempB2 = (MCount>>8)&0xff; //0xa1
     std::uint8_t tempB3 = MCount&0xff; //0x20
 
-    changeTempEvent->metaStore.bufer.push_back(tempB1);
-    changeTempEvent->metaStore.bufer.push_back(tempB2);
-    changeTempEvent->metaStore.bufer.push_back(tempB3);
+    changeTempEvent->metaBufer.push_back(tempB1);
+    changeTempEvent->metaBufer.push_back(tempB2);
+    changeTempEvent->metaBufer.push_back(tempB3);
 
     std::uint8_t lenMeta = 3;
-    changeTempEvent->metaStore.metaLen.push_back(lenMeta);
+    changeTempEvent->metaLen.push_back(lenMeta);
 
     //byte timeZero = 0;
     //changeTempEvent.param2 = 0;
@@ -718,7 +358,7 @@ void MidiTrack::pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel)
     volumeChange->param1 = 7; //volume change
     volumeChange->param2 = newVolume;
     std::uint8_t timeZero = 0;
-    volumeChange->time.push_back(timeZero);
+    volumeChange->timeStamp.push_back(timeZero);
 
     push_back(std::move(volumeChange));
 }
@@ -730,7 +370,7 @@ void MidiTrack::pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel)
     panoramChange->param1 = 0xA; //change panoram
     panoramChange->param2 = newPanoram;
     std::uint8_t timeZero = 0;
-    panoramChange->time.push_back(timeZero);
+    panoramChange->timeStamp.push_back(timeZero);
 
     this->push_back(std::move(panoramChange));
 }
@@ -835,7 +475,7 @@ void MidiTrack::pushEvent47()
 
     auto event47 = std::make_unique<MidiSignal>(0xff,47,0,0);
     std::uint8_t lenZero = 0;
-    event47->metaStore.metaLen.push_back(lenZero);
+    event47->metaLen.push_back(lenZero);
     this->push_back(std::move(event47));
 }
 

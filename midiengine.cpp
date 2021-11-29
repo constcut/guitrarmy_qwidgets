@@ -178,13 +178,13 @@ void MidiEngine::playTrack(MidiTrack *track)
     {
         auto& sig = track->at(i);
 
-        size_t absValue = 10; //sig->time.getValue()/
-        //ul waitTime = absValue
+        size_t absoluteTime = 10; //sig->time.getValue()/
+        //ul waitTime = absoluteTime
 
         //need right time
 
         if (sig->byte0!=0xff)
-            sendSignalShortDelay(absValue,
+            sendSignalShortDelay(absoluteTime,
                         sig->byte0,sig->param1,
                             sig->param2);
     }
@@ -317,8 +317,8 @@ int MidiEngine::getVolume()
 
 bool midiAbsSortFunction(MidiSignal *a, MidiSignal *b)
 {
-    size_t timeA = a->absValue; //GET ABS!!
-    size_t timeB = b->absValue;
+    size_t timeA = a->absoluteTime; //GET ABS!!
+    size_t timeB = b->absoluteTime;
 
     return timeA>timeB;
 }
@@ -340,10 +340,10 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
         {
             auto& sig = track->at(sigI);
 
-            size_t signalTimeShift = sig->time.getValue();
+            size_t signalTimeShift = sig->timeStamp.getValue();
             absTimeShift += signalTimeShift;
 
-            sig->absValue = absTimeShift;
+            sig->absoluteTime = absTimeShift;
 
             allSignals.push_back(sig.get());
         }
@@ -359,15 +359,17 @@ MidiTrack *MidiEngine::uniteFileToTrack(MidiFile *midiFile)
     for (int sigI = allSignals.size()-1; sigI >= 0; --sigI)
     {
             MidiSignal *sig = allSignals[sigI];
-            size_t currentAbs = sig->absValue;
+            size_t currentAbs = sig->absoluteTime;
             size_t shift = currentAbs - lastGlobalAbs;
             auto signalCopy = std::make_unique<MidiSignal>(sig->byte0,
                                                     sig->param1,
                                                     sig->param2,shift);
 
-            signalCopy->absValue = sig->absValue;
-            if (sig->byte0==0xff)
-                signalCopy->metaStore = sig->metaStore; //attention
+            signalCopy->absoluteTime = sig->absoluteTime;
+            if (sig->byte0==0xff) {
+                signalCopy->metaBufer = sig->metaBufer;
+                signalCopy->metaLen = sig->metaLen;
+             }//attention
 
             lastGlobalAbs = currentAbs;
             result->push_back(std::move(signalCopy));

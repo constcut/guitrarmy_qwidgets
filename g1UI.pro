@@ -32,6 +32,7 @@ SOURCES += main.cpp\
     g0/bar.cpp \
     g0/beat.cpp \
     g0/midiexport.cpp \
+    g0/midisignal.cpp \
     g0/note.cpp \
     g0/tab_com.cpp \
     g0/track.cpp \
@@ -71,6 +72,7 @@ HEADERS  += mainwindow.h \
     barview.h \
     g0/bar.h \
     g0/beat.h \
+    g0/midisignal.h \
     g0/note.h \
     g0/track.h \
     g0/types.h \
