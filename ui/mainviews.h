@@ -157,21 +157,17 @@ public:
 class InfoView : public GView
 {
 protected:
-    GLabel *labelA;
-    GLabel *labelA2;
+    std::unique_ptr<GLabel> labelA;
+    std::unique_ptr<GLabel> labelA2;
+    std::unique_ptr<GLabel> icons;
+    std::unique_ptr<GLabel> labelB;
+    std::unique_ptr<GLabel> labelC;
+    std::unique_ptr<GLabel> labelD;
+    std::unique_ptr<GLabel> labelE;
+    std::unique_ptr<GLabel> help;
+    std::unique_ptr<GLabel> logShow;
+    std::unique_ptr<GLabel> sendCrash;
 
-    GLabel *icons;
-
-    GLabel *labelB;
-    GLabel *labelC;
-
-    GLabel *labelD;
-    GLabel *labelE;
-
-    GLabel *help;
-    GLabel *logShow;
-
-    GLabel *sendCrash;
 
 
 public:
@@ -179,24 +175,24 @@ public:
     {
         int verticalShift = -60; //-10; //40
 
-        labelA = new GLabel(10,100+verticalShift,"Here is Guitarmy early beta test. This software is provided 'as-is', without any express or implied ");
-        labelA2 = new GLabel(10,125+verticalShift,
+        labelA = std::make_unique<GLabel>(10,100+verticalShift,"Here is Guitarmy early beta test. This software is provided 'as-is', without any express or implied ");
+        labelA2 = std::make_unique<GLabel>(10,125+verticalShift,
                             "warranty. In no event will the authors be held liable for any damages arising from the use of this software.");
 
-        icons  = new GLabel(10,150+verticalShift,
+        icons  = std::make_unique<GLabel>(10,150+verticalShift,
                             "Some of icons used for app taken from icons8.com");
 
-        labelB = new GLabel(10, 175+verticalShift, "This software is developed using Qt library under LGPL licence. Press here for information");
-        labelC = new GLabel(10, 200+verticalShift, "Link to the sources of Qt library used for development(5.4.2): guitarmy.in/lgpl/src.zip");
+        labelB = std::make_unique<GLabel>(10, 175+verticalShift, "This software is developed using Qt library under LGPL licence. Press here for information");
+        labelC = std::make_unique<GLabel>(10, 200+verticalShift, "Link to the sources of Qt library used for development(5.4.2): guitarmy.in/lgpl/src.zip");
 
-        labelD = new GLabel(10, 225+verticalShift, "Link to the licence text: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html");
-        labelE = new GLabel(10, 250+verticalShift, "Address to contact author about LGPL topics: support@guitarmy.in");
+        labelD = std::make_unique<GLabel>(10, 225+verticalShift, "Link to the licence text: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html");
+        labelE = std::make_unique<GLabel>(10, 250+verticalShift, "Address to contact author about LGPL topics: support@guitarmy.in");
 
-        help = new GLabel(10,300+verticalShift,"Show help");
+        help = std::make_unique<GLabel>(10,300+verticalShift,"Show help");
 
-        logShow = new GLabel(10,330+verticalShift,"Check crashes");
+        logShow = std::make_unique<GLabel>(10,330+verticalShift,"Check crashes");
 
-        sendCrash = new GLabel(10,360+verticalShift,"Send crashed");
+        sendCrash = std::make_unique<GLabel>(10,360+verticalShift,"Send crashed");
 
         labelA->setBorder(false);
         labelA2->setBorder(false);
@@ -233,23 +229,23 @@ class TestsView : public GView
 {
 protected:
     GLabel upper, bottom;
-    GLabel *playlistButton;
-    GLabel *playlist2Button;
-    GLabel *stopPlaylist;
+    std::unique_ptr<GLabel> playlistButton;
+    std::unique_ptr<GLabel> playlist2Button;
+    std::unique_ptr<GLabel> stopPlaylist;
 
     std::vector<GLabel> buttons;
 
     MainView *mainView;
-     TabView *tabsView;
+    TabView *tabsView;
 
 public:
     TestsView(MainView *mainV, TabView *tabV):upper(30,0+30,"Start all tests!(dbl click)"),
     bottom(250,0+30,"Information about full tests: not started")
     ,mainView(mainV),tabsView(tabV)
     {
-        playlistButton = new GLabel(400,0+30,"playlist");
-        playlist2Button = new GLabel(400,115-85+30,"playlist2");
-        stopPlaylist = new GLabel(450,0+30,"stop playlist");
+        playlistButton = std::make_unique<GLabel>(400,0+30,"playlist");
+        playlist2Button = std::make_unique<GLabel>(400,115-85+30,"playlist2");
+        stopPlaylist = std::make_unique<GLabel>(450,0+30,"stop playlist");
         setAllButtons();
     }
 
@@ -301,15 +297,13 @@ public:
         int xSh = 30;
         int ySh = 120-85+30;
 
-        for (int i = 0; i < 11; ++i)
-        {
+        for (int i = 0; i < 11; ++i) {
             GLabel button(xSh,ySh,"1." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
 
             xSh += 20 + button.getW();
-            if (xSh >= (wi-50))
-            {
+            if (xSh >= (wi-50)) {
                 xSh = 30;
                 ySh += button.getH()*2;
             }
@@ -329,15 +323,12 @@ public:
             }
         }
 
-        for (int i = 0; i < 70; ++i)
-        {
+        for (int i = 0; i < 70; ++i) {
             GLabel button(xSh,ySh,"3." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
-
             xSh += 20 + button.getW();
-            if (xSh >= (wi-50))
-            {
+            if (xSh >= (wi-50)) {
                 xSh = 30;
                 ySh += button.getH()*2;
             }
@@ -346,65 +337,14 @@ public:
         //move after first buttons add
          ySh += 50;
          xSh = 30;
-
          playlistButton->setX(xSh);
          playlistButton->setY(ySh);
-
-
          xSh += playlistButton->getW() + 10;
-
          stopPlaylist->setX(xSh);;
          stopPlaylist->setY(ySh);
-
          xSh += stopPlaylist->getW() + 10;
-
          playlist2Button->setX(xSh);
          playlist2Button->setY(ySh);
-
-        /*
-        GLabel bE1(xSh,ySh,"4.47");
-        buttons.push_back(bE1);
-        xSh += 10 + bE1.getW();
-
-        GLabel bE2(xSh,ySh,"4.68");
-        buttons.push_back(bE2);
-        xSh += 10 + bE2.getW();
-
-        GLabel bE3(xSh,ySh,"4.91");
-        buttons.push_back(bE3);
-        xSh += 10 + bE3.getW();
-
-        GLabel bE4(xSh,ySh,"4.92");
-        buttons.push_back(bE4);
-        xSh += 10 + bE4.getW();
-
-        if (xSh >= (wi-50))
-        {
-            xSh = 30;
-            ySh += bE4.getH()*2;
-        }
-
-        GLabel bE5(xSh,ySh,"4.97");
-        buttons.push_back(bE5);
-        xSh += 10 + bE5.getW();
-
-        GLabel bE6(xSh,ySh,"4.99");
-        buttons.push_back(bE6);
-        xSh += 10 + bE6.getW();
-
-        GLabel bE7(xSh,ySh,"4.107");
-        buttons.push_back(bE7);
-        xSh += 10 + bE7.getW();
-
-        GLabel bE8(xSh,ySh,"4.108");
-        buttons.push_back(bE8);
-        xSh += 10 + bE8.getW();
-
-        GLabel bE9(xSh,ySh,"4.109");
-        buttons.push_back(bE9);
-        xSh += 10 + bE9.getW();
-        */
-
 
 
          if (mainView->getMaster())
@@ -571,7 +511,7 @@ public:
 class ChordInput : public GView
 {
 protected:
-    GLabel *top;
+    std::unique_ptr<GLabel> top;
 public:
     void setUI()
     {
@@ -594,13 +534,13 @@ public:
         }
     }
 
-    ChordInput()
-    {top = new GLabel(100,110,"Chord input","",false);
+    ChordInput() {
+        top = std::make_unique<GLabel>(100,110,"Chord input","",false);
     }
     virtual ~ChordInput() {}
 
-    void draw(QPainter *painter)
-    {top->draw(painter);
+    void draw(QPainter *painter) {
+        top->draw(painter);
     }
     void keyevent([[maybe_unused]]std::string press){}
 };
@@ -608,7 +548,7 @@ public:
 class ChangesInput : public GView
 {
 protected:
-    GLabel *top;
+    std::unique_ptr<GLabel> top;
 
 public:
 
@@ -641,8 +581,8 @@ public:
         }
     }
 
-    ChangesInput()
-    {top = new GLabel(10,10,"Changes input","",false);
+    ChangesInput() {
+        top = std::make_unique<GLabel>(10,10,"Changes input","",false);
     }
     virtual ~ChangesInput(){}
 
@@ -659,10 +599,10 @@ public:
 class BendInput : public GView
 {
 protected:
-    GLabel *top;
+    std::unique_ptr<GLabel> top;
 
-    GLabel *okButton;
-    GLabel *delButton;
+    std::unique_ptr<GLabel> okButton;
+    std::unique_ptr<GLabel> delButton;
 public:
 
     static BendPoints *ptrToBend;
@@ -683,9 +623,10 @@ public:
     }
 
     BendInput()
-    {top = new GLabel(10,10,"Bend input","",false);
-     okButton = new GLabel(530,35,"OK");
-     delButton = new GLabel(630,35,"Delete");
+    {
+        top = std::make_unique<GLabel>(10,10,"Bend input","",false);
+        okButton = std::make_unique<GLabel>(530,35,"OK");
+        delButton = std::make_unique<GLabel>(630,35,"Delete");
     }
     virtual ~BendInput() {}
     void draw(QPainter *painter);
