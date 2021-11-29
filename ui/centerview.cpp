@@ -12,6 +12,9 @@
 #include <string>
 #include <sstream>
 
+#define QWIDGET_ALLOC new
+//https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger
+
 
 void changeColor(const std::string& color, QPainter* src);
 void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
@@ -70,7 +73,7 @@ void GQButton::buttonWasClicked() {
 
 void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue)
 {
-    GQCombo *newBox = new GQCombo(this);
+    GQCombo *newBox = QWIDGET_ALLOC GQCombo(this);
     newBox->setGeometry(x1,y1,w1,h1);
     newBox->setParams("params not set");
 
@@ -738,7 +741,7 @@ void CenterView::SetButton(int index,std::string text, int x1, int y1, int w1, i
 
 void CenterView::addButton(std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
 {
-    GQButton *newBut = new GQButton(this);
+    GQButton *newBut = QWIDGET_ALLOC GQButton(this);
     newBut->setText(text.c_str());
     newBut->setGeometry(x1,y1-h1,w1+10,h1*2);
 

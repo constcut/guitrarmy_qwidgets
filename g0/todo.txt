@@ -1,8 +1,7 @@
 
 
-1) убрать все void - localThread, effects pack
-2) Проверить и обновить буфер обмена и реверс операций
-3) Проверить InputViews
+
+Уменьшить задержку нажатия
 
 
         3) tests midi\tab->midi : greatCheck() : scenario.cpp

@@ -65,7 +65,8 @@
 #include <sstream>
 
 
-
+#define QWIDGET_ALLOC new
+//https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger
 
 //-------------------------------
 
@@ -78,7 +79,7 @@ void MainWindow::createMenuTool()
 {
     menuToolBar = addToolBar("mainMenu");
 
-    QWidget *sep1 = new QWidget(this);
+    QWidget *sep1 = QWIDGET_ALLOC QWidget(this);
     sep1->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep1);
@@ -87,7 +88,7 @@ void MainWindow::createMenuTool()
     QAction *hideP1 = addToolButton(menuToolBar,"new","newtab");
     QAction *hideP2 = addToolButton(menuToolBar,"open",CONF_PARAM("Main.open"));
 
-    QWidget *sep2 = new QWidget(this);
+    QWidget *sep2 = QWIDGET_ALLOC QWidget(this);
     sep2->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep2);
@@ -95,14 +96,14 @@ void MainWindow::createMenuTool()
 
     addToolButton(menuToolBar,"tab","tabview");
 
-    QWidget *sep3 = new QWidget(this);
+    QWidget *sep3 = QWIDGET_ALLOC QWidget(this);
     sep3->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep3);
 
     hideA1=addToolButton(menuToolBar,"tests","tests"); //HIDE
 
-    QWidget *sep32 = new QWidget(this);
+    QWidget *sep32 = QWIDGET_ALLOC QWidget(this);
     sep32->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep32);
@@ -110,7 +111,7 @@ void MainWindow::createMenuTool()
 
     hideA2=addToolButton(menuToolBar,"tap","tap");  //HIDE
 
-    QWidget *sep31 = new QWidget(this);
+    QWidget *sep31 = QWIDGET_ALLOC QWidget(this);
     sep31->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep31);
@@ -118,14 +119,14 @@ void MainWindow::createMenuTool()
 
     addToolButton(menuToolBar,"pattern","pattern");
 
-    QWidget *sep4 = new QWidget(this);
+    QWidget *sep4 = QWIDGET_ALLOC QWidget(this);
     sep4->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep4);
 
     addToolButton(menuToolBar,"config","config");
 
-    QWidget *sep5 = new QWidget(this);
+    QWidget *sep5 = QWIDGET_ALLOC QWidget(this);
     sep5->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep5);
@@ -133,7 +134,7 @@ void MainWindow::createMenuTool()
     hideA3=addToolButton(menuToolBar,"record","rec"); //hide
     hideA4=addToolButton(menuToolBar,"morze","morze"); //hide
 
-    QWidget *sep52 = new QWidget(this);
+    QWidget *sep52 = QWIDGET_ALLOC QWidget(this);
     sep52->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep52);
@@ -141,7 +142,7 @@ void MainWindow::createMenuTool()
 
     hideA5=addToolButton(menuToolBar,"info","info"); //hide
 
-    QWidget *sep51 = new QWidget(this);
+    QWidget *sep51 = QWIDGET_ALLOC QWidget(this);
     sep51->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep51);
@@ -150,14 +151,14 @@ void MainWindow::createMenuTool()
     addToolButton(menuToolBar,"play",CONF_PARAM("TrackView.playMidi"));
 
 
-    QWidget *sep6 = new QWidget(this);
+    QWidget *sep6 = QWIDGET_ALLOC QWidget(this);
     sep6->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep6);
 
     addToolButton(menuToolBar,"openPannel","openPannel");
 
-    QWidget *sep7 = new QWidget(this);
+    QWidget *sep7 = QWIDGET_ALLOC QWidget(this);
     sep7->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
     menuToolBar->addWidget(sep7);
@@ -269,7 +270,7 @@ void MainWindow::createMainToolbar()
         m1->addAction("open");
         m1->addAction("save");
 
-        QMenu *m1Addition = new QMenu(m1);
+        QMenu *m1Addition = QWIDGET_ALLOC QMenu(m1);
 
         m1->addMenu(m1Addition)->setIconText("export");;
 
@@ -291,17 +292,17 @@ void MainWindow::createMainToolbar()
         m3->addAction("cut");
         m3->addAction("paste");
 
-        QMenu *m3Addition = new QMenu(m3);
+        QMenu *m3Addition = QWIDGET_ALLOC QMenu(m3);
         m3Addition->addAction("bufer1");
         m3Addition->addAction("bufer2");
         m3Addition->addAction("bufer3");
 
         m3->addMenu(m3Addition)->setIconText("chose bufer");
 
-        QMenu *m3Addition2 = new QMenu(m3);
+        QMenu *m3Addition2 = QWIDGET_ALLOC QMenu(m3);
         m3Addition2->addAction("effects");
 
-        QMenu *m3Addition3 = new QMenu(m3);
+        QMenu *m3Addition3 = QWIDGET_ALLOC QMenu(m3);
         m3Addition3->addAction("specif");
 
         m3->addMenu(m3Addition2)->setIconText("effects");
@@ -327,8 +328,8 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
 {
     GPannel *pan = (GPannel*)pannel;
 
-    QDockWidget *dockTab = new QDockWidget(dockname.c_str(),this);
-    QMainWindow *dockWin = new QMainWindow(0);
+    QDockWidget *dockTab = QWIDGET_ALLOC QDockWidget(dockname.c_str(),this);
+    QMainWindow *dockWin = QWIDGET_ALLOC QMainWindow(0);
 
     dockWin->setWindowFlags(Qt::Widget);
     QToolBar *men = dockWin->addToolBar(dockname.c_str());
@@ -337,13 +338,13 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
     men->setFloatable(false);
 
 
-    QWidget *spacerWidget = new QWidget(this);
+    QWidget *spacerWidget = QWIDGET_ALLOC QWidget(this);
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     spacerWidget->setVisible(true);
 
     men->addWidget(spacerWidget);
 
-    QWidget* titleWidget = new QWidget(this);
+    QWidget* titleWidget = QWIDGET_ALLOC QWidget(this);
     dockTab->setTitleBarWidget( titleWidget );
 
     QToolBar *men2 = 0;
@@ -361,12 +362,12 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
         {
             if (men2 == 0)
             {
-                dockWin->addToolBarBreak(); //need few new toolbars
+                dockWin->addToolBarBreak(); //need few QWIDGET_ALLOC toolbars
                 men2 = dockWin->addToolBar("second");
                 men2->setMovable(false);
                 men2->setFloatable(false);
 
-                QWidget *spacerWidget2 = new QWidget(this);
+                QWidget *spacerWidget2 = QWIDGET_ALLOC QWidget(this);
                 spacerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
                 spacerWidget2->setVisible(true);
 
@@ -432,7 +433,7 @@ QMenu *MainWindow::createToolMenu(void *pannel)
 {
     GPannel *pan = (GPannel*)pannel;
 
-    QMenu *menu = new QMenu(0);
+    QMenu *menu = QWIDGET_ALLOC QMenu(0);
 
     std::string iconsSet;
      if (CONF_PARAM("iconsSet")=="1")
@@ -457,10 +458,10 @@ QMenu *MainWindow::createToolMenu(void *pannel)
 
 void MainWindow::createUI()
 {
-    GPannel *pan1 = new GTabPannel(1,2,3);
-    GPannel *pan2 = new GTrackPannel(1,2,3);
-    GPannel *pan3 = new GEffectsPannel(1,2,3);
-    GPannel *pan4 = new GClipboardPannel(1,2,3);
+    GPannel *pan1 = QWIDGET_ALLOC GTabPannel(1,2,3);
+    GPannel *pan2 = QWIDGET_ALLOC GTrackPannel(1,2,3);
+    GPannel *pan3 = QWIDGET_ALLOC GEffectsPannel(1,2,3);
+    GPannel *pan4 = QWIDGET_ALLOC GClipboardPannel(1,2,3);
 
     menu1 = createToolMenu(pan1);
     menu2 = createToolMenu(pan2);
@@ -470,11 +471,11 @@ void MainWindow::createUI()
     createMainToolbar();
     createFloDocks();
 
-    statusLabel = new QLabel(this);
-    statusLabelSecond = new QLabel(this);
-    //statusLabelThird = new QLabel(this);
+    statusLabel = QWIDGET_ALLOC QLabel(this);
+    statusLabelSecond = QWIDGET_ALLOC QLabel(this);
+    //statusLabelThird = QWIDGET_ALLOC QLabel(this);
 
-    win = new GQCombo(this);
+    win = QWIDGET_ALLOC GQCombo(this);
     win->addItem("welcome");
 
     if (CONF_PARAM("")=="1")
@@ -491,7 +492,7 @@ void MainWindow::createUI()
     win->setElementNum(0);
 
 
-    GQCombo *win2 = new GQCombo(this);
+    GQCombo *win2 = QWIDGET_ALLOC GQCombo(this);
     win2->addItem("menu");
     win2->addItem("track / bar");
     win2->addItem("effects");
@@ -517,10 +518,10 @@ void MainWindow::createUI()
     //showHelp();
 
     if (center == 0)
-        center = new CenterView();
+        center = QWIDGET_ALLOC CenterView();
 
     if (centerScroll==0)
-        centerScroll = new QScrollArea(this);
+        centerScroll = QWIDGET_ALLOC QScrollArea(this);
 
     centerScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -688,10 +689,10 @@ void MainWindow::recreateUI()
     {
 
 
-        GPannel *pan1 = new GTabPannel(1,2,3);
-        GPannel *pan2 = new GTrackPannel(1,2,3);
-        GPannel *pan3 = new GEffectsPannel(1,2,3);
-        GPannel *pan4 = new GClipboardPannel(1,2,3);
+        GPannel *pan1 = QWIDGET_ALLOC GTabPannel(1,2,3);
+        GPannel *pan2 = QWIDGET_ALLOC GTrackPannel(1,2,3);
+        GPannel *pan3 = QWIDGET_ALLOC GEffectsPannel(1,2,3);
+        GPannel *pan4 = QWIDGET_ALLOC GClipboardPannel(1,2,3);
         QDockWidget *tabDock = createToolDock("tab",pan1);
         QDockWidget *trackDock = createToolDock("track",pan2);
         QDockWidget *effectsDock = createToolDock("effects",pan3);
@@ -1212,10 +1213,10 @@ void MainWindow::actionNow(QAction *action)
     else
     {
         if (CONF_PARAM("pannels")=="tabbed"){
-            GPannel *pan1 = new GTabPannel(1,2,3);
-            GPannel *pan2 = new GTrackPannel(1,2,3);//memory leak
-            GPannel *pan3 = new GEffectsPannel(1,2,3);
-            GPannel *pan4 = new GClipboardPannel(1,2,3);//memleak
+            GPannel *pan1 = QWIDGET_ALLOC GTabPannel(1,2,3);
+            GPannel *pan2 = QWIDGET_ALLOC GTrackPannel(1,2,3);//memory leak
+            GPannel *pan3 = QWIDGET_ALLOC GEffectsPannel(1,2,3);
+            GPannel *pan4 = QWIDGET_ALLOC GClipboardPannel(1,2,3);//memleak
 
 
             QDockWidget *tabDock = createToolDock("tab",pan1);
@@ -2120,9 +2121,9 @@ void MainWindow::initAudioInput()
         format = info.nearestFormat(format);
     }
 
-    audioInfo  = new AudioInfo(format, this);
+    audioInfo  = QWIDGET_ALLOC AudioInfo(format, this);
     //connect(audioInfo, SIGNAL(update()), SLOT(refreshDisplay()));
-    audioInput = new QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
+    audioInput = QWIDGET_ALLOC QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
 
     ///audioInput->setNotifyInterval(100);
     ///audioInput->setBufferSize();
@@ -2167,9 +2168,9 @@ void MainWindow::initAudioOutput()
     }
 
     //create generator
-    audioSpeaker = new AudioSpeaker(format);
+    audioSpeaker = QWIDGET_ALLOC AudioSpeaker(format);
 
-    audioOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
+    audioOutput = QWIDGET_ALLOC QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
 
 }
 
@@ -2366,7 +2367,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (actionName=="esc")
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
         menu->addAction("exit");
         menu->addAction("darkSkin");
         menu->addAction("lightSkin");
@@ -2378,7 +2379,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (actionName=="rec")
     {
-          QMenu *menu = new QMenu(toolBar);
+          QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
           menu->addAction("start_audioi");
           menu->addAction("stop_audioi");
           menu->addAction("start_record_output");
@@ -2388,7 +2389,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (actionName == "tabview")
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
 
         QIcon icon2(":/icons/new.png");
         menu->addAction(icon2,"newtab");
@@ -2410,14 +2411,14 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (actionName=="openPannel")
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
 
         //classic of dock
-        //QAction *pannelType = new QAction("docked",menu);
+        //QAction *pannelType = QWIDGET_ALLOC QAction("docked",menu);
         //pannelType->setCheckable(true);
         //menu->addAction(pannelType);
 
-        QMenu *docksMenu = new QMenu("docks",menu);
+        QMenu *docksMenu = QWIDGET_ALLOC QMenu("docks",menu);
         docksMenu->addAction("tab");
         docksMenu->addAction("track");
         docksMenu->addAction("effects");
@@ -2427,13 +2428,13 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
         //docksMenu->addAction("set position");
 
 
-        //QAction *moveType = new QAction("movable",docksMenu);
+        //QAction *moveType = QWIDGET_ALLOC QAction("movable",docksMenu);
         //moveType->setCheckable(true);
         //docksMenu->addAction(moveType);
 
         menu->addMenu(docksMenu);
 
-        QMenu *pans = new QMenu(menu);
+        QMenu *pans = QWIDGET_ALLOC QMenu(menu);
         pans->addAction("only tab");
         pans->addAction("only track");
         pans->addAction("only effects");
@@ -2443,7 +2444,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
         menu->addMenu(pans)->setIconText("pannels");
 
-        QMenu *m6 = new QMenu(menu); //menuBar()->addMenu("pannels");
+        QMenu *m6 = QWIDGET_ALLOC QMenu(menu); //menuBar()->addMenu("pannels");
         m6->addMenu(menu1)->setIconText("tab");
         m6->addMenu(menu2)->setIconText("track_dock");
         m6->addMenu(menu3)->setIconText("effects");
@@ -2478,7 +2479,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
         QIcon icon3(icon3Place.c_str());
 
 
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
 
         QAction *act1 = menu->addAction(icon1,"tap"); //tap
         act1->setText("tap");
@@ -2492,7 +2493,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (button=="play")
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
         menu->addAction("playMidi");
         menu->addAction("playAMusic");
         menu->addAction("playMerge");
@@ -2512,7 +2513,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
                 + std::string("tests.png");
         QIcon icon2(icon2Place.c_str());
 
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
         menu->addAction(icon1,"info");
         menu->addAction(icon2,"tests");
 
@@ -2525,7 +2526,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (confValue==CONF_PARAM("TrackView.deleteNote"))
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
         menu->addAction("delete bar");
         menu->addAction("delete selected bars");
         menu->addAction("delete selected beats");
@@ -2534,7 +2535,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     if (confValue == "signs")
     {
-        QMenu *menu = new QMenu(toolBar);
+        QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
         menu->addAction("set till the end"); //signs
         menu->addAction("set for selected"); //signs too
         act->setMenu(menu);
@@ -2569,20 +2570,20 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
 
     if (wi == 0)
     {
-        wi = new QWidget(dock);
+        wi = QWIDGET_ALLOC QWidget(dock);
         //wi->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         dock->setWidget(wi);
 
         wi->setGeometry(0,0,700,100);
     }
 
-    QToolButton *but = new QToolButton(wi);
+    QToolButton *but = QWIDGET_ALLOC QToolButton(wi);
     std::string iconPlace = "";//std::string(getTestsLocation()) + std::string("Icons/") + button + std::string(".png");
     iconPlace = ":/icons/"+ button + std::string(".png");
     QIcon icon(iconPlace.c_str());
     but->setIcon(icon);
 
-    //QAction *act = new QAction(icon,confValue.c_str(),wi);
+    //QAction *act = QWIDGET_ALLOC QAction(icon,confValue.c_str(),wi);
 
 
     QString actionName = button.c_str();
@@ -2617,13 +2618,13 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
 
 void MainWindow::createFloDocks()
 {
-    dock = new QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
+    dock = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
                            Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint); //("pannel",this);
 
 
     addToolButtonGrid(0,0,"",""); //new dock
 
-    QLabel *labelTitle = new QLabel("pannel",dock);
+    QLabel *labelTitle = QWIDGET_ALLOC QLabel("pannel",dock);
     dock->setTitleBarWidget(labelTitle);
 
 
@@ -2677,10 +2678,10 @@ void MainWindow::createFloDocks()
     dock->show();
 
 
-    QDockWidget *dock2 = new QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
+    QDockWidget *dock2 = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
                            Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint); //("pannel",this);
 
-    QLabel *labelTitle2 = new QLabel("clips ",dock2);
+    QLabel *labelTitle2 = QWIDGET_ALLOC QLabel("clips ",dock2);
     dock2->setTitleBarWidget(labelTitle2);
 
     dock2->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
@@ -2706,10 +2707,10 @@ void MainWindow::createFloDocks()
 
 
 
-    QDockWidget *dock3 = new QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
+    QDockWidget *dock3 = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
                            Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint); //("pannel",this);
 
-    QLabel *labelTitle3 = new QLabel("tabs  ",dock3);
+    QLabel *labelTitle3 = QWIDGET_ALLOC QLabel("tabs  ",dock3);
     dock3->setTitleBarWidget(labelTitle3);
 
     dock3->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
@@ -2753,10 +2754,10 @@ void MainWindow::createFloDocks()
     dock3->show();
 
 
-    QDockWidget *dock4 = new QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
+    QDockWidget *dock4 = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
                                          Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint);
 
-    QLabel *labelTitle4 = new QLabel("effects",dock4);
+    QLabel *labelTitle4 = QWIDGET_ALLOC QLabel("effects",dock4);
     dock4->setTitleBarWidget(labelTitle4);
 
     dock4->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
