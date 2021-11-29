@@ -543,57 +543,6 @@ void ConfigView::draw([[maybe_unused]]QPainter *painter)
 
 
 
-///tests buttons
-
-void TestsView::fastTestAll()
-{
-    clock_t now = getTime();
-    bottom.setText("starting full tests");
-
-
-    //NORMAL CASE TEST ALL
-    /*
-    for (size_t i = 0; i < buttons.size(); ++i)
-    {
-        strin gExtended sX;
-        sX << ":/own_tests/"<<buttons[i].getText().c_str()<<".gp4";
-
-        QFile qFile; //(sX.c_str());
-        qFile.setFileName(sX.c_str());
-
-        if (qFile.open(QIODevice::ReadOnly) == false)
-            std::cout << "Failed to open";
-
-        file(&qFile);// a f ile
-
-        Tab *forLoad=new Tab();
-        Gp4Import importer;
-        importer.import(file,forLoad);
-
-        forLoad->postGTP();
-        forLoad->connectTracks();
-        qDebug() << "file v 4 was opened"<<sX.c_str();
-
-        MidiFile midiCheck;
-        midiCheck.fromTab(forLoad);
-        AMusic amCheck;
-        amCheck.readFromTab(forLoad);
-        MidiFile amMidiCheck;
-        amMidiCheck.generateFromAMusic(amCheck); //to ptr later
-
-        qDebug()<<"full scen done";
-        delete forLoad;
-    }
-    */
-
-    //}
-
-
-    clock_t after = getTime();
-    clock_t diff = after-now;
-    bottom.setText("Time spent  - " + std::to_string(diff) + " ms");
-}
-
 
 void TestsView::openTestNumber(int num) {
     if (tabsView->gotChanges()==false) {

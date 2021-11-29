@@ -14,7 +14,6 @@
 #include <time.h>
 #include <QDebug>
 
-void not_used(void *p);
 
 class MasterView;
 

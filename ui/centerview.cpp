@@ -1041,9 +1041,8 @@ void checkBase()
 
                     if (tabLoader.open(fnStd) == true)
                     {
-                        Tab *tab = tabLoader.getTab();
+                        auto& tab = tabLoader.getTab();
                         qDebug() << "Tab bpm "<<tab->getBPM();
-                        delete tab;
                     }
 
 

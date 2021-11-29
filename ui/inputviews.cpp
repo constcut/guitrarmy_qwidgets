@@ -751,10 +751,8 @@ void TapRyView::createBar()
     //getMaster()->setStatusBarMessage(0,sX.c_str(),3000);
     //labStat->setText(sX.c_str());
 
-    //ryBar to the bar view
-    ///if (barView) delete barView;
-    if (barView==0)
-    {
+
+    if (barView == nullptr) {
         barView = std::make_unique<BarView>(ryBar.get(),6);
         barView->setShifts(210,80);
     }
@@ -1080,10 +1078,7 @@ void RecordView::loadCurrentFile()
 
     bar = waveItself.generateBar();
 
-    if (bar)
-    {
-        //need to delete old one
-        ///if (barView) delete barView;
+    if (bar) {
         barView = std::make_unique<BarView>(bar.get(),6);
         barView->setShifts(20,50);
     }
