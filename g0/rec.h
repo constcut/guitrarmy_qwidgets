@@ -3,9 +3,7 @@
 
 #include <QByteArray>
 
-#include "g0/types.h"
-
-#include "g0/tab.h"
+#include "tab/tab.h"
 
 
 //Tuner

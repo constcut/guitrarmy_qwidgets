@@ -1,7 +1,7 @@
 #ifndef INPUTVIEWS_H
 #define INPUTVIEWS_H
 
-#include "g0/tab.h"
+#include "tab/tab.h"
 #include "gview.h"
 
 #include "g0/rec.h"

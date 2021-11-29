@@ -1,8 +1,9 @@
 #ifndef TABCOMMANDS_H
 #define TABCOMMANDS_H
 
-#include "g0/types.h"
-
+#include <cstdint>
+#include <vector>
+#include <memory>
 //#include "g0/tab.h"
 
 enum class TabCommand {

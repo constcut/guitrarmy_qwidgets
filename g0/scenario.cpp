@@ -1,21 +1,19 @@
-#include "g0/types.h"
 
 #include <iostream>
 
-
-#include "g0/midifile.h"
-#include "g0/tab.h"
-#include "g0/gtpfiles.h"
+#include "midi/midifile.h"
+#include "tab/tab.h"
+#include "tab/gtpfiles.h"
 #include "g0/aconfig.h"
 
-#include "g0/aexpimp.h"
+#include "tab/aexpimp.h"
 
 #include <QMediaPlayer>
 
 #include <fstream>
 #include <QDebug>
 
-#include "midiexport.h"
+#include "midi/midiexport.h"
 
 #define log qDebug()
 

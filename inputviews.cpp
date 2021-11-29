@@ -1,8 +1,8 @@
 #include "inputviews.h"
 
 #include "tabviews.h"
-#include "g0/aclipboard.h"
-#include "g0/midifile.h"
+#include "tab/aclipboard.h"
+#include "midi/midifile.h"
 
 #include <QInputDialog>
 
@@ -11,7 +11,7 @@
 
 #include "g0/waveanalys.h"
 
-#include "g0/midiexport.h"
+#include "midi/midiexport.h"
 
 #include <QAudioRecorder>
 #include <QAudioDeviceInfo>
@@ -40,7 +40,7 @@
 //dont like it..
 #include "mainwindow.h"
 
-#include "midiengine.h"
+#include "midi/midiengine.h"
 
 
 

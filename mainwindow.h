@@ -26,7 +26,7 @@
 
 #include <QTimer>
 
-#include "g0/aclipboard.h"
+#include "tab/aclipboard.h"
 
 namespace Ui {
 class MainWindow;

@@ -2,16 +2,16 @@
 
 #include <QFileDialog>
 
-#include "g0/tab.h"
-#include "g0/gtpfiles.h"
-#include "g0/midifile.h"
+#include "tab/tab.h"
+#include "tab/gtpfiles.h"
+#include "midi/midifile.h"
 
 #include "g0/aconfig.h"
 
 
-#include "g0/gmyfile.h"
+#include "tab/gmyfile.h"
 
-#include "g0/aexpimp.h" //loader
+#include "tab/aexpimp.h" //loader
 
 #include "athread.h"
 

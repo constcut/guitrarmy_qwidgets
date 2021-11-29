@@ -1,7 +1,7 @@
 #ifndef GMYFILE_H
 #define GMYFILE_H
 
-#include "g0/tab.h"
+#include "tab.h"
 
 class GmyFile
 {

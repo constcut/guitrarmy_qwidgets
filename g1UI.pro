@@ -29,31 +29,31 @@ win32:LIBS += -lWinMM
 
 SOURCES += main.cpp\
     barview.cpp \
-    g0/bar.cpp \
-    g0/beat.cpp \
-    g0/midiexport.cpp \
-    g0/midisignal.cpp \
-    g0/note.cpp \
-    g0/tab_com.cpp \
-    g0/track.cpp \
-    g0/track_com.cpp \
+    tab/bar.cpp \
+    tab/beat.cpp \
+    midi/midiexport.cpp \
+    midi/midisignal.cpp \
+    tab/note.cpp \
+    tab/tab_com.cpp \
+    tab/track.cpp \
+    tab/track_com.cpp \
     libs/sf/tsf.cpp \
     mainwindow.cpp \
     gview.cpp \
-    g0/abitarray.cpp \
+    tab/abitarray.cpp \
     g0/aconfig.cpp \
-    g0/aexpimp.cpp \
-    g0/gmyfile.cpp \
-    g0/gtpfiles.cpp \
-    g0/midifile.cpp \
+    tab/aexpimp.cpp \
+    tab/gmyfile.cpp \
+    tab/gtpfiles.cpp \
+    midi/midifile.cpp \
     g0/scenario.cpp \
-    g0/tab.cpp \
+    tab/tab.cpp \
     athread.cpp \
     gpannel.cpp \
     mainviews.cpp \
-    midirender.cpp \
+    midi/midirender.cpp \
     tabviews.cpp \
-    g0/aclipboard.cpp \
+    tab/aclipboard.cpp \
     tabcommands.cpp \
     g0/wavefile.cpp \
     g0/fft.cpp \
@@ -62,7 +62,7 @@ SOURCES += main.cpp\
     centerview.cpp \
     qthelper.cpp \
     inputviews.cpp \
-    midiengine.cpp \
+    midi/midiengine.cpp \
     g0/build.cpp \
     g0/rec.cpp \
     trackview.cpp
@@ -70,20 +70,20 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     barview.h \
-    g0/bar.h \
-    g0/beat.h \
-    g0/midisignal.h \
-    g0/note.h \
-    g0/track.h \
-    g0/types.h \
+    tab/bar.h \
+    tab/beat.h \
+    midi/midisignal.h \
+    tab/note.h \
+    tab/track.h \
+    tab/types.h \
     gview.h \
-    g0/abitarray.h \
+    tab/abitarray.h \
     g0/aconfig.h \
-    g0/aexpimp.h \
-    g0/gmyfile.h \
-    g0/gtpfiles.h \
-    g0/midifile.h \
-    g0/tab.h \
+    tab/aexpimp.h \
+    tab/gmyfile.h \
+    tab/gtpfiles.h \
+    midi/midifile.h \
+    tab/tab.h \
     athread.h \
     g0/buildheader.h \
     gpannel.h \
@@ -92,17 +92,16 @@ HEADERS  += mainwindow.h \
     mainviews.h \
     midirender.h \
     tabviews.h \
-    g0/aclipboard.h \
+    tab/aclipboard.h \
     tabcommands.h \
     g0/wavefile.h \
     g0/fft.h \
     g0/waveanalys.h \
-    g0/ptbfile.h \
     android_helper.h \
     centerview.h \
     qthelper.h \
     inputviews.h \
-    midiengine.h \
+    midi/midiengine.h \
     g0/rec.h \
     trackview.h
 

@@ -3,8 +3,6 @@
 
 #include <QThread>
 
-#include "g0/types.h"
-
 
 
 class AThread

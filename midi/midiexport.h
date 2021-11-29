@@ -1,7 +1,7 @@
 #ifndef MIDIEXPORT
 #define MIDIEXPORT
 #include "midifile.h"
-#include "tab.h"
+#include "tab/tab.h"
 
 std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor=0);
 void exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shiftCursorBar); //TODO use unique&

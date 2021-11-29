@@ -1,8 +1,7 @@
 #ifndef GTPFILES_H
 #define GTPFILES_H
 
-#include "g0/types.h"
-#include "g0/tab.h"
+#include "tab.h"
 
 void readBend(std::ifstream *file, BendPoints *bend);
 void writeBend(std::ofstream *file, BendPoints *bend);

@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-#include "g0/tab.h"
-#include "g0/gmyfile.h"
-#include "g0/gtpfiles.h"
+#include "tab/tab.h"
+#include "tab/gmyfile.h"
+#include "tab/gtpfiles.h"
 
 
 class GTabLoader

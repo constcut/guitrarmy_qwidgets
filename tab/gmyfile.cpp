@@ -1,7 +1,5 @@
 #include "gmyfile.h"
-
-
-#include "g0/gtpfiles.h"
+#include "tab/gtpfiles.h"
 #include <fstream>
 
 #include <QDebug>

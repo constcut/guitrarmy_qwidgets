@@ -5,7 +5,7 @@
 
 #include "g0/aconfig.h"
 
-#include "g0/aclipboard.h"
+#include "tab/aclipboard.h"
 
 #include <QTextCodec>
 //#include <QSettings>
@@ -34,12 +34,12 @@
 #include <windows.h>
 #endif
 
-#include "midiengine.h"
-#include "g0/aexpimp.h"
+#include "midi/midiengine.h"
+#include "tab/aexpimp.h"
 
 #include <QDebug>
 
-#include "midirender.h"
+#include "midi/midirender.h"
 
 
 

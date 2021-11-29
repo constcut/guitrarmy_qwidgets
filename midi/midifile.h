@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <iostream>
-
-#include "types.h"
+#include <memory>
 
 #include "midisignal.h"
 

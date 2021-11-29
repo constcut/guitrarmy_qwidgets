@@ -1,10 +1,10 @@
 #include "tab.h"
 
-#include "g0/midifile.h"
-#include "g0/gmyfile.h"
-#include "g0/aexpimp.h"
-#include "g0/gtpfiles.h"
-#include "midiengine.h"
+#include "midi/midifile.h"
+#include "gmyfile.h"
+#include "aexpimp.h"
+#include "gtpfiles.h"
+#include "midi/midiengine.h"
 
 #include <fstream>
 #include <QDebug>

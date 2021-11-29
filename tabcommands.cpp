@@ -4,11 +4,11 @@
 #include "mainviews.h"
 
 //other dep
-#include "g0/midifile.h"
-#include "g0/aexpimp.h"
+#include "midi/midifile.h"
+#include "tab/aexpimp.h"
 
-#include "midiengine.h"
-#include "g0/midiexport.h"
+#include "midi/midiengine.h"
+#include "midi/midiexport.h"
 
 #include <QInputDialog>
 #include <QMutex>
@@ -21,7 +21,7 @@
 #include <fstream>
 
 
-#include "midirender.h"
+#include "midi/midirender.h"
 
 //Trackview events:
 

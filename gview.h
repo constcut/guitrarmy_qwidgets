@@ -2,8 +2,7 @@
 #define GVIEW_H
 
 
-#include "g0/types.h"
-#include "g0/tab.h"
+#include "tab/tab.h"
 #include "g0/aconfig.h"
 
 #include "tabcommands.h"
@@ -11,7 +10,6 @@
 #include <QPainter>
 #include "athread.h"
 
-#include "g0/aconfig.h"
 
 #include <time.h>
 #include <QDebug>
