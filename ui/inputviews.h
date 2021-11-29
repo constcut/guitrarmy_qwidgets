@@ -18,16 +18,14 @@ protected:
     std::vector<GLabel> lineInstrLabels;
 
     std::unique_ptr<Bar> bar;
-    BarView *barView;
+    std::unique_ptr<BarView> barView;
 
-    GLabel *sigNumBut;
-    GLabel *sigDenBut;
-
-    GLabel *bpmBut;
-    GLabel *bpmValue;
-
-    GLabel *repeatLabel;
-    GCheckButton *butRepeat;
+    std::unique_ptr<GLabel> sigNumBut;
+    std::unique_ptr<GLabel> sigDenBut;
+    std::unique_ptr<GLabel> bpmBut;
+    std::unique_ptr<GLabel> bpmValue;
+    std::unique_ptr<GLabel> repeatLabel;
+    std::unique_ptr<GCheckButton> butRepeat;
 
     int currentDen;
 
@@ -41,55 +39,34 @@ public:
 
     void keyevent(std::string press);
 
-    PatternInput():barView(0),currentDen(4)
+    PatternInput():currentDen(4)
     {
-        sigNumBut = new GLabel(100,330-75,"16");
-        //sigNumBut->setH(50);
-
-        sigDenBut = new GLabel(150,330-75,"16");
-        //sigDenBut->setH(50);
-
-        bpmBut = new GLabel(20,330-75,"new bpm");
-        bpmValue = new GLabel(20,300-75,"120");
-
-        //bpmBut->setH(50);
-
-        butRepeat = new GCheckButton(100,310,70,30);
-
-        repeatLabel = new GLabel(20,330,"Repeat bar:","",false);
-
+        sigNumBut = std::make_unique<GLabel>(100,330-75,"16");
+        sigDenBut = std::make_unique<GLabel>(150,330-75,"16");
+        bpmBut = std::make_unique<GLabel>(20,330-75,"new bpm");
+        bpmValue = std::make_unique<GLabel>(20,300-75,"120");
+        butRepeat = std::make_unique<GCheckButton>(100,310,70,30);
+        repeatLabel = std::make_unique<GLabel>(20,330,"Repeat bar:","",false);
         addButtons();
     }
 
-    void addButtons()
-    {
+    void addButtons() {
         int shX = 30;
         int shY = 100-55;
-
-        for (int lines=0; lines < 4; ++lines)
-        {
+        for (int lines=0; lines < 4; ++lines) {
             shY = 100-55+50*lines;
             shX = 30;
-
             std::string instrText;
-            switch(lines)
-            {
+            switch(lines) {
                 case 0: instrText = "57"; break;
                 case 1: instrText = "49"; break;
                 case 2: instrText = "38"; break;
                 case 3: instrText = "36"; break;
             }
-
             GLabel lineLab(shX,shY,instrText);
-
-
-
             lineInstrLabels.push_back(lineLab);
-
             shX += 70;
-
-            for (int i = 0; i < 16; ++i)
-            {
+            for (int i = 0; i < 16; ++i) {
                 GCheckButton but(shX,shY-30,30,30);
                 shX += but.getW() + 10;
                 checkButtons.push_back(but);

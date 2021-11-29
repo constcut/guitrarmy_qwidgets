@@ -113,9 +113,6 @@ void PatternInput::draw(QPainter *painter)
 
 void PatternInput::createBar()
 {
-    if (barView)
-        delete barView;
-
     bar = std::make_unique<Bar>();
     bar->flush();
 
@@ -125,25 +122,18 @@ void PatternInput::createBar()
     bar->setSignDenum(den);
     bar->setSignNum(num);
 
-    for (size_t i = 0; i < (checkButtons.size()/4); ++i)
-    {
+    for (size_t i = 0; i < (checkButtons.size()/4); ++i) {
         auto beat = std::make_unique<Beat>();
-
         beat->setDuration(currentDen);
         beat->setDotted(0);
         beat->setDurationDetail(0);
         beat->setPause(false);
-
         bool oneChecked = false;
-
-        for (size_t iCoef = 0; iCoef < 4; ++iCoef)
-        {
+        for (size_t iCoef = 0; iCoef < 4; ++iCoef) {
             size_t ind = i + iCoef*(checkButtons.size()/4);
-            if (checkButtons[ind].isChecked())
-            {
+            if (checkButtons[ind].isChecked()){
                 auto newNote = std::make_unique<Note>();
                 std::uint8_t localFret = atoi(lineInstrLabels[iCoef].getText().c_str());
-
                 if (getMaster())
                     localFret = getMaster()->getComboBoxValue(iCoef)+27;
                 /*
@@ -158,7 +148,6 @@ void PatternInput::createBar()
                 newNote->setFret(localFret); //0
                 newNote->setStringNumber(iCoef+1);
                 newNote->setState(0);
-                //newNote.setVolume();
                 beat->push_back(std::move(newNote));
                 oneChecked = true;
             }
@@ -170,11 +159,8 @@ void PatternInput::createBar()
         bar->push_back(std::move(beat));
     }
 
-
-
-    barView = new BarView(bar.get(), 6);
+    barView = std::make_unique<BarView>(bar.get(), 6);
     barView->setShifts(250,300-55-30);
-
 
     AClipboard::current()->setPtr(bar.get());
     AClipboard::current()->setType(4); //ptr
@@ -235,27 +221,14 @@ void PatternInput::playBar() {
 
 void PatternInput::setUI()
 {
-    for (size_t i = 0; i < lineInstrLabels.size(); ++i)
-    {
-        //old style
-      //  lineInstrLabels[i].draw(painter);
-
-
+    for (size_t i = 0; i < lineInstrLabels.size(); ++i) {
         int shY = 100-55+50*i;
         int shX = 30;
-
         if (getMaster())
         getMaster()->setComboBox(i,"drums",shX-25,shY-40,70,30,-1);
     }
 
-
-
-    //make set, as with buttons?
-    //if (getMaster())
-    //getMaster()->setComboBox(lines,"drums",shX-25,shY-40,70,30,-1);
-
-    if (getMaster())
-    {
+    if (getMaster()) {
        int i = lineInstrLabels.size();
        getMaster()->SetButton(i,sigDenBut->getText(),sigDenBut->getX(),
                               sigDenBut->getY(),sigDenBut->getW(),sigDenBut->getH(),"newDen");
@@ -265,12 +238,9 @@ void PatternInput::setUI()
        ++i;
        getMaster()->SetButton(i,bpmBut->getText(),bpmBut->getX(),
                               bpmBut->getY(),bpmBut->getW(),bpmBut->getH(),"newBpm");
-
        ++i;
        getMaster()->SetButton(i,"play",bpmBut->getX()+180,
                               bpmBut->getY(),30,20,CONF_PARAM("TrackView.playMidi"));
-
-
     }
 }
 
