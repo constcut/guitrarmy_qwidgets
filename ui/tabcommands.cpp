@@ -560,14 +560,14 @@ void setTune(Track* pTrack) {
      30.8677063285
     };
 
-    for (int i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         //octaves
         iBuf[0] = i +49;
         iBuf[1] = 0;
         std::string octave = iBuf;
         std::string note;
         int midiNote = 0;
-        for (int j = 0; j < 12; ++j) {
+        for (size_t j = 0; j < 12; ++j) {
             //Notes
             switch (j) {
                 case 0: note = "C";  break;
@@ -599,12 +599,12 @@ void setTune(Track* pTrack) {
     //items.push_back("another thesr");
     //items.push_back("once_more");
 
-    for (int i = 0; i < pTrack->tuning.getStringsAmount(); ++i) {
+    for (size_t i = 0; i < pTrack->tuning.getStringsAmount(); ++i) {
         int preValue = pTrack->tuning.getTune(i)-12;
         QString resp = QInputDialog::getItem(0,"Input tune",
                                         ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
         int respIndex = -1;
-        for (int j = 0; j < items.size(); ++j)
+        for (size_t j = 0; j < items.size(); ++j)
             if (items.at(j)==resp) {
                 respIndex = j;
                 break;
@@ -707,7 +707,7 @@ int changeTrackPanoram(Tab* pTab) {
 
     int backToNumber = -1;
     if (ok) {
-       for (int i = 0 ; i < 128; ++i)
+       for (size_t i = 0 ; i < 128; ++i)
            if (result == items[i]) {
                backToNumber = i;
                break;
@@ -854,7 +854,7 @@ int changeTrackInstrument(Tab* pTab) {
 
      bool ok=false;
     QStringList items;
-    for (int i = 0 ; i < 128; ++i) {
+    for (size_t i = 0 ; i < 128; ++i) {
         auto s = (std::to_string(i) + " - " + instruments[i]);
         items.push_back(s.c_str());
     }
@@ -865,7 +865,7 @@ int changeTrackInstrument(Tab* pTab) {
                                  "New Instrument:",items, curInstr,false,&ok);
     int backToNumber = -1;
     if (ok)
-        for (int i = 0 ; i < 128; ++i)
+        for (size_t i = 0 ; i < 128; ++i)
             if (result == items[i]) {
                 backToNumber = i;
                 break;

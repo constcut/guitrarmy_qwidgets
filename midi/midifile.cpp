@@ -72,7 +72,7 @@ bool MidiFile::readStream(std::ifstream & ifile)
         timeDevision << "; ftype:" << midiHeader.formatType;
 
 	if (midiHeader.nTracks > 0)
-		for (int i = 0; i < midiHeader.nTracks; ++i)	// why was 1!!!&&
+        for (size_t i = 0; i < midiHeader.nTracks; ++i)	// why was 1!!!&&
 		{
 
             if (midiLog)  qDebug() << "Reading track " << i;
@@ -170,11 +170,11 @@ size_t MidiFile::noMetricsTest(std::ofstream &ofile)
 
     bytesWritten += 14;
 
-    calculateHeader(true);//for tracks mostly
+    calculateHeader(true);
 
-    //don't skip first track ??
-    for (short int i = 1; i < 2; ++i) //shit condition
+    //for (short int i = 1; i < 2; ++i)
     {
+        size_t i = 1;
         ofile.write((const char*)at(i)->trackHeader.chunkId,4);
         writeReversedEndian((const char*)&at(i)->trackHeader.trackSize, 2, ofile);
 

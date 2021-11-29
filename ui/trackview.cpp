@@ -16,12 +16,9 @@ void TrackView::stopThread()
     }
 }
 
-void TrackView::connectThreadSignal(MasterView *masterView)
-{
+void TrackView::connectThreadSignal(MasterView *masterView) {
     masterView->connectThread(localThr);
 }
-
-
 
 
 void TrackView::ongesture(int offset, bool horizontal)

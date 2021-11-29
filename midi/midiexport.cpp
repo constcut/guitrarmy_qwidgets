@@ -85,7 +85,7 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
                     else if (newDen==0)
                              metronomeClickSize=3840;
 
-                    int num = newDen = bar->getSignNum();;
+                    int num = newDen = bar->getSignNum(); //TODO shouldn't be -1
                     for (int i = 0; i < num; ++i)
                         if (firstRun){
                             auto noteOn = std::make_unique<MidiSignal>(0x90 | 9, 33, 127,0);
@@ -196,7 +196,7 @@ void exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shif
     midiTrack->pushChangeVolume(midiVol, channel);
 
     std::uint8_t theTunes[11];
-    for (int i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 10; ++i)
         if (track->isDrums())
             theTunes[i] = 0;
         else
@@ -579,7 +579,7 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
         if (note->effPack.get(24)) { //tremolo pick {
             //pushTremoloPick - tremolo pick - trills
             short int tremoloStep = midiTrack->accum/4;
-            for (int i = 0; i < 3; ++i) {
+            for (size_t i = 0; i < 3; ++i) {
                 auto mSignalOff = std::make_unique<MidiSignal>(0x80 | channel,midiNote,midiVelocy,tremoloStep);
                 midiTrack->push_back(std::move(mSignalOff));
                 auto mSignalOn = std::make_unique<MidiSignal>(0x90 | channel,midiNote,midiVelocy,0);
@@ -653,7 +653,7 @@ void pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t channe
             double stepsDone = 0.0;
             double shiftDone = 0.0;
 
-            for (int i = 0; i < 10; ++i) {
+            for (size_t i = 0; i < 10; ++i) {
                 double thisStep = rhyStep*(i+1) - stepsDone;
                 stepsDone += thisStep;
                 double thisShift = pitchStep*(i+1) - shiftDone;

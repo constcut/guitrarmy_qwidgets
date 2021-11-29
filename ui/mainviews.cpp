@@ -537,7 +537,7 @@ void ConfigView::draw([[maybe_unused]]QPainter *painter)
     //labScaleMinus->draw(painter);
     //labScalePlus->draw(painter);
 
-    //int i = 0;
+    //size_t i = 0;
     //int limitY = getMaster()->getHeight();
     //int curX = 200;
     //int curY = 75;
@@ -672,7 +672,7 @@ void TestsView::onclick(int x1, int y1)
 QByteArray alphaCut(QByteArray &src)
 {
     QByteArray newBytes;
-    for (int i = 0; i < src.size(); ++i)
+    for (size_t i = 0; i < src.size(); ++i)
     {
         int letter = src.at(i)+128;
         int hi = letter / 16;
@@ -848,10 +848,10 @@ void BendInput::draw(QPainter *painter)
     {
         painter->drawRect(20,80,480,240);
 
-        for (int i = 0; i < 12; ++i)
+        for (size_t i = 0; i < 12; ++i)
             painter->drawLine(20,80+i*20,500,80+i*20);
 
-        for (int i = 0; i < 60; ++i)
+        for (size_t i = 0; i < 60; ++i)
             painter->drawLine(20+i*8,80,20+i*8,320);
 
         //8 px for horizon step, 20 for vertical

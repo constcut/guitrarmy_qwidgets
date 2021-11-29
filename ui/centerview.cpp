@@ -136,7 +136,7 @@ void CenterView::ViewWasChanged()
     if (itF != uiWidgets.end())
     {
         std::vector<QWidget*> localWidgets = itF->second;
-        for (int j = 0; j < localWidgets.size(); ++j)
+        for (size_t j = 0; j < localWidgets.size(); ++j)
                 localWidgets[j]->setVisible(false);
     }
 
@@ -147,19 +147,19 @@ void CenterView::ViewWasChanged()
         if (itForce != uiWidgets.end())
         {
             std::vector<QWidget*> localWidgets = itForce->second;
-            for (int j = 0; j < localWidgets.size(); ++j)
+            for (size_t j = 0; j < localWidgets.size(); ++j)
                     localWidgets[j]->setVisible(false);
         }
     } //fix for old tab view
 
     /*
-    for (int i = 0 ; i < 16; ++i)
+    for (size_t i = 0 ; i < 16; ++i)
     {
         std::map<int, std::vector<QWidget*> >::iterator itF = uiWidgets.find(i);
         if (itF != uiWidgets.end())
         {
             std::vector<QWidget*> localWidgets = itF->second;
-            for (int j = 0; j < localWidgets.size(); ++j)
+            for (size_t j = 0; j < localWidgets.size(); ++j)
             {
                 if (i != VType)
                     localWidgets[j]->setVisible(false);
@@ -402,7 +402,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
                         };
 
                 //moved
-                for (int i = 0; i < 128; ++i)
+                for (size_t i = 0; i < 128; ++i)
                 {
                     newBox->addItem(instruments[i].c_str());
                 }
@@ -410,7 +410,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
             }
             if (params=="volume")
             {
-                for (int i = 0; i < 17; ++i)
+                for (size_t i = 0; i < 17; ++i)
                     newBox->addItem(std::to_string(i).c_str());
             }
 
@@ -482,7 +482,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
                 "87 - Open Surdo"
                 };
 
-                for (int i = 0; i < 61; ++i)
+                for (size_t i = 0; i < 61; ++i)
                 {
                     newBox->addItem(percussions[i].c_str());
                 }
@@ -506,7 +506,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
             {
                 newBox->addItem("right now");
                 //in 1 beat etc
-                for (int i = 1; i < 32; ++i) {
+                for (size_t i = 1; i < 32; ++i) {
                     auto s = std::to_string(i) + " beats later";
                     newBox->addItem(s.c_str());
                 }
@@ -588,7 +588,7 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
 
             if (params=="bpm")
             {
-                for (int i = 1; i < 300; ++i)
+                for (size_t i = 1; i < 300; ++i)
                     newBox->addItem(std::to_string(i).c_str());
             }
 
@@ -800,7 +800,7 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
     yOffsetGesture=0;
     isPressed=false;
 
-    for (int i = 0; i < 16; ++i)
+    for (size_t i = 0; i < 16; ++i)
     uiWidgets[i] = std::vector<QWidget*>();
 
     tabCommands = {
@@ -982,7 +982,7 @@ void checkBase()
 
 
 
-        for (int i = 166156; i < files.size(); ++i)
+        for (size_t i = 166156; i < files.size(); ++i)
         {
             QString fileName = testsLoc +QString("/")+ files[i];
 
@@ -1066,7 +1066,7 @@ void CenterView::pushForceKey(std::string keyevent)
     if (keyevent.empty()==false)
     {
         qDebug() << "Push force '" << keyevent.c_str() << "' size="<<(int)keyevent.size();
-        //for (int i = 0; i < keyevent.size(); ++i)
+        //for (size_t i = 0; i < keyevent.size(); ++i)
         //     audio_qDebug() << ".[" << i << "] = " << (int)(keyevent[i]);
     }
 
@@ -1184,7 +1184,7 @@ void CenterView::pushForceKey(std::string keyevent)
         qDebug() << "Starting base file ";
         int fullCount = 0;
 
-        for (int i = 0; i < files.size(); ++ i)
+        for (size_t i = 0; i < files.size(); ++ i)
         {
             QString currentFile = directoryName +QString("/") + files[i];
             QFile fileDesc;
@@ -1298,7 +1298,7 @@ void CenterView::pushForceKey(std::string keyevent)
         AConfig::getInstance()->cleanValues();
         QTextDocument *confDocument = confEdit->document();
 
-        for (int i = 0; i < confDocument->lineCount(); ++i)
+        for (size_t i = 0; i < confDocument->lineCount(); ++i)
         {
            QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
            AConfig::getInstance()->addLine(oneMoreLine.toStdString());
@@ -1562,7 +1562,7 @@ void CenterView::paintEvent(QPaintEvent *event)
                 AConfig::getInstance()->cleanValues();
                 QTextDocument *confDocument = confEdit->document();
 
-                for (int i = 0; i < confDocument->lineCount(); ++i)
+                for (size_t i = 0; i < confDocument->lineCount(); ++i)
                 {
                    QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
                    AConfig::getInstance()->addLine(oneMoreLine.toStdString());
@@ -1918,7 +1918,7 @@ void CenterView::showConf()
         confEdit = new QTextEdit(this);
         confEdit->show();
 
-        int i = 0;
+        size_t i = 0;
         QString qs;
 
         for (std::map<std::string,std::string>::iterator it = AConfig::getInstance()->values.begin();

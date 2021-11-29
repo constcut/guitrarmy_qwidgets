@@ -48,7 +48,7 @@ bool tabLog = false;
  int Tab::getBpmOnBar(size_t barN)
  {
     int bpmTrace = bpmTemp;
-    for (int i = 0; i < timeLine.size(); ++i){
+    for (size_t i = 0; i < timeLine.size(); ++i){
         //TODO
     }
  }
@@ -151,7 +151,7 @@ bool tabLog = false;
 
              short int lastChange = -1;
 
-             for (int i = 0; i < timeChanges.size(); ++i)
+             for (size_t i = 0; i < timeChanges.size(); ++i)
              {
                 if (timeChanges[i].time != lastChange)
                 {

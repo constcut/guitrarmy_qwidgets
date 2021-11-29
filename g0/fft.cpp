@@ -20,7 +20,7 @@ FreqTable::FreqTable()
                          82.41, 87.31, 92.5, 98.0,
                          103.8, 110.0, 116.54, 123.48};
 
-    for (int i = 0 ; i < 12; ++i)
+    for (size_t i = 0 ; i < 12; ++i)
         bigOctave[i] /= 2.0;
 
     //at first generating scaled values
@@ -30,8 +30,8 @@ FreqTable::FreqTable()
 
 
     //then from each generating unscaled values
-    for (unsigned int i = 0; i < scaled.size(); ++i)
-        for (unsigned int j = 2; j < 12; ++j) //12 harmonics
+    for (size_t i = 0; i < scaled.size(); ++i)
+        for (size_t j = 2; j < 12; ++j) //12 harmonics
         {
             double newValue = scaled[i]*j;
             for (unsigned int k = 0; k < scaled.size(); ++k)
@@ -50,7 +50,7 @@ FreqTable::FreqTable()
 double FreqTable::getNearestUnscaled
 (double freq)
 {
-     for (unsigned int i = 1; i < unscaled.size()-1; ++i)
+     for (size_t i = 1; i < unscaled.size()-1; ++i)
      {
          if ((fabs(unscaled[i]-freq) < fabs(unscaled[i-1]-freq))
              &&
@@ -64,7 +64,7 @@ double FreqTable::getNearestUnscaled
 
 double FreqTable::getNearestScaled(double freq)
 {
-     for (unsigned int i = 1; i < scaled.size()-1; ++i)
+     for (size_t i = 1; i < scaled.size()-1; ++i)
      {
          if ((fabs(scaled[i]-freq) < fabs(scaled[i-1]-freq))
              &&
@@ -78,7 +78,7 @@ double FreqTable::getNearestScaled(double freq)
 
 int FreqTable::getScaledIndex(double freq)
 {
-    for (unsigned int i = 1; i < scaled.size()-1; ++i)
+    for (size_t i = 1; i < scaled.size()-1; ++i)
     {
         if ((fabs(scaled[i]-freq) < fabs(scaled[i-1]-freq))
             &&
@@ -105,7 +105,7 @@ double FreqTable::getNearest(double freq)
 
 double FreqTable::getUpperScaled(double freq)
 {
-    for (unsigned int i = 1; i < scaled.size()-1; ++i)
+    for (size_t i = 1; i < scaled.size()-1; ++i)
     {
         if ((fabs(scaled[i]-freq) <= fabs(scaled[i-1]-freq))
             &&
@@ -119,7 +119,7 @@ double FreqTable::getUpperScaled(double freq)
 
 double FreqTable::getLowerScaled(double freq)
 {
-    for (unsigned int i = 1; i < scaled.size()-1; ++i)
+    for (size_t i = 1; i < scaled.size()-1; ++i)
     {
         if ((fabs(scaled[i]-freq) <= fabs(scaled[i-1]-freq))
             &&
@@ -138,7 +138,7 @@ short FreqTable::getNoteByFreq(double freq)
     //12-15(32 steps of welldone)
 
     int freqPosition = -1;
-    for (unsigned int i = 1; i < scaled.size()-1; ++i)
+    for (size_t i = 1; i < scaled.size()-1; ++i)
         if ((fabs(scaled[i]-freq) < fabs(scaled[i-1]-freq))
             &&
             (fabs(scaled[i]-freq) < fabs(scaled[i+1]-freq)))
@@ -412,14 +412,14 @@ bool FFT::transform(short int *place)
 
 bool FFT::countDecibels()
 {
-    for (int i = 0; i < N/2; ++i)
+    for (size_t i = 0; i < N/2; ++i)
         decibels[i] = Decibels(this->destReal[i],this->destImg[i])/256;
         return true;
 }
 
 bool FFT::countAmplitude()
 {
-    for (int i = 0; i < N/2; ++i)
+    for (size_t i = 0; i < N/2; ++i)
         this->amplitude[i] = Amplitude(this->destReal[i],this->destImg[i],N)/256;
         return true;
 }
@@ -434,7 +434,7 @@ FFT::AmplitudeValue FFT::getMaxAmplitude()
 
 bool FFT::countAmplitudeScale()
 {
-    for (int i = 0; i < N/2; ++i)
+    for (size_t i = 0; i < N/2; ++i)
         amplitudeScale[i] = AmplitudeScaled(this->destReal[i],this->destImg[i],N,256);
          return true; //scale?
 }
@@ -442,7 +442,7 @@ bool FFT::countAmplitudeScale()
 bool FFT::countSQRD()
 {
 
-    for (int i = 0; i < N/2; ++i)
+    for (size_t i = 0; i < N/2; ++i)
         sqrd[i] = mag_sqrd(this->destReal[i],this->destImg[i]);
          return true;
 }
@@ -502,7 +502,7 @@ int FFT::findPeaks(double coefRate)
 
                 if (peaks->empty() == false)
                 {
-                    for (unsigned int j = 0; j < peaks->size(); ++j)
+                    for (size_t j = 0; j < peaks->size(); ++j)
                     {
                        if ((*peaks)[j].getPosition() == i) goto skip;
                     }

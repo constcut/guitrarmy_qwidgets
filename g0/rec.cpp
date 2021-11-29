@@ -216,7 +216,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
     //energy levels + types allocation
     int amountOfEnergyLevels = waveLimit/bpmDependentWindow;
 
-    for (int i = wavePosition+1; i < waveLimit; )
+    for (int i= wavePosition+1; i < waveLimit; )
     {
         int fullSumm = 0;
 
@@ -234,7 +234,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
 
 
     energyTypes.insert(energyTypes.begin(),energyLevels.size(),0);
-    for (int i = 1; i < localPosition-1; ++i)
+    for (int i= 1; i < localPosition-1; ++i)
     {
         energyTypes[i]=0;
         if (energyLevels[i]<energyLevels[i+1])
@@ -265,7 +265,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
 void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote> *notes)
 {
     //Melodic recognyzer
-    for (int i = 0; i < notes->size(); ++i)
+    for (size_t i = 0; i < notes->size(); ++i)
     {
         int noteEnd = (*notes)[i].noteEnd;
         int notePeak = (*notes)[i].notePeak;
@@ -285,7 +285,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
 
             //stri ngExtended sX;
             double peaksSumm = 0.0;
-            for (int i = 0; i < peaks->size(); ++i)
+            for (size_t i = 0; i < peaks->size(); ++i)
             {
                 Peak peak= peaks->operator [](i);
                 //sX<<"PB "<<peak.getFreq()<<":"<<peak.getPosition()<<":"<<peak.getAmplitude()*10<<"; ";
@@ -305,7 +305,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
 
             std::vector<LocalFreqTable::LFTvote> *votes = localFreq.getRezultVotes();
             //stringEx tended sX3;
-            //for (int i = 0; i < votes->size(); ++i)
+            //for (size_t i = 0; i < votes->size(); ++i)
             //{
                   //sX3 << (*votes)[i].rFreq<<" "<<(*votes)[i].value<<";";
             //}
@@ -313,7 +313,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
 
             //sX.clear();
             peaks = localFreq.getPeaks();
-            for (int i = 0; i < peaks->size(); ++i)
+            for (size_t i = 0; i < peaks->size(); ++i)
             {
                 Peak peak= peaks->operator [](i);
                 //sX<<"PA "<<peak.getFreq()<<":"<<peak.getAmplitude()*10<<"; ";
@@ -325,7 +325,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             double *ampSrc = fft.getAmplitude();
 
             //stringE xtended sX2;
-            //for (int i = 0; i < 128; ++i)
+            //for (size_t i = 0; i < 128; ++i)
             //{
             //    sX2<<(int)(ampSrc[i]*100)<<" ;";
             //}
@@ -367,7 +367,7 @@ void BaseRhy::findNotesPositions(std::vector<int> *energyLevels, std::vector<int
     }
 
     //Rhythmic recogizer
-    for (int i = 0; i < energyLevels->size()-1; ++i)
+    for (size_t i = 0; i < energyLevels->size()-1; ++i)
     {
         if ((energyTypes->at(i) == 4) || (energyTypes->at(i+1) == 2))//blue now or yellow is next
         if (energyLevels->at(i) < eLev1Value) //the constant

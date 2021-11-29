@@ -286,7 +286,7 @@ int PlayAnimationThr::calculateSeconds()
 {
     size_t totalSumm = 0;
 
-    for (int i = 0; i < waitTimes.size(); ++i)
+    for (size_t i = 0; i < waitTimes.size(); ++i)
     {
         totalSumm += waitTimes[i];
     }

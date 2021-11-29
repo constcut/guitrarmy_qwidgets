@@ -14,7 +14,7 @@ int getTime();
 bool testScenario();
 void connectConfigs(void *ptr);
 bool midiPrint(std::string fileName);
-bool greatCheckScenarioCase(int scen, int from, int to, int v);
+bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v);
 
 
 template<typename T>

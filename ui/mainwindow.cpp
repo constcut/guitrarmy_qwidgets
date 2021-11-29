@@ -360,7 +360,7 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
         middleBreak = 100; //force one line
     }
 
-    for (int i =0 ;i < pan->buttons.size(); ++i)
+    for (size_t i =0 ;i < pan->buttons.size(); ++i)
     {
 
         if (i > middleBreak) //16?
@@ -447,7 +447,7 @@ QMenu *MainWindow::createToolMenu(void *pannel)
      else
          iconsSet = ":/icons2/";
 
-    for (int i =0 ;i < pan->buttons.size(); ++i)
+    for (size_t i =0 ;i < pan->buttons.size(); ++i)
     {
         std::string button = pan->buttons[i].getText();
         std::string iconPlace = iconsSet+ button + std::string(".png");
@@ -2664,7 +2664,7 @@ void MainWindow::createFloDocks()
 
     addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playAMusic"));
 
-    for (int i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 10; ++i)
      addToolButtonGrid(this,dock,std::to_string(i),std::to_string(i));
 
     addToolButtonGrid(this,dock,"prevBar",CONF_PARAM("TrackView.prevBar"));

@@ -229,7 +229,7 @@ void PatternInput::setUI()
     }
 
     if (getMaster()) {
-       int i = lineInstrLabels.size();
+       size_t i = lineInstrLabels.size();
        getMaster()->SetButton(i,sigDenBut->getText(),sigDenBut->getX(),
                               sigDenBut->getY(),sigDenBut->getW(),sigDenBut->getH(),"newDen");
        ++i;
@@ -300,7 +300,7 @@ void PatternInput::keyevent(std::string press)
 
                 shX += 70;
 
-                for (int i = 0; i < newNum; ++i)
+                for (size_t i = 0; i < newNum; ++i)
                 {
                     GCheckButton but(shX,shY-30,30,30);
                     shX += but.getW() + 10;
@@ -335,7 +335,7 @@ void PatternInput::keyevent(std::string press)
         {
             int listValue = -1;
 
-            for (int i = 0; i < items.size(); ++i)
+            for (size_t i = 0; i < items.size(); ++i)
             {
                 if (items.at(i)==resp)
                 {
@@ -534,7 +534,7 @@ void findClosestRhythm(short absValue, std::uint8_t &durGet, std::uint8_t &detGe
    {
        short base = (240000/thatBPM)*2;;
 
-       for (int i = 0; i < 7; ++i)
+       for (size_t i = 0; i < 7; ++i)
        {
            pabsNet[i] = base;
            base /= 2;
@@ -862,7 +862,7 @@ void TapRyView::keyevent(std::string press)
 
         ryBar->setSignDenum(4); ryBar->setSignNum(4);
 
-        for (int i =0; i < 4; ++i)
+        for (size_t i =0; i < 4; ++i)
         {
             auto ryBeat= std::make_unique<Beat>();
             ryBeat->setDuration(2);
@@ -1044,7 +1044,7 @@ void RecordView::setUI()
 
     std::string recordsNames="";
 
-    for (int i = 0; i < files.size(); ++i)
+    for (size_t i = 0; i < files.size(); ++i)
     {
       recordsNames += files[i].toStdString();
       recordsNames += std::string(";");
@@ -1118,7 +1118,7 @@ void RecordView::draw(QPainter *painter)
     int liftDown = 0;
     changeColor("white", painter);
     //draw main wave scaled, shifted
-    for (int i = wavePosition; i < waveLimit; )
+    for (int i= wavePosition; i < waveLimit; )
     {
         int maxShift = 0;
         for (int coefIndex = 0; coefIndex < zoomCoef; ++coefIndex)
@@ -1155,7 +1155,7 @@ void RecordView::draw(QPainter *painter)
     //draw energy levels
     int toShift = wavePosition/bpmDependentWindow;
 
-    for (int i = toShift+1; i < waveItself.energyLevels.size(); ++i)
+    for (size_t i = toShift+1; i < waveItself.energyLevels.size(); ++i)
     {
         int lastELevel = waveItself.energyLevels[i-1];
         int currentLevel = waveItself.energyLevels[i];
@@ -1187,7 +1187,7 @@ void RecordView::draw(QPainter *painter)
     //draw notes
 
     changeColor("white", painter);
-    for (int i = 0; i < waveItself.notes.size(); ++i)
+    for (size_t i = 0; i < waveItself.notes.size(); ++i)
     {
         int notePeak = waveItself.notes[i].notePeak - toShift;
         int noteEnd = waveItself.notes[i].noteEnd - toShift;

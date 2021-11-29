@@ -57,7 +57,7 @@ bool GTabLoader::open(std::string fileName)
             char version[2];
             char skip[2];
 
-            for (int i = 0; i < 28; ++i) //1+29-2 + post
+            for (size_t i = 0; i < 28; ++i) //1+29-2 + post
             {
                 if (i==18) file.read(version,1);
                 else

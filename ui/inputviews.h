@@ -66,7 +66,7 @@ public:
             GLabel lineLab(shX,shY,instrText);
             lineInstrLabels.push_back(lineLab);
             shX += 70;
-            for (int i = 0; i < 16; ++i) {
+            for (size_t i = 0; i < 16; ++i) {
                 GCheckButton but(shX,shY-30,30,30);
                 shX += but.getW() + 10;
                 checkButtons.push_back(but);

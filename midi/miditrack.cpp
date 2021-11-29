@@ -214,7 +214,7 @@ void MidiTrack::pushFadeIn(short int rOffset, std::uint8_t channel)
     auto volumeChangeFirst = std::make_unique<MidiSignal>(0xB0 | channel,7,newVolume,0);
     this->push_back(std::move(volumeChangeFirst));
 
-    for (int i = 0; i < 20; ++i)
+    for (size_t i = 0; i < 20; ++i)
     {
         newVolume += 5;
         auto volumeChange = std::make_unique<MidiSignal>(0xB0 | channel,7,newVolume,fadeInStep);
@@ -321,7 +321,7 @@ void MidiTrack::add(MidiSignal &val)
 //new fun
 void MidiTrack::closeLetRings(std::uint8_t channel)
 {
-    for (int i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
         if (ringRay[i] != 255)
         {

@@ -357,7 +357,7 @@ void AConfig::checkConfig()
      loadImage("trill"); loadImage("ham");
 
 
-     for (int i = 0; i < 10; ++i)
+     for (size_t i = 0; i < 10; ++i)
      {
          std::string sX = std::to_string(i);
          loadImage(sX.c_str());

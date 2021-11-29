@@ -98,7 +98,7 @@ void AmplitudeAnalys::startAnalys(short *samples, long monoLength)
         if (scaledWave[i].energy > 1000) middleLine = (middleLine+scaledWave[i].energy)/2;
         if(scaledWave[i].energy > maxValue)
         {
-            for (unsigned int j = 0; j < rythmicMaxSequence.size(); ++j)
+            for (size_t j = 0; j < rythmicMaxSequence.size(); ++j)
                 if (abs(int(rythmicMaxSequence[j].localOffset - i))<=2)//32&&&&&&
                     goto xBreakMax;
 
@@ -163,7 +163,7 @@ long minPosition = -1;
 for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
 {    if(scaledWave[i].energy < minValue)
     {
-        for (unsigned int j = 0; j < rythmicMinSequence.size(); ++j)
+        for (size_t j = 0; j < rythmicMinSequence.size(); ++j)
             if (abs(int(rythmicMinSequence[j].localOffset - i))<=2)//32&&&&&&
                 goto xBreakMin;
 
@@ -234,10 +234,10 @@ for (int maxI = 0; maxI < upperBridge; ++maxI)
 
 
 
-for (unsigned int i = 0; i < rythmicMaxSequence.size(); ++i)
+for (size_t i = 0; i < rythmicMaxSequence.size(); ++i)
     rythmicSplit.push_back(rythmicMaxSequence[i]);
 
-for (unsigned int i = 0; i < rythmicMinSequence.size(); ++i)
+for (size_t i = 0; i < rythmicMinSequence.size(); ++i)
     rythmicSplit.push_back(rythmicMinSequence[i]);
 
 std::sort(rythmicSplit.begin(),rythmicSplit.end(),AmplitudePositionPredicate);
@@ -246,7 +246,7 @@ isAnalysDone = true;
 
 
 int upperSplitBridge = rythmicSplit.size();
-for (int i =0; i < upperSplitBridge-1; ++i)
+for (size_t i =0; i < upperSplitBridge-1; ++i)
 {
     if (rythmicSplit[i].stepsFromLocalMin == rythmicSplit[i+1].stepsFromLocalMin)
     {
@@ -291,7 +291,7 @@ AmplitudeValue AmplitudeAnalys::searchAttackStart(AmplitudeValue a)
 
   int minimum = scaledWave[a.localOffset].energy;
   int posOf = 0;
-  for (int i = 1; i < 3; ++i)
+  for (size_t i = 1; i < 3; ++i)
     if (minimum > scaledWave[a.localOffset-i].energy)
     {
         minimum = scaledWave[a.localOffset-i].energy;
@@ -377,7 +377,7 @@ void AmplitudeAnalys::calculateNotes()
     rezultSequence.clear();
 
 
-    for (unsigned int i = 0; i <rythmicSplit.size()/2; i++)
+    for (size_t i = 0; i <rythmicSplit.size()/2; i++)
     {
         if (i*2+1 > rythmicSplit.size())
         {
@@ -460,7 +460,7 @@ int signMF(long mass)
      //stage 0 calculating scores
      while ((sectionN+1)*widthOfMiniFrame < monoLength)
      {
-         int innerCycle = 0;
+         size_t innerCycle = 0;
          long mass = 0;
          long shape = 0;
          while (innerCycle < widthOfMiniFrame)
@@ -477,7 +477,7 @@ int signMF(long mass)
 
      //divide into sausage
 
-     for (int i = 0; i < pusher.size(); ++i)
+     for (size_t i = 0; i < pusher.size(); ++i)
      {
         int state =  signMF(pusher[i]);
 
@@ -489,7 +489,7 @@ int signMF(long mass)
 
      //NOT divided well ((
 
-     for (int i = 0; i < ss.sounds.size(); ++i)
+     for (size_t i = 0; i < ss.sounds.size(); ++i)
      {
         long start = ss.sounds[i].start;
         int amount = ss.sounds[i].amount;
@@ -538,7 +538,7 @@ int signMF(long mass)
 
      FreqTable aprox;
 
-     for (int i =0; i < tableElements.size(); ++i)
+     for (size_t i =0; i < tableElements.size(); ++i)
      {
          double nextElement = 999.0;
 
@@ -662,7 +662,7 @@ int signMF(long mass)
 
  /* does work not the best yet
   *
-     for (int i =0; i < tableElements.size()-1; ++i)
+     for (size_t i =0; i < tableElements.size()-1; ++i)
      {
          if (tableElements[i+1].getPosition() - tableElements[i].getPosition() < 1.1)
          {
@@ -698,7 +698,7 @@ int signMF(long mass)
 
  void LocalFreqTable::addPeaks(std::vector<Peak> *peaks)
  {
-     for (unsigned int i = 0; i < peaks->size(); ++i)
+     for (size_t i = 0; i < peaks->size(); ++i)
          tableElements.push_back((*peaks)[i]);
 
  }
@@ -719,7 +719,7 @@ int signMF(long mass)
              //if found  - append value
              //else - add new value
 
-     for (unsigned int i = 0; i < votes.size(); ++i)
+     for (size_t i = 0; i < votes.size(); ++i)
      {
          double tF = votes[i].freq;
          double delta = fabs(tF-freq);
@@ -740,7 +740,7 @@ int signMF(long mass)
 
  void LocalFreqTable::voteForNew(double freq, double voteValue)
  {
-     for (unsigned int i = 0; i < votes.size(); ++i)
+     for (size_t i = 0; i < votes.size(); ++i)
      {
          if (votes[i].freq == freq)
          {
@@ -767,7 +767,7 @@ int signMF(long mass)
 
      FreqTable freqTable;
 
-     for (unsigned int i = 0; i < tableElements.size(); ++i)
+     for (size_t i = 0; i < tableElements.size(); ++i)
      {
          double vote = tableElements[i].getAmplitude();
          vote /= 100.0;
@@ -787,7 +787,7 @@ int signMF(long mass)
 
      std::sort(votes.begin(),votes.end(),LocalFreqVotePredicate);
 
-     for (unsigned int i = 0; i < votes.size(); ++i)
+     for (size_t i = 0; i < votes.size(); ++i)
          votes[i].takeReal();
 
  }
@@ -800,7 +800,7 @@ int signMF(long mass)
 
      votes.clear();
 
-     for (unsigned int i = 0; i < tableElements.size(); ++i)
+     for (size_t i = 0; i < tableElements.size(); ++i)
      {
         int massAmmountOfBits = 0;
         short harm = harmUnion[i];
@@ -837,7 +837,7 @@ int signMF(long mass)
      std::sort(votes.begin(),votes.end(),LocalFreqVotePredicate);
 
  //kill)
-     for (unsigned int i = 0; i < votes.size(); ++i)
+     for (size_t i = 0; i < votes.size(); ++i)
          votes[i].takeReal();
 
  }
@@ -850,7 +850,7 @@ int signMF(long mass)
      short int harm = 0;
      harmUnion.push_back(harm);
      //find all crossing in table of elements
-     for (unsigned int i = 1; i < tableElements.size(); ++i)
+     for (size_t i = 1; i < tableElements.size(); ++i)
      {
          harm = 0;
          for (int j = i-1; j >= 0; --j)
@@ -892,7 +892,7 @@ int signMF(long mass)
  void HarmonicAnalys::startAnalys(short int *zeroPoint)
  {
 
-     for (unsigned int i =0; i < this->ampPtr->rezultSequence.size(); ++i)//++u actually, u know;
+     for (size_t i =0; i < this->ampPtr->rezultSequence.size(); ++i)//++u actually, u know;
      {
          int start = this->ampPtr->rezultSequence[i].attack.localOffset;
          int length = this->ampPtr->rezultSequence[i].attenuation.localOffset-this->ampPtr->rezultSequence[0].attack.localOffset;
@@ -937,7 +937,7 @@ int signMF(long mass)
  void HarmonicAnalys::startTable(short int *zeroPoint)
  {
      //magic works here
-     for (unsigned int i =0; i < 33; ++i)//++u actually, u know;
+     for (size_t i =0; i < 33; ++i)//++u actually, u know;
      {
          //int start = this->ampPtr->rezultSequence[i].attack.localOffset;
          //int length = this->ampPtr->rezultSequence[i].attenuation.localOffset-this->ampPtr->rezultSequence[0].attack.localOffset;

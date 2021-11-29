@@ -288,8 +288,8 @@ bool greatCheck()
 {
 
     //phase 1
-    int from = 1; //1
-    int to = 70; //70
+    size_t from = 1; //1
+    size_t to = 70; //70
 
     int scen = 3;
 
@@ -297,7 +297,7 @@ bool greatCheck()
     std::cerr << "Starting big check" << std::endl;
     bool doTheLogs = false;
 
-    for (int i = from; i <= to; ++i)
+    for (size_t i = from; i <= to; ++i)
     {
         try
         {
@@ -335,10 +335,10 @@ bool greatCheck()
     return true;
 }
 
-bool greatCheckScenarioCase(int scen, int from, int to, int v)
+bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v)
 {
     bool doTheLogs = false;
-    for (int i = from; i <= to; ++i)
+    for (uint32_t i = from; i <= to; ++i)
     {
         try
         {

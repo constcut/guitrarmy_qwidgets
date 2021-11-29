@@ -265,7 +265,7 @@ public:
 
         if (mainView->getMaster())
         {
-            int i = buttons.size();
+            size_t i = buttons.size();
 
             mainView->getMaster()->SetButton(i,playlistButton->getText(),
                                    playlistButton->getX(),playlistButton->getY(),
@@ -297,7 +297,7 @@ public:
         int xSh = 30;
         int ySh = 120-85+30;
 
-        for (int i = 0; i < 11; ++i) {
+        for (size_t i = 0; i < 11; ++i) {
             GLabel button(xSh,ySh,"1." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);
@@ -309,7 +309,7 @@ public:
             }
         }
 
-        for (int i = 0; i < 38; ++i)
+        for (size_t i = 0; i < 38; ++i)
         {
             GLabel button(xSh,ySh,"2." + std::to_string(i+1));
             button.setW(40);
@@ -323,7 +323,7 @@ public:
             }
         }
 
-        for (int i = 0; i < 70; ++i) {
+        for (size_t i = 0; i < 70; ++i) {
             GLabel button(xSh,ySh,"3." + std::to_string(i+1));
             button.setW(40);
             buttons.push_back(button);

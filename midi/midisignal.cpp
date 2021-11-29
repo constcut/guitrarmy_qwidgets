@@ -18,7 +18,7 @@ NBytesInt::NBytesInt(std::uint32_t source) {
         source /= 128;
     }
 
-    for (int i = byteParts.size()-1; i >=0 ; --i)
+    for (size_t i = byteParts.size()-1; i >=0 ; --i)
         push_back(byteParts[i]); ///TODO algo
 }
 
@@ -55,9 +55,9 @@ std::uint32_t NBytesInt::writeStream(std::ofstream &f) {
 
 std::uint32_t NBytesInt::getValue() {
     std::uint32_t value = 0;
-    int bytesToCollect = size() < 4 ? size() : 4;
+    size_t bytesToCollect = size() < 4 ? size() : 4;
 
-    for (int i = 0; i < bytesToCollect; ++i) {
+    for (size_t i = 0; i < bytesToCollect; ++i) {
         value <<= 7;
         value += this->operator [](i);
     }
@@ -313,7 +313,7 @@ std::uint32_t MidiSignal::writeStream(std::ofstream& f, bool skipSomeMessages) {
         totalBytesWritten += metaLen.writeStream(f);
 
         //TODO compare
-        //for (int i = 0; i < metaBufer.size(); ++i)
+        //for (size_t i = 0; i < metaBufer.size(); ++i)
         //    f.write((const char *)&metaBufer[i], 1);
         f.write(reinterpret_cast<char*>(metaBufer.data()), metaBufer.size());
         totalBytesWritten += metaBufer.size();

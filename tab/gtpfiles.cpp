@@ -206,7 +206,7 @@ void readChordDiagramGP3(std::ifstream &file)
         int firstFret = 0;
         file.read((char*)&firstFret,4);
 
-        for (int i = 0; i < 6; ++i)
+        for (size_t i = 0; i < 6; ++i)
         {
             int fret =0;
             file.read((char*)&fret,4);
@@ -221,7 +221,7 @@ void readChordDiagramGP3(std::ifstream &file)
          file.read((char*)&firstFret,4);
 
          if (firstFret != 0)
-             for (int i = 0; i < 6; ++i)
+             for (size_t i = 0; i < 6; ++i)
              {
                  int fret =0;
                  file.read((char*)&fret,4);
@@ -260,7 +260,7 @@ void readChordDiagramGP4(std::ifstream &file)
         file.read((char*)&firstFret,4);//skli
         file.read((char*)&firstFret,4);
 
-        for (int i = 0; i < 7; ++i)
+        for (size_t i = 0; i < 7; ++i)
         {
             int fret =0;
             file.read((char*)&fret,4);
@@ -293,7 +293,7 @@ void readChordDiagramGP4(std::ifstream &file)
          file.read((char*)&firstFret,4);
 
          if (firstFret != 0)
-             for (int i = 0; i < 6; ++i)
+             for (size_t i = 0; i < 6; ++i)
              {
                  int fret =0;
                  file.read((char*)&fret,4);
@@ -1391,7 +1391,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     file.read((char*)&lyTrack,4);
     if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack;
 
-    for (int i = 0; i < 5; ++i)
+    for (size_t i = 0; i < 5; ++i)
     {
         size_t emWo = 0;
         file.read((char*)&emWo,4);
@@ -2084,7 +2084,7 @@ void readChordDiagramGP5(std::ifstream &file)
     int firstFret = 0;
     file.read((char*)&firstFret,4); //first fret
 
-    for (int i =0; i < 7; ++i)
+    for (size_t i =0; i < 7; ++i)
     {
         file.read((char*)chordBufer,4);//string fret?
     }
@@ -2438,7 +2438,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     file.read((char*)&lyTrack,4);
     if (gtpLog)  qDebug() << "Lyrics track " <<(int)lyTrack ;
 
-    for (int i = 0; i < 5; ++i)
+    for (size_t i = 0; i < 5; ++i)
     {
         size_t emWo = 0;
         file.read((char*)&emWo,4);
@@ -2452,7 +2452,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
         if (versionIndex == 0)
             file.read((char*)placeToSkip,30);
 
-    for (int i = 0; i < 11; ++i)
+    for (size_t i = 0; i < 11; ++i)
     {
          size_t pageInt = 0;
          file.read((char*)&pageInt,4);
@@ -2701,7 +2701,7 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
       }
 
       /*
-      for (int i = 0; i < 11; ++i)
+      for (size_t i = 0; i < 11; ++i)
       {
           byte reader = 0;
           file.read((char*)&reader,1);
