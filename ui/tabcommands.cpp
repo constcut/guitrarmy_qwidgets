@@ -414,7 +414,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
         auto generatedMidi = exportMidi(pTab,shiftTheCursor);
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-        std::ofstream outFile2;
+        std::ofstream outFile2(fullOutName);
         if (!outFile2.is_open())
             qDebug() << "Failed to open out file :(";
         else

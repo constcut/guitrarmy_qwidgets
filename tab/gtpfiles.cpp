@@ -2003,7 +2003,8 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
 
             if (someSkip)
             {
-                qDebug()<<"Skip byte = "<<someSkip;
+                if (gtpLog)
+                    qDebug()<<"Skip byte = "<<someSkip;
             }
          }
 
@@ -2423,8 +2424,9 @@ bool Gp5Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
             file.read((char*)&noteLen,1);
             qDebug() <<"Note strlens "<<noteLen<<" "<<intLen;
             */
-            std::string noticeOne = readStringShiByte(file); //,noteLen
-            qDebug()<<"Notice#"<<i<<" "<<noticeOne.c_str();
+            std::string noticeOne = readStringShiByte(file); //,noteLe
+            if (gtpLog)
+                qDebug()<<"Notice#"<<i<<" "<<noticeOne.c_str();
         }
     }
 

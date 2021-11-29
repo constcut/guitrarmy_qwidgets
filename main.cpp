@@ -299,6 +299,9 @@ int main(int argc, char *argv[])
     //testScenario();
 
 
+    //setTestLocation("/home/punnalyse/dev/g/_wgtab/gtab/og/"); //TODO only for linux yet hardcode
+
+
     int out = 0;
     try{
        out = a.exec();

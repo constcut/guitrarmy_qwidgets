@@ -189,7 +189,7 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
 
     if (itfile.is_open())
-        log << "File opened" ;
+        ; //log << "File opened" ;
     else
     {
         log <<"Failed to open GP file" ;
@@ -326,7 +326,7 @@ bool greatCheck()
         }
         catch(...)
         {
-            std::cout <<"Exception";
+            std::cerr <<"Exception" << std::endl;
         }
     }
 
@@ -344,7 +344,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //TODO repair getTestsLocation();
+            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/";
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
             std::string gp3File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
@@ -389,7 +389,7 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
         }
         catch(...)
         {
-            std::cout <<"Exception";
+            std::cout <<"Exception" << std::endl;
         }
     }
 

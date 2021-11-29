@@ -228,7 +228,7 @@ public:
 class TestsView : public GView
 {
 protected:
-    GLabel upper, bottom;
+    GLabel upper, bottom, g3, g5;
     std::unique_ptr<GLabel> playlistButton;
     std::unique_ptr<GLabel> playlist2Button;
     std::unique_ptr<GLabel> stopPlaylist;
@@ -240,7 +240,7 @@ protected:
 
 public:
     TestsView(MainView *mainV, TabView *tabV):upper(30,0+30,"Start all tests!(dbl click)"),
-    bottom(250,0+30,"Information about full tests: not started")
+    bottom(250,0+30,"Information about full tests: not started"), g3(600,0+30,"G3____"), g5(700, 30, "G5_____")
     ,mainView(mainV),tabsView(tabV)
     {
         playlistButton = std::make_unique<GLabel>(400,0+30,"playlist");
@@ -365,6 +365,9 @@ public:
         upper.draw(painter);
         bottom.draw(painter);
 
+        g3.draw(painter);
+        g5.draw(painter);
+
         playlistButton->draw(painter);
         playlist2Button->draw(painter);
         stopPlaylist->draw(painter);
@@ -392,6 +395,29 @@ public:
         if (upper.hit(x1,y1)) {
             keyevent("playlist");
             getMaster()->pleaseRepaint();
+        }
+        if (g3.hit(x1,y1)) {
+            clock_t now = getTime();
+            bottom.setText("starting 1 pack");
+            greatCheckScenarioCase(1,1,12,3);
+            greatCheckScenarioCase(2,1,35,3);
+            greatCheckScenarioCase(3,1,70,3);
+            clock_t after = getTime();
+            clock_t diff = after-now;
+            std::string sX = "TIme spent for g3 ; - " + std::to_string(diff) + " ms";;
+            bottom.setText(sX.c_str());
+        }
+        if (g5.hit(x1,y1)) {
+            clock_t now = getTime();
+            bottom.setText("starting 1 pack");
+            greatCheckScenarioCase(1,1,12,5);
+            greatCheckScenarioCase(2,1,35,5);
+            greatCheckScenarioCase(3,1,70,5);
+            greatCheckScenarioCase(4,1,109,5);
+            clock_t after = getTime();
+            clock_t diff = after-now;
+            std::string sX = "TIme spent for g3 ; - " + std::to_string(diff) + " ms";;
+            bottom.setText(sX.c_str());
         }
     }
 
@@ -455,7 +481,6 @@ public:
         if (press == "1")
         {
             clock_t now = getTime();
-
             bottom.setText("starting 1 pack");
             greatCheckScenarioCase(1,1,12,4);
             clock_t after = getTime();
@@ -469,7 +494,6 @@ public:
 
             bottom.setText("starting 2 pack");
             greatCheckScenarioCase(2,1,35,4);
-
             clock_t after = getTime();
             clock_t diff = after-now;
             std::string sX = "TIme spent for pack 2; - " + std::to_string(diff) + " ms";
@@ -483,7 +507,6 @@ public:
             bottom.setText("starting 3 pack");
             greatCheckScenarioCase(3,1,70,4);
             bottom.setText("pack 3 finished");
-
             clock_t after = getTime();
             clock_t diff = after-now;
 
@@ -494,7 +517,6 @@ public:
         if (press == "4")
         {
             clock_t now = getTime();
-
             bottom.setText("starting 4 pack");
             greatCheckScenarioCase(4,1,109,4);
             clock_t after = getTime();
