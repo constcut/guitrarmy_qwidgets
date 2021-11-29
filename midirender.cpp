@@ -288,7 +288,7 @@ QByteArray MidiRender::renderMemoryShortNext(int len)
         {
             auto& signal = midiTrack->at(trackPosition); //later replace such place with ->at(i)
 
-            //qDebug() << "Render "<<signal->byte0<<" "<<signal->absoluteTime;
+            qDebug() << "Render "<<signal->byte0<<" "<<signal->absoluteTime;
 
             switch (signal->byte0 & 0xf0)
             {

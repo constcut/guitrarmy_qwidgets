@@ -377,7 +377,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
     for (size_t i =0; i < beat->size(); ++i)
     {
         Note *note = beat->at(i).get();
-        exportSingalsFromNoteOn(note, midiTrack, channel);
+        exportSingalsFromNoteOff(note, midiTrack, channel);
     }
 }
 

@@ -249,7 +249,8 @@ void AConfig::checkConfig()
 
     addValue("onloadBaseCheck","1");
 
-    addValue("midi.config","on"); //TODO rename and use for soundfont
+    //После разделения аудио от интерфейса возможно удастся генерировать налету
+    //addValue("midi.config","on"); //TODO оно работает но медленно, при прегенерации ждать очень долго
 }
 
 
