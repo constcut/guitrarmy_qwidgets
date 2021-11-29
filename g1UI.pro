@@ -28,6 +28,10 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
+    g0/config.cpp \
+    tab/effects.cpp \
+    tab/tabclipboard.cpp \
+    tab/tabloader.cpp \
     ui/barview.cpp \
     tab/bar.cpp \
     tab/beat.cpp \
@@ -40,9 +44,6 @@ SOURCES += main.cpp\
     libs/sf/tsf.cpp \
     mainwindow.cpp \
     ui/gview.cpp \
-    tab/abitarray.cpp \
-    g0/aconfig.cpp \
-    tab/aexpimp.cpp \
     tab/gmyfile.cpp \
     tab/gtpfiles.cpp \
     midi/midifile.cpp \
@@ -53,7 +54,6 @@ SOURCES += main.cpp\
     ui/mainviews.cpp \
     midi/midirender.cpp \
     ui/tabviews.cpp \
-    tab/aclipboard.cpp \
     ui/tabcommands.cpp \
     g0/wavefile.cpp \
     g0/fft.cpp \
@@ -69,6 +69,10 @@ SOURCES += main.cpp\
 
 
 HEADERS  += mainwindow.h \
+    g0/config.h \
+    tab/effects.h \
+    tab/tabclipboard.h \
+    tab/tabloader.h \
     ui/barview.h \
     tab/bar.h \
     tab/beat.h \
@@ -77,9 +81,6 @@ HEADERS  += mainwindow.h \
     tab/track.h \
     tab/types.h \
     ui/gview.h \
-    tab/abitarray.h \
-    g0/aconfig.h \
-    tab/aexpimp.h \
     tab/gmyfile.h \
     tab/gtpfiles.h \
     midi/midifile.h \
@@ -92,7 +93,6 @@ HEADERS  += mainwindow.h \
     ui/mainviews.h \
     midi/midirender.h \
     ui/tabviews.h \
-    tab/aclipboard.h \
     tab/tabcommands.h \
     g0/wavefile.h \
     g0/fft.h \

@@ -4,9 +4,9 @@
 #include "midi/midifile.h"
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
-#include "g0/aconfig.h"
+#include "g0/config.h"
 
-#include "tab/aexpimp.h"
+#include "tab/tabloader.h"
 
 #include <QMediaPlayer>
 

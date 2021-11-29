@@ -1,4 +1,4 @@
-#include "aconfig.h"
+#include "config.h"
 
 #include <QImage>
 #include <QFile>

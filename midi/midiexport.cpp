@@ -1,5 +1,5 @@
 #include "midiexport.h"
-#include "g0/aconfig.h"
+#include "g0/config.h"
 
 bool midiExportLog = false;
 

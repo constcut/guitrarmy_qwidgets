@@ -2,7 +2,7 @@
 #define NOTE_H
 
 #include "types.h"
-#include "abitarray.h"
+#include "effects.h"
 
 #include <vector>
 

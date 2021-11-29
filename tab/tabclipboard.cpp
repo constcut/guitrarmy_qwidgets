@@ -1,4 +1,4 @@
-#include "aclipboard.h"
+#include "tabclipboard.h"
 
 AClipboard *AClipboard::currentClip;
 

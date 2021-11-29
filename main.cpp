@@ -1,11 +1,11 @@
-#include "ui/mainwindow.h"
+#include "mainwindow.h"
 #include <QApplication>
 
 #include "ui/mainviews.h"
 
-#include "g0/aconfig.h"
+#include "g0/config.h"
 
-#include "tab/aclipboard.h"
+#include "tab/tabclipboard.h"
 
 #include <QTextCodec>
 //#include <QSettings>
@@ -35,7 +35,7 @@
 #endif
 
 #include "midi/midiengine.h"
-#include "tab/aexpimp.h"
+#include "tab/tabloader.h"
 
 #include <QDebug>
 

@@ -6,12 +6,12 @@
 #include "tab/gtpfiles.h"
 #include "midi/midifile.h"
 
-#include "g0/aconfig.h"
+#include "g0/config.h"
 
 
 #include "tab/gmyfile.h"
 
-#include "tab/aexpimp.h" //loader
+#include "tab/tabloader.h" //loader
 
 #include "athread.h"
 

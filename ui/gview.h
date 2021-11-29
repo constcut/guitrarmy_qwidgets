@@ -3,7 +3,7 @@
 
 
 #include "tab/tab.h"
-#include "g0/aconfig.h"
+#include "g0/config.h"
 
 #include "tab/tabcommands.h"
 
