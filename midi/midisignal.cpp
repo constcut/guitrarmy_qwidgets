@@ -18,7 +18,7 @@ NBytesInt::NBytesInt(std::uint32_t source) {
         source /= 128;
     }
 
-    for (size_t i = byteParts.size()-1; i >=0 ; --i)
+    for (int i = byteParts.size()-1; i >=0 ; --i)
         push_back(byteParts[i]); ///TODO algo
 }
 
