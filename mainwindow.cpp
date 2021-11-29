@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 //#include "ui_mainwindow.h"
 
 //Events includes
@@ -2174,7 +2174,7 @@ void MainWindow::initAudioOutput()
 
     QAudioFormat format;
     format.setSampleRate(audioSampleRateG);
-    format.setChannelCount(1);
+    format.setChannelCount(2); //TODO for pcm but will have issue with records
     format.setSampleSize(16);
     format.setSampleType(QAudioFormat::SignedInt);
     format.setByteOrder(QAudioFormat::LittleEndian);
@@ -2196,7 +2196,15 @@ void MainWindow::initAudioOutput()
 void MainWindow::startAudioOutput(std::string localName)
 {
     QFile audioFile;
-    QString defaultRecFile = QString(getTestsLocation()) + QString(localName.c_str());
+    QString defaultRecFile;
+
+    if (localName.empty()) {
+        localName = "/home/punnalyse/.local/share/applications/wavOutput.graw";
+        defaultRecFile = localName.c_str();
+    }
+    else
+       defaultRecFile = QString(getTestsLocation()) + QString(localName.c_str());
+
     audioFile.setFileName(defaultRecFile);
 
     if (audioFile.open(QIODevice::ReadOnly) == false)

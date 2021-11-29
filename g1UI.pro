@@ -31,6 +31,7 @@ SOURCES += main.cpp\
     barview.cpp \
     g0/bar.cpp \
     g0/beat.cpp \
+    g0/midiexport.cpp \
     g0/note.cpp \
     g0/tab_com.cpp \
     g0/track.cpp \
