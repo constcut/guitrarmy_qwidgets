@@ -462,10 +462,10 @@ void TapRyView::setUI()
         getMaster()->setComboBox(0,"drums",leftPress.getX()+10,leftPress.getY()+10,150,30,-1);
         getMaster()->setComboBox(1,"drums",rightPress.getX()+10,rightPress.getY()+10,150,30,-1);
 
-        getMaster()->SetButton(2,labClean,"clean tap");
-        getMaster()->SetButton(3,stopMetr,"stop metr");
-        getMaster()->SetButton(4,bpmLabel,"newBpm");
-        getMaster()->SetButton(5,labA,"start metr");
+        getMaster()->SetButton(2,labClean.get(),"clean tap");
+        getMaster()->SetButton(3,stopMetr.get(),"stop metr");
+        getMaster()->SetButton(4,bpmLabel.get(),"newBpm");
+        getMaster()->SetButton(5,labA.get(),"start metr");
 
         getMaster()->SetButton(6,"play",600,labClean->getY(),50,20,"ent");
     }
@@ -755,7 +755,7 @@ void TapRyView::createBar()
     ///if (barView) delete barView;
     if (barView==0)
     {
-        barView = new BarView(ryBar.get(),6);
+        barView = std::make_unique<BarView>(ryBar.get(),6);
         barView->setShifts(210,80);
     }
         else barView->setBar(ryBar.get());
@@ -826,15 +826,9 @@ void TapRyView::keyevent(std::string press)
 
     if (press == "clean tap")
     {
-        //info << "Cleaned "<<(int)presses.size()<<" presses;";
         presses.clear();
-        if (ryBar)
-            ryBar = nullptr;
-        if (barView)
-            delete barView;
+        ryBar = nullptr;
         barView = nullptr;
-        //labStat->setText(info.c_str());
-        //getMaster()->pleaseRepaint();
     }
 
     if (press == "stop metr")
@@ -853,17 +847,15 @@ void TapRyView::keyevent(std::string press)
         if (ok)
         {
             bpmLabel->setText(std::to_string(newBpm));
-            getMaster()->SetButton(4,bpmLabel,"newBpm");
+            getMaster()->SetButton(4,bpmLabel.get(),"newBpm");
         }
     }
 
     if (press == "start metr")
     {
         //START PSEUDO METRONOME
-        if (ryBar) ryBar = nullptr;
-        if (barView)
-            delete barView;
-        barView=0;
+        ryBar = nullptr;
+        barView = nullptr;
 
         ryBar = std::make_unique<Bar>();
         ryBar->flush();
@@ -1061,7 +1053,7 @@ void RecordView::setUI()
     getMaster()->setComboBox(0,recordsNames,250,5,500,30,-1); //scetches
 
     //set up only once
-    tunerItself.setViews(getMaster(),tunerLabel);
+    tunerItself.setViews(getMaster(),tunerLabel.get());
 }
 
 void RecordView::loadCurrentFile()
@@ -1092,7 +1084,7 @@ void RecordView::loadCurrentFile()
     {
         //need to delete old one
         ///if (barView) delete barView;
-        barView = new BarView(bar.get(),6);
+        barView = std::make_unique<BarView>(bar.get(),6);
         barView->setShifts(20,50);
     }
 }
@@ -1534,9 +1526,6 @@ void MorzeInput::onclick(int x1, int y1)
 
         if (ok)
         {
-            if (barView)
-                delete barView;
-
             bar = std::make_unique<Bar>();
 
             bar->flush();
@@ -1594,7 +1583,7 @@ void MorzeInput::onclick(int x1, int y1)
             }
 
 
-            barView = new BarView(bar.get(),6);
+            barView = std::make_unique<BarView>(bar.get(),6);
             barView->setShifts(100,200-55);
 
             AClipboard::current()->setPtr(bar.get());

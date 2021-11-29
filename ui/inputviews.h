@@ -87,25 +87,22 @@ public:
 class TapRyView : public GView
 {
 protected:
-    GLabel *labA;
-    GLabel *stopMetr;
-    GLabel *labB;
+    std::unique_ptr<GLabel> labA;
+    std::unique_ptr<GLabel> stopMetr;
+    std::unique_ptr<GLabel> labB;
 
-    GLabel *labClean;
-    GLabel *labStat;
-    GLabel *labExp;
-
-    GLabel *bpmLabel;
+    std::unique_ptr<GLabel> labClean;
+    std::unique_ptr<GLabel> labStat;
+    std::unique_ptr<GLabel> labExp;
+    std::unique_ptr<GLabel> bpmLabel;
 
     GRect leftPress;
     GRect rightPress;
 
     std::unique_ptr<Bar> ryBar;
+    std::unique_ptr<BarView> barView;
 
-    BarView *barView;
-
-    struct intPair
-    {
+    struct intPair {
         int first;
         int second;
     };
@@ -117,35 +114,19 @@ public:
 
     void measureTime(); //perfect to do in another thread
 
-    TapRyView():leftPress(0,280,200,200),
-        rightPress(600,280,200,200)
-    {
-
-        labA = new GLabel(50,100-80,"Launch pseudo-metronome");
-        //labA->setH(40);
+    TapRyView():leftPress(0,280,200,200), rightPress(600,280,200,200) {
+        labA = std::make_unique<GLabel>(50,100-80,"Launch pseudo-metronome");
         labA->setW(labA->getW() + 20);
-
-        stopMetr = new GLabel(300,100-80,"stop");
-        //stopMetr->setH(40);
-
-        labB = new GLabel(50,200-55,"Please click here :)");
-        //labB->setH(40);
+        stopMetr = std::make_unique<GLabel>(300,100-80,"stop");
+        labB = std::make_unique<GLabel>(50,200-55,"Please click here :)");
         labB->setVisible(false);
-
-        labClean = new GLabel(500,100-80,"clean");
-        //labClean->setH(40);
-
-        labStat = new GLabel(50,10,"Info:                 ");
+        labClean = std::make_unique<GLabel>(500,100-80,"clean");
+        labStat = std::make_unique<GLabel>(50,10,"Info:                 ");
         labStat->setBorder(false);
         labStat->setVisible(false);
-
-        labExp = new GLabel(200,150-80,"stop record");
-        //labExp->setH(40);
+        labExp = std::make_unique<GLabel>(200,150-80,"stop record");
         labExp->setVisible(false);
-
-        bpmLabel = new GLabel(400,100-80,"120");
-       // bpmLabel->setH(40);
-
+        bpmLabel = std::make_unique<GLabel>(400,100-80,"120");
         barView = 0;
     }
 
@@ -155,31 +136,25 @@ public:
     void createBar();
     void copyAndPlayBar();
 
-
     void keyevent(std::string press);
 
     void ondblclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
-    {
-        //onclick(x1,y1);
-    }
-   // void keyevent(std::string press)
-
+    {}
 };
 
 class MorzeInput : public GView
 {
 protected:
     std::unique_ptr<Bar> bar;
-    BarView *barView;
-    GLabel *createBut;
+    std::unique_ptr<BarView> barView;
+    std::unique_ptr<GLabel> createBut;
 
 public:
 
     virtual void setUI();
 
-    MorzeInput(): barView(0)
-    {
-        createBut = new GLabel(100,100,"create tab from text");
+    MorzeInput() {
+        createBut = std::make_unique<GLabel>(100,100,"create tab from text");
     }
 
     virtual void keyevent(std::string keypress);
@@ -195,15 +170,15 @@ class RecordView : public GView
 protected:
 
     std::unique_ptr<Bar> bar;
-    BarView *barView;
+    std::unique_ptr<BarView> barView;
 
 
-    GLabel *zoom;
-    GLabel *bpm;
+    std::unique_ptr<GLabel> zoom;
+    std::unique_ptr<GLabel> bpm;
 
-    GLabel *eLevel1;
-    GLabel *eLevel2;
-    GLabel *eLevel3;
+    std::unique_ptr<GLabel> eLevel1;
+    std::unique_ptr<GLabel> eLevel2;
+    std::unique_ptr<GLabel> eLevel3;
 
     int wavePosition;
 
@@ -218,7 +193,7 @@ protected:
     //byte wtypes[500000];
 
     TunerInstance tunerItself;
-    GLabel *tunerLabel;
+    std::unique_ptr<GLabel> tunerLabel;
 
     QStringList recFiles;
     std::string currentFile;
@@ -226,25 +201,20 @@ protected:
     GWave waveItself; //move inside
 
 public:
-    RecordView():barView(0),wavePosition(0),waveLimit(0),recorderPtr(0)
-    {
-        //status = new GLabel(60,100-55-20,"Record not started");
-
-
+    RecordView():wavePosition(0),waveLimit(0),recorderPtr(0) {
         recording = 0;
         playing = 0;
+        zoom = std::make_unique<GLabel>(20,100-55-20,"10");
+        bpm = std::make_unique<GLabel>(60,100-55-20,"120");
 
-        zoom = new GLabel(20,100-55-20,"10");
-        bpm = new GLabel(60,100-55-20,"120");
-
-        eLevel1 = new GLabel(100,100-55-20,"500");
-        eLevel2 = new GLabel(150,100-55-20,"850");
-        eLevel3 = new GLabel(200,100-55-20,"500");
+        eLevel1 = std::make_unique<GLabel>(100,100-55-20,"500");
+        eLevel2 = std::make_unique<GLabel>(150,100-55-20,"850");
+        eLevel3 = std::make_unique<GLabel>(200,100-55-20,"500");
 
         currentFile = "record.graw";
         loadCurrentFile();
 
-        tunerLabel = new GLabel(20,25+30,"tuner-is-off");
+        tunerLabel = std::make_unique<GLabel>(20,25+30,"tuner-is-off");
     }
 
     virtual void setUI();
@@ -257,22 +227,17 @@ public:
 
     virtual void keyevent(std::string press);
 
-    virtual void ongesture(int offset, bool horizontal)
-    {
-        if (horizontal)
-        {
+    virtual void ongesture(int offset, bool horizontal) {
+        if (horizontal) {
             int zoomCoef = atoi(zoom->getText().c_str());
-
             int PREwavePosition = wavePosition + offset*zoomCoef;
-
             if (PREwavePosition < 0) //SCROLL GOOD BACK!
                 wavePosition = 0;
-
             else
-            if (PREwavePosition > waveLimit)
-                wavePosition = waveLimit - 1;
-            else
-                wavePosition = PREwavePosition;
+                if (PREwavePosition > waveLimit)
+                    wavePosition = waveLimit - 1;
+                else
+                    wavePosition = PREwavePosition;
         }
     }
 };
