@@ -6,12 +6,6 @@
 
 #include "types.h"
 
-class Tab;
-class Track;
-class Bar;
-class Beat;
-class Note;
-
 
 //protected looks great but should be designed for manual use
 class VariableInt : public std::vector<std::uint8_t> //or public, or fullfit
@@ -142,7 +136,7 @@ public:
 	//ul writeStream(AF ile &ofile);
 	//ul readStream(AF ile &ifile); //missing from refactoing
 
-    bool fromTrack(Track *track, std::uint8_t channel=0, size_t shiftCursorBar=0);
+    //bool fromTrack(Track *track, std::uint8_t channel=0, size_t shiftCursorBar=0);
 
     //void add(MidiSignal &val);
 
@@ -176,20 +170,20 @@ public:
     std::uint8_t calcPalmMuteVelocy(std::uint8_t vel);
     std::uint8_t calcLeggatoVelocy(std::uint8_t vel);
 
-protected:
+public: //TODO review when midi generation is done
 
-    int accum;
+
     std::uint8_t tunes[10];
     std::uint8_t ringRay[10];
 
     ///! CHENNELS FOR RING RAY
 
-    bool addSignalsFromNoteOn(Note *note, std::uint8_t channel);
-    bool addSignalsFromNoteOff(Note *note, std::uint8_t channel);
+    //bool addSignalsFromNoteOn(Note *note, std::uint8_t channel);
+    //bool addSignalsFromNoteOff(Note *note, std::uint8_t channel);
 
-    bool addPostEffects(Beat *beat, std::uint8_t channel);
+    //bool addPostEffects(Beat *beat, std::uint8_t channel);
 
-    bool addSignalsFromBeat(Beat *beat, std::uint8_t channel, short specialR=0);
+    //bool addSignalsFromBeat(Beat *beat, std::uint8_t channel, short specialR=0);
 
     void closeLetRings(std::uint8_t channel);		//-
     void openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
@@ -206,6 +200,8 @@ protected:
     bool checkForLeegFails(); //-
 
 public:
+
+    int accum;//TODO ref fun or move?
 
     int accumulate(int value) { accum += value; return accum; }
     int getAccum() { return accum; }
@@ -241,7 +237,7 @@ public:
 
 
     //bool generateFromAMusic(AMusic &music);
-    bool fromTab(Tab *tab, size_t shiftTheCursor=0);
+    ///bool fromTab(Tab *tab, size_t shiftTheCursor=0);
 
     //calculation helpers
 
