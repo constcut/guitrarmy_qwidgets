@@ -15,6 +15,8 @@
 #include <fstream>
 #include <QDebug>
 
+#include "midiexport.h"
+
 #define log qDebug()
 
 #ifdef WIN32
@@ -206,10 +208,9 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
 
     std::cout << "All information about readin is in log"<<std::endl;
 
-    MidiFile f;
-    f.fromTab(&tab);
+    auto f = exportMidi(&tab);
     std::ofstream midiOut(outFileName);
-    size_t bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
@@ -240,10 +241,9 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     tab.postGTP();
     tab.connectTracks(); //new for chains refact
 
-    MidiFile f;
-    f.fromTab(&tab);
+    auto f = exportMidi(&tab);
     std::ofstream midiOut(outFileName);
-    size_t bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
@@ -274,10 +274,9 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
     tab.postGTP();
     tab.connectTracks(); //new for chains
 
-    MidiFile f;
-    f.fromTab(&tab);
+    auto f = exportMidi(&tab);
     std::ofstream midiOut(outFileName);
-    size_t bytesWritten = f.writeStream(midiOut);
+    size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
 
@@ -375,12 +374,13 @@ bool greatCheckScenarioCase(int scen, int from, int to, int v)
                 //HERE IS LEAK
                 if (loader.open(gp4File) == false)
                     log <<"G4+ failed file "<<newLine.c_str();
-                MidiFile mid;
-                mid.fromTab(loader.getTab());
+
+
+                auto mid = exportMidi(loader.getTab());
                 std::ofstream outMidiFile(outGp4plus);
                 if (outMidiFile.is_open() == false)
                     log <<"failed to open for output "<<outGp4plus.c_str();
-                mid.writeStream(outMidiFile);
+                mid->writeStream(outMidiFile);
                 outMidiFile.close();
 
             }

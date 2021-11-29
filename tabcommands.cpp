@@ -8,6 +8,7 @@
 #include "g0/aexpimp.h"
 
 #include "midiengine.h"
+#include "g0/midiexport.h"
 
 #include <QInputDialog>
 #include <QMutex>
@@ -142,8 +143,7 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
         qDebug() <<"Repair chains "<<diffT;
         Tab *tab = tabParrent->getTab();
         tab->connectTracks();
-        MidiFile generatedMidi;
-        generatedMidi.fromTab(tabParrent->getTab(),shiftTheCursor);
+        auto generatedMidi = exportMidi(tabParrent->getTab(),shiftTheCursor);
 
         /*
         if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge")){
@@ -167,7 +167,7 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
         else
             qDebug() <<"File opened " << fullOutName.c_str();
 
-        generatedMidi.writeStream(outFile2);
+        generatedMidi->writeStream(outFile2);
         outFile2.close();
 
         if (CONF_PARAM("midi.config").empty() == false){
@@ -388,8 +388,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
         }
         //Разделить все этапы с интерфейсом TODO
         pTab->connectTracks();
-        MidiFile generatedMidi;
-        generatedMidi.fromTab(pTab,shiftTheCursor);
+        auto generatedMidi = exportMidi(pTab,shiftTheCursor);
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
         std::ofstream outFile2;
@@ -398,7 +397,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
         else
             qDebug() <<"File opened "<<fullOutName.c_str();
 
-        generatedMidi.writeStream(outFile2);
+        generatedMidi->writeStream(outFile2);
         outFile2.close();
 
         tabView->prepareAllThreads(shiftTheCursor);
@@ -417,8 +416,7 @@ void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView 
 }
 
 void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
-    MidiFile generatedMidi;
-    generatedMidi.fromTab(pTab);
+    auto generatedMidi = exportMidi(pTab);
 
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
@@ -428,10 +426,10 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
         qDebug() << "Failed to open out file :(";
         statusLabel->setText("failed to open generated");
     }
-    size_t outFileSize2 = generatedMidi.writeStream(outFile2);
+    size_t outFileSize2 = generatedMidi->writeStream(outFile2);
     qDebug() << "File wroten. " << outFileSize2 << " bytes. ";
     outFile2.close();
-    generatedMidi.printToStream(std::cout);
+    //generatedMidi->printToStream(std::cout); //att?
     statusLabel->setText("generation done. p for play");
 }
 

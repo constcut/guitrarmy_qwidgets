@@ -11,6 +11,8 @@
 
 #include "g0/waveanalys.h"
 
+#include "g0/midiexport.h"
+
 #include <QAudioRecorder>
 #include <QAudioDeviceInfo>
 
@@ -218,13 +220,10 @@ void PatternInput::playBar() {
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
-    MidiFile outMidi;
-
-    outMidi.fromTab(&patternTab);
-    outMidi.writeStream(outFile);
+    auto outMidi = exportMidi(&patternTab);
+    outMidi->writeStream(outFile);
     outFile.close();
-
-    outMidi.printToStream(std::cout);
+    outMidi->printToStream(std::cout);
 
     MidiEngine::openDefaultFile();
     MidiEngine::startDefaultFile();
@@ -833,10 +832,9 @@ void TapRyView::copyAndPlayBar()
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
-    MidiFile outMidi;
+    auto outMidi = exportMidi(&patternTab);
 
-    outMidi.fromTab(&patternTab);
-    outMidi.writeStream(outFile);
+    outMidi->writeStream(outFile);
 
     //outMidi.printToStream(std::cout);
 
@@ -954,10 +952,8 @@ void TapRyView::keyevent(std::string press)
 
 
         std::ofstream outFile(fullOutName);
-        MidiFile outMidi;
-
-        outMidi.fromTab(&patternTab);
-        outMidi.writeStream(outFile);
+        auto outMidi = exportMidi(&patternTab);
+        outMidi->writeStream(outFile);
         outFile.close();
 
         //outMidi.printToStream(std::cout);
@@ -1527,13 +1523,11 @@ void MorzeInput::playBar()
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
         std::ofstream outFile(fullOutName);
-        MidiFile outMidi;
+        auto outMidi = exportMidi(&morzeTab);
 
-        outMidi.fromTab(&morzeTab);
-        outMidi.writeStream(outFile);
+        outMidi->writeStream(outFile);
         outFile.close();
-
-        outMidi.printToStream(std::cout);
+        outMidi->printToStream(std::cout);
 
         MidiEngine::openDefaultFile();
         MidiEngine::startDefaultFile();
