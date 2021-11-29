@@ -5,7 +5,7 @@
 
 #include <string>
 
-const char *getTestsLocation(); //Вынести в отдельный модуль с тестами
+const char *getTestsLocation();
 const char *getInvertedLocation();
 void setTestLocation(std::string newTL);
 

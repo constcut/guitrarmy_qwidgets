@@ -389,18 +389,6 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
     chanInp = std::make_unique<ChangesInput>();
     chordInp = std::make_unique<ChordInput>();
 
-    /*
-    chBut = new GCheckButton(500,200,30,30);
-    labA = new GLabel(100,100,"open'o'","o");
-    labB = new GLabel(100,150,"config 'c'","c");
-    labC = new GLabel(100,200,"tests 't'","t");
-    labD = new GLabel(100,250,"new 'n'","n");
-    labE = new GLabel(100,300,"tap rhythm 'r'","r");
-    labF = new GLabel(100,350,"pattern input 'i'","i");
-    labVersion = new GLabel(100,400,getGuitarmyVersion());
-    */
-
-    //set up
     currentView  =  welcome.get(); //testsView;
 
     pan = std::make_unique<GStickPannel>(0,60,800);
