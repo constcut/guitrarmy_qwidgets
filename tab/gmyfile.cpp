@@ -160,25 +160,16 @@ bool GmyFile::saveToFile(std::ofstream *file, Tab *tab)
         {
             //Each bar for that track
             Bar *bar;
+            static Bar staticBar;
 
             if (j < track->size())
                 bar = track->at(j).get();
             else
-                bar = new Bar; //TODO great attention!!! amybe memleak?
-
-
+                bar = &staticBar; //Отладить этот участок, раньше тут была утечка и сырое выделение TODO
 
             if (i == 0) //first track
             {
                 qDebug() <<"First track bar "<<j;
-
-                //work over repeats signs etc - set them only from first track
-                //On POLY tab format this would be applied to each track
-                ///HEADED: 1) repeats 2) signatures 3) Marker
-                /// 1 - change num 2 - change denum
-                /// 4 - begin repeat 8 - end repeat
-                /// 16- alt     32 marker - could be stored in 3 bits (+2 reserved values)
-
                 std::uint8_t barHead = 0;
 
                 std::uint8_t barNum = bar->getSignNum();

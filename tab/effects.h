@@ -22,7 +22,7 @@ public:
 
     void setPointer(void *newPoint);// { point = newPoint; }
     void *getPointer();// { return point; }
-    bool createPointer();// { return false; } //creates new from type
+
 
     //here will appear also some way to pack data into turned on bits
     // a - universal packer - will spend time for nothing

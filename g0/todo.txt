@@ -26,6 +26,11 @@
         12) C++ qml engine, that can be loaded as dynamic lib
 
 
+Main function done
+Main end reached
+QThread: Destroyed while thread is still running
+
+
 
 Old things:
 

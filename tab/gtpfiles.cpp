@@ -1054,7 +1054,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
         if (noteHeader & 2)
         {
             newNote->setEffect(27); //accented heavy
-            //refact to use new value later
+            //refact to use ne w value later
         }
 
         char toSkip[10];

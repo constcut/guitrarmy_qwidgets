@@ -877,7 +877,7 @@ void Track::clipboardCopyBar() {
         cloner->flush();
         cloner->clone(bar.get());
 
-        AClipboard::current()->setPtr(cloner);
+        AClipboard::current()->setPtr(cloner); //Move сюда и потом от сюда К строчке выше!!!
         AClipboard::current()->setType(4);
     }
     else {

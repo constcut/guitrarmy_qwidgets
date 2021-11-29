@@ -451,7 +451,7 @@ size_t Track::connectTimeLoop()
                }
                else
                {
-                   //alt is a start of a new repeat
+                   //alt is a start of a ne w repeat
                }
                //Post-Tail complete
            }

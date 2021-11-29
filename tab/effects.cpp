@@ -167,6 +167,3 @@ void *Package::getPointer() { //TODO
     return point;
 }
 
-bool Package::createPointer() {
-    return false;
-} //creates new from type

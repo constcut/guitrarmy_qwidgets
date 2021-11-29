@@ -202,7 +202,7 @@ void MainView::keyevent(std::string press)
                 if  (tabLoader.open(s.toStdString()))
                 {
                     changeCurrentView(tabsView.get());
-                    tabsView->setTab(tabLoader.getTab());
+                    tabsView->setTab(tabLoader.getTab().get());
                     if (CONF_PARAM("skipTabView")=="1")
                     tabsView->onTabCommand(TabCommand::OpenTrack);
 

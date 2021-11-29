@@ -124,11 +124,11 @@ enum class TrackCommand {
 
 //15 - bpm
 
-//16 - insert new bar or more
+//16 - insert ne w bar or more
 
 //17 - change note state
 
-//18 - insert new pause (note)
+//18 - insert ne w pause (note)
 
 //19 - set sign
 

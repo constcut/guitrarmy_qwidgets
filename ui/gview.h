@@ -154,47 +154,6 @@ class GLabel : public GView
         std::string getText() { return ownText; }
 
         GLabel(int x, int y, std::string text, std::string pressSyn="", bool showBord=true);
-        /*
-            imageLabel(0),visible(true), showBorder(showBord)
-        {
-            int size = text.length();
-            //int height = 12;
-            this->x = x;
-            this->y = y;
-            h = 20;
-            w = size*6 + 20;
-            ownText = text;
-            pressSynonim = pressSyn;
-
-            if (CONF_PARAM("images")=="1")
-            {
-                //later preloaded images should apear
-                //REFACT: use map
-
-                if ((text =="prevBeat") || (text =="nextBeat") || (text =="upString") || (text =="downString") ||
-                        (text =="prevBar") || (text =="nextBar") || (text =="play") || (text =="save") ||
-                        (text=="open")|| (text =="new")
-                        || (text =="config")
-                        || (text =="record")|| (text =="tap")
-                        || (text =="pattern")|| (text =="tests")||
-                        (text=="tab")||(text=="backview")||
-                        (text=="morze")||(text=="info")||(text=="openPannel")||
-                        (text=="1")||(text=="2")||(text=="3")||
-                        (text=="4")||(text=="5")||(text=="6")||
-                        (text=="7")||(text=="8")||(text=="9")||
-                        (text=="0")||(text=="qp")||(text=="qm")||
-                        (text=="p")||(text=="del")||(text==".")
-                        ||(text=="-3-")||(text=="leeg")||(text=="x"))
-                {
-                    imageLabel = new GImage(x,y,text);
-
-                    setW(imageLabel->getW());
-                    setH(imageLabel->getH());
-                }
-            }
-
-        }
-        */
 
         std::string getPressSyn(){return pressSynonim;}
 
@@ -220,13 +179,9 @@ class GLabel : public GView
 
             }
         }
-        //void onclick(int x1, int y1){}
-        //void ondblclick(int x1, int y1){}
 
         virtual bool hit(int hX, int hY);
 
-        //calc size to create view
-        //virtual void keyevent(std::string press){}
 };
 
 

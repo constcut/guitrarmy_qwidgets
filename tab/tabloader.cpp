@@ -3,6 +3,8 @@
 #include <fstream>
 #include <QDebug>
 
+#include "tab/gmyfile.h"
+#include "tab/gtpfiles.h"
 
 
 //TODO move to gtp files
@@ -27,14 +29,10 @@ bool GTabLoader::open(std::string fileName)
         if (firstBytes[1]=='A')
         {
             GmyFile gF;
-            if (tab)
-            {
-                delete tab;
-                tab = 0;
-            }
-            tab = new Tab;
 
-            if (gF.loadFromFile(&file,tab,true))
+            tab = std::make_unique<Tab>();
+
+            if (gF.loadFromFile(&file,tab.get(),true))
             {
                 tab->connectTracks();
                 file.close();
@@ -76,12 +74,7 @@ bool GTabLoader::open(std::string fileName)
             if ((versionIndex == 5) || (versionIndex == 51)
                     || (versionIndex == 4) || (versionIndex == 3))
             {
-                if (tab)
-                {
-                    delete tab;
-                    tab = 0;
-                }
-                tab = new Tab;
+                tab = std::make_unique<Tab>();
             }
 
             bool loaded = false;
@@ -89,17 +82,17 @@ bool GTabLoader::open(std::string fileName)
             if ((versionIndex == 5) || (versionIndex == 51))
             {
                 Gp5Import gImp;
-                loaded = gImp.import(file,tab,versionIndex);
+                loaded = gImp.import(file,tab.get(),versionIndex);
             }
             if (versionIndex == 4)
             {
                 Gp4Import gImp;
-                loaded = gImp.import(file,tab,versionIndex);
+                loaded = gImp.import(file,tab.get(),versionIndex);
             }
             if (versionIndex == 3)
             {
                 Gp3Import gImp;
-                loaded = gImp.import(file,tab,versionIndex);
+                loaded = gImp.import(file,tab.get(),versionIndex);
             }
             if (loaded)
             {

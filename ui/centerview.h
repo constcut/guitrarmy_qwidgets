@@ -151,13 +151,13 @@ protected:
 
     std::list<std::vector<std::string> > playlist;
 
-    AudioInfo *audioInfo;
-    QAudioInput *audioInput;
+    std::unique_ptr<AudioInfo> audioInfo;
+    std::unique_ptr<QAudioInput> audioInput;
 
     int lastPressX,lastPressY;
 
-    QTextBrowser *welcomeText;
-    QTextEdit *confEdit;
+    std::unique_ptr<QTextBrowser> welcomeText;
+    std::unique_ptr<QTextEdit> confEdit;
 
     MasterView *statusSetter;
     QScrollArea *fatherScroll;

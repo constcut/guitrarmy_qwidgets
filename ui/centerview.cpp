@@ -1116,9 +1116,8 @@ void CenterView::pushForceKey(std::string keyevent)
                 try
                 {
                     tabLoader.open(fileName);
-                    Tab *tab = tabLoader.getTab();
+                    //auto& tab = tabLoader.getTab();
                     qDebug() <<"OK!";
-                    delete tab;
                     ++goodTest;
                 }
                 catch(...)
@@ -1259,14 +1258,8 @@ void CenterView::pushForceKey(std::string keyevent)
 
 
 
-    if (welcomeText)
-    {
-        delete welcomeText;
-        welcomeText = 0;
-    //if (welcomeText->isHidden()==false)
-      //  welcomeText->hide();
-    }
 
+    welcomeText = nullptr;
     if (confEdit)
     {
         AConfig::getInstance()->cleanValues();
@@ -1279,9 +1272,7 @@ void CenterView::pushForceKey(std::string keyevent)
         }
 
         AConfig::getInstance()->checkConfig();
-
-        delete confEdit;
-        confEdit = 0;
+        confEdit = nullptr;
     }
 
 
@@ -1401,7 +1392,7 @@ void CenterView::startAudioInput()
 {
     qDebug()<<"Audio input started";
     audioInfo->start();
-    audioInput->start(audioInfo);
+    audioInput->start(audioInfo.get());
 
 }
 
@@ -1428,9 +1419,9 @@ void CenterView::initAudioInput() //refact - hide audio f()
         format = info.nearestFormat(format);
     }
 
-    audioInfo  = new AudioInfo(format, this);
+    audioInfo  = std::make_unique<AudioInfo>(format, this);
     //connect(audioInfo, SIGNAL(update()), SLOT(refreshDisplay()));
-    audioInput = new QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
+    audioInput = std::make_unique<QAudioInput>(QAudioDeviceInfo::defaultInputDevice(), format, this);
     //m_volumeSlider->setValue(m_audioInput->volume() * 100);
 
 }
@@ -1540,8 +1531,7 @@ void CenterView::paintEvent(QPaintEvent *event)
 
                 AConfig::getInstance()->checkConfig();
 
-                delete confEdit;
-                confEdit = 0;
+                confEdit = nullptr;
             }
         }
 
@@ -1857,7 +1847,7 @@ void CenterView::showHelp()
 {
     if (welcomeText==0)
     {
-        welcomeText = new QTextBrowser(this);
+        welcomeText = std::make_unique<QTextBrowser>(this);
 
         QFile helpFile;
         helpFile.setFileName(":/info/help.txt");
@@ -1885,7 +1875,7 @@ void CenterView::showConf()
 {
     if (confEdit==0)
     {
-        confEdit = new QTextEdit(this);
+        confEdit = std::make_unique<QTextEdit>(this);
         confEdit->show();
 
         size_t i = 0;
