@@ -35,6 +35,7 @@ SOURCES += main.cpp\
     g0/tab_com.cpp \
     g0/track.cpp \
     g0/track_com.cpp \
+    libs/sf/tsf.cpp \
     mainwindow.cpp \
     gview.cpp \
     g0/abitarray.cpp \
@@ -48,6 +49,7 @@ SOURCES += main.cpp\
     athread.cpp \
     gpannel.cpp \
     mainviews.cpp \
+    midirender.cpp \
     tabviews.cpp \
     g0/aclipboard.cpp \
     tabcommands.cpp \
@@ -82,7 +84,10 @@ HEADERS  += mainwindow.h \
     athread.h \
     g0/buildheader.h \
     gpannel.h \
+    libs/sf/tml.h \
+    libs/sf/tsf.h \
     mainviews.h \
+    midirender.h \
     tabviews.h \
     g0/aclipboard.h \
     tabcommands.h \
@@ -110,6 +115,8 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
+    libs/sf/LICENSE \
+    libs/sf/README.md \
     othLibs/ffft/readme.txt \
     android/src/in/guitarmy/app/AndroidHelper.java
 

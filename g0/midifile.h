@@ -43,7 +43,7 @@ struct MidiSignal
 {
 	//for each of type
     VariableInt time;
-    size_t absValue;
+
     //for each of type
 	//byte type; //replace with getEventType()
     //byte channel; //replace with getChannel()
@@ -102,8 +102,9 @@ struct MidiSignal
     MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2, size_t timeShift);
     MidiSignal(){absValue=0;}
 
-protected:
+public:
     //any shit put here from format
+    double absValue;
 
 };
 

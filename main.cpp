@@ -39,6 +39,8 @@
 
 #include <QDebug>
 
+#include "midirender.h"
+
 
 
 //OMGC its a nightmare
@@ -294,6 +296,15 @@ int main(int argc, char *argv[])
                 //if (QFile::exists(crashName) {
     //TODO окно для загрузки разных тестов
     //testScenario();
+
+
+    //TODO midi generation
+    /*
+    MidiRender render;
+    render.openSoundFont("/usr/share/sounds/sf2/FluidR3_GM.sf2");
+    auto qa = render.renderShort("/home/punnalyse/.local/share/applications/midiOutput.mid");
+    qDebug() << "Generated " << qa.size() << " bytes ";
+    */
 
   
     int out = 0;
