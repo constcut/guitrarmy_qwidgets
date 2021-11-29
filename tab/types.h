@@ -10,9 +10,11 @@
 #include <memory>
 
 
+class AConfig;
+
 int getTime();
 bool testScenario();
-void connectConfigs(void *ptr);
+void connectConfigs(AConfig *config);
 bool midiPrint(std::string fileName);
 bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v);
 

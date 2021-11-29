@@ -398,9 +398,8 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
     return true;
 }
 
-void connectConfigs(void *ptr)
+void connectConfigs(AConfig *config)
 {
-    AConfig *config = (AConfig*)ptr;
     config->connectLog(&tabLog,0,"tab");
     //config->connectLog(&museLog,1,"amusic");
     config->connectLog(&midiLog,2,"midi");

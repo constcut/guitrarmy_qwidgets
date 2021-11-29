@@ -7,11 +7,13 @@
 
 #define CONF_PARAM(z) AConfig::getInstance()->values[ z ]
 
+class QImage;
+
 //qt dependent yet
 class ImagePreloader
 {
 protected:
-    std::map<std::string,void *> imageMap;
+    std::map<std::string, QImage*> imageMap;
     bool inv;
 
 public:
@@ -20,7 +22,7 @@ public:
     void loadImage(std::string imageName);
     void loadImages();
 
-    void *getImage(std::string imageName);
+    QImage *getImage(std::string imageName);
 
     void invertAll();
 
@@ -39,7 +41,7 @@ public:
     std::map<std::string,std::string> values;
     void addLine(std::string anotherLine);
 
-    ImagePreloader imageLoader;
+    ImagePreloader imageLoader; //TODO sepparate so config works without qt
 
     double scaleCoef;
 

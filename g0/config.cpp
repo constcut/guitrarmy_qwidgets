@@ -285,7 +285,7 @@ void AConfig::checkConfig()
 
     if (img->height() < 72)
     {
-       QImage *oldImage = img; //leak
+       QImage *oldImage = img; //leak? Изучить этот фрагмент и если возможно перенести всё в уник
        *img = img->scaled(72,72);
     }
 
@@ -295,6 +295,7 @@ void AConfig::checkConfig()
 
     imageMap[imageName] = img;
  }
+
 
  void ImagePreloader::loadImages()
  {
@@ -364,22 +365,16 @@ void AConfig::checkConfig()
      }
  }
 
- void *ImagePreloader::getImage(std::string imageName)
+ QImage* ImagePreloader::getImage(std::string imageName)
  {
-     if (imageMap.find(imageName)!=imageMap.end())
-     {
+     if (imageMap.count(imageName))
          return imageMap[imageName];
-     }
      return 0;
  }
 
 void ImagePreloader::invertAll()
 {
-     for (std::map<std::string,void *>::iterator it = imageMap.begin();
-          it != imageMap.end(); ++it)
-     {
-        QImage *img = (QImage*)it->second;
-        img->invertPixels();
-     }
+     for (auto it = imageMap.begin(); it != imageMap.end(); ++it)
+        it->second->invertPixels();
 }
 
