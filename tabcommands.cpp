@@ -21,6 +21,8 @@
 #include <fstream>
 
 
+#include "midirender.h"
+
 //Trackview events:
 
 void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView* mw) { //TODO keyeventsUI
@@ -109,6 +111,21 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
 }
 
 
+void saveRawAudio(QByteArray& ba, QString location) {
+    QString defaultRecFile = location;
+    //QString("/home/punnalyse/.local/share/applications/wavOutput.graw");
+    QFile f;
+    f.setFileName(defaultRecFile);
+    ///int compressedSize = compress.size(); //TODO compress
+    if (f.open(QIODevice::WriteOnly)) {
+        qDebug() << "Collector size was "<<ba.size();
+        f.write(ba);
+        f.flush();
+    }
+    else
+        qDebug() << "Open file for raw record error;";
+}
+
 
 void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
 
@@ -175,6 +192,12 @@ void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, s
             //MidiToPcm generator(CONF_PARAM("midi.config"));
             std::string outputSound = getTestsLocation() + std::string("waveOutput.wav");
             //generator.convert(fullOutName,outputSound); //TODO sf mit
+
+            MidiRender render;
+            render.openSoundFont("/usr/share/sounds/sf2/FluidR3_GM.sf2");
+            auto qa = render.renderShort("/home/punnalyse/.local/share/applications/midiOutput.mid");
+            qDebug() << "Generated " << qa.size() << " bytes ";
+            saveRawAudio(qa, outputSound.c_str());
         }
         tabParrent->prepareAllThreads(shiftTheCursor);
         tabParrent->connectAllThreadsSignal(mw);

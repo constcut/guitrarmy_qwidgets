@@ -249,7 +249,7 @@ void AConfig::checkConfig()
 
     addValue("onloadBaseCheck","1");
 
-    //addValue("midi.config",""); //TODO rename and use for soundfont
+    addValue("midi.config","on"); //TODO rename and use for soundfont
 }
 
 

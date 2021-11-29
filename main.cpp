@@ -164,19 +164,7 @@ int sayType(QByteArray &file)
 }
 
 
-void saveRawAudio(QByteArray& ba) {
-    QString defaultRecFile = QString("/home/punnalyse/.local/share/applications/wavOutput.graw");
-    QFile f;
-    f.setFileName(defaultRecFile);
-    ///int compressedSize = compress.size(); //TODO compress
-    if (f.open(QIODevice::WriteOnly)) {
-        qDebug() << "Collector size was "<<ba.size();
-        f.write(ba);
-        f.flush();
-    }
-    else
-        qDebug() << "Open file for raw record error;";
-}
+
 
 
 
@@ -313,15 +301,6 @@ int main(int argc, char *argv[])
     //testScenario();
 
 
-    //TODO midi generation
-    MidiRender render;
-    render.openSoundFont("/usr/share/sounds/sf2/FluidR3_GM.sf2");
-    auto qa = render.renderShort("/home/punnalyse/.local/share/applications/midiOutput.mid");
-    qDebug() << "Generated " << qa.size() << " bytes ";
-    saveRawAudio(qa);
-
-
-  
     int out = 0;
     try{
        out = a.exec();
