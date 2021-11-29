@@ -84,12 +84,12 @@ int scaleCoef = 1;
 
 
 //Tab view
-TabView::TabView():GView(0,0,w,h),pTab(0),localThr(0)
+TabView::TabView():GView(0,0,0,0),pTab(0),localThr(0)
 {
-    statusLabel = new GLabel(50,460,"file was loaded.");
-    bpmLabel = new GLabel(300,460,"bpm=notsetyet");
+    statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
+    bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
 
-    pan = new GTabPannel(300,480,800);
+    pan = std::make_unique<GTabPannel>(300,480,800);
     pan->setPressView(this);
 }
 

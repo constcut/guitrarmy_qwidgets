@@ -2,10 +2,10 @@
 #define TRACKVIEW_H
 
 #include <vector>
+#include <memory>
 
 #include "gview.h"
 #include "gpannel.h"
-//#include "g0/aclipboard.h"
 #include "tab/tabcommands.h"
 #include "barview.h"
 
@@ -19,13 +19,14 @@ protected:
     Track *pTrack;
 
     TabView *tabParrent;
-    ThreadLocal *localThr;
+    ThreadLocal *localThr; //Подумать над хранением, возможно удастся спрятать?
+
     ViewPull barsPull;
 
-    GPannel *pan;
-    GTrackPannel *trackPan;
-    GEffectsPannel *effPan;
-    GClipboardPannel *clipPan;
+    GPannel* pan;
+    std::unique_ptr<GTrackPannel> trackPan;
+    std::unique_ptr<GEffectsPannel> effPan;
+    std::unique_ptr<GClipboardPannel> clipPan;
 
 
 public:
@@ -36,19 +37,15 @@ public:
     virtual bool isMovableY() { return true; }
 
     TrackView(Track *from):pTrack(from),localThr(0), pan(0) {
-
-        trackPan = new GTrackPannel(300,480,800);
-        effPan = new GEffectsPannel(300,480,800);
-        clipPan = new GClipboardPannel(300,480,800);
-
+        trackPan = std::make_unique<GTrackPannel>(300,480,800);
+        effPan = std::make_unique<GEffectsPannel>(300,480,800);
+        clipPan = std::make_unique<GClipboardPannel>(300,480,800);
         trackPan->setPressView(this);
         effPan->setPressView(this);
         clipPan->setPressView(this);
-
         effPan->preOpen();
         clipPan->preOpen();
-
-        pan = trackPan;
+        pan = trackPan.get();
     }
 
     virtual ~TrackView(){}

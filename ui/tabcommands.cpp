@@ -909,7 +909,7 @@ void TabView::onTabCommand(TabCommand command) {
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
-        generateMidiQt(pTab, statusLabel);
+        generateMidiQt(pTab, statusLabel.get());
     else if (command == TabCommand::GotoBar)
         goToBar(pTab);
     //if (press == "alt");//TODO

@@ -2,6 +2,7 @@
 #define TABVIEWS_H
 
 #include <vector>
+#include <memory>
 
 #include "gview.h"
 #include "gpannel.h"
@@ -16,16 +17,19 @@ void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 void drawEllipse(QPainter *painter, int x, int y, int w, int h);
 int translateDefaulColor(const std::string& confParam);
 
+
+
 class TabView : public GView
 {
 protected:
     Tab* pTab;
-    GLabel *statusLabel;
-    GLabel *bpmLabel;
-    GTabPannel *pan;
 
-     //Подумать, можно ли перенести?
-    ThreadLocal *localThr; //Возможно тоже если без QT
+    std::unique_ptr<GLabel> statusLabel;
+    std::unique_ptr<GLabel> bpmLabel;
+    std::unique_ptr<GTabPannel> pan;
+
+
+    ThreadLocal *localThr; //Подумать, можно ли перенести?
 
 public:
 
@@ -77,7 +81,7 @@ public:
 
      void connectAllThreadsSignal(MasterView *masterView);
 
-     void *getPannel() { return pan; }
+     void *getPannel() { return pan.get(); }
 
      bool gotChanges();
 
