@@ -327,7 +327,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     if (changeStruct.newInstr != 255)
     {
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
@@ -339,7 +339,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
@@ -350,7 +350,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
@@ -361,7 +361,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
         cursorBeat->changes.push_back(chorusCh);
@@ -371,7 +371,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
          cursorBeat->changes.push_back(reverbCh);
@@ -381,7 +381,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
         cursorBeat->changes.push_back(phaserCh);
@@ -391,7 +391,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
          cursorBeat->changes.push_back(tremoloCh);
@@ -403,7 +403,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         {
              file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
-             Beat::SingleChange tempCh;
+             SingleChange tempCh;
              tempCh.changeCount = 0;
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;
@@ -1913,7 +1913,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     if (changeStruct.newInstr != 255)
     {
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
@@ -1925,7 +1925,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
@@ -1936,7 +1936,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
@@ -1947,7 +1947,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
         cursorBeat->changes.push_back(chorusCh);
@@ -1957,7 +1957,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
          cursorBeat->changes.push_back(reverbCh);
@@ -1967,7 +1967,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
         cursorBeat->changes.push_back(phaserCh);
@@ -1977,7 +1977,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
          cursorBeat->changes.push_back(tremoloCh);
@@ -1989,7 +1989,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
          file.read((char*)&changeStruct.tempoDur,1);
          //set changes table inside
-         Beat::SingleChange tempCh;
+         SingleChange tempCh;
          tempCh.changeCount = 0;
          tempCh.changeType = 8;
          tempCh.changeValue = changeStruct.newTempo;
@@ -2750,7 +2750,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         //file.read((char*)&changeStruct.instrDur,1);
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
@@ -2762,7 +2762,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
@@ -2773,7 +2773,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
@@ -2784,7 +2784,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
         cursorBeat->changes.push_back(chorusCh);
@@ -2794,7 +2794,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
          cursorBeat->changes.push_back(reverbCh);
@@ -2804,7 +2804,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
         cursorBeat->changes.push_back(phaserCh);
@@ -2814,7 +2814,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
          cursorBeat->changes.push_back(tremoloCh);
@@ -2826,7 +2826,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         {
              file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
-             Beat::SingleChange tempCh;
+             SingleChange tempCh;
              tempCh.changeCount = 0;
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;

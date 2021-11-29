@@ -300,7 +300,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
 
         if (changePack)
         {
-            Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
+            ChangesList *changes = (ChangesList*)changePack->getPointer();
 
             for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
             {

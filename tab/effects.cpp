@@ -1,4 +1,8 @@
 #include "effects.h"
+
+#include "note.h"
+#include "beat.h"
+
 //.....................Effects.........................................
 
 void EffectsPack::addPack(std::uint8_t index, std::uint8_t type, void *point)
@@ -6,13 +10,11 @@ void EffectsPack::addPack(std::uint8_t index, std::uint8_t type, void *point)
     Package pack;
     pack.setPointer(point);
     pack.setType(type);
-    packMap[index] = pack;
+    packMap[index] = std::move(pack);
 }
 
-void EffectsPack::addPack(std::uint8_t index, Package pack)
-{
-    packMap[index] = pack;
-}
+
+
 
 Package *EffectsPack::getPack(std::uint8_t index)
 {
@@ -31,7 +33,7 @@ void EffectsPack::mergeWith(EffectsPack &addition)
          itEff!=addition.packMap.end(); ++itEff)
     {
         //check for overwite attention
-        packMap[itEff->first]=itEff->second;
+        packMap[itEff->first] = std::move(itEff->second);
     }
 
     bits |= addition.bits;

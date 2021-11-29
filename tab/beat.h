@@ -8,8 +8,20 @@
 #include "note.h"
 
 
-
 class Bar;
+
+struct SingleChange {
+    std::uint8_t changeType;
+    size_t changeValue;
+    std::uint8_t changeCount;
+};
+
+
+class ChangesList : public std::vector<SingleChange>
+{
+public:
+    //search functions
+};
 
 
 class Beat : public ChainContainer<Note, Bar> {
@@ -20,20 +32,6 @@ public:
 
     void printToStream(std::ostream &stream);
 
-    struct SingleChange {
-        std::uint8_t changeType;
-        size_t changeValue;
-        std::uint8_t changeCount;
-    };
-
-    //need inner functions for analtics of packing
-    class ChangesList : public std::vector<SingleChange>
-    {
-    public:
-        //search functions
-    };
-
-    //used for compatibility with guitar pro
     struct GPChordDiagram
     {
         std::uint8_t header;

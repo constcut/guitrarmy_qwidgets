@@ -1063,7 +1063,7 @@ void ChangesInput::draw(QPainter *painter)
             Package *changePack = ptrToBeat->effPack.getPack(28);
             if (changePack)
             {
-                Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
+                ChangesList *changes = (ChangesList*)changePack->getPointer();
                 if (changes)
                 {
                     getMaster()->setComboBox(5,"changecombo4",550,70,50,40,0);
@@ -1124,9 +1124,9 @@ void ChangesInput::draw(QPainter *painter)
 void ChangesInput::turnOffChange(std::string combo)
 {
     Package *changePack = ptrToBeat->effPack.getPack(28);
-    Beat::ChangesList *changes = 0;
+    ChangesList *changes = 0;
     if (changePack)
-        changes = (Beat::ChangesList*)changePack->getPointer();
+        changes = (ChangesList*)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
 
@@ -1157,9 +1157,9 @@ void ChangesInput::turnOffChange(std::string combo)
 void ChangesInput::turnOnChange(std::string combo)
 {
     Package *changePack = ptrToBeat->effPack.getPack(28);
-    Beat::ChangesList *changes = 0;
+    ChangesList *changes = 0;
     if (changePack)
-        changes = (Beat::ChangesList *)changePack->getPointer();
+        changes = (ChangesList *)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
     size_t changeValue = 0;
@@ -1216,7 +1216,7 @@ void ChangesInput::turnOnChange(std::string combo)
 
     if (notFound)
     {
-        Beat::SingleChange newChange;
+        SingleChange newChange;
         newChange.changeType = awaitType;
         newChange.changeValue = changeValue;
         newChange.changeCount = changeAfter;
@@ -1228,9 +1228,9 @@ void ChangesInput::turnOnChange(std::string combo)
 void ChangesInput::changeMainValue(int combo, int newValue)
 {
     Package *changePack = ptrToBeat->effPack.getPack(28);
-    Beat::ChangesList *changes = 0;
+    ChangesList *changes = 0;
     if (changePack)
-        changes = (Beat::ChangesList *)changePack->getPointer();
+        changes = (ChangesList *)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
 
@@ -1257,9 +1257,9 @@ void ChangesInput::changeMainValue(int combo, int newValue)
 void ChangesInput::changeSubValue(int combo, int newValue)
 {
     Package *changePack = ptrToBeat->effPack.getPack(28);
-    Beat::ChangesList *changes = 0;
+    ChangesList *changes = 0;
     if (changePack)
-        changes = (Beat::ChangesList *)changePack->getPointer();
+        changes = (ChangesList *)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
 
