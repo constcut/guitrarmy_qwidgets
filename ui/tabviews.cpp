@@ -424,7 +424,7 @@ void TabView::connectAllThreadsSignal(MasterView *masterView)
 
    // masterView->connectThread(localThr);
 
-   masterView->connectMainThread(localThr.get());
+   masterView->connectMainThread(localThr);
 }
 
 

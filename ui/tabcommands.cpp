@@ -127,7 +127,7 @@ void saveRawAudio(QByteArray& ba, QString location) {
 }
 
 
-void playTrack(TabView* tabParrent, ThreadLocal* localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
+void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
 
     if (tabParrent->getPlaying()==true) {
         if (localThr)
@@ -346,7 +346,7 @@ void TrackView::onTrackCommand(TrackCommand command) {
     else if (command == TrackCommand::SetSignForSelected)
       changeBarSignsQt(pTrack, selectionBarFirst, selectionBarLast);
     else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
-        playTrack(tabParrent, localThr.get(), cursorBeat, cursor, pTrack, getMaster());
+        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
     else if (command == TrackCommand::SaveAsFromTrack)
         saveAsFromTrack(tabParrent);
     else if (command == TrackCommand::Bend)
@@ -392,7 +392,7 @@ void TrackView::onTabCommand(TabCommand command) {
 
 
 
-void playPressedQt(Tab* pTab, ThreadLocal* localThr, size_t currentBar, TabView *tabView) {
+void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t currentBar, TabView *tabView) {
     //pre action for repeat
     if (tabView->getPlaying()==true)
         if (localThr)
@@ -907,7 +907,7 @@ void TabView::onTabCommand(TabCommand command) {
     else if (command == TabCommand::NewTrack) {
        pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
-        playPressedQt(pTab, localThr.get(), pTab->getCurrentBar(), this);
+        playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
         generateMidiQt(pTab, statusLabel.get());
     else if (command == TabCommand::GotoBar)

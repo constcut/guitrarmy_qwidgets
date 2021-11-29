@@ -254,8 +254,8 @@ public:
 
       GView *getFirstChild() { return firstChld; }
 
-      virtual void connectThread([[maybe_unused]]ThreadLocal *localThr){}
-      virtual void connectMainThread([[maybe_unused]]ThreadLocal *localThr){}
+      virtual void connectThread([[maybe_unused]]std::unique_ptr<ThreadLocal>& thr){}
+      virtual void connectMainThread([[maybe_unused]]std::unique_ptr<ThreadLocal>& thr){}
 
       virtual void pleaseRepaint() {}
 

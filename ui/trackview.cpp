@@ -18,7 +18,7 @@ void TrackView::stopThread()
 
 void TrackView::connectThreadSignal(MasterView *masterView)
 {
-    masterView->connectThread(localThr.get());
+    masterView->connectThread(localThr);
 }
 
 

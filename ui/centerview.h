@@ -229,8 +229,8 @@ public:
     void showConf();
     void fitTextBrowser();
 
-    void connectThread(ThreadLocal *localThr);
-    void connectMainThread(ThreadLocal *localThr);
+    void connectThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
+    void connectMainThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
 
     virtual int getToolBarHeight();
     virtual int getStatusBarHeight();
