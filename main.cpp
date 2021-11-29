@@ -24,8 +24,6 @@
 
 #include <signal.h>
 
-#include "qthelper.h"
-
 #include <QNetworkInterface>
 #include <QDateTime>
 //DATE N TIME TO QT HELPER

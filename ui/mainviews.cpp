@@ -21,9 +21,6 @@
 //TODO
 
 
-//#include <loguploader.h>
-#include "qthelper.h"
-//MUST NOT BE HERE
 #include "mainwindow.h"
 
 void changeColor(const std::string& color, QPainter* src);
