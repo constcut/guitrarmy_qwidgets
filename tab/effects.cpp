@@ -9,10 +9,7 @@ void EffectsPack::addPack(std::uint8_t index, std::uint8_t type, void *point)
     packMap[index] = pack;
 }
 
-void EffectsPack::addPack(std::uint8_t index, Package pack)
-{
-    packMap[index] = pack;
-}
+
 
 Package *EffectsPack::getPack(std::uint8_t index)
 {

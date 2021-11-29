@@ -574,7 +574,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead2 & 4)
     {   //tremolo
        if (gtpLog)  qDebug() << " read bend tremolo";
-       BendPoints *tremoloBend = new BendPoints;
+       BendPoints *tremoloBend = &cursorBeat->tremolo;
        readBendGTP(&file,tremoloBend);
        cursorBeat->setEffects(19); //would be tremolo
        cursorBeat->effPack.addPack(19,2,tremoloBend);
@@ -630,7 +630,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         if (gtpLog)  qDebug() << "Bend found.";
 
 
-        BendPoints *bend = new BendPoints;
+        BendPoints *bend = &newNote->bend;
         readBendGTP(&file,bend);
 
         if (gtpLog)

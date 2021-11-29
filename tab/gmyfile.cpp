@@ -696,7 +696,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                 {
                     size_t amountOfChanges = 0;
 
-                    Beat::ChangesList *newChanges = new Beat::ChangesList();
+                    Beat::ChangesList *newChanges = &beat->changes;
 
                     file->read((char*)&amountOfChanges,1);
 
@@ -788,7 +788,7 @@ bool GmyFile::loadFromFile(std::ifstream* file, Tab *tab, bool skipVersion)
                         //note.effPack.set(17,false); //turn off bend
                         if (note->effPack == 17)
                         {
-                            BendPoints *bend = new BendPoints;
+                            BendPoints *bend = &note->bend;
                             readBendGMY(file,bend);
                             note->effPack.addPack(17,2,bend);
                         }

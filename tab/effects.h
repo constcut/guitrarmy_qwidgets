@@ -10,7 +10,7 @@ class Package //TODO review
 protected:
 
     std::uint8_t type;
-    void *point;
+    void *point; //TODO remove after we have
 
 public:
 
@@ -74,7 +74,7 @@ protected:
 public:
 
     void addPack(std::uint8_t index, std::uint8_t type, void *point);
-    void addPack(std::uint8_t index, Package pack);
+
     Package* getPack(std::uint8_t index);
 
     //operator +=

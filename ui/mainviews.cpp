@@ -937,7 +937,7 @@ void BendInput::onclick(int x1, int y1)
             bool whatIsThere = ptrToNote->effPack.get(17);
             qDebug() << "Deleting bend that is "<<(int)whatIsThere;
 
-            ptrToNote->effPack.addPack(17,2,0);
+            ptrToNote->effPack.addPack(17,2,0); //TODO better waY?
             ptrToNote->effPack.set(17,false);
             //delete ptrToBend;
             ptrToBend = 0;
