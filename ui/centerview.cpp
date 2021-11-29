@@ -1137,32 +1137,6 @@ void CenterView::pushForceKey(std::string keyevent)
 
     if (keyevent=="alt+b")
     {
-        //opening base
-        /*
-        QFileDialog *fd = new QFileDialog;
-
-
-        fd->setStyleSheet("QScrollBar:horizontal {\
-                          border: 2px solid grey;\
-                          background: #32CC99;\
-                          height: 15px;\
-                          margin: 0px 20px 0 20px;\
-                      }\
-                      QLineEdit { height: 20px; \
-                      }");
-
-        fd->setViewMode(QFileDialog::List);
-        fd->setFileMode(QFileDialog::Directory);
-        fd->setOption(QFileDialog::ShowDirsOnly);
-
-        QString directoryName;
-        if (fd->exec())
-        directoryName = fd->selectedFiles().at(0);
-
-        audio_qDebug() << s.toStdString().c_str() << " -chosen folder";
-
-        delete fd;
-        */
 
         QString testsLoc = getTestsLocation() + QString("gb");//QString("gtp")
 
@@ -1527,23 +1501,19 @@ void CenterView::paintEvent(QPaintEvent *event)
 
         if (ownChild)
         {
-        ownChild->setVisible(true);
+            ownChild->setVisible(true);
 
+            MainView *mw = (MainView *)getFirstChild();
+            TabView *tabV = (TabView *)mw->getCurrenView();
 
-        MainView *mw = (MainView *)getFirstChild();
-        TabView *tabV = (TabView *)mw->getCurrenView();
+            if (tabV->tracksView.size())
+            {
+                auto& trackV = tabV->tracksView[tabV->getCurTrack()];
+                trackV->setMaster(mw->getMaster());
 
-        if (tabV->tracksView.size())
-        {
-            auto& trackV = tabV->tracksView[tabV->getCurTrack()];
-            trackV->setMaster(mw->getMaster());
-
-            MainView *mw2 =  (MainView *)ownChild->getFirstChild();
-            mw2->changeCurrentView(trackV.get());
-        }
-
-
-        //find track view
+                MainView *mw2 =  (MainView *)ownChild->getFirstChild();
+                mw2->changeCurrentView(trackV.get());
+            }
         }
 
         //no preview

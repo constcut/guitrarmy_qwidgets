@@ -133,100 +133,100 @@ public:
 
 class GLabel : public GView
 {
-protected:
-std::string ownText;
-std::string pressSynonim;
+    protected:
+    std::string ownText;
+    std::string pressSynonim;
 
-GImage *imageLabel;
+    std::unique_ptr<GImage> imageLabel;
 
-bool visible;
+    bool visible;
 
-bool showBorder;
+    bool showBorder;
 
-public:
+    public:
 
-    bool isVisible() { return visible; }
-    void setVisible(bool value) {visible     = value; }
+        bool isVisible() { return visible; }
+        void setVisible(bool value) {visible     = value; }
 
-    void setBorder(bool nowShowBorder) { showBorder = nowShowBorder; }
+        void setBorder(bool nowShowBorder) { showBorder = nowShowBorder; }
 
-    void setText(std::string newText) { ownText = newText; }
-    std::string getText() { return ownText; }
+        void setText(std::string newText) { ownText = newText; }
+        std::string getText() { return ownText; }
 
-    GLabel(int x, int y, std::string text, std::string pressSyn="", bool showBord=true);
-    /*
-        imageLabel(0),visible(true), showBorder(showBord)
-    {
-        int size = text.length();
-        //int height = 12;
-        this->x = x;
-        this->y = y;
-        h = 20;
-        w = size*6 + 20;
-        ownText = text;
-        pressSynonim = pressSyn;
-
-        if (CONF_PARAM("images")=="1")
+        GLabel(int x, int y, std::string text, std::string pressSyn="", bool showBord=true);
+        /*
+            imageLabel(0),visible(true), showBorder(showBord)
         {
-            //later preloaded images should apear
-            //REFACT: use map
+            int size = text.length();
+            //int height = 12;
+            this->x = x;
+            this->y = y;
+            h = 20;
+            w = size*6 + 20;
+            ownText = text;
+            pressSynonim = pressSyn;
 
-            if ((text =="prevBeat") || (text =="nextBeat") || (text =="upString") || (text =="downString") ||
-                    (text =="prevBar") || (text =="nextBar") || (text =="play") || (text =="save") ||
-                    (text=="open")|| (text =="new")
-                    || (text =="config")
-                    || (text =="record")|| (text =="tap")
-                    || (text =="pattern")|| (text =="tests")||
-                    (text=="tab")||(text=="backview")||
-                    (text=="morze")||(text=="info")||(text=="openPannel")||
-                    (text=="1")||(text=="2")||(text=="3")||
-                    (text=="4")||(text=="5")||(text=="6")||
-                    (text=="7")||(text=="8")||(text=="9")||
-                    (text=="0")||(text=="qp")||(text=="qm")||
-                    (text=="p")||(text=="del")||(text==".")
-                    ||(text=="-3-")||(text=="leeg")||(text=="x"))
+            if (CONF_PARAM("images")=="1")
             {
-                imageLabel = new GImage(x,y,text);
+                //later preloaded images should apear
+                //REFACT: use map
 
-                setW(imageLabel->getW());
-                setH(imageLabel->getH());
+                if ((text =="prevBeat") || (text =="nextBeat") || (text =="upString") || (text =="downString") ||
+                        (text =="prevBar") || (text =="nextBar") || (text =="play") || (text =="save") ||
+                        (text=="open")|| (text =="new")
+                        || (text =="config")
+                        || (text =="record")|| (text =="tap")
+                        || (text =="pattern")|| (text =="tests")||
+                        (text=="tab")||(text=="backview")||
+                        (text=="morze")||(text=="info")||(text=="openPannel")||
+                        (text=="1")||(text=="2")||(text=="3")||
+                        (text=="4")||(text=="5")||(text=="6")||
+                        (text=="7")||(text=="8")||(text=="9")||
+                        (text=="0")||(text=="qp")||(text=="qm")||
+                        (text=="p")||(text=="del")||(text==".")
+                        ||(text=="-3-")||(text=="leeg")||(text=="x"))
+                {
+                    imageLabel = new GImage(x,y,text);
+
+                    setW(imageLabel->getW());
+                    setH(imageLabel->getH());
+                }
+            }
+
+        }
+        */
+
+        std::string getPressSyn(){return pressSynonim;}
+
+        void draw(QPainter *painter){
+
+            if (visible==false)
+                return;
+
+            if (imageLabel==0)
+            {
+                painter->drawText(x+5,y,ownText.c_str());
+
+                if (showBorder)
+                    painter->drawRect(x,y-15,w,h); //10 half of text height
+            }
+            else
+            {
+                imageLabel->setX(x); imageLabel->setY(y-10);
+                imageLabel->draw(painter);
+
+                if (showBorder)
+                    painter->drawRect(x,y-10,imageLabel->getW(),imageLabel->getH());
+
             }
         }
+        //void onclick(int x1, int y1){}
+        //void ondblclick(int x1, int y1){}
 
-    }
-    */
+        virtual bool hit(int hX, int hY);
 
-    std::string getPressSyn(){return pressSynonim;}
-
-    void draw(QPainter *painter){
-
-        if (visible==false)
-            return;
-
-        if (imageLabel==0)
-        {
-            painter->drawText(x+5,y,ownText.c_str());
-
-            if (showBorder)
-                painter->drawRect(x,y-15,w,h); //10 half of text height
-        }
-        else
-        {
-            imageLabel->setX(x); imageLabel->setY(y-10);
-            imageLabel->draw(painter);
-
-            if (showBorder)
-                painter->drawRect(x,y-10,imageLabel->getW(),imageLabel->getH());
-
-        }
-    }
-    //void onclick(int x1, int y1){}
-    //void ondblclick(int x1, int y1){}
-
-    virtual bool hit(int hX, int hY);
-
-    //calc size to create view
-    //virtual void keyevent(std::string press){}
+        //calc size to create view
+        //virtual void keyevent(std::string press){}
 };
 
 

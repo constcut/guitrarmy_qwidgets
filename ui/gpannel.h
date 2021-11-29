@@ -58,7 +58,7 @@ public:
         if (syn.empty())
             syn=capture;
         GLabel labelButton(thatX,thatY,capture,syn);
-        buttons.push_back(labelButton);
+        buttons.push_back(std::move(labelButton));
 
     }
 

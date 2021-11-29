@@ -300,7 +300,7 @@ public:
         for (size_t i = 0; i < 11; ++i) {
             GLabel button(xSh,ySh,"1." + std::to_string(i+1));
             button.setW(40);
-            buttons.push_back(button);
+            buttons.push_back(std::move(button));
 
             xSh += 20 + button.getW();
             if (xSh >= (wi-50)) {
@@ -313,7 +313,7 @@ public:
         {
             GLabel button(xSh,ySh,"2." + std::to_string(i+1));
             button.setW(40);
-            buttons.push_back(button);
+            buttons.push_back(std::move(button));
 
             xSh += 20 + button.getW();
            if (xSh >= (wi-50))
@@ -326,7 +326,7 @@ public:
         for (size_t i = 0; i < 70; ++i) {
             GLabel button(xSh,ySh,"3." + std::to_string(i+1));
             button.setW(40);
-            buttons.push_back(button);
+            buttons.push_back(std::move(button));
             xSh += 20 + button.getW();
             if (xSh >= (wi-50)) {
                 xSh = 30;

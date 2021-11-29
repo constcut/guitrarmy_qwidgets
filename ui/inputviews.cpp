@@ -270,7 +270,7 @@ void PatternInput::keyevent(std::string press)
         int maxShX = 0;
 
         bool ok=false;
-        int newNum = QInputDialog::getInt(0,"Input",
+        size_t newNum = QInputDialog::getInt(0,"Input",
                              "New amount of beats:",20,
                              1,256,1,&ok);
         if (ok)
@@ -296,7 +296,7 @@ void PatternInput::keyevent(std::string press)
                 }
 
                 GLabel lineLab(shX,shY,instrText);
-                lineInstrLabels.push_back(lineLab);
+                lineInstrLabels.push_back(std::move(lineLab));
 
                 shX += 70;
 
@@ -1258,29 +1258,6 @@ void RecordView::keyevent(std::string press)
 void RecordView::onclick(int x1, int y1)
 {
 
-    //if (this->status->hit(x1,y1))
-    { /*
-        return;
-
-        ThreadWave *waveThr = new ThreadWave();
-        waveThr->setInc(&wavePosition,0);
-        waveThr->setLimit((waveLimit)-1);
-       //
-        //getMaster()->connectThread(waveThr);
-
-        MainWindow *mw = getMaster();
-        mw->connect(
-                    waveThr,
-                    SIGNAL(updateUI()),
-                    SLOT(update()),
-                    Qt::QueuedConnection);
-
-
-        waveThr->start();
-        //waveThr->
-        */
-    }
-
     if (zoom->hit(x1,y1))
     {
         bool ok=false;
@@ -1335,7 +1312,7 @@ void RecordView::onclick(int x1, int y1)
     }
 
     //ATTENTION - other function buttons blocked
-    return;
+    return; //TODO
 
     //OLD windows only code
     //if (startBut->hit(x1,y1))

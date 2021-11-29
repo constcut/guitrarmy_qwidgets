@@ -45,7 +45,7 @@ GView *MasterView::changeChild(GView *newChild)
 
 
 GLabel::GLabel(int x, int y, std::string text, std::string pressSyn, bool showBord):
-    imageLabel(0),visible(true), showBorder(showBord)
+    visible(true), showBorder(showBord)
 {
     int size = text.length();
     //int height = 12;
@@ -81,8 +81,7 @@ GLabel::GLabel(int x, int y, std::string text, std::string pressSyn, bool showBo
 
         if (imgPtr)
         {
-            imageLabel = new GImage(x,y,text);
-
+            imageLabel = std::make_unique<GImage>(x,y,text);
             setW(imageLabel->getW());
             setH(imageLabel->getH());
         }

@@ -64,7 +64,7 @@ public:
                 case 3: instrText = "36"; break;
             }
             GLabel lineLab(shX,shY,instrText);
-            lineInstrLabels.push_back(lineLab);
+            lineInstrLabels.push_back(std::move(lineLab));
             shX += 70;
             for (size_t i = 0; i < 16; ++i) {
                 GCheckButton but(shX,shY-30,30,30);
