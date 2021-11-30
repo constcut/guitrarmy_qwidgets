@@ -81,6 +81,7 @@ HEADERS  += ui/mainwindow.h \
     tab/note.h \
     tab/track.h \
     tab/types.h \
+    ui/gpannel.h \
     ui/gview.h \
     tab/gmyfile.h \
     tab/gtpfiles.h \
@@ -88,7 +89,6 @@ HEADERS  += ui/mainwindow.h \
     tab/tab.h \
     ui/athread.h \
     g0/buildheader.h \
-    gpannel.h \
     libs/sf/tml.h \
     libs/sf/tsf.h \
     ui/mainviews.h \
