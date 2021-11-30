@@ -191,7 +191,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
 
-        std::ofstream outFile2(fullOutName);
+        std::ofstream outFile2(fullOutName, std::ios::binary);
 
         if (!outFile2.is_open())
             qDebug() << "Failed to open out file :(";
