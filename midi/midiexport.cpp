@@ -296,9 +296,11 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
     if (beat->effPack.get(28))
     {
         //changes
+        Package *changePack = beat->effPack.getPack(28);
 
+        if (changePack)
         {
-            Beat::ChangesList *changes = &beat->changes;
+            Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
             for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
             {
@@ -566,8 +568,12 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
         }
 
         if (note->effPack.get(17)) { //bend
-            BendPoints *bend = &note->bend;
-            pushBendToTrack(bend, midiTrack,channel);
+            Package *bendPack = note->effPack.getPack(17);
+            if (bendPack) //attention possible errors escaped
+            {
+                BendPoints *bend = (BendPoints*) bendPack->getPointer();
+                pushBendToTrack(bend, midiTrack,channel);
+            }
         }
 
         if (note->effPack.get(24)) { //tremolo pick {

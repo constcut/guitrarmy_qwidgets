@@ -5,6 +5,38 @@
 
 #include <map>
 
+class Package //TODO review
+{
+protected:
+
+    std::uint8_t type;
+    void *point; //TODO remove after we have
+
+public:
+
+    Package();//:type(0),point(0){}
+
+
+    void setType(std::uint8_t newType);// { type = newType; }
+    std::uint8_t getType();// { return type; }
+
+    void setPointer(void *newPoint);// { point = newPoint; }
+    void *getPointer();// { return point; }
+
+
+    //here will appear also some way to pack data into turned on bits
+    // a - universal packer - will spend time for nothing
+    // b - short int as type of pack and structures to define values
+    // and pointer to store it
+
+    //tremolo + bend - BendPoints
+    //grace note
+    //trill picking
+    //chord diagram
+    //text + - marker
+
+};
+
 
 class ABitArray // Vector bool?
 {
@@ -36,7 +68,22 @@ public:
 };
 
 
+class EffectsPack : public ABitArray
+{
+protected:
 
+    std::map<std::uint8_t,Package> packMap;
+
+public:
+
+    void addPack(std::uint8_t index, std::uint8_t type, void *point);
+
+    Package* getPack(std::uint8_t index);
+
+    //operator +=
+    void mergeWith(EffectsPack &addition);
+
+};
 
 
 ////////////////////Pack reference - used only for GMY format///////////////////////////

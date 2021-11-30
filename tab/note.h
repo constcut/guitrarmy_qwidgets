@@ -132,7 +132,7 @@ class Note
 
     BendPoints bend;
     //[EFFECTS]
-    ABitArray effPack;
+    EffectsPack effPack;
 
     //SET GET operations
     void setStringNumber(std::uint8_t num) {stringNumber = num;}
@@ -158,8 +158,8 @@ class Note
     std::uint8_t getFingering() { return fingering; }
 
     void setEffect(std::uint8_t eff);// { effectsA = eff; }
-    ABitArray getEffects();// { return effectsA; }
-    void addEffects(ABitArray &append) { effPack.mergeWith(append); }
+    EffectsPack getEffects();// { return effectsA; }
+    void addEffects(EffectsPack &append) { effPack.mergeWith(append); }
 
     //effects need review
     //MISSING

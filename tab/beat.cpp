@@ -49,7 +49,7 @@ void Beat::printToStream(std::ostream &stream)
             at(ind)->printToStream(stream);
 }
 
-ABitArray Beat::getEffects()
+EffectsPack Beat::getEffects()
 {
     return effPack;
 }

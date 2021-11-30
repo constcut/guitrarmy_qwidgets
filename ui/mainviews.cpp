@@ -811,7 +811,7 @@ void BendInput::onclick(int x1, int y1)
              if (ptrToBend)
              {
                 ptrToNote->effPack.set(17,true);
-                //ptrToNote->effPack.addPack(17,2,ptrToBend); //insure but it must be already inside
+                ptrToNote->effPack.addPack(17,2,ptrToBend);
              }
              getMaster()->pushForceKey("esc"); //go prev
              //better have another function atention
@@ -823,7 +823,11 @@ void BendInput::onclick(int x1, int y1)
         {
             bool whatIsThere = ptrToNote->effPack.get(17);
             qDebug() << "Deleting bend that is "<<(int)whatIsThere;
-            ptrToNote->effPack.set(17, false);
+
+            ptrToNote->effPack.addPack(17,2,0); //TODO better waY?
+            ptrToNote->effPack.set(17,false);
+            //delete ptrToBend;
+            ptrToBend = 0;
         }
     }
     //shoud react on press and calculate
@@ -943,9 +947,10 @@ void ChangesInput::draw(QPainter *painter)
         top->setText("beat ptr was set");
         if (ptrToBeat->effPack.get(28)==true)
         {
-
+            Package *changePack = ptrToBeat->effPack.getPack(28);
+            if (changePack)
             {
-                Beat::ChangesList *changes = &ptrToBeat->changes;
+                Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
                 if (changes)
                 {
                     getMaster()->setComboBox(5,"changecombo4",550,70,50,40,0);
@@ -1005,8 +1010,10 @@ void ChangesInput::draw(QPainter *painter)
 
 void ChangesInput::turnOffChange(std::string combo)
 {
-
-    Beat::ChangesList *changes = &ptrToBeat->changes;
+    Package *changePack = ptrToBeat->effPack.getPack(28);
+    Beat::ChangesList *changes = 0;
+    if (changePack)
+        changes = (Beat::ChangesList*)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
 
@@ -1036,7 +1043,10 @@ void ChangesInput::turnOffChange(std::string combo)
 
 void ChangesInput::turnOnChange(std::string combo)
 {
-    Beat::ChangesList *changes = &ptrToBeat->changes;
+    Package *changePack = ptrToBeat->effPack.getPack(28);
+    Beat::ChangesList *changes = 0;
+    if (changePack)
+        changes = (Beat::ChangesList *)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
     size_t changeValue = 0;
@@ -1074,6 +1084,7 @@ void ChangesInput::turnOnChange(std::string combo)
     if (changes==0)
     {
         ptrToBeat->effPack.set(28,true);
+        ptrToBeat->effPack.addPack(28,1,&ptrToBeat->changes);
         changes = &ptrToBeat->changes;
     }
     else
@@ -1103,7 +1114,11 @@ void ChangesInput::turnOnChange(std::string combo)
 
 void ChangesInput::changeMainValue(int combo, int newValue)
 {
-    Beat::ChangesList *changes = &ptrToBeat->changes;
+    Package *changePack = ptrToBeat->effPack.getPack(28);
+    Beat::ChangesList *changes = 0;
+    if (changePack)
+        changes = (Beat::ChangesList *)changePack->getPointer();
+
     std::uint8_t awaitType = 255;
 
     if (combo==0)
@@ -1128,7 +1143,10 @@ void ChangesInput::changeMainValue(int combo, int newValue)
 
 void ChangesInput::changeSubValue(int combo, int newValue)
 {
-    Beat::ChangesList *changes = &ptrToBeat->changes;
+    Package *changePack = ptrToBeat->effPack.getPack(28);
+    Beat::ChangesList *changes = 0;
+    if (changePack)
+        changes = (Beat::ChangesList *)changePack->getPointer();
 
     std::uint8_t awaitType = 255;
 

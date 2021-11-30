@@ -14,7 +14,7 @@ void Note::printToStream(std::ostream &stream)
    stream << "Fret = " <<(int)this->fret << std::endl;
 }
 
-ABitArray Note::getEffects()
+EffectsPack Note::getEffects()
 {
     return effPack;
 }

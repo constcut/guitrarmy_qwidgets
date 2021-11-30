@@ -80,10 +80,11 @@ bool tabLog = false;
 
             for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
             {
-                if (currentBar->at(beatI)->effPack.get(28)) //changes
+                if (currentBar->at(beatI)->effPack == 28) //changes
                 {
                     //search for bpm changes
-                    Beat::ChangesList *changes = &currentBar->at(beatI)->changes;
+                    Package *changePack = currentBar->at(beatI)->effPack.getPack(28);
+                    Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
                     for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
                       if (changes->at(indexChange).changeType==8)

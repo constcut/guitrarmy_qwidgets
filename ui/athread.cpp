@@ -309,8 +309,11 @@ void PlayAnimationThr::addBeatTimes(Bar* bar)
         //CHANGE BPM
         if (beat->effPack.get(28))
         {
+            Package *changePack =beat->effPack.getPack(28);
+
+            if (changePack)
             {
-                Beat::ChangesList *changes = &beat->changes;
+                Beat::ChangesList *changes = (Beat::ChangesList*)changePack->getPointer();
 
                 for (size_t indexChange=0; indexChange < changes->size(); ++indexChange)
                 if (changes->at(indexChange).changeType==8)

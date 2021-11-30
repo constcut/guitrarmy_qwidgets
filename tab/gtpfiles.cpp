@@ -412,10 +412,14 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
         }
 
+
     cursorBeat->setEffects(28);
+    cursorBeat->effPack.addPack(28,1,&(cursorBeat->changes));
 
     //refact
     file.read((char*)&changeStruct.changesTo,1); //not applied! attention
+
+
 }
 
 
@@ -573,6 +577,8 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
        BendPoints *tremoloBend = &cursorBeat->tremolo;
        readBendGTP(&file,tremoloBend);
        cursorBeat->setEffects(19); //would be tremolo
+       cursorBeat->effPack.addPack(19,2,tremoloBend);
+
     }
 
     //and dear rusedhsajhdkjsa
@@ -623,12 +629,15 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     {//bend
         if (gtpLog)  qDebug() << "Bend found.";
 
+
         BendPoints *bend = &newNote->bend;
         readBendGTP(&file,bend);
+
         if (gtpLog)
-            qDebug()<< " Bend h "<<"; len "<<bend->size()<<"; type"<<bend->getType();
+        qDebug()<< " Bend h "<<"; len "<<bend->size()<<"; type"<<bend->getType();
 
         newNote->setEffect(17);//first common pattern
+        newNote->effPack.addPack(17,2,bend); //type 2 is bend
     }
 
 
@@ -2002,6 +2011,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     }
 
     cursorBeat->setEffects(28);
+    cursorBeat->effPack.addPack(28,1,&(cursorBeat->changes));
 
     //refact
     file.read((char*)&changeStruct.changesTo,1); //not applied! attention
@@ -2827,7 +2837,10 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
         }
 
+
     cursorBeat->setEffects(28);
+    cursorBeat->effPack.addPack(28,1,&(cursorBeat->changes));
+
 }
 
 void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
