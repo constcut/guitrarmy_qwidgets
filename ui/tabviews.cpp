@@ -115,12 +115,12 @@ void TabView::setUI()
     }
 }
 
-void TabView::setTab(Tab* point2Tab)
-{
-    //refact note - list of deleted pTabs
-
+void TabView::setTab(Tab* point2Tab) {
     pTab = point2Tab;
+    refreshTabStats();
+}
 
+void TabView::refreshTabStats() {
     MidiEngine::stopDefaultFile();
     stopAllThreads();
     setPlaying(false);
@@ -142,7 +142,6 @@ void TabView::setTab(Tab* point2Tab)
         getMaster()->setStatusBarMessage(2,statusBar2.c_str());
         getMaster()->setStatusBarMessage(0,"Tab was loaded",500);
     }
-
 }
 
 

@@ -50,6 +50,7 @@ public:
     int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
 
     void setTab(Tab* point2Tab);// {pTab = point2Tab;}
+    void refreshTabStats();
     Tab* getTab() { return pTab; }
 
      void draw(QPainter *painter);

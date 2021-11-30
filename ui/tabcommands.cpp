@@ -903,7 +903,7 @@ void TabView::onTabCommand(TabCommand command) {
     else if (command == TabCommand::OpenTrack)
         openTrackQt(pTab->size(),pTab->getLastOpenedTrack(), this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
     else if (command == TabCommand::NewTrack) {
-       pTab->createNewTrack(); this->setTab(pTab); } //Второе нужно для обновления
+       pTab->createNewTrack(); refreshTabStats(); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
         playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
