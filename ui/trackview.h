@@ -75,7 +75,6 @@ public:
     void connectThreadSignal(MasterView *masterView);
     int threadSeconds() { return localThr->calculateSeconds(); }
 
-    void *getPannel() { return pan; }
 
     bool gotChanges();
 

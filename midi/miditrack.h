@@ -46,7 +46,6 @@ public:
     void pushSlideUp(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
     void pushSlideDown(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
 
-    void pushBend(short int rOffset, void *bendP, std::uint8_t channel); //yet deadcoded one
     void pushTremolo(short int rOffset); //yet deadcoded one
 
     void pushFadeIn(short int rOffset, std::uint8_t channel);
@@ -68,15 +67,6 @@ public: //TODO review when midi generation is done
     std::uint8_t tunes[10];
     std::uint8_t ringRay[10];
 
-    ///! CHENNELS FOR RING RAY
-
-    //bool addSignalsFromNoteOn(Note *note, std::uint8_t channel);
-    //bool addSignalsFromNoteOff(Note *note, std::uint8_t channel);
-
-    //bool addPostEffects(Beat *beat, std::uint8_t channel);
-
-    //bool addSignalsFromBeat(Beat *beat, std::uint8_t channel, short specialR=0);
-
     void closeLetRings(std::uint8_t channel);		//-
     void openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
     void closeLetRing(std::uint8_t stringN, std::uint8_t channel);  //-
@@ -89,27 +79,22 @@ public: //TODO review when midi generation is done
     void startLeeg(std::uint8_t stringN, std::uint8_t channel);
     void stopLeeg(std::uint8_t stringN, std::uint8_t channel);
 
-    bool checkForLeegFails(); //-
+    bool checkForLeegFails();
 
 public:
 
-    int accum;//TODO ref fun or move?
+    int accum;//TODO int& accumulate(); int takeAccumulate();
 
     int accumulate(int value) { accum += value; return accum; }
     int getAccum() { return accum; }
     void takeAccum() { accum=0; }
 
-    void setTunes(std::uint8_t *from)
-    {
-        for (std::uint8_t i=0; i < 10; ++i)
-        {
+    void setTunes(std::uint8_t *from) {
+        for (std::uint8_t i=0; i < 10; ++i){
             tunes[i]=from[i];
             ringRay[i]=255;
         }
-
     }
-
-
 };
 
 

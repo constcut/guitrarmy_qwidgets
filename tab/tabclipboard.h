@@ -12,7 +12,7 @@ protected:
     int n1,m1,k1;
     int n2,m2,k2;
 
-    void *ptr;
+    void *ptr; //TODO rewrite to avoid void ptr
 
     static AClipboard *currentClip;
 

@@ -101,32 +101,15 @@ void MainView::keyevent(std::string press)
         if (currentView)
             currentView->keyevent(press);
 
-        if (press=="openPannel")
-            if (currentView)
-            {
-                GPannel *viewPannel =0; //(GPannel*)currentView->getPannel();
-
-                //no more
-                if (viewPannel)
-                {
-                    if (viewPannel->isOpenned())
-                        viewPannel->close();
-                    else
-                        viewPannel->preOpen();
-                }
-            }
-
         if (press == "esc")
             changeViewToLast();
 
         if (press == "rec")
             changeCurrentView(recordView.get());
 
-        if ((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen"))
-        {
+        if ((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) {
 
-            if (tabsView->gotChanges()==false)
-            {
+            if (tabsView->gotChanges()==false) {
                 GmyFile gmyFile; 
                 std::string gfileName =  std::string(getTestsLocation())  + "first.gmy";
                 if (QFile::exists(gfileName.c_str()))
@@ -320,15 +303,6 @@ void MainView::draw(QPainter *painter)
 
     if (currentView)
     {
-        GPannel *viewPannel = 0; //(GPannel *)currentView->getPannel();
-
-        if (viewPannel)
-        {
-            viewPannel->setH(hi);
-            viewPannel->setW(wi);
-            viewPannel->setY(hi-180);
-            viewPannel->resetButtons();
-        }
 
         currentView->setW(wi);
         currentView->setH(hi);

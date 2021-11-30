@@ -83,8 +83,6 @@ public:
 
      void connectAllThreadsSignal(MasterView *masterView);
 
-     void *getPannel() { return pan.get(); }
-
      bool gotChanges();
 
      //void ondblclick(int x1, int y1);

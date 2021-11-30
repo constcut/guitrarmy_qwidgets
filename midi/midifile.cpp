@@ -11,7 +11,7 @@
 
 bool midiLog = false;
 
-void reverseEndian(void *p,int s) { //TODO remove
+void reverseEndian(void *p,int s) { //TODO remove https://stackoverflow.com/questions/3823921/convert-big-endian-to-little-endian-when-reading-from-a-binary-file
     char *bytes = (char*)p;
     if (s == 4){
         char b = bytes[0];

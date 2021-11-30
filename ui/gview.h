@@ -83,7 +83,6 @@ public:
         qDebug() << "EMPY on TrackCommand";
     }
 
-    virtual void *getPannel() { return 0; }
 };
 
 class GImage : public GView
