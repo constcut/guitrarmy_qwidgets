@@ -239,16 +239,15 @@ int main(int argc, char *argv[])
     if (globals.platform == "windows")
         MidiEngine midInit;
 
-    auto mw = std::make_unique<MainView>();
-    mw->setMaster(w.getCenterView());
-    w.getCenterView()->changeChild(mw.get());
+    auto mainViewLayer1 = std::make_unique<MainView>(); //Sorry for this layers, MainView and CenterView are not used to be supported furter
+    mainViewLayer1->setMaster(w.getCenterView());           //This is abadoned part of a project, that would be fully replaces with QML
+    w.getCenterView()->changeChild(mainViewLayer1.get());
     w.getCenterView()->setStatusSetter(&w);
-    auto m2 = std::make_unique<MainView>();
-    m2->setSlave();
+    auto mainViewLayer2 = std::make_unique<MainView>();
+    mainViewLayer2->setDependent();
     auto centerView = std::make_unique<CenterView>(w.getCenterView());
     w.getCenterView()->ownChild = centerView.get();
-    w.getCenterView()->ownChild ->changeChild(m2.get());
-
+    w.getCenterView()->ownChild ->changeChild(mainViewLayer2.get());
     w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());
 
     std::string winIconName = currentPath + "Icons/winIcon.png";
@@ -261,8 +260,6 @@ int main(int argc, char *argv[])
     if (globals.platform == "android")
         if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
             logName = "/sdcard/Guitarmy.log";
-
-
 
 
     w.setAttribute(Qt::WA_AcceptTouchEvents);
@@ -279,27 +276,18 @@ int main(int argc, char *argv[])
     }
     else
         w.show();
-    ///checkBase(); //if param set - moved to center view
-    //for the self chosen rotation
-    //android_helper and_help;
+
     //and_help.setLandscape();
+
     w.setWindowTitle(getGuitarmyVersion());
     signal(SIGSEGV, posix_death_signal);
     signal(SIGILL, posix_death_signal);
     signal(SIGFPE, posix_death_signal);
-    //w.getCenterView()->addComboBox("ohhsome",50,50,70,30);
     w.getCenterView()->pushForceKey("newtab");
-    //because now we debug recording
-    ///w.getCenterView()->pushForceKey("rec");
+
+
     if (CONF_PARAM("skipTabView")=="1")
         w.getCenterView()->pushForceKey("opentrack");
-    //TODO  отправка краш логов?       QString crashName = getTestsLocation() + QString("crashs.glog");
-                //if (QFile::exists(crashName) {
-    //TODO окно для загрузки разных тестов
-    //testScenario();
-
-
-    //setTestLocation("/home/punnalyse/dev/g/_wgtab/gtab/og/"); //TODO only for linux yet hardcode
 
 
     int out = 0;
@@ -309,7 +297,7 @@ int main(int argc, char *argv[])
     }
     catch(...){
         qDebug() << "Exception thrown";
-        //crash log saver
+        //crash log saver todo - same as on signals
     }
 
     qDebug() << "Main function done" ;

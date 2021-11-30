@@ -330,7 +330,7 @@ void MainView::setMaster(MasterView *mast)
 
 MainView::MainView():GView(0,0,800,480), currentView(0)
 {
-    slave=false;
+    dependent=false;
     tabsView = std::make_unique<TabView>();
     configView = std::make_unique<ConfigView>();
     tapRyView = std::make_unique<TapRyView>();

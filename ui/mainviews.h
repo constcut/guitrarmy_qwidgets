@@ -60,26 +60,24 @@ protected:
         GView *lastOne = lastViews[lastViews.size()-1];
         lastViews.pop_back();
         currentView = lastOne;
-        if (slave==false)
-        currentView->setUI();
+        if (dependent==false)
+            currentView->setUI();
     }
 
-    bool slave;
+    bool dependent;
 
  public:
 
-    void setSlave(){slave=true;}
+    void setDependent() {dependent=true;}
 
     void changeCurrentView(GView *newView)
     {
         lastViews.push_back(currentView);
         currentView = newView;
-        //
 
         currentView->setMaster(getMaster());
-        if (slave==false)
-        newView->setUI();
-
+        if (dependent==false)
+            newView->setUI();
     }
 
     GView *getCurrenView() { return currentView; }
