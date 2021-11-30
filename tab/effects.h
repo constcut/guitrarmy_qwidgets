@@ -85,20 +85,6 @@ public:
 };
 
 
-class EffectsMap
-{
-protected:
-    std::map<size_t,EffectsPack> mapOfEffects;
-
-public:
-
-    bool isThere(size_t index);
-    EffectsPack getEffect(size_t index);
-    void setEffect(size_t index, EffectsPack eff);
-
-};
-
-
 ////////////////////Pack reference - used only for GMY format///////////////////////////
 
     //pack guide:

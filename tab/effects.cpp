@@ -33,33 +33,6 @@ void EffectsPack::mergeWith(EffectsPack &addition)
 
     bits |= addition.bits;
 }
-
-//....................EffectsMap....................................
-
-bool EffectsMap::isThere(size_t index)
-{
-    std::map<size_t,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
-    if (effIterator == mapOfEffects.end())
-        return false;
-    return true;
-}
-
-EffectsPack EffectsMap::getEffect(size_t index)
-{
-    std::map<size_t,EffectsPack>::iterator effIterator = mapOfEffects.find(index);
-    if (effIterator == mapOfEffects.end())
-    {
-        EffectsPack emptyPack;
-        return emptyPack;
-    }
-    return effIterator->second;
-}
-
-void EffectsMap::setEffect(size_t index, EffectsPack eff)
-{
-    mapOfEffects[index] = eff;
-}
-
 /////////////////Bit array and Package/////////////////////////////////
 
 ABitArray::ABitArray():bits(0)
