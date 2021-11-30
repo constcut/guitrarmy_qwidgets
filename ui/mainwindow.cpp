@@ -1,7 +1,4 @@
 ﻿#include "mainwindow.h"
-//#include "ui_mainwindow.h"
-
-//Events includes
 
 #include <QPainter>
 #include <QKeyEvent>
@@ -13,8 +10,6 @@
 
 #include "ui/gview.h"
 
-//ONLY FOR GESTURES
-//and recog
 #include "ui/mainviews.h"
 #include "ui/tabviews.h"
 
@@ -390,19 +385,12 @@ QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
     men->setIconSize(QSize(iconSize,iconSize));
 
 
-    //NewStyle style;
-    //men->setStyle(&style);
-
-
     int iCoef = 4; //for the clip
 
     if (men2)
     {
         iCoef = 4;
         men2->setIconSize(QSize(iconSize,iconSize));
-
-        //men2->setStyle(&style);
-
         this->connect(men2,SIGNAL(actionTriggered(QAction*)),
                       SLOT(actionNow(QAction*)));
     }
@@ -471,7 +459,6 @@ void MainWindow::createUI()
 
     statusLabel = QWIDGET_ALLOC QLabel(this);
     statusLabelSecond = QWIDGET_ALLOC QLabel(this);
-    //statusLabelThird = QWIDGET_ALLOC QLabel(this);
 
     win = QWIDGET_ALLOC GQCombo(this);
     win->addItem("welcome");
@@ -503,10 +490,8 @@ void MainWindow::createUI()
 
     statusBar()->addWidget(statusLabel,4);
     statusBar()->addWidget(statusLabelSecond,4);
-    //statusBar()->addWidget(statusLabelThird,2);
     statusBar()->addWidget(win,3);
     statusBar()->addWidget(win2,3);
-
 
 
     initAudioInput();
@@ -599,33 +584,21 @@ void MainWindow::createUI()
     else  if (CONF_PARAM("pannels")=="oneline")  //classic is banned
     {       
         GPannel *pan1=new GNumPannel();
-        //GPannel *pan2=new GMovePannel(); //for refact future //make too toolbars and tool bar break
         GPannel *pan3=new GEditPannel();
-        //GPannel *pan4=new GClipboardPannel(1,2,3);
-        //GPannel *pan5=new GBeatPannel();
         GPannel *pan6=new GNotePannel();
         GPannel *pan7=new GTrackNewPannel();
-        //GPannel *pan8=new GBarPannel();
         GPannel *pan9=new GUserPannel(1,2,3);
 
         dock5 = createToolDock("num / move",pan1);
-        //dock6 = createToolDock("move",pan2);
         dock6 = createToolDock("edit / clipboard",pan3);
-        //dock7 = createToolDock("clip",pan4);
         dock7 = createToolDock("effects",pan6);
-        //QDockWidget *dock8 = createToolDock("note",pan6);
         dock8 = createToolDock("track / bar",pan7);
-        //QDockWidget *dock10 = createToolDock("bar",pan8);
         dock9 = createToolDock("menu",pan9);
 
         tabifyDockWidget(dock9,dock5);
-         tabifyDockWidget(dock9,dock6);
-          tabifyDockWidget(dock9,dock7);
-           tabifyDockWidget(dock9,dock8);
-
-
-
-
+        tabifyDockWidget(dock9,dock6);
+        tabifyDockWidget(dock9,dock7);
+        tabifyDockWidget(dock9,dock8);
     }
 
 
@@ -654,14 +627,6 @@ void MainWindow::recreateUI()
     removeDockWidget(dock8);
     removeDockWidget(dock9);
 
-    /*
-    delete dock5;
-    delete dock6;
-    delete dock7;
-    delete dock8;
-    delete dock9;
-    */
-
     dock5->deleteLater();
     dock6->deleteLater();
     dock7->deleteLater();
@@ -669,11 +634,11 @@ void MainWindow::recreateUI()
     dock9->deleteLater();
 
 
-    dock5=0;
-    dock6=0;
-    dock7=0;
-    dock8=0;
-    dock9=0;
+    dock5 = nullptr;
+    dock6 = nullptr;
+    dock7 = nullptr;
+    dock8 = nullptr;
+    dock9 = nullptr;
 
 
 
@@ -786,19 +751,14 @@ void MainWindow::resizeEvent([[maybe_unused]]QResizeEvent* event)
 
     if (geometry().width() < geometry().height())
     {
-        //menuToolBar->set
-        //hideA1->setVisible(false);
         hideA2->setVisible(false);
         hideA3->setVisible(false);
-        //hideA4->setVisible(false);
         hideA5->setVisible(false);
     }
     else
     {
-        //hideA1->setVisible(true);
         hideA2->setVisible(true);
         hideA3->setVisible(true);
-        //hideA4->setVisible(true);
         hideA5->setVisible(true);
     }
 }
@@ -965,36 +925,6 @@ void MainWindow::actionNow(QAction *action)
   if (textOut.size()>0)
     qDebug() <<"Action now trig: "<<textOut.toStdString().c_str();
 
-/* fixed:
-  //bug
-  if (textOut==CONF_PARAM("TrackView.playMidi").c_str())
-  {
-
-     keyMute.lock();
-     static clock_t lastClick = 0;
-     clock_t now = getTime();
-
-     clock_t diff = now-lastClick;
-
-
-
-     qDebug()<<"Press on play last dif"<<diff);
-     //hotfix:
-
-     if (lastClick)
-         if (diff < 1000)
-         {
-             qDebug() << "Too short";
-         }
-
-     //if (CONF_PARAM("crashOnPlayHotFix")=="1")
-       //thread()->msleep(1000);
-
-    //thread()->msleep(1000); //check
-
-     lastClick = now;
-     keyMute.unlock();
-  }*/
 
   if (textOut=="tab")
   {
@@ -1304,24 +1234,11 @@ void MainWindow::actionNow(QAction *action)
       return;
   }
 
-  //int viewBeforeRun = getCurrentViewType();
-
-  //MAIN HANDLING OF KEY EVENTS THROUGH ALL THE GVIEWs
-
   {
-
-
-     // keyMute.lock();
-
-
       if (textOut.size() > 0)
         center->pushForceKey(textOut.toStdString());
-
-
-      //keyMute.unlock();
   }
-  //==================================================
-  ///MAIN HANDLING
+
 
   update();
 }
@@ -1344,7 +1261,6 @@ void MainWindow::moveEvent(QMoveEvent *ev)
 
         dock->setGeometry(newDX,newDY,750,110);
     }
-    //dock->setGeometry(this->pos().x()+50,this->pos().y()+390,750,110);
 }
 
 
@@ -1363,9 +1279,7 @@ void MainWindow::setStatusBarMessage(int index, std::string text, int timeOut)
        statusLabelSecond->setText(uniText);
    if (index==3)
    {
-       //missing third one
        qDebug()<<"No 3rd status label now!!";
-    //   statusLabelThird->setText(uniText);
    }
 
 
@@ -1373,7 +1287,6 @@ void MainWindow::setStatusBarMessage(int index, std::string text, int timeOut)
 
 MainWindow::~MainWindow()
 {
-   //d el ete u i;
 }
 
 
@@ -1381,24 +1294,14 @@ void MainWindow::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
-
     QFont defaultFont("Times");//arial-9
     defaultFont.setPixelSize(14);
-    //defaultFont.setWeight();
     painter.setFont(defaultFont);
 
     if (getChild()) {
         //,CONF_PARAM("colors.background")
         //painter.fillRect(0,0,width(),height()); //TODO
     }
-    else {
-
-    }
-
-
-    //painter.drawImage(0,0,"bg"); //TODO
-    //painter.changeColor(CONF_PARAM("colors.default"));//TODO
-
 
     double scaleCoef = AConfig::getInstance()->getScaleCoef();
 
@@ -1411,12 +1314,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     if (getChild())
     getChild()->draw(&painter);
 
-    ///////////////////////////////////////
-
-
-
 }
-
 
 
 
@@ -1468,8 +1366,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *mEvent)
 
 void MainWindow::keyPressEvent ( QKeyEvent * event )
 {
-    //if (center)
-       // center->keyPressEvent(event);
 
     int value = event->key();
     char key = (char)value;
@@ -1482,12 +1378,6 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
     singleKey = c_style;
 
 
-
-    //if (value==Qt::Key_Back)
-    //    singleKey = "backview";
-
-
-    //no escape no more
     if (value == Qt::Key_Right)
          singleKey =">>>";
     else if (value == Qt::Key_Left)
@@ -1510,8 +1400,6 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
         singleKey = "ins";
 
 
-    //INSERT
-
 
     if (event->modifiers() & Qt::ControlModifier)
         singleKey = std::string("ctrl+") + singleKey;
@@ -1521,10 +1409,6 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
 
     if (event->modifiers() & Qt::ShiftModifier)
         singleKey = std::string("shift+") + singleKey;
-
-    //QString titileNow(singleKey.c_str());
-    //this->setWindowTitle(titileNow);
-     //repaint();
 
 
     if (center)
@@ -1538,16 +1422,9 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
 }
 
 
-//-------------------------Touch handle-------------------------------------------
-/*void MainWindow::handlePanelAction(int action) // int row
-{
-
-}*/
 
 void MainWindow::mousePressEvent( QMouseEvent * event )
 {
-    //if (center)
-       // center->mousePressEvent(event);
 
     int xPress = event->localPos().x(); //event->globalX();
     int yPress = event->localPos().y(); //event->globalY();
@@ -1564,27 +1441,13 @@ void MainWindow::mousePressEvent( QMouseEvent * event )
 
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
-
-        //stringE xtended sX;
-        //sX<<"x="<<xPress<<"; y="<<yPress;
-
-        //this->setWindowTitle(sX.c_str());
-        // if (getChild())
-        //getChild()->onclick(xPress,yPress);
     }
-
-    //may be not always??
 
 }
 
 
 void MainWindow::mouseDoubleClickEvent( QMouseEvent * event )
 {
-    //if (center)
-        //center->mouseDoubleClickEvent(event);
-
-    //calculate button position
-    //push to touch function
 
    if(event->buttons()&Qt::LeftButton)
    {
@@ -1637,9 +1500,6 @@ void MainWindow::on_actionExit_triggered()
 
 bool MainWindow::gestureEvent(QGestureEvent *event)
 {
-   // std::stringstream  sX;
-
-    //if (event-)
 
     if (QGesture *pinch = event->gesture(Qt::PinchGesture))
     {
@@ -1677,33 +1537,10 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
                    update();
            }
 
-
-           if ((nowScale >= 0.5) && (nowScale <= 5.0))
-           {
-               /*
-               GView *gview = getChild();
-               MainView *mv = dynamic_cast<MainView*>(gview);
-
-               if (mv)
-               {
-                   gview = mv->getCurrenView();
-                   ConfigView *cView = dynamic_cast<ConfigView*>(gview);
-
-                   if (cView != 0)
-                   {
-                        AConfig::getInstance()->setScaleCoef(nowScale);
-                        update();
-                   }
-               }
-               */
-           }
-
         }
     }
 
 
-
-   // sX << "gestureEvent():" << event->gestures().size();
 
     if (QGesture *swipe = event->gesture(Qt::SwipeGesture))
     {
@@ -1723,22 +1560,10 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
         }
     }
 
-    if(QGesture *tap = event->gesture(Qt::TapGesture))
-    {
-        //sX <<"Tap ";
-        //QTapGesture *tapGesture = static_cast<QTapGesture*>(tap);
-        //sX<<tapGesture->position().x()<<" "<<tapGesture->position().y();
-
-    }
 
     if (QGesture *tapNhold = event->gesture(Qt::TapAndHoldGesture))
     {
-        //sX <<"Tap and hold "<< tapNhold;
-
-
         QTapAndHoldGesture *tapGest = dynamic_cast<QTapAndHoldGesture*>(tapNhold);
-
-        //if(tapGest->state() == Qt::GestureFinished)
 
         {
             if (CONF_PARAM("tapAndHoldCopy")=="1")
@@ -1747,61 +1572,14 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
             qDebug()<<"Tap and hold x="<<tapGest->position().x()<<"; y="
                  <<tapGest->position().y();
 
-            //QTapAndHoldGesture *tap2 = static_cast<QTapAndHoldGesture *>(tapNhold);
-            //sX<<tap2->position.x()<<" "<<tap2->position.y();
-
             if (center)
-            center->ondblclick(tapGest->position().x(),tapGest->position().y());
-            //not sure but why no
+                center->ondblclick(tapGest->position().x(),tapGest->position().y());
 
             event->accept();
             }
         }
     }
 
-    if (QGesture *pan = event->gesture(Qt::PanGesture))
-    {
-        /*
-        QPanGesture *panGesture = static_cast<QPanGesture*>(pan);
-        //panGesture->
-        sX <<"Pan gesture "<<panGesture->offset().x()<<" "
-             <<panGesture->offset().y();
-
-        int absX = panGesture->offset().x();
-        int absY = panGesture->offset().y();
-
-        if (absX < 0) absX *= -1;
-        if (absY < 0) absY *= -1;
-
-        if (panGesture->state() == Qt::GestureFinished)
-        {
-            if (absX > absY)
-            {
-                //horizontal offset
-                 if (getChild())
-                getChild()->ongesture(panGesture->offset().x(), true);
-            }
-            else
-            {
-                //vertical offset
-                 if (getChild())
-                getChild()->ongesture(panGesture->offset().y(), false);
-            }
-
-            update();
-        }
-        */
-    }
-
-    //setWindowTitle(sX.c_str());
-
-
-    /*
-    else if (QGesture *pan = event->gesture(Qt::PanGesture))
-        std::cout << "Pan"; //panTriggered(static_cast<QPanGesture *>(pan));
-    if (QGesture *pinch = event->gesture(Qt::PinchGesture))
-        std::cout << "Pinch"; //pinchTriggered(static_cast<QPinchGesture *>(pinch));
-    */
 
     return true;
 }
@@ -1813,12 +1591,9 @@ bool MainWindow::event(QEvent *event)
     return QWidget::event(event);
 }
 
-///////////////Audio inputs///////////////////////////////////
-/// \brief MainWindow::startAudioInput
-///
-///
 
-const int BufferSize = 4096;
+
+//const int BufferSize = 4096;
 
 AudioInfo::AudioInfo(const QAudioFormat &format, QObject *parent)
     :   QIODevice(parent)
@@ -1897,28 +1672,14 @@ qint64 AudioInfo::readData(char *data, qint64 maxlen)
 qint64 AudioInfo::writeData(const char *data, qint64 len)
 {
 
-        //int audioLen = len;
-
-        //static int portionCounter=0;
-        //++portionCounter;
-
         collector += QByteArray(data,len);
 
-
-        //Here is place for tuner
         static int lastSize = 0;
-
 
         if (collector.size() - lastSize > 4100)
         {
 
             lastSize = collector.size();
-            //if it does slows anything - then use it less freq
-            //may be also have a param
-            ///bool tuner;
-
-
-
             short *sourceData = (short*)collector.data();
 
             int fullSize = collector.size()/2;
@@ -1938,13 +1699,6 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
             std::vector<LocalFreqTable::LFTvote> *votes = localFreq.getRezultVotes();
 
             double freq = (*votes)[0].rFreq;
-            //using pointer from outside we will
-            //set found freq later
-
-            ///tuner->setFreq(freq);
-            //Then - the tuner sets the value into the
-            //GLabel - and after it pushes repaint request
-
             TunerInstance::getInst()->setFreq(freq);
         }
 
@@ -1961,17 +1715,6 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
 
             if (f.open(QIODevice::Append))
             {
-                ///GOOD THING _ TO COMPRESS _ BUT NOW WE USE WAY MORE SIMPLE
-                /*//
-                QByteArray fromInt;
-                fromInt = QByteArray::number(compressedSize);
-
-                f.write(fromInt);
-                f.write(compress);
-
-                qDebug() << "Compressed wroten: "<<compressedSize);
-
-                //*/
                 f.write(collector);
                 f.flush();
                 f.close();
@@ -1981,18 +1724,13 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
 
 
             collector.clear();
-
-            //ATTENTION HERE _ IT COULD BE USED FOR paid version - just skip from here
-
         }
 
     int fullLen = collector.size();
     int cutLen = len;
 
-    //exceed log
-    //if (0)
+
     qDebug() << "Wroten audio data "<<cutLen<<"; in bufer "<<fullLen;
-    //emit update();
     return len;
 }
 /// AUDIO INPUT FINISHED
@@ -2003,8 +1741,6 @@ AudioSpeaker::AudioSpeaker([[maybe_unused]]const QAudioFormat &format,
     :   QIODevice(parent)
     ,   m_pos(0)
 {
-    //if (format.isValid())
-        //generateData(format, durationUs, sampleRate);
 }
 
 AudioSpeaker::~AudioSpeaker()
@@ -2123,10 +1859,6 @@ void MainWindow::initAudioInput()
     //connect(audioInfo, SIGNAL(update()), SLOT(refreshDisplay()));
     audioInput = QWIDGET_ALLOC QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
 
-    ///audioInput->setNotifyInterval(100);
-    ///audioInput->setBufferSize();
-
-    //m_volumeSlider->setValue(m_audioInput->volume() * 100);
 }
 
 
@@ -2207,15 +1939,9 @@ void MainWindow::stopAudioOutput()
 
 void MainWindow::startAudioInput()
 {
-    ///QString defaultRecFile = QString(getTestsLocation()) + QString("record.graw");
-
-    ///if (QFile::exists(defaultRecFile))
-    ///        QFile::remove(defaultRecFile);
 
     audioInfo->collector.clear();
 
-
-    //audio_qDebug()<<"Audio input started";
     audioInfo->start();
     audioInput->start(audioInfo);
 
@@ -2223,7 +1949,7 @@ void MainWindow::startAudioInput()
 
 void MainWindow::stopAudioInput()
 {
-    //audio_qDebug()<<"Audio input stopped";
+
     audioInfo->stop();
     audioInput->stop();
 
@@ -2233,12 +1959,10 @@ void MainWindow::stopAudioInput()
     std::string time = st.toStdString();
     size_t pos1 = time.find(":",0);
     size_t pos2 = time.find(":",pos1+1);
-    //size_t pos3 = time.find(":",pos2+1);
 
     const std::string rep = ".";
     time.replace(pos1,1,rep);
     time.replace(pos2,1,rep);
-    //time.replace(pos3,1,rep);
 
     std::string saveName = "record.graw";
 
@@ -2249,20 +1973,16 @@ void MainWindow::stopAudioInput()
     bool ok=false;
     QString inputedText = QInputDialog::getText(0,"Input record name","Input record name:",QLineEdit::Normal,recordNameV,&ok);
 
-    if (ok)
-    {
+    if (ok) {
         saveName = inputedText.toStdString();
         if (saveName.find(".graw")==std::string::npos)
             saveName += ".graw";
     }
-    else
-    {
-        //default
+    else {
         //ask do you want to delete?
     }
 
 
-    //save the rest of file
     ///QByteArray compress = qCompress(audioInfo->collector,7);
     QString defaultRecFile = QString(getTestsLocation()) + QString(saveName.c_str());
     QFile f; f.setFileName(defaultRecFile);
@@ -2270,16 +1990,6 @@ void MainWindow::stopAudioInput()
 
     if (f.open(QIODevice::Append))
     {
-        /*
-        QByteArray fromInt;
-        fromInt = QByteArray::number(compressedSize);
-
-        f.write(fromInt);
-        f.write(compress);
-        */
-
-        ////qDebug() << "Compressed wroten: "<<compressedSize;
-        ///
 
         qDebug() << "Collector size was "<<audioInfo->collector.size();
 
@@ -2298,8 +2008,6 @@ void MainWindow::stopAudioInput()
     startAudioOutput(saveName);
 }
 
-///// ///////////////////////////////
-//==================================panels===============================================
 
 
 QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::string confValue)
@@ -2326,32 +2034,24 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
 
     if (imageIcon.isNull())
-    {
         qDebug() << "Image empty";
-    }
     else
     {
         if (CONF_PARAM("invertImages")=="1")
-        {
             imageIcon.invertPixels();
-        }
     }
 
     //no invert while
 
     QImage *imgs =(QImage*)AConfig::getInstance()->imageLoader.getImage(button);
     QPixmap result;
-    if (imgs)
-    {
+    if (imgs) {
         QImage scI = *imgs;
-    QPixmap newPix(72,72);
-    result = newPix.fromImage(scI);
+        QPixmap newPix(72,72);
+        result = newPix.fromImage(scI);
     }
-    //
-    //satan mode
-    //newPix.fill(QColor("red"));
-    QIcon iconNew(result); //newPix);
 
+    QIcon iconNew(result);
 
 
     QString actionName = button.c_str();
@@ -2411,25 +2111,11 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     {
         QMenu *menu = QWIDGET_ALLOC QMenu(toolBar);
 
-        //classic of dock
-        //QAction *pannelType = QWIDGET_ALLOC QAction("docked",menu);
-        //pannelType->setCheckable(true);
-        //menu->addAction(pannelType);
-
         QMenu *docksMenu = QWIDGET_ALLOC QMenu("docks",menu);
         docksMenu->addAction("tab");
         docksMenu->addAction("track");
         docksMenu->addAction("effects");
         docksMenu->addAction("clipboard");
-
-
-        //docksMenu->addAction("set position");
-
-
-        //QAction *moveType = QWIDGET_ALLOC QAction("movable",docksMenu);
-        //moveType->setCheckable(true);
-        //docksMenu->addAction(moveType);
-
         menu->addMenu(docksMenu);
 
         QMenu *pans = QWIDGET_ALLOC QMenu(menu);
@@ -2450,15 +2136,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
         pannelsMenu = m6;
         menu->addMenu(pannelsMenu)->setIconText("menu");
-
-
-
-        //hide show dock pannels by one!!
-
         act->setMenu(menu);
-
-
-
     }
 
     if (button=="pattern")
@@ -2561,7 +2239,6 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
             counter2=-1;
             wi=0;
             return;
-
         }
     }
 
@@ -2569,9 +2246,7 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
     if (wi == 0)
     {
         wi = QWIDGET_ALLOC QWidget(dock);
-        //wi->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         dock->setWidget(wi);
-
         wi->setGeometry(0,0,700,100);
     }
 
@@ -2580,9 +2255,6 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
     iconPlace = ":/icons/"+ button + std::string(".png");
     QIcon icon(iconPlace.c_str());
     but->setIcon(icon);
-
-    //QAction *act = QWIDGET_ALLOC QAction(icon,confValue.c_str(),wi);
-
 
     QString actionName = button.c_str();
     if (confValue.size())
@@ -2593,8 +2265,6 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
     but->setAccessibleName(confValue.c_str());
     but->setIconSize(QSize(50,50));
 
-
-    //but->addAction(new QAction(confValue.c_str(),dock));
 
     mainWindow->connect(but,SIGNAL(triggered(QAction*)),
                   SLOT(actionNow(QAction*)));

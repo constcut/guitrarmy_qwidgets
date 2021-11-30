@@ -124,10 +124,6 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
 void CenterView::ViewWasChanged()
 {
 
-    //lastCheckedView; //is prev
-    //could be used to set invisible old
-
-    //SCROLL UP
     if (fatherScroll)
         fatherScroll->ensureVisible(0,0);
 
@@ -155,26 +151,9 @@ void CenterView::ViewWasChanged()
         }
     } //fix for old tab view
 
-    /*
-    for (size_t i = 0 ; i < 16; ++i)
-    {
-        std::map<int, std::vector<QWidget*> >::iterator itF = uiWidgets.find(i);
-        if (itF != uiWidgets.end())
-        {
-            std::vector<QWidget*> localWidgets = itF->second;
-            for (size_t j = 0; j < localWidgets.size(); ++j)
-            {
-                if (i != VType)
-                    localWidgets[j]->setVisible(false);
-                else
-                  localWidgets[j]->setVisible(true);
-            }
-        }
-    }*/
 
-    //if (fatherScroll)
-        requestHeight(250);
-        requestWidth(650);
+    requestHeight(250);
+    requestWidth(650);
 
 
     std::string tipLine;
@@ -806,7 +785,7 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
     for (size_t i = 0; i < 16; ++i)
     uiWidgets[i] = std::vector<QWidget*>();
 
-    tabCommands = {
+    tabCommands = { //TODO move into config
         {"set till the end", TabCommand::SetSignTillEnd},
         {"save as",TabCommand::SaveAs},
         {"mute", TabCommand::Mute},
@@ -835,7 +814,7 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
         {"tune",  TabCommand::Tune}
     };
 
-    trackCommands = {
+    trackCommands = { //TODO move into config
         {"playFromStart", TrackCommand::PlayFromStart},
         {"gotoStart", TrackCommand::GotoStart},
         {"set for selected", TrackCommand::SetSignForSelected},
@@ -963,105 +942,7 @@ void CenterView::setStatusBarMessage(int index, std::string text, int timeOut)
    }
 }
 
-/*
-void checkBase()
-{
 
-    if (CONF_PARAM("onloadBaseCheck")=="1")
-    {
-
-        return; //release version
-        QString testsLoc = getTestsLocation() + QString("gb");//QString("gtp")
-        //
-        QDir    curDir(testsLoc);
-
-        QStringList filters;
-        QString filter = "*";  filters.push_back(filter); //all files yet, then refact good
-        QStringList files = curDir.entryList(filters,QDir::Files | QDir::NoSymLinks);
-        //QDir::Dirs  - search also for sub directories
-        QStringList outputList;
-
-        std::map<std::string,std::string> mdCheckList
-
-
-
-        for (size_t i = 166156; i < files.size(); ++i)
-        {
-            QString fileName = testsLoc +QString("/")+ files[i];
-
-
-            QFile baseFile(fileName);
-            baseFile.setFileName(fileName);
-            if (baseFile.open(QIODevice::ReadOnly) == true)
-            {
-                QByteArray wholeFile = baseFile.readAll();
-                baseFile.close();
-
-                int fileSize = wholeFile.size();
-
-                QCryptographicHash mdfiver(QCryptographicHash::Md5);
-
-                mdfiver.reset();
-                mdfiver.addData(wholeFile);
-                QString mdsum = mdfiver.result().toHex();
-
-                ///+testsLoc
-                  sX;
-
-                int fileType = sayType(wholeFile);
-
-
-                std::string md5Std = mdsum.toStdString();
-
-
-
-                if (mdCheckList.find(md5Std)!=mdCheckList.end())
-                {
-                    qDebug() << "ATTENTION MD5 is same !!!";
-                }
-                else
-                {
-                    std::string fnStd = files[i].toStdString();
-                    mdCheckList.insert(std::pair<std::string,std::string>
-                                       (md5Std,fnStd));
-                }
-
-
-                sX<<(i+1)<<" "<<fileName.toStdString()<<" "<<fileSize<<" "<<mdsum.toStdString()<<" "<<fileType<<"\n";
-                //missing file type gtp gmy ptb etc
-
-                qDebug()<<sX.c_str();
-                qDebug()<<"+";
-                QString newLine = sX.c_str();
-                outputList.push_back(newLine);
-
-                if ((fileType>=3) && (fileType <=5))
-                {
-
-                    GTabLoader tabLoader;
-
-                    std::string fnStd = fileName.toStdString();
-
-                    if (tabLoader.open(fnStd) == true)
-                    {
-                        auto& tab = tabLoader.getTab();
-                        qDebug() << "Tab bpm "<<tab->getBPM();
-                    }
-
-
-                    //gtps
-                    //slow and stupid but noe exceed code rigt now
-                }
-            }
-            else
-            {
-                qDebug() <<"ERROR oppening file "<<fileName.toStdString().c_str();;
-            }
-
-        }
-    }
-
-} */
 
 void CenterView::pushForceKey(std::string keyevent)
 {
@@ -1476,8 +1357,6 @@ void CenterView::paintEvent(QPaintEvent *event)
         }
     }
 
-    if (ownChild==0)
-        painter.drawText(10,10,"DOUBLE CLICK TO OPEN TRACK (ON PREVIEW OR BAR NUMBER)");
 
 
     if (getChild())
@@ -1736,16 +1615,10 @@ checkView();
 
 bool CenterView::gestureEvent(QGestureEvent *event)
 {
-    //stringEx tended  sX;
-
-
-
     //if (QGesture *swipe = event->gesture(Qt::SwipeGesture))
     //if (QGesture *tap = event->gesture(Qt::TapGesture))
     //if (QGesture *tapNhold = event->gesture(Qt::TapAndHoldGesture))
     //if (QGesture *pan = event->gesture(Qt::PanGesture))
-
-
     return true;
 }
 
