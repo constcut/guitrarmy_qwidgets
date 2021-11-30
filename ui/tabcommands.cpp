@@ -128,7 +128,20 @@ void saveRawAudio(QByteArray& ba, QString location) {
 }
 
 
+std::chrono::steady_clock::time_point lastCall = std::chrono::steady_clock::now();
+
 void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size_t& cursorBeat, size_t cursor, Track* pTrack, MasterView* mw) { //TODO объединить - воспроизведение должно быть из одного источника запускаться
+
+    auto newCall = std::chrono::steady_clock::now();
+    auto duration = newCall - lastCall;
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    lastCall = newCall;
+
+    if (ms < 200) {
+        //qDebug() << "Skipped continued press " << ms;
+        return;
+    }
+
 
     if (tabParrent->getPlaying()==true) {
         if (localThr)

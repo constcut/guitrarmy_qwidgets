@@ -370,7 +370,8 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
 
     if (localThr) {
         localThr->requestStop();
-        localThr->wait();
+        //localThr->wait();
+        finishPool.push_back(std::move(localThr)); //Consumes memory TODO checker to delete finished
     }
 
     localThr = std::make_unique<ThreadLocal>();

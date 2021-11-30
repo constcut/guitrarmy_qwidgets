@@ -533,7 +533,8 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 
     if (localThr) {
         localThr->requestStop();
-        localThr->wait();
+        //localThr->wait();
+        finishPool.push_back(std::move(localThr));
     }
 
     localThr = std::make_unique<ThreadLocal>();

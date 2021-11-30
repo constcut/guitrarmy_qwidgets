@@ -20,6 +20,7 @@ protected:
 
     TabView *tabParrent;
     std::unique_ptr<ThreadLocal> localThr; //Подумать над хранением, возможно удастся спрятать?
+    std::vector<std::unique_ptr<ThreadLocal>> finishPool;
 
     ViewPull barsPull;
 

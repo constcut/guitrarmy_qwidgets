@@ -30,6 +30,7 @@ protected:
 
 
     std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
+    std::vector<std::unique_ptr<ThreadLocal>> finishPool;
 
 public:
 
