@@ -47,7 +47,7 @@ public:
     qint32 getSize() { return header.size; }
 
     bool read(std::string fileName) {
-        std::ifstream file(fileName);
+        std::ifstream file(fileName, std::ios::binary);
         bool result = file.is_open();
 
         if (result==false)

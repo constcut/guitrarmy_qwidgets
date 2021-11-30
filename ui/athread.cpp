@@ -101,7 +101,7 @@ void PlayAnimationThr::threadRun()
                 }
 
                 if (beatWait > 0)
-                    sleepThread(beatWait); //Thread may have issues TODO review stop when waits
+                    sleepThread(beatWait); //Conditional variables
 
                 if (pleaseStop) {
                    status = 1;

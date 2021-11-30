@@ -114,7 +114,7 @@ void MainView::keyevent(std::string press)
                 std::string gfileName =  std::string(getTestsLocation())  + "first.gmy";
                 if (QFile::exists(gfileName.c_str()))
                 {
-                    std::ifstream file(gfileName.c_str());
+                    std::ifstream file(gfileName.c_str(), std::ios::binary);
 
                     auto newTab = std::make_unique<Tab>();
                     gmyFile.loadFromFile(file,newTab.get());
@@ -515,7 +515,7 @@ void TestsView::openTestNumber(int num) {
 #else
      std::string fn = std::string("C:\\dev\\guitrarmy_qwidgets\\own_tests\\") + buttons[num].getText().c_str() + ".gp4";
 #endif
-        std::ifstream importFile(fn);
+        std::ifstream importFile(fn, std::ios::binary);
          if (importFile.is_open() == false)
              std::cout << "Failed to open";
         auto forLoad = std::make_unique<Tab>();

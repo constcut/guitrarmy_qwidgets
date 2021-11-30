@@ -10,7 +10,7 @@
 //TODO move to gtp files
 bool GTabLoader::open(std::string fileName)
 {
-    std::ifstream file(fileName);
+    std::ifstream file(fileName, std::ios::binary);
 
     if (file.is_open() == false) {
         qDebug() << "Failed to open file from loader";

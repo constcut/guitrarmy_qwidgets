@@ -209,7 +209,7 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
     //std::cout << "All information about readin is in log"<<std::endl;
 
     auto f = exportMidi(&tab);
-    std::ofstream midiOut(outFileName);
+    std::ofstream midiOut(outFileName, std::ios::binary);
     size_t bytesWritten = f->writeStream(midiOut);
 
     qDebug() << "Bytes midi written " << bytesWritten << " to " << outFileName.c_str();
@@ -242,7 +242,7 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     tab.connectTracks(); //new for chains refact
 
     auto f = exportMidi(&tab);
-    std::ofstream midiOut(outFileName);
+    std::ofstream midiOut(outFileName, std::ios::binary);
     size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
@@ -275,7 +275,7 @@ bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
     tab.connectTracks(); //new for chains
 
     auto f = exportMidi(&tab);
-    std::ofstream midiOut(outFileName);
+    std::ofstream midiOut(outFileName, std::ios::binary);
     size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;

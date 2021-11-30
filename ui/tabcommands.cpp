@@ -266,7 +266,7 @@ void saveAsFromTrack(TabView* tabParent) {
     QString saveFileName = fd->getSaveFileName(0,"Save tab as",dir.c_str(),"Guitarmy files (*.gmy)");
     GmyFile gmyFile;
     std::string  gfileName = saveFileName.toStdString();
-    std::ofstream file(gfileName);
+    std::ofstream file(gfileName, std::ios::binary);
     gmyFile.saveToFile(file,tabParent->getTab().get());
     return;
 }
@@ -420,7 +420,7 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
         auto generatedMidi = exportMidi(pTab,shiftTheCursor);
         MidiEngine::closeDefaultFile();
         std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-        std::ofstream outFile2(fullOutName);
+        std::ofstream outFile2(fullOutName, std::ios::binary);
         if (!outFile2.is_open())
             qDebug() << "Failed to open out file :(";
         else
@@ -449,7 +449,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
 
     MidiEngine::closeDefaultFile();
     std::string fullOutName = getTestsLocation() + std::string("midiOutput.mid");
-    std::ofstream outFile2(fullOutName);
+    std::ofstream outFile2(fullOutName, std::ios::binary);
 
     if (! outFile2.is_open()){
         qDebug() << "Failed to open out file :(";
