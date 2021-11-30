@@ -3,7 +3,7 @@
 
 #include <QMediaPlayer>
 
-
+#include <sstream>
 
 #include <QDebug>
 
@@ -99,7 +99,7 @@ void MidiEngine::openDefaultFile()
  std::stringstream command;
      command<<"open \""<<getInvertedLocation()<<"midiOutput.mid\" type sequencer alias gMIDI";
 
-    mciSendStringA(.str().c_str(),0,0,0);
+    mciSendStringA(command.str().c_str(),0,0,0);
 #endif
 }
 
@@ -245,9 +245,9 @@ void MidiEngine::sendSignalLong(MidiSignal *signal)
 
 void Midi_Callback_Win(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 {
-    qDebug() << "Midi cb begin "<<(ul)dwUser;
+    qDebug() << "Midi cb begin "<<dwUser;
     MidiEngine::sendSignalShortWin(dwUser);
-    qDebug() << "Midi cb end "<<(ul)dwUser;
+    qDebug() << "Midi cb end "<<dwUser;
 }
 
 
@@ -276,7 +276,7 @@ void MidiEngine::sendSignalShortDelay( int msdelay, std::uint8_t status, int byt
         signal +=byte2<<16;
 
 
-    qDebug()<<"Pushing signal "<<(ul)signal<<"for ms delay "<<msdelay;
+    qDebug()<<"Pushing signal "<<signal<<"for ms delay "<<msdelay;
     qDebug()<<"Sinal parts "<<byte1<<" "<<byte2<<"; "<<status;
 
     if (timeSetEvent(msdelay, wTimerRes, Midi_Callback_Win,signal,TIME_ONESHOT) ==  0)
