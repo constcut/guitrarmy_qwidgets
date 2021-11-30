@@ -98,7 +98,7 @@ public:
        std::uint8_t postFix;
     };
 
-    EffectsPack effPack;
+    ABitArray effPack;
 
     Beat &operator=(Beat *another)
     {
@@ -240,7 +240,7 @@ protected:
     std::uint8_t getDotted() { return dotted; }
 
     void setEffects(std::uint8_t eValue);// { effects = eValue; }
-    EffectsPack getEffects();// { return effects; }
+    ABitArray getEffects();// { return effects; }
 
     //TREMOLO missing
 

@@ -1,40 +1,6 @@
 #include "effects.h"
 //.....................Effects.........................................
 
-void EffectsPack::addPack(std::uint8_t index, std::uint8_t type, void *point)
-{
-    Package pack;
-    pack.setPointer(point);
-    pack.setType(type);
-    packMap[index] = pack;
-}
-
-
-
-Package *EffectsPack::getPack(std::uint8_t index)
-{
-    std::map<std::uint8_t,Package>::iterator itFind = packMap.find(index);
-    if (itFind != packMap.end())
-    {
-       Package *pointer = &(itFind->second);
-       return pointer;
-    }
-    return 0;
-}
-
-void EffectsPack::mergeWith(EffectsPack &addition)
-{
-    for (std::map<std::uint8_t,Package>::iterator itEff=addition.packMap.begin();
-         itEff!=addition.packMap.end(); ++itEff)
-    {
-        //check for overwite attention
-        packMap[itEff->first]=itEff->second;
-    }
-
-    bits |= addition.bits;
-}
-/////////////////Bit array and Package/////////////////////////////////
-
 ABitArray::ABitArray():bits(0)
 {
 }
@@ -122,25 +88,4 @@ bool ABitArray::empty()
     return bits == 0;
 }
 
-
-///////////PAck//////////////////////////////
-
-Package::Package():type(0),point(0){}
-
-
-void Package::setType(std::uint8_t newType) {
-    type = newType;
-}
-
-std::uint8_t Package::getType() {
-    return type;
-}
-
-void Package::setPointer(void *newPoint) {
-    point = newPoint;
-}
-
-void *Package::getPointer() { //TODO
-    return point;
-}
 
