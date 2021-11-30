@@ -807,7 +807,7 @@ void Track::saveFromTrack() {
     std::cerr << "Test loc " << getTestsLocation() << std::endl;
     std::ofstream file(gfilename.c_str());
     Tab* pTab =  parent; //TODO инкапсулировать в обычный класс, а не шаблон
-    gmyFile.saveToFile(&file, pTab);
+    gmyFile.saveToFile(file, pTab);
     //TODO just get parent tab
     file.close();
     return;

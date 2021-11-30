@@ -32,7 +32,7 @@ bool GTabLoader::open(std::string fileName)
 
             tab = std::make_unique<Tab>();
 
-            if (gF.loadFromFile(&file,tab.get(),true))
+            if (gF.loadFromFile(file,tab.get(),true))
             {
                 tab->connectTracks();
                 file.close();

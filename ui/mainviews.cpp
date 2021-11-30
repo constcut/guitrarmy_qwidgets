@@ -134,7 +134,7 @@ void MainView::keyevent(std::string press)
                     std::ifstream file(gfileName.c_str());
 
                     auto newTab = std::make_unique<Tab>();
-                    gmyFile.loadFromFile(&file,newTab.get());
+                    gmyFile.loadFromFile(file,newTab.get());
 
                     newTab->connectTracks();
 

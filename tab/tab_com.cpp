@@ -199,7 +199,7 @@ void Tab::gotoBar(size_t pos) {
 void Tab::saveAs(std::string filename) {
     std::ofstream file(filename);
     GmyFile gmyFile;
-    gmyFile.saveToFile(&file, this);
+    gmyFile.saveToFile(file, this);
     file.close();
 }
 

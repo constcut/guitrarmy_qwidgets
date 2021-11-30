@@ -138,17 +138,10 @@ struct BpmWaitNode
 };
 
 
-void PlayAnimationThr::setupValues(Tab *tab_ptr, Track *track_ptr, size_t shiftTheCursor)
+void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor)
 {
-    Tab *tab=(Tab*)tab_ptr; //TODO get rid!
-
-
-    Track *track = (Track*)track_ptr;
     size_t timeLoopLen = track->timeLoop.size();
-
-    //INCREMENTS set OUTSIDE
     int localWait = 0;
-
     std::vector<BpmWaitNode> bpmChangeList;
 
     for (size_t ind = 0 ; ind < tab->timeLine.size(); ++ind) {

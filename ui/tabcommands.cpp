@@ -254,7 +254,7 @@ void saveAsFromTrack(TabView* tabParent) {
     GmyFile gmyFile;
     std::string  gfileName = saveFileName.toStdString();
     std::ofstream file(gfileName);
-    gmyFile.saveToFile(&file,tabParent->getTab().get());
+    gmyFile.saveToFile(file,tabParent->getTab().get());
     return;
 }
 
