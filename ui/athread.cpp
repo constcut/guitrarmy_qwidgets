@@ -33,6 +33,7 @@ void WaveMoveThr::threadRun()
             if(counter%40==0)
                 ++toAdd; //*10
 
+
             *incrementA=*incrementA+toAdd;
             if (*incrementA >= limit)
                 break;
@@ -60,70 +61,82 @@ void PlayAnimationThr::threadRun()
    status = 0;
 
    //while ((*increment +1) < limit)
-   for (size_t i = 0 ; i < waitTimes.size(); ++i)
-   {
-         (*incrementA) = waitIndexes[indexWait];
-         int nowWait = waitTimes[indexWait];
+    for (size_t i = 0 ; i < waitTimes.size(); ++i)
+    {
+        if (pleaseStop) {
+           status = 1;
+           break;
+        }
 
-         if (incrementB)
-            (*incrementB) = 0;
+        (*incrementA) = waitIndexes[indexWait];
+        int nowWait = waitTimes[indexWait];
 
-         if (pleaseStop)
-         {
-             status = 1;
-             break;
-         }
+        if (incrementB)
+        (*incrementB) = 0;
 
-         //sleepThread(nowWait); //msleep(nowWait);
-         callUpdate();
+        if (pleaseStop) {
+            status = 1;
+            break;
+        }
 
+        if (pleaseStop) {
+           status = 1;
+           break;
+        }
 
-         if (beatTimes.size() > i)
-         for(size_t j = 0; j < beatTimes[i].size(); ++j)
-         {
-             int beatWait = beatTimes[i][j];
+        callUpdate();
 
-             nowWait-=beatWait;
-             if (nowWait < 0)
+        if (beatTimes.size() > i)
+            for(size_t j = 0; j < beatTimes[i].size(); ++j)
+            {
+                int beatWait = beatTimes[i][j];
+
+                nowWait-=beatWait;
+                if (nowWait < 0)
                  beatWait += nowWait;
 
-             if (pleaseStop)
-             {
-                 status = 1;
-                 break;
-             }
+                if (pleaseStop) {
+                   status = 1;
+                   break;
+                }
 
-             if (beatWait > 0)
-                sleepThread(beatWait); //Thread may have issues TODO review stop when waits
+                if (beatWait > 0)
+                    sleepThread(beatWait); //Thread may have issues TODO review stop when waits
 
-             (*incrementB) = (*incrementB) +1;
-             callUpdate();
-         }
-         //check for beats times - for cycle
-         //a) sleep each beat
-         //b) move beat cursor
-         //c) update screen
-         //d) decreace nowWait
-         //e) escape nowWaite
+                if (pleaseStop) {
+                   status = 1;
+                   break;
+                }
 
-         if (nowWait>0) {
-             if (incrementB != 0) {
-                (*incrementB) = (*incrementB) - 1;
+                (*incrementB) = (*incrementB) +1;
                 callUpdate();
-             }
-             sleepThread(nowWait);
+            }
+     //check for beats times - for cycle
+     //a) sleep each beat
+     //b) move beat cursor
+     //c) update screen
+     //d) decreace nowWait
+     //e) escape nowWaite
+
+     if (nowWait>0) {
+
+         if (pleaseStop) {
+            status = 1;
+            break;
          }
 
+         if (incrementB != 0) {
+            (*incrementB) = (*incrementB) - 1;
+            callUpdate();
+         }
+         sleepThread(nowWait);
+     }
 
-         //(*increment) + 1; // ++
-         //callUpdate(); //emit updateUI();
-         ++indexWait;
+
+     //(*increment) + 1; // ++
+     //callUpdate(); //emit updateUI();
+     ++indexWait;
    }
-
-   /* //issue with stepback attention debugging
-   if (incrementB != 0)
-    (*incrementB) = (*incrementB) - 1; //step back
-    */
 
    status = 1;
    if (incrementB == 0)

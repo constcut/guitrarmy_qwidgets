@@ -47,7 +47,7 @@ protected:
 
 public:
 
-    void requestStop() { pleaseStop = true; }
+   void requestStop() { pleaseStop = true; }
 
    PlayAnimationThr():incrementA(0),incrementB(0),limit(0),bpm(1),status(0),pleaseStop(false) {}
 
