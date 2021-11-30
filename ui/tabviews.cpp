@@ -409,6 +409,14 @@ void TabView::stopAllThreads()
 
     if (localThr) {
         localThr->requestStop();
+        //localThr->wait();
+    }
+}
+
+
+TabView::~TabView() {
+    if (localThr) {
+        localThr->requestStop();
         localThr->wait();
     }
 }

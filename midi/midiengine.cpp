@@ -29,7 +29,7 @@ MidiEngine *MidiEngine::inst=0;
 
 
 #ifndef WIN32
-std::unique_ptr<QMediaPlayer> midiPlayer;
+QMediaPlayer midiPlayer;
 
 #endif
 
@@ -48,8 +48,8 @@ void MidiEngine::startDefaultFile()
 #else
     //midiPlayer.play();
 
-    if (midiPlayer)
-    midiPlayer->play();
+    //if (midiPlayer)
+    midiPlayer.play();
 
 
 #endif
@@ -64,8 +64,8 @@ void MidiEngine::stopDefaultFile()
 #ifdef WIN32
    mciSendStringA("stop gMIDI",0,0,0);
 #else
-   if (midiPlayer)
-   midiPlayer->stop();
+   //if (midiPlayer)
+   midiPlayer.stop();
 #endif
 
    /*
@@ -84,12 +84,12 @@ void MidiEngine::openDefaultFile()
 #else
     //midiPlayer.setMedia(QUrl::fromLocalFile("/sdcard/p/tests/midiOutput.mid"));
 
-    if (midiPlayer==nullptr)
-        midiPlayer = std::make_unique<QMediaPlayer>();
+    //if (midiPlayer==nullptr)
+        //midiPlayer = std::make_unique<QMediaPlayer>();
 
     std::string command = std::string(getTestsLocation()) + "midiOutput.mid";
     QString playerPath = command.c_str(); // "/sdcard/p/tests/midiOutput.mid";
-    midiPlayer->setMedia(QUrl::fromLocalFile(playerPath));
+    midiPlayer.setMedia(QUrl::fromLocalFile(playerPath));
     return;
 
 #endif

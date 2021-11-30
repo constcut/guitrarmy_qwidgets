@@ -48,7 +48,7 @@ public:
         pan = trackPan.get();
     }
 
-    virtual ~TrackView(){}
+    virtual ~TrackView();
 
     virtual void keyevent(std::string press);
     virtual void onTabCommand(TabCommand command);

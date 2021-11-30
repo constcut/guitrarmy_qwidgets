@@ -1317,7 +1317,7 @@ void MainWindow::actionNow(QAction *action)
 
 
       if (textOut.size() > 0)
-      center->pushForceKey(textOut.toStdString());
+        center->pushForceKey(textOut.toStdString());
 
 
       //keyMute.unlock();

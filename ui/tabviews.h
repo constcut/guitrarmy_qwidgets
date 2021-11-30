@@ -42,6 +42,7 @@ public:
     virtual bool isMovableY() { return true; }
 
     TabView();
+    virtual ~TabView();
 
     std::vector<std::unique_ptr<TrackView>> tracksView;
 

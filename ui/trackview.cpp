@@ -12,6 +12,13 @@ void TrackView::stopThread()
 {
     if (localThr) {
         localThr->requestStop();
+        //localThr->wait();
+    }
+}
+
+TrackView::~TrackView() {
+    if (localThr) {
+        localThr->requestStop();
         localThr->wait();
     }
 }
