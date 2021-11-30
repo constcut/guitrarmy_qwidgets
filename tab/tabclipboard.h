@@ -3,6 +3,9 @@
 
 //first one
 //index clipboard
+
+class Bar;
+
 class AClipboard
 {
 protected:
@@ -12,7 +15,7 @@ protected:
     int n1,m1,k1;
     int n2,m2,k2;
 
-    void *ptr; //TODO rewrite to avoid void ptr
+    Bar* ptr;
 
     static AClipboard *currentClip;
 
@@ -30,7 +33,7 @@ public:
 
 
     void setType(int newType) { type = newType; }
-    //types 0 index bar
+    //types 0 index bar //TODO enum on clipboard an recovery work
     //      1 index beat
     //      2 index bars
     //      3 index beats
@@ -40,8 +43,8 @@ public:
 
     int getType() { return type; }
 
-    void setPtr(void *newPtr) {ptr=newPtr;}
-    void *getPtr(){return ptr;}
+    void setPtr(Bar *newPtr) { ptr=newPtr; }
+    Bar* getPtr() { return ptr; }
 
     void setBeginIndexes(int track, int bar, int beat=-1)
     {

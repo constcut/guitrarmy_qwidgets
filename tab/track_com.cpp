@@ -948,7 +948,7 @@ void Track::clipboardPaste() {
     if (AClipboard::current()->getType() >= 0){
         if (AClipboard::current()->getType()==4) {
             auto addition = std::make_unique<Bar>();
-            Bar *bOrigin=(Bar*)AClipboard::current()->getPtr();
+            Bar *bOrigin = AClipboard::current()->getPtr();
             addition->clone(bOrigin);
             insertBefore(std::move(addition), _cursor);
             connectAll();
