@@ -37,10 +37,11 @@ public:
 
 };
 
+
 class ABitArray // Vector bool?
 {
 protected:
-    size_t bits;
+    uint32_t bits;
 
 public:
 
@@ -62,6 +63,8 @@ public:
 
     void flush();
 
+    void mergeWith(ABitArray& addition);
+
 };
 
 
@@ -79,8 +82,6 @@ public:
 
     //operator +=
     void mergeWith(EffectsPack &addition);
-
-
 
 };
 

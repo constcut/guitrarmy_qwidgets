@@ -94,6 +94,10 @@ void ABitArray::set(std::uint8_t index, bool value)
 
 }
 
+void ABitArray::mergeWith(ABitArray& addition) {
+    bits |= addition.bits;
+}
+
 void ABitArray::logIt()
 {
     //log<<"Output effects bit array "<<bits;
