@@ -1762,6 +1762,7 @@ void CenterView::showConf()
             qs += (*it).first.c_str();
             qs += " = ";
             qs += (*it).second.c_str();
+            qs += "\n";
         }
 
         confEdit->insertPlainText(qs);
