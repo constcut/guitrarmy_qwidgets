@@ -355,10 +355,14 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 }
 
+
+
 ConfigView::ConfigView():GView()
 {
-    configPointer = std::make_unique<AConfig>();
-    auto& confValues = configPointer;
+    AConfig *confValues = new AConfig(); //TODO перенести внутрь
+    connectConfigs(confValues);
+
+    configPointer = confValues;
 
     std::string sP = confValues->logsNames[0] + " " +
         std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
@@ -375,7 +379,10 @@ ConfigView::ConfigView():GView()
 
 void ConfigView::keyevent(std::string press)
 {
-    auto& confValues = configPointer;
+    //if (press == "m")
+        //getMaster()->resetToFirstChild();
+
+    AConfig *confValues = this->configPointer;
 
     if (press == "1")
     {
