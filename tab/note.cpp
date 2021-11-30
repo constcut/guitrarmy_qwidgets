@@ -26,5 +26,5 @@ void Note::setEffect(std::uint8_t eff)
         effPack.flush();
     }
         else
-    effPack.set(eff,true);
+    effPack.setEffectAt(eff,true);
 }

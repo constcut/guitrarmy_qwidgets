@@ -527,10 +527,10 @@ void BarView::draw(QPainter *painter)
                     */
                 }
 
-                bool letRing = curNote->effPack.get(18);
-                bool palmMute = curNote->effPack.get(2);
-                bool ghostNote = curNote->effPack.get(21);
-                bool harmonics = curNote->effPack.get(14);
+                bool letRing = curNote->effPack.getEffectAt(18);
+                bool palmMute = curNote->effPack.getEffectAt(2);
+                bool ghostNote = curNote->effPack.getEffectAt(21);
+                bool harmonics = curNote->effPack.getEffectAt(14);
 
                 std::string noteVal;
 
@@ -659,10 +659,10 @@ void BarView::draw(QPainter *painter)
 
         //painter->drawText(cX+10+i*inbarWidth,cY+stringWidth*(amountStr+1), // downerdurVal.c_str());
         //draw beat eff
-        bool upStroke = curBeat->effPack.get(25);
-        bool downStroke = curBeat->effPack.get(26);
+        bool upStroke = curBeat->effPack.getEffectAt(25);
+        bool downStroke = curBeat->effPack.getEffectAt(26);
 
-        bool changes = curBeat->effPack.get(28);
+        bool changes = curBeat->effPack.getEffectAt(28);
 
         std::string textBeat; curBeat->getGPCOMPText(textBeat);
         bool textPrec = textBeat.empty()==false;
@@ -671,7 +671,7 @@ void BarView::draw(QPainter *painter)
 
         //chord SKIPPED
 
-        bool fadeIn = curBeat->effPack.get(20);
+        bool fadeIn = curBeat->effPack.getEffectAt(20);
 
         if (downStroke)
         {
@@ -801,21 +801,21 @@ void BarView::draw(QPainter *painter)
 
 void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABitArray *eff)
 {
-    if (eff->get(27))
+    if (eff->getEffectAt(27))
     {
         //accented
         painter->drawLine(x1+w1/2,y1-h1,x1+2+w1/2,y1-3-h1);
         painter->drawLine(x1+2+w1/2,y1-3-h1,x1+4+w1/2,y1-h1);
     }
 
-    if (eff->get(17))
+    if (eff->getEffectAt(17))
     {
         //bend
         painter->drawLine(x1+w1, y1-h1/2, x1+w1+6, y1-h1-6);
 
     }
 
-    if (eff->get(24))
+    if (eff->getEffectAt(24))
     {
         painter->drawLine(x1+w1/2,y1-h1,
                           x1+w1/2+3,y1-h1-3);
@@ -827,7 +827,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
                           x1+w1/2+7,y1-h1-3);
     }
 
-    if (eff->get(1))
+    if (eff->getEffectAt(1))
     {
         //vibratto turned on
         x1+=inbarWidth/2;
@@ -840,7 +840,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
         painter->drawLine(x1+8,y1,x1+10,y1-2);
     }
 
-    if (eff->get(10))
+    if (eff->getEffectAt(10))
     {
         //legato turned on
         x1+=inbarWidth/2;
@@ -855,7 +855,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
     {
         //some of slides turned on
 
-        if (eff->get(4)||eff->get(5))
+        if (eff->getEffectAt(4)||eff->getEffectAt(5))
         {
             //4 normal
             //5 legatto slide
@@ -868,7 +868,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
             x1-=inbarWidth/4;
             y1-=stringWidth/4;
 
-            if (eff->get(5))
+            if (eff->getEffectAt(5))
             {
                 painter->drawLine(x1,y1,x1+7,y1-3);
                 painter->drawLine(x1+7,y1-3,x1+14,y1);
@@ -876,7 +876,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
         }
 
         //8+6 slides down
-        if (eff->get(8)||eff->get(6))
+        if (eff->getEffectAt(8)||eff->getEffectAt(6))
         {
             x1+=3*inbarWidth/4;
             y1-=stringWidth/2;
@@ -886,7 +886,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABi
 
         //9+7 slides up
 
-        if (eff->get(9)||eff->get(7))
+        if (eff->getEffectAt(9)||eff->getEffectAt(7))
         {
             x1+=3*inbarWidth/4;
             y1-=stringWidth/2;

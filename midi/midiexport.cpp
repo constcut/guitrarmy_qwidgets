@@ -293,7 +293,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
     }
 
     //BEAT EFFECTS:
-    if (beat->effPack.get(28))
+    if (beat->effPack.getEffectAt(28))
     {
         //changes
 
@@ -342,7 +342,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
         //reverse indexation
         size_t trueIndex = i;
 
-        if (beat->effPack.get(26)) //down
+        if (beat->effPack.getEffectAt(26)) //down
             trueIndex = (beatLen - i - 1);
 
         if (beat->effPack.inRange(25,26)) //up down strokes
@@ -358,13 +358,13 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
     //ACCUMULATE BEFORE EFFECTS AND OFFS
     midiTrack->accumulate(rOffset);
 
-    if (beat->effPack.get(20)) //fade in
+    if (beat->effPack.getEffectAt(20)) //fade in
     {
         midiTrack->pushFadeIn(midiTrack->accum, channel);
         midiTrack->takeAccum();
     }
 
-    if (beat->effPack.get(19)) //tremolo
+    if (beat->effPack.getEffectAt(19)) //tremolo
     {
         midiTrack->pushTremolo(midiTrack->accum);
         midiTrack->takeAccum();
@@ -405,34 +405,34 @@ bool exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_t chan
         midiVelocy = lastVelocy;
 
     //PRE-effects
-    if (note->effPack.get(18)) //let ring
+    if (note->effPack.getEffectAt(18)) //let ring
     {
         midiTrack->openLetRing(stringN,midiNote,midiVelocy,channel);
         return true;
     }
 
-    if (note->effPack.get(2)) //palm mute
+    if (note->effPack.getEffectAt(2)) //palm mute
         midiVelocy = midiTrack->calcPalmMuteVelocy(midiVelocy);
 
-    if (note->effPack.get(21)) //ghost note
+    if (note->effPack.getEffectAt(21)) //ghost note
         midiVelocy = midiVelocy > 10 ? midiVelocy - 10 : 1 ;
 
-    if (note->effPack.get(27)) //heavy accented
+    if (note->effPack.getEffectAt(27)) //heavy accented
         midiVelocy = midiVelocy < 110 ? midiVelocy+midiVelocy/10 : 127;
 
-    if (note->effPack.get(22)) //grace note
+    if (note->effPack.getEffectAt(22)) //grace note
     {   //attention - deadcode - realize
         midiNote += 2;
     }
 
     if (note->effPack.inRange(11,16))
     { //11-16 - harmonics
-      if (note->effPack.get(11))
+      if (note->effPack.getEffectAt(11))
       {
           if (fret==7) midiNote += 12;
           if (fret==5) midiNote += 19;
       }
-      if (note->effPack.get(14))
+      if (note->effPack.getEffectAt(14))
       {
           midiNote += 12;
       }
@@ -450,7 +450,7 @@ bool exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_t chan
 
 
 bool exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
-    if (note->effPack.get(18)) //let ring
+    if (note->effPack.getEffectAt(18)) //let ring
         //skip let ring
         return false;
 
@@ -461,7 +461,7 @@ bool exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t cha
         //skip - next is leeg
         return false;
 
-    if (note->effPack.get(23))
+    if (note->effPack.getEffectAt(23))
         return false; //skip stokkato
 
     std::uint8_t fret = note->getFret();
@@ -475,12 +475,12 @@ bool exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t cha
     if (note->effPack.inRange(11,16))
     { //11-16 - harmonics
         //update calculations for harmonics
-      if (note->effPack.get(11))
+      if (note->effPack.getEffectAt(11))
       {
           if (fret==7) midiNote += 12;
           if (fret==5) midiNote += 19;
       }
-      if (note->effPack.get(14))
+      if (note->effPack.getEffectAt(14))
       {
           midiNote += 12;
       }
@@ -524,7 +524,7 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
             //DEAD NOTE
         }
 
-        if (note->effPack.get(22))
+        if (note->effPack.getEffectAt(22))
         {
             short int graceLen = (midiTrack->accum/8);
             if (graceLen == 0)
@@ -565,12 +565,12 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
             }
         }
 
-        if (note->effPack.get(17)) { //bend
+        if (note->effPack.getEffectAt(17)) { //bend
             BendPoints *bend = &note->bend;
             pushBendToTrack(bend, midiTrack,channel);
         }
 
-        if (note->effPack.get(24)) { //tremolo pick {
+        if (note->effPack.getEffectAt(24)) { //tremolo pick {
             //pushTremoloPick - tremolo pick - trills
             short int tremoloStep = midiTrack->accum/4;
             for (size_t i = 0; i < 3; ++i) {
@@ -583,7 +583,7 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
             //takeAccum();
         }
 
-        if (note->effPack.get(23)) {
+        if (note->effPack.getEffectAt(23)) {
             //stokato - stop earlier
             short halfAccum = midiTrack->accum/2;
             auto mSignalOff = std::make_unique<MidiSignal>(0x80 | channel,midiNote,midiVelocy,halfAccum);
@@ -591,7 +591,7 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
             midiTrack->accum = halfAccum;
         }
 
-        if (note->effPack.get(1)) {
+        if (note->effPack.getEffectAt(1)) {
             short int vibroStep = midiTrack->accum/6;
             midiTrack->pushVibration(channel,3,vibroStep);
             midiTrack->takeAccum();

@@ -5,7 +5,7 @@ ABitArray::ABitArray():bits(0)
 {
 }
 
-bool ABitArray::get(std::uint8_t index)
+bool ABitArray::getEffectAt(std::uint8_t index)
 {
     size_t maskValue = 1;
     maskValue <<= (index-1); //-1
@@ -23,12 +23,12 @@ bool ABitArray::get(std::uint8_t index)
 
 bool ABitArray::operator==(std::uint8_t index)
 {
-    return get(index);
+    return getEffectAt(index);
 }
 
 bool ABitArray::operator!=(std::uint8_t index)
 {
-    return !get(index);
+    return !getEffectAt(index);
 }
 
 void ABitArray::flush()
@@ -36,7 +36,7 @@ void ABitArray::flush()
     bits = 0;
 }
 
-void ABitArray::set(std::uint8_t index, bool value)
+void ABitArray::setEffectAt(std::uint8_t index, bool value)
 {
     size_t maskValue = 1;
     maskValue <<= (index-1); //-1
@@ -75,7 +75,7 @@ bool ABitArray::inRange(std::uint8_t lowIndex, std::uint8_t highIndex)
 
     for (std::uint8_t index=lowIndex; index != (highIndex+1); ++index)
     {
-        wasThere |= get(index);
+        wasThere |= getEffectAt(index);
         //log<<"InRange "<<index<<" of " <<(highIndex)<<" was? "<<wasThere;
     }
 

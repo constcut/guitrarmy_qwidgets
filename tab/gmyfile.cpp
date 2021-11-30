@@ -709,7 +709,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
 
                         newChanges->push_back(change);
                     }
-                    beat->effPack.set(28, true);
+                    beat->effPack.setEffectAt(28, true);
                 }
 
                 //tremolo, chord etc should be loaded here
@@ -779,10 +779,10 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                         {
                             BendPoints *bend = &note->bend;
                             readBendGMY(file,bend);
-                            beat->effPack.set(17, true);
+                            beat->effPack.setEffectAt(17, true);
                         }
 
-                        note->effPack.set(19,false); //turn off tremolo
+                        note->effPack.setEffectAt(19,false); //turn off tremolo
                     }
 
                     beat->push_back(std::move(note));

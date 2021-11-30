@@ -26,9 +26,9 @@ void Track::switchEffect(NoteEffects effect) {
 
     Note *theNote = this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1);
     if (theNote) {
-        bool effect = theNote->effPack.get(ind);
+        bool effect = theNote->effPack.getEffectAt(ind);
         effect = !effect;
-        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.set(ind,effect);
+        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.setEffectAt(ind,effect);
 
         SingleCommand command(ReversableCommand::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
@@ -46,9 +46,9 @@ void Track::switchBeatEffect(BeatEffects beatEffect) {
         return;
     int ind = effIndex;
     //check for pause
-    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.get(ind);
+    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.getEffectAt(ind);
     effect = !effect;
-    this->at(_cursor)->at(_cursorBeat)->effPack.set(ind,effect);
+    this->at(_cursor)->at(_cursorBeat)->effPack.setEffectAt(ind,effect);
 
     SingleCommand command(ReversableCommand::SwitchEffectBeat,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
@@ -104,17 +104,17 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
     if (type == ReversableCommand::SwitchEffectNote) //eff
     {
         int ind = value;
-        bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.get(ind);
+        bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.getEffectAt(ind);
         effect = !effect;
-        this->at(barN)->at(beatN)->getNote(stringN)->effPack.set(ind,effect);
+        this->at(barN)->at(beatN)->getNote(stringN)->effPack.setEffectAt(ind,effect);
     }
 
     if (type == ReversableCommand::SwitchEffectBeat) //beat eff
     {
         int ind = value;
-        bool effect = this->at(barN)->at(beatN)->effPack.get(ind);
+        bool effect = this->at(barN)->at(beatN)->effPack.getEffectAt(ind);
         effect = !effect;
-        this->at(barN)->at(beatN)->effPack.set(ind,effect);
+        this->at(barN)->at(beatN)->effPack.setEffectAt(ind,effect);
     }
 
     if (type == ReversableCommand::SetFret) //fret

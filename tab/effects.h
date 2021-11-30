@@ -5,17 +5,47 @@
 
 #include <map>
 
+enum class Effect {
+    Vibrato = 1,
+    PalmMute = 2,
+    Slide = 4,
+    LegatoSlide = 5,
+    SlideDownV1 = 6,
+    SlideUpV1 = 7,
+    SlideDownV2 = 8,
+    SlideUpV2 = 9,
+    Legato = 10,
+    Harmonics = 11,
+    HarmonicsV2 = 12,
+    HarmonicsV3 = 13,
+    HarmonicsV4 = 14,
+    HarmonicsV5 = 15,
+    HarmonicsV6 = 16,
+    Bend = 17,
+    LetRing = 18,
+    Tremolo = 19,
+    FadeIn = 20,
+    GhostNote = 21,
+    GraceNote = 22,
+    Stokatto = 23,
+    TremoloPick = 24,
+    UpStroke = 25,
+    DownStroke = 26,
+    HeavyAccented = 27,
+    Changes = 28
+};
 
-class ABitArray // Vector bool?
+
+class ABitArray
 {
 protected:
-    uint32_t bits;
+    uint32_t bits; //TODO vector<bool> resize 32
 
 public:
 
     ABitArray();
-    bool get(std::uint8_t index);
-    void set(std::uint8_t index, bool value);
+    bool getEffectAt(std::uint8_t index);
+    void setEffectAt(std::uint8_t index, bool value);
 
     size_t takeBits(){ return bits;}
     void putBits(size_t newBits) { bits = newBits; }

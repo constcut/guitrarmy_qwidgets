@@ -61,5 +61,5 @@ void Beat::setEffects(std::uint8_t eValue)
          effPack.flush();
     }
         else
-    effPack.set(eValue,true);
+    effPack.setEffectAt(eValue,true);
 }
