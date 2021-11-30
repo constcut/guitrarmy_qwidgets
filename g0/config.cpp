@@ -279,21 +279,18 @@ void AConfig::checkConfig()
         std::cerr << "Failed to open image file: " << imageName << std::endl;
 
 
-    QImage *img = new QImage(); //(fullImageName.c_str());
+    auto img = std::make_unique<QImage>(); //(fullImageName.c_str());
 
     img->load(&imageFile,0);
 
     if (img->height() < 72)
-    {
-       QImage *oldImage = img; //leak? Изучить этот фрагмент и если возможно перенести всё в уник
        *img = img->scaled(72,72);
-    }
 
     if (inv)
         if (img)
             img->invertPixels();
 
-    imageMap[imageName] = img;
+    imageMap[imageName] = std::move(img);
  }
 
 
@@ -368,7 +365,7 @@ void AConfig::checkConfig()
  QImage* ImagePreloader::getImage(std::string imageName)
  {
      if (imageMap.count(imageName))
-         return imageMap[imageName];
+         return imageMap[imageName].get();
      return 0;
  }
 

@@ -245,7 +245,8 @@ int main(int argc, char *argv[])
     w.getCenterView()->setStatusSetter(&w);
     auto m2 = std::make_unique<MainView>();
     m2->setSlave();
-    w.getCenterView()->ownChild = new CenterView(w.getCenterView()); //Немного криповый участок :( TODO
+    auto centerView = std::make_unique<CenterView>(w.getCenterView());
+    w.getCenterView()->ownChild = centerView.get();
     w.getCenterView()->ownChild ->changeChild(m2.get());
 
     w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());

@@ -4,16 +4,19 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
+
+#include <QImage>
 
 #define CONF_PARAM(z) AConfig::getInstance()->values[ z ]
 
-class QImage;
 
-//qt dependent yet
+
+//TODO sepparate this Qt part from config
 class ImagePreloader
 {
 protected:
-    std::map<std::string, QImage*> imageMap;
+    std::map<std::string, std::unique_ptr<QImage>> imageMap;
     bool inv;
 
 public:
