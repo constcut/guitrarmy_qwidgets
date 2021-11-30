@@ -275,7 +275,7 @@ void saveAsFromTrack(TabView* tabParent) {
 
 void setBendOnNote(Note* currentNote, MasterView* mw) {
 
-   if (currentNote->effPack.getEffectAt(17)) {
+   if (currentNote->effPack.getEffectAt(Effect::Bend)) {
 
         BendPoints *bend = &currentNote->bend;
         BendInput::setPtrNote(currentNote);

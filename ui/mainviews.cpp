@@ -810,7 +810,7 @@ void BendInput::onclick(int x1, int y1)
          {
              if (ptrToBend)
              {
-                ptrToNote->effPack.setEffectAt(17,true);
+                ptrToNote->effPack.setEffectAt(Effect::Bend,true);
                 //ptrToNote->effPack.addPack(17,2,ptrToBend); //insure but it must be already inside
              }
              getMaster()->pushForceKey("esc"); //go prev
@@ -821,9 +821,9 @@ void BendInput::onclick(int x1, int y1)
     {
         if (ptrToNote)
         {
-            bool whatIsThere = ptrToNote->effPack.getEffectAt(17);
+            bool whatIsThere = ptrToNote->effPack.getEffectAt(Effect::Bend);
             qDebug() << "Deleting bend that is "<<(int)whatIsThere;
-            ptrToNote->effPack.setEffectAt(17, false);
+            ptrToNote->effPack.setEffectAt(Effect::Bend, false);
         }
     }
     //shoud react on press and calculate
@@ -941,7 +941,7 @@ void ChangesInput::draw(QPainter *painter)
 
 
         top->setText("beat ptr was set");
-        if (ptrToBeat->effPack.getEffectAt(28)==true)
+        if (ptrToBeat->effPack.getEffectAt(Effect::Changes)==true)
         {
 
             {
@@ -1027,7 +1027,7 @@ void ChangesInput::turnOffChange(std::string combo)
                 changes->erase(changes->begin() + i);
                 if (changes->size() == 0)
                 {
-                    ptrToBeat->effPack.setEffectAt(28,false);
+                    ptrToBeat->effPack.setEffectAt(Effect::Changes,false);
                 }
                 return;
             }
@@ -1042,8 +1042,8 @@ void ChangesInput::turnOnChange(std::string combo)
     size_t changeValue = 0;
     std::uint8_t changeAfter = 0;
 
-    if (ptrToBeat->effPack.getEffectAt(28)==false)
-        ptrToBeat->effPack.setEffectAt(28,true);
+    if (ptrToBeat->effPack.getEffectAt(Effect::Changes)==false)
+        ptrToBeat->effPack.setEffectAt(Effect::Changes,true);
 
     if (combo=="2")
     {
@@ -1073,7 +1073,7 @@ void ChangesInput::turnOnChange(std::string combo)
     bool notFound = true;
     if (changes==0)
     {
-        ptrToBeat->effPack.setEffectAt(28,true);
+        ptrToBeat->effPack.setEffectAt(Effect::Changes,true);
         changes = &ptrToBeat->changes;
     }
     else

@@ -54,12 +54,10 @@ ABitArray Beat::getEffects()
     return effPack;
 }
 
-void Beat::setEffects(std::uint8_t eValue)
+void Beat::setEffects(Effect eValue)
 {
-    if (eValue==0)
-    {
+    if (eValue == Effect::None)
          effPack.flush();
-    }
-        else
-    effPack.setEffectAt(eValue,true);
+    else
+        effPack.setEffectAt(eValue,true);
 }

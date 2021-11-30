@@ -34,29 +34,9 @@ class PolyBar : public std::vector<Bar*>
     }
 };
 
-//TODO изучить эффекты на основе генерации миди
-//TODO перенести к эффектам ближе
 enum class NoteStates {
     Leeg = 2,
     Dead = 3,
-};
-
-enum class NoteEffects{
-    Vibratto = 1,
-    PalmMute = 2,
-    Slide = 4,
-    Hammer = 10,
-    Harmonics = 14,
-    LetRing = 18,
-    Stokatto = 23,
-    Trill = 24,
-    Accent = 27
-};
-
-enum class BeatEffects {
-    FadeIn = 20,
-    UpStroke = 25,
-    DownStroke = 26
 };
 
 
@@ -184,8 +164,8 @@ public:
 
 
     //TODO command handler
-    void switchEffect(NoteEffects effect);
-    void switchBeatEffect(BeatEffects effect);
+    void switchEffect(Effect effect);
+    void switchBeatEffect(Effect effect);
     void switchNoteState(NoteStates changeState);
     void reverseCommand(SingleCommand command);
 

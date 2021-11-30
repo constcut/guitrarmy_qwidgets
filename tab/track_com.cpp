@@ -10,7 +10,7 @@
 #include <fstream>
 #include <QDebug>
 
-void Track::switchEffect(NoteEffects effect) {
+void Track::switchEffect(Effect effect) {
 
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
         return;
@@ -26,9 +26,9 @@ void Track::switchEffect(NoteEffects effect) {
 
     Note *theNote = this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1);
     if (theNote) {
-        bool effect = theNote->effPack.getEffectAt(ind);
-        effect = !effect;
-        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.setEffectAt(ind,effect);
+        bool effectFlag = theNote->effPack.getEffectAt(effect);
+        effectFlag = !effectFlag;
+        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.setEffectAt(effect, effectFlag);
 
         SingleCommand command(ReversableCommand::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
@@ -36,7 +36,7 @@ void Track::switchEffect(NoteEffects effect) {
     }
 }
 
-void Track::switchBeatEffect(BeatEffects beatEffect) {
+void Track::switchBeatEffect(Effect beatEffect) { //TODO insure it fits
 
     int effIndex = static_cast<int>(beatEffect);
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
@@ -44,11 +44,10 @@ void Track::switchBeatEffect(BeatEffects beatEffect) {
     auto pa = parent;
     if (pa->playing())
         return;
-    int ind = effIndex;
     //check for pause
-    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.getEffectAt(ind);
+    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.getEffectAt(beatEffect);
     effect = !effect;
-    this->at(_cursor)->at(_cursorBeat)->effPack.setEffectAt(ind,effect);
+    this->at(_cursor)->at(_cursorBeat)->effPack.setEffectAt(beatEffect,effect);
 
     SingleCommand command(ReversableCommand::SwitchEffectBeat,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
@@ -103,7 +102,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
 
     if (type == ReversableCommand::SwitchEffectNote) //eff
     {
-        int ind = value;
+        auto ind = static_cast<Effect>(value);
         bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.getEffectAt(ind);
         effect = !effect;
         this->at(barN)->at(beatN)->getNote(stringN)->effPack.setEffectAt(ind,effect);
@@ -111,7 +110,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
 
     if (type == ReversableCommand::SwitchEffectBeat) //beat eff
     {
-        int ind = value;
+        auto ind = static_cast<Effect>(value);
         bool effect = this->at(barN)->at(beatN)->effPack.getEffectAt(ind);
         effect = !effect;
         this->at(barN)->at(beatN)->effPack.setEffectAt(ind,effect);
@@ -1140,44 +1139,44 @@ void Track::DeadNote() {
     _digitPress = -1;
 }
 void Track::Vibratto() {
-    switchEffect(NoteEffects::Vibratto);
+    switchEffect(Effect::Vibrato);
 }
 void Track::Slide() {
-    switchEffect(NoteEffects::Slide);
+    switchEffect(Effect::Slide);
 }
 void Track::Hammer() {
-    switchEffect(NoteEffects::Hammer);
+    switchEffect(Effect::Hammer);
 }
 void Track::LetRing() {
-    switchEffect(NoteEffects::LetRing);
+    switchEffect(Effect::LetRing);
 }
 void Track::PalmMute() {
-    switchEffect(NoteEffects::PalmMute);
+    switchEffect(Effect::PalmMute);
 }
 void Track::Harmonics() {
-    switchEffect(NoteEffects::Harmonics);
+    switchEffect(Effect::Harmonics);
 }
 void Track::TremoloPicking() {
-    switchEffect(NoteEffects::Trill); //EMM.. TODO //tremlo picking
+    switchEffect(Effect::TremoloPick);
 }
 void Track::Trill() {
-    switchEffect(NoteEffects::Trill);
+    switchEffect(Effect::TremoloPick); //What is real difference?
 }
 void Track::Stokatto() {
-    switchEffect(NoteEffects::Stokatto);
+    switchEffect(Effect::Stokatto);
 }
 void Track::FadeIn() { //Todo fade out
-    switchBeatEffect(BeatEffects::FadeIn);
+    switchBeatEffect(Effect::FadeIn);
 }
 void Track::Accent() {
-    switchEffect(NoteEffects::Accent);
+    switchEffect(Effect::HeavyAccented);
 }
 void Track::HeavyAccent() {
-    switchEffect(NoteEffects::Accent); //TODO real & new
+    switchEffect(Effect::HeavyAccented); //TODO real & new
 }
 void Track::UpStroke() {
-    switchBeatEffect(BeatEffects::UpStroke);
+    switchBeatEffect(Effect::UpStroke);
 }
 void Track::DownStroke() {
-    switchBeatEffect(BeatEffects::DownStroke);
+    switchBeatEffect(Effect::DownStroke);
 }

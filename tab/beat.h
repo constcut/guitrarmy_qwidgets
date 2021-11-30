@@ -239,7 +239,7 @@ protected:
     std::uint8_t getDurationDetail () { return durationDetail; }
     std::uint8_t getDotted() { return dotted; }
 
-    void setEffects(std::uint8_t eValue);// { effects = eValue; }
+    void setEffects(Effect eValue);// { effects = eValue; }
     ABitArray getEffects();// { return effects; }
 
     //TREMOLO missing

@@ -157,7 +157,7 @@ class Note
     void setFingering(std::uint8_t fValue) {fingering = fValue;}
     std::uint8_t getFingering() { return fingering; }
 
-    void setEffect(std::uint8_t eff);// { effectsA = eff; }
+    void setEffect(Effect eff);// { effectsA = eff; }
     ABitArray getEffects();// { return effectsA; }
     void addEffects(ABitArray &append) { effPack.mergeWith(append); }
 

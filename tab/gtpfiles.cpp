@@ -412,7 +412,7 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
 
         }
 
-    cursorBeat->setEffects(28);
+    cursorBeat->setEffects(Effect::Changes);
 
     //refact
     file.read((char*)&changeStruct.changesTo,1); //not applied! attention
@@ -557,14 +557,14 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 
         if (tapPopSlap)
         {
-            std::uint8_t beatEffSet = 29 + tapPopSlap;
+            auto beatEffSet = static_cast<Effect>(29 + tapPopSlap);
             cursorBeat->setEffects(beatEffSet);
         }
     }
 
     if (beatEffectsHead1 & 0x10) //16
     {
-        cursorBeat->setEffects(20); //would be fade in
+        cursorBeat->setEffects(Effect::FadeIn); //would be fade in
     }
 
     if (beatEffectsHead2 & 4)
@@ -572,7 +572,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
        if (gtpLog)  qDebug() << " read bend tremolo";
        BendPoints *tremoloBend = &cursorBeat->tremolo;
        readBendGTP(&file,tremoloBend);
-       cursorBeat->setEffects(19); //would be tremolo
+       cursorBeat->setEffects(Effect::Tremolo); //would be tremolo
     }
 
     //and dear rusedhsajhdkjsa
@@ -585,10 +585,10 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  qDebug() << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke;
 
         if (upStroke)
-        cursorBeat->setEffects(25); //upstroke
+        cursorBeat->setEffects(Effect::UpStroke); //upstroke
 
         if (downStroke)
-            cursorBeat->setEffects(26);
+            cursorBeat->setEffects(Effect::DownStroke);
         //NOTSET
     }
 
@@ -600,7 +600,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 
         if (pickStoke)
         {
-            std::uint8_t beatEffSet = 29 + pickStoke;
+            auto beatEffSet = static_cast<Effect>(32 + pickStoke);
             cursorBeat->setEffects(beatEffSet);
             //useless features cover under anoter field not effects
         }
@@ -628,7 +628,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         if (gtpLog)
             qDebug()<< " Bend h "<<"; len "<<bend->size()<<"; type"<<bend->getType();
 
-        newNote->setEffect(17);//first common pattern
+        newNote->setEffect(Effect::Bend);//first common pattern
     }
 
 
@@ -662,14 +662,14 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         newNote->graceIsHere = true; //temp way
         newNote->graceNote[1] = graceDynamic;
 
-        newNote->setEffect(22); //grace note
+        newNote->setEffect(Effect::GraceNote); //grace note
     }
 
     if (noteEffectsHead2&1)
     {
         if (gtpLog)  qDebug() << "Staccato appear";
 
-        newNote->setEffect(23); //staccato
+        newNote->setEffect(Effect::Stokatto); //staccato
     }
 
     if (noteEffectsHead2&2)
@@ -677,18 +677,18 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
 
         if (gtpLog)  qDebug() << "Palm mute appear";
 
-        newNote->setEffect(2);
+        newNote->setEffect(Effect::PalmMute);
     }
 
     if (noteEffectsHead1&2)
     {//legato
-       newNote->setEffect(10);
+       newNote->setEffect(Effect::Legato);
        if (gtpLog)  qDebug() << "legatto turned on";
     }
 
     if (noteEffectsHead1&8)
     {//let ring
-       newNote->setEffect(18);
+       newNote->setEffect(Effect::LetRing);
        if (gtpLog)  qDebug() <<" Let ring turned on";
        if (gtpLog)  qDebug() <<" if (gtpLog)  log";
     }
@@ -698,7 +698,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
         std::uint8_t tremoloPicking;
         file.read((char*)&tremoloPicking,1);
         if (gtpLog)  qDebug() << "Tremolo byte "<<tremoloPicking;
-        newNote->setEffect(24); //tremolo picking
+        newNote->setEffect(Effect::TremoloPick); //tremolo picking
     }
 
     if (noteEffectsHead2&8)
@@ -719,7 +719,8 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
             if (slide == 254)
                 effect = 3+6;
         }
-            newNote->setEffect(effect);
+        auto eff = static_cast<Effect>(effect);
+        newNote->setEffect(eff);
     }
 
 
@@ -758,7 +759,8 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
             } //attention - not sets
 
             std::uint8_t effect = 11;
-            newNote->setEffect(effect);
+            auto eff = static_cast<Effect>(effect);
+            newNote->setEffect(eff);
 
         }
         else
@@ -768,7 +770,8 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
             if (harmonics==17) harmonics=3;
             if (harmonics==22) harmonics=6;
             std::uint8_t effect = 10 + harmonics;
-            newNote->setEffect(effect);
+            auto eff = static_cast<Effect>(effect);
+            newNote->setEffect(eff);
         }
     }
 
@@ -783,7 +786,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     if (noteEffectsHead2&64)
     {
         //vibrato
-        newNote->setEffect(1);//1 is vibrato
+        newNote->setEffect(Effect::Vibrato);//1 is vibrato
         if (gtpLog)  qDebug() << "Vibratto turned on";
     }
 }
@@ -798,7 +801,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     std::uint8_t noteType=0;
     if (gtpLog)  qDebug() << "Note header "<<(int)noteHeader;
 
-    newNote->setEffect(0); //flush first
+    newNote->setEffect(Effect::None); //flush first
 
     if (noteHeader & 0x20)
     {
@@ -1017,13 +1020,13 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     {
         if (gtpLog)  qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
         //ghost not here
-        newNote->setEffect(21); //ghost note
+        newNote->setEffect(Effect::GhostNote); //ghost note
     }
 
     if (noteHeader & 64)
     {
         if (gtpLog)  qDebug() <<"Bit 6 in header turned on"; //ACCENTED
-        newNote->setEffect(27); //there is no heavy accented note anymore (
+        newNote->setEffect(Effect::HeavyAccented); //there is no heavy accented note anymore (
         //in gp4
 
     }
@@ -1044,7 +1047,7 @@ void readNote(std::ifstream &file, Note *newNote, int gpVersion=4)
     {
         if (noteHeader & 2)
         {
-            newNote->setEffect(27); //accented heavy
+            newNote->setEffect(Effect::HeavyAccented); //accented heavy
             //refact to use ne w value later
         }
 
@@ -2001,7 +2004,7 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
 
     }
 
-    cursorBeat->setEffects(28);
+    cursorBeat->setEffects(Effect::Changes);
 
     //refact
     file.read((char*)&changeStruct.changesTo,1); //not applied! attention
@@ -2827,7 +2830,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
         }
 
-    cursorBeat->setEffects(28);
+    cursorBeat->setEffects(Effect::Changes);
 }
 
 void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
@@ -2840,13 +2843,13 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     if ((beatEffectsHead&1)||(beatEffectsHead&2))
     {
         //vibrato
-        cursorBeat->setEffects(2);
+        cursorBeat->setEffects(Effect::PalmMute);
     }
 
     if (beatEffectsHead&10)
     {
         //fade in
-        cursorBeat->setEffects(20); //would be fade in
+        cursorBeat->setEffects(Effect::FadeIn); //would be fade in
     }
 
     if (beatEffectsHead & 32)
@@ -2859,7 +2862,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
 
         if (tapPopSlap)
         {
-            std::uint8_t beatEffSet = 29 + tapPopSlap;
+            auto beatEffSet = static_cast<Effect>(29 + tapPopSlap);
             cursorBeat->setEffects(beatEffSet);
             int skipInt;
             file.read((char*)&skipInt,4);
@@ -2871,7 +2874,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
             int tremoloValue = 0;
             file.read((char*)&tremoloValue,4);
             //readBend(file,tremoloBend);
-            cursorBeat->setEffects(19); //would be tremolo
+            cursorBeat->setEffects(Effect::Tremolo); //would be tremolo
         }
     }
 
@@ -2883,10 +2886,10 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  qDebug() << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke;
 
         if (upStroke)
-        cursorBeat->setEffects(25); //upstroke
+        cursorBeat->setEffects(Effect::UpStroke); //upstroke
 
         if (downStroke)
-            cursorBeat->setEffects(26);
+            cursorBeat->setEffects(Effect::DownStroke);
 
         if (gtpLog)  qDebug() << "if (gtpLog)  log";
         //NOTSET
@@ -2895,7 +2898,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead & 4)
     {
         //harm natur
-        cursorBeat->setEffects(11);
+        cursorBeat->setEffects(Effect::Harmonics);
         /*
          TGEffectHarmonic harmonic = getFactory().newEffectHarmonic();
             harmonic.setType(TGEffectHarmonic.TYPE_NATURAL);
@@ -2906,7 +2909,7 @@ void readBeatEffectsGP3(std::ifstream &file, Beat *cursorBeat)
     if (beatEffectsHead & 4)
     {
         //harm artif
-        cursorBeat->setEffects(12);
+        cursorBeat->setEffects(Effect::HarmonicsV2);
         /*
            TGEffectHarmonic harmonic = getFactory().newEffectHarmonic();
             harmonic.setType(TGEffectHarmonic.TYPE_ARTIFICIAL);
@@ -2928,7 +2931,7 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     {//bend
         if (gtpLog)  qDebug() << "Bend found.";
         readBendGTP(&file,&(newNote->bend));
-        newNote->setEffect(17);//first common pattern
+        newNote->setEffect(Effect::Bend);//first common pattern
     }
 
 
@@ -2956,13 +2959,13 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
 
         newNote->graceIsHere = true; //temp way
 
-        newNote->setEffect(22); //grace note
+        newNote->setEffect(Effect::GraceNote); //grace note
     }
 
 
     if (noteEffectsHead&2)
     {//legato
-       newNote->setEffect(10);
+       newNote->setEffect(Effect::Legato);
        if (gtpLog)  qDebug() << "legatto turned on";
     }
 
@@ -2970,13 +2973,12 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     {//Slide : b
 
         if (gtpLog)  qDebug() << "Slide ";
-        std::uint8_t effect = 3;
-        newNote->setEffect(effect);
+        newNote->setEffect(Effect::Slide); //Review is it slide or hammer?
     }
 
     if (noteEffectsHead&8)
     {//let ring
-       newNote->setEffect(18);
+       newNote->setEffect(Effect::LetRing);
        if (gtpLog)  qDebug() <<" Let ring turned on";
        if (gtpLog)  qDebug() <<" if (gtpLog)  log";
     }
@@ -3088,7 +3090,7 @@ void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *curs
     std::uint8_t noteType=0;
     if (gtpLog)  qDebug() << "Note header "<<(int)noteHeader;
 
-    newNote->setEffect(0); //flush first
+    newNote->setEffect(Effect::None); //flush first
 
     if (noteHeader & 0x20)
     {
@@ -3299,13 +3301,13 @@ void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *curs
     {
         if (gtpLog)  qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
         //ghost not here
-        newNote->setEffect(21); //ghost note
+        newNote->setEffect(Effect::GhostNote); //ghost note
     }
 
     if (noteHeader & 64)
     {
         if (gtpLog)  qDebug() <<"Bit 6 in header turned on"; //ACCENTED
-        newNote->setEffect(27); //there is no heavy accented note anymore (
+        newNote->setEffect(Effect::HeavyAccented); //there is no heavy accented note anymore (
         //in gp4
 
     }

@@ -80,7 +80,7 @@ bool tabLog = false;
 
             for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
             {
-                if (currentBar->at(beatI)->effPack.getEffectAt(28)) //changes
+                if (currentBar->at(beatI)->effPack.getEffectAt(Effect::Changes)) //changes
                 {
                     //search for bpm changes
                     Beat::ChangesList *changes = &currentBar->at(beatI)->changes;

@@ -288,7 +288,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                      file.write((char*)&effPackBeatValue,4);
 
 
-                if (effPackBeat == 28)
+                if (effPackBeat == Effect::Changes)
                 {
                     //Package *changePack = effPackBeat.getPack(28);
 
@@ -357,7 +357,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                         size_t noteEffValue = effPackNote.takeBits();
                          file.write((char*)&noteEffValue,4);
 
-                        if (effPackNote == 17) //bend
+                        if (effPackNote == Effect::Bend) //bend
                         {
                             BendPoints *bend = &note->bend;
                             writeBendGMY(file,bend);
@@ -682,7 +682,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
 
                 beat->effPack.putBits(effPackBeatValue);
 
-                if (beat->effPack == 28)
+                if (beat->effPack == Effect::Changes)
                 {
                     size_t amountOfChanges = 0;
 
@@ -709,7 +709,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
 
                         newChanges->push_back(change);
                     }
-                    beat->effPack.setEffectAt(28, true);
+                    beat->effPack.setEffectAt(Effect::Changes, true);
                 }
 
                 //tremolo, chord etc should be loaded here
@@ -775,14 +775,14 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                         note->effPack.putBits(noteEffValue);
 
                         //note.effPack.set(17,false); //turn off bend
-                        if (note->effPack == 17)
+                        if (note->effPack == Effect::Bend)
                         {
                             BendPoints *bend = &note->bend;
                             readBendGMY(file,bend);
-                            beat->effPack.setEffectAt(17, true);
+                            beat->effPack.setEffectAt(Effect::Bend, true);
                         }
 
-                        note->effPack.setEffectAt(19,false); //turn off tremolo
+                        note->effPack.setEffectAt(Effect::Tremolo,false); //turn off tremolo
                     }
 
                     beat->push_back(std::move(note));

@@ -19,12 +19,10 @@ ABitArray Note::getEffects()
     return effPack;
 }
 
-void Note::setEffect(std::uint8_t eff)
+void Note::setEffect(Effect eff)
 {
-    if (eff==0)
-    {
+    if (eff == Effect::None)
         effPack.flush();
-    }
-        else
-    effPack.setEffectAt(eff,true);
+    else
+        effPack.setEffectAt(eff,true);
 }

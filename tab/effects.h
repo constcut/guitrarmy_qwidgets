@@ -6,8 +6,10 @@
 #include <map>
 
 enum class Effect {
+    None = 0,
     Vibrato = 1,
     PalmMute = 2,
+    Hammer = 3, //TODO it kind of slide
     Slide = 4,
     LegatoSlide = 5,
     SlideDownV1 = 6,
@@ -32,32 +34,40 @@ enum class Effect {
     UpStroke = 25,
     DownStroke = 26,
     HeavyAccented = 27,
-    Changes = 28
+    Changes = 28,
+    Tap = 29,
+    Slap = 30,
+    Pop = 31,
+    Picking1 = 32,
+    Picking2 = 33,
+    Picking3 = 34,
+    Picking4 = 35
 };
 
+ //     Effect::
 
 class ABitArray
 {
 protected:
-    uint32_t bits; //TODO vector<bool> resize 32
+    uint64_t bits; //TODO vector<bool> resize 32
 
 public:
 
     ABitArray();
-    bool getEffectAt(std::uint8_t index);
-    void setEffectAt(std::uint8_t index, bool value);
+    bool getEffectAt(Effect id);
+    void setEffectAt(Effect id, bool value);
 
     size_t takeBits(){ return bits;}
     void putBits(size_t newBits) { bits = newBits; }
 
-    bool inRange(std::uint8_t lowIndex, std::uint8_t highIndex);
+    bool inRange(Effect lowId, Effect highId);
 
     void logIt();
 
     bool empty();
 
-    bool operator==(std::uint8_t index);// { return get(index); }
-    bool operator!=(std::uint8_t index);//
+    bool operator==(Effect id);// { return get(index); }
+    bool operator!=(Effect id);//
 
     void flush();
 

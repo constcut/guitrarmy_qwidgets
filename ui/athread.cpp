@@ -307,7 +307,7 @@ void PlayAnimationThr::addBeatTimes(Bar* bar)
 
 
         //CHANGE BPM
-        if (beat->effPack.getEffectAt(28))
+        if (beat->effPack.getEffectAt(Effect::Changes))
         {
             {
                 Beat::ChangesList *changes = &beat->changes;
