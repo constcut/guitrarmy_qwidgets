@@ -316,7 +316,6 @@ void MainView::draw(QPainter *painter)
 }
 
 
-
 void MainView::setMaster(MasterView *mast)
 {
     GView::setMaster(mast);
@@ -327,6 +326,7 @@ void MainView::setMaster(MasterView *mast)
     if (patternInp) patternInp->setMaster(mast);
     //log <<"Main view set master called";
 }
+
 
 MainView::MainView():GView(0,0,800,480), currentView(0)
 {
@@ -357,10 +357,8 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 ConfigView::ConfigView():GView()
 {
-    AConfig *confValues = new AConfig(); //TODO перенести внутрь
-    connectConfigs(confValues);
-
-    configPointer = confValues;
+    configPointer = std::make_unique<AConfig>();
+    auto& confValues = configPointer;
 
     std::string sP = confValues->logsNames[0] + " " +
         std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
@@ -377,10 +375,7 @@ ConfigView::ConfigView():GView()
 
 void ConfigView::keyevent(std::string press)
 {
-    //if (press == "m")
-        //getMaster()->resetToFirstChild();
-
-    AConfig *confValues = this->configPointer;
+    auto& confValues = configPointer;
 
     if (press == "1")
     {
@@ -877,7 +872,7 @@ void BendInput::onclick(int x1, int y1)
 void BendInput::fillBend(int type, int height)
 {
     if (ptrToBend==0)
-        ptrToBend = new BendPoints; //simple escape then could be reason of leak
+        ptrToBend = new BendPoints; //simple escape then could be reason of leak TODO
     //first only type==0 (normal bend)
     if (type==0)
     {

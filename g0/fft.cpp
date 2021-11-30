@@ -363,7 +363,7 @@ FFT::FFT(int size): decibels(0),amplitude(0),amplitudeScale(0),sqrd(0),halfFoubr
 
 {
     N = size;
-    this->destImg = new double[N];
+    this->destImg = new double[N]; //TODO vectors
     this->destReal = new double[N];
     this->amplitude = new double[N/2];
     this->decibels = new double[N/2];

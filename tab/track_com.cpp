@@ -934,10 +934,10 @@ void Track::clipboardCutBar() {
     auto& bar = at(_cursor);
     if (_selectionBarFirst == -1) {
         //int trackInd=tabParrent->getLastOpenedTrack();
-        Bar *cloner = new Bar;
+        Bar *cloner = new Bar; //TODO memory leak - переделать весь буфер обмена на unique
         cloner->flush();
         cloner->clone(bar.get());
-        AClipboard::current()->setPtr(cloner); //TODO move - иначе утечка
+        AClipboard::current()->setPtr(cloner); //TODO move - иначе утечка (выше ещё 1 пример)
         AClipboard::current()->setType(4);
         deleteBar();
     }
