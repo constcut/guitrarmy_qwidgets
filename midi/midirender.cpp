@@ -30,16 +30,15 @@ bool MidiRender::openMidiFile(QString midiFilename)
 
 bool MidiRender::openSoundFont(QString sfFilename)
 {
-     QByteArray fileNameBytes = sfFilename.toLocal8Bit();
-      tsf*  sf  = tsf_load_filename(fileNameBytes.constData());
+    QByteArray fileNameBytes = sfFilename.toLocal8Bit();
+    tsf*  sf  = tsf_load_filename(fileNameBytes.constData());
 
-      if (sf == 0)
-          return false;
+    if (sf == nullptr)
+        return false;
+    tsf_set_output(sf, TSF_STEREO_INTERLEAVED, freq, -18.0f);
 
-     tsf_set_output(sf, TSF_STEREO_INTERLEAVED, freq, -18.0f);
-
-      soundFont = sf;
-      return true;
+    soundFont = sf;
+    return true;
 }
 
 QByteArray MidiRender::renderShort(QString midiFilename)
@@ -58,7 +57,7 @@ QByteArray MidiRender::renderShort(QString midiFilename)
     while (midiFile)
         response += renderShortNext(renderFrameSize);
 
-     tsf_note_off_all((tsf*)soundFont);
+     tsf_note_off_all(soundFont);
 
     qint64 renderMidi = timer.elapsed();
 
@@ -80,7 +79,7 @@ QByteArray MidiRender::renderFloat(QString midiFilename)
     while (midiFile)
         response += renderFloatNext(renderFrameSize);
 
-     tsf_note_off_all((tsf*)soundFont);
+     tsf_note_off_all(soundFont);
 
     return response;
 }
@@ -105,7 +104,7 @@ QByteArray MidiRender::renderFloat(QString midiFilename, QString sfFilename)
 
 QByteArray MidiRender::renderShortNext(int len)
 {
-    tml_message* g_MidiMessage = (tml_message*)midiFile;
+    tml_message* g_MidiMessage = midiFile;
 
     QByteArray result; //(const char*)data,len); - old way
     result.resize(len);      //may have some tail in the end
@@ -127,18 +126,18 @@ QByteArray MidiRender::renderShortNext(int len)
                 //Возможно проблема в ситуациях, когда инструмент не устанавливается изначально
                 //Вести логи - изучить. По крайней мере многие клавиши у нас работают
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
-                    g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex((tsf*)soundFont, 0, g_MidiMessage->program);
+                    g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
                     if (g_MidiChannelPreset[g_MidiMessage->channel] < 0) g_MidiChannelPreset[g_MidiMessage->channel] = 0;
                     break;
                 case TML_NOTE_ON: //play a note
-                    tsf_note_on((tsf*)soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
+                    tsf_note_on(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
                     break;
                 case TML_NOTE_OFF: //stop a note
-                    tsf_note_off((tsf*)soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
+                    tsf_note_off(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
                     break;
             }
         }
-        tsf_render_short((tsf*)soundFont, (short*)stream, SampleBlock, 0);
+        tsf_render_short(soundFont, (short*)stream, SampleBlock, 0);
     }
 
    midiFile = g_MidiMessage;
@@ -149,7 +148,7 @@ QByteArray MidiRender::renderShortNext(int len)
 
 QByteArray MidiRender::renderFloatNext(int len)
 {
-    tml_message* g_MidiMessage = (tml_message*)midiFile;
+    tml_message* g_MidiMessage = midiFile;
 
     QByteArray result; //(const char*)data,len); - old way
     result.resize(len);      //may have some tail in the end
@@ -168,18 +167,18 @@ QByteArray MidiRender::renderFloatNext(int len)
             switch (g_MidiMessage->type)
             {
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
-                    g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex((tsf*)soundFont, 0, g_MidiMessage->program);
+                    g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
                     if (g_MidiChannelPreset[g_MidiMessage->channel] < 0) g_MidiChannelPreset[g_MidiMessage->channel] = 0;
                     break;
                 case TML_NOTE_ON: //play a note
-                    tsf_note_on((tsf*)soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
+                    tsf_note_on(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
                     break;
                 case TML_NOTE_OFF: //stop a note
-                    tsf_note_off((tsf*)soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
+                    tsf_note_off(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
                     break;
             }
         }
-        tsf_render_float((tsf*)soundFont, (float*)stream, SampleBlock, 0);
+        tsf_render_float(soundFont, (float*)stream, SampleBlock, 0);
     }
 
    midiFile = g_MidiMessage;
@@ -200,7 +199,7 @@ QByteArray MidiRender::renderFromMemoryShort(MidiTrack &track)
     while (trackPosition < midiTrack->size())
         response += renderMemoryShortNext(renderFrameSize);
 
-     tsf_note_off_all((tsf*)soundFont);
+     tsf_note_off_all(soundFont);
 
     return response;
 }
@@ -216,7 +215,7 @@ QByteArray MidiRender::renderFromMemoryFloat(MidiTrack &track)
     while (trackPosition < midiTrack->size())
         response += renderMemoryFloatNext(renderFrameSize);
 
-     tsf_note_off_all((tsf*)soundFont);
+     tsf_note_off_all(soundFont);
 
     return response;
 }
@@ -245,19 +244,19 @@ QByteArray MidiRender::renderMemoryFloatNext(int len)
             switch (signal->byte0 & 0xf0)
             {
                 case TML_PROGRAM_CHANGE:
-                    g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex((tsf*)soundFont, 0, signal->param1);
+                    g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex(soundFont, 0, signal->param1);
                     if (g_MidiChannelPreset[signal->getChannel()] < 0) g_MidiChannelPreset[signal->getChannel()] = 0;
                     break;
                 case TML_NOTE_ON: //play a note
-                    tsf_note_on((tsf*)soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1, signal->param2 / 127.0f);
+                    tsf_note_on(soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1, signal->param2 / 127.0f);
                     break;
                 case TML_NOTE_OFF: //stop a note
-                    tsf_note_off((tsf*)soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1);
+                    tsf_note_off(soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1);
                     break;
             }
 
         }
-        tsf_render_float((tsf*)soundFont, (float*)stream, SampleBlock, 0);
+        tsf_render_float(soundFont, (float*)stream, SampleBlock, 0);
 
         if (trackPosition >= midiTrack->size())
             break;
@@ -290,19 +289,19 @@ QByteArray MidiRender::renderMemoryShortNext(int len)
             switch (signal->byte0 & 0xf0)
             {
                 case TML_PROGRAM_CHANGE:
-                    g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex((tsf*)soundFont, 0, signal->param1);
+                    g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex(soundFont, 0, signal->param1);
                     if (g_MidiChannelPreset[signal->getChannel()] < 0) g_MidiChannelPreset[signal->getChannel()] = 0;
                     break;
                 case TML_NOTE_ON: //play a note
-                    tsf_note_on((tsf*)soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1, signal->param2 / 127.0f);
+                    tsf_note_on(soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1, signal->param2 / 127.0f);
                     break;
                 case TML_NOTE_OFF: //stop a note
-                    tsf_note_off((tsf*)soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1);
+                    tsf_note_off(soundFont, g_MidiChannelPreset[signal->getChannel()], signal->param1);
                     break;
             }
         }
 
-        tsf_render_short((tsf*)soundFont, (short*)stream, SampleBlock, 0);
+        tsf_render_short(soundFont, (short*)stream, SampleBlock, 0);
 
         if (trackPosition >= midiTrack->size())
             break;

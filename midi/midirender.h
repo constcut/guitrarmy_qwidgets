@@ -6,11 +6,11 @@
 #include <QByteArray>
 #include <QElapsedTimer>
 
-//#include "mit/sf/tsf.h"
-//#include "mit/sf/tml.h"
-
 #include "midi/midifile.h"
 
+
+struct tml_message;
+struct tsf;
 
 
 class MidiRender
@@ -50,8 +50,8 @@ protected:
     QByteArray renderMemoryFloatNext(int len);
     QByteArray renderMemoryShortNext(int len); //refact to quint32 etc - everywhere
 
-    void *midiFile;
-    void *soundFont;
+    tml_message* midiFile = nullptr;
+    tsf* soundFont = nullptr;
 
     MidiTrack *midiTrack;
     quint32 trackPosition;
