@@ -269,7 +269,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                     beatHead += 1 << 5;
 
 
-                EffectsPack effPackBeat = beat->getEffects();
+                ABitArray effPackBeat = beat->getEffects();
                 size_t effPackBeatValue = effPackBeat.takeBits();
 
                 if (effPackBeatValue)
@@ -320,13 +320,13 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                 //tremolo, chord etc should be stored here
 
                 size_t beatLen = beat->size();
-                 file.write((char*)&beatLen,1); //256 notes in beat are too much
+                file.write((char*)&beatLen,1); //256 notes in beat are too much
 
                 //and notes inside
                 for (size_t el=0; el < beat->size(); ++el)
                 {
                     auto& note = beat->at(el);
-                    EffectsPack effPackNote = note->getEffects();                  
+                    ABitArray effPackNote = note->getEffects();
                     std::uint8_t fret = note->getFret();
                     //merge
                     std::uint8_t stringNum = note->getStringNumber();
@@ -344,14 +344,14 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                        packFret += stringSh;
                     }
 
-                     file.write((char*)&packFret,1);
+                    file.write((char*)&packFret,1);
                     std::uint8_t noteSpec = 0;
                     std::uint8_t vol = note->getVolume();
                     std::uint8_t state = note->getState();
                     std::uint8_t effectsPrec = effPackNote.empty() == true ? 0 : 1;
 
                     noteSpec = (vol & 0xF) + ((state&7)<<4) + (effectsPrec<<7);
-                     file.write((char*)&noteSpec,1);
+                    file.write((char*)&noteSpec,1);
 
                     if (effectsPrec) {
                         size_t noteEffValue = effPackNote.takeBits();
@@ -359,8 +359,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
                         if (effPackNote == 17) //bend
                         {
-                            Package *bendPack = effPackNote.getPack(17);
-                            BendPoints *bend = (BendPoints*) bendPack->getPointer();
+                            BendPoints *bend = &note->bend;
                             writeBendGMY(file,bend);
                         }
                     }
@@ -710,8 +709,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
 
                         newChanges->push_back(change);
                     }
-
-                    beat->effPack.addPack(28,1,newChanges);
+                    beat->effPack.set(28, true);
                 }
 
                 //tremolo, chord etc should be loaded here
@@ -781,7 +779,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                         {
                             BendPoints *bend = &note->bend;
                             readBendGMY(file,bend);
-                            note->effPack.addPack(17,2,bend);
+                            beat->effPack.set(17, true);
                         }
 
                         note->effPack.set(19,false); //turn off tremolo

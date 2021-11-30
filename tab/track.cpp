@@ -99,7 +99,7 @@ size_t Track::connectNotes() //for let ring
 
                    //EFFECTS COPY!
                    //AND MAYBE MORE WIDE CONDITION
-                   EffectsPack prevEff = prevNote->getEffects();
+                   ABitArray prevEff = prevNote->getEffects();
                    curNote->addEffects(prevEff);
                }
 
@@ -140,7 +140,7 @@ size_t Track::connectNotes() //for let ring
 
 
                    //Full copy not yet used well
-                   EffectsPack prevEff = prevNote->getEffects();
+                   ABitArray prevEff = prevNote->getEffects();
                    curNote->addEffects(prevEff);
 
 

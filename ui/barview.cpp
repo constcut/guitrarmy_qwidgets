@@ -799,7 +799,7 @@ void BarView::draw(QPainter *painter)
     //w = (barLen+2)*inbarWidth;
 }
 
-void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, EffectsPack *eff)
+void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABitArray *eff)
 {
     if (eff->get(27))
     {
