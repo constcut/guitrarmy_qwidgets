@@ -20,6 +20,11 @@ public:
 };
 
 
+class Tab;
+class Track;
+class Bar;
+
+
 class PlayAnimationThr: public AThread
 {
 protected:
@@ -53,11 +58,11 @@ public:
    void setInc(size_t *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
    //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
 
-   void setupValues(void *tab_ptr, void *track_ptr, size_t shiftTheCursor);
+   void setupValues(Tab* tab_ptr, Track* track_ptr, size_t shiftTheCursor);
 
    void addNumDenum(std::uint8_t nu, std::uint8_t de, size_t nextIndex);
 
-   void addBeatTimes(void *bar);
+   void addBeatTimes(Bar* bar);
 
    void threadRun();
 

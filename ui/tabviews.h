@@ -22,7 +22,7 @@ int translateDefaulColor(const std::string& confParam);
 class TabView : public GView
 {
 protected:
-    Tab* pTab;
+    std::unique_ptr<Tab> pTab;
 
     std::unique_ptr<GLabel> statusLabel;
     std::unique_ptr<GLabel> bpmLabel;
@@ -49,9 +49,9 @@ public:
     int getCurTrack() { return pTab->getCurrentTrack(); }
     int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
 
-    void setTab(Tab* point2Tab);// {pTab = point2Tab;}
+    void setTab(std::unique_ptr<Tab> point2Tab);// {pTab = point2Tab;}
     void refreshTabStats();
-    Tab* getTab() { return pTab; }
+    std::unique_ptr<Tab>& getTab() { return pTab; }
 
      void draw(QPainter *painter);
 

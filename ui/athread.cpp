@@ -138,12 +138,9 @@ struct BpmWaitNode
 };
 
 
-void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftTheCursor)
+void PlayAnimationThr::setupValues(Tab *tab_ptr, Track *track_ptr, size_t shiftTheCursor)
 {
     Tab *tab=(Tab*)tab_ptr; //TODO get rid!
-
-    int startBPM = tab->getBPM();
-    //beter from timeline
 
 
     Track *track = (Track*)track_ptr;
@@ -154,17 +151,11 @@ void PlayAnimationThr::setupValues(void *tab_ptr, void *track_ptr, size_t shiftT
 
     std::vector<BpmWaitNode> bpmChangeList;
 
-    for (int ind = 0 ; ind < tab->timeLine.size(); ++ind)
-    {
+    for (size_t ind = 0 ; ind < tab->timeLine.size(); ++ind) {
        if (tab->timeLine[ind].type == 0)
-       {
-            //wait
            localWait += tab->timeLine[ind].value;
-       }
 
-       if (tab->timeLine[ind].type == 1)
-       {
-            //change
+       if (tab->timeLine[ind].type == 1){
            BpmWaitNode newNode;
            newNode.newBpm = tab->timeLine[ind].value;
            newNode.waitTime = localWait;
@@ -296,7 +287,7 @@ int PlayAnimationThr::calculateSeconds()
 }
 
 
-void PlayAnimationThr::addBeatTimes(void *bar)
+void PlayAnimationThr::addBeatTimes(Bar* bar)
 {
     Bar *curBar = (Bar*)bar;
 

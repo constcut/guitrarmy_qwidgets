@@ -46,14 +46,6 @@ void ChangesInput::setPtrBeat(Beat *beatPtr)
 
 
 
-void MainView::setTabLoaded(Tab *tab)
-{
-    changeCurrentView( tabsView.get() );
-
-    tabsView->setTab(tab);
-    //getMaster()->changeChild(tabsView);
-}
-
 bool MainView::isPlaying()
 {
     return tabsView->getPlaying();
@@ -61,20 +53,12 @@ bool MainView::isPlaying()
 
 void MainView::onclick(int x1, int y1)
 {
-    //tool bar now
-    //if (pan->hit(x1,y1))
-    //    pan->onclick(x1,y1); //
-
-    //else
     if (currentView)
         currentView->onclick(x1,y1);
 }
 
 void MainView::ondblclick(int x1, int y1)
 {
-    //if (pan->hit(x1,y1))
-       // pan->onclick(x1,y1);
-    //else
     if (currentView)
         currentView->ondblclick(x1,y1);
 }
@@ -149,13 +133,13 @@ void MainView::keyevent(std::string press)
                 {
                     std::ifstream file(gfileName.c_str());
 
-                    Tab *newTab = new Tab(); //TODO unique function 
-                    gmyFile.loadFromFile(&file,newTab);
+                    auto newTab = std::make_unique<Tab>();
+                    gmyFile.loadFromFile(&file,newTab.get());
 
                     newTab->connectTracks();
 
                     changeCurrentView(tabsView.get());
-                    tabsView->setTab(newTab);
+                    tabsView->setTab(std::move(newTab));
                     if (CONF_PARAM("skipTabView")=="1")
                     tabsView->onTabCommand(TabCommand::OpenTrack);
                 }
@@ -202,9 +186,9 @@ void MainView::keyevent(std::string press)
                 if  (tabLoader.open(s.toStdString()))
                 {
                     changeCurrentView(tabsView.get());
-                    tabsView->setTab(tabLoader.getTab().get());
+                    tabsView->setTab(std::move(tabLoader.getTab()));
                     if (CONF_PARAM("skipTabView")=="1")
-                    tabsView->onTabCommand(TabCommand::OpenTrack);
+                        tabsView->onTabCommand(TabCommand::OpenTrack);
 
                     //getMaster()->changeChild(tabsView);
 
@@ -271,12 +255,12 @@ void MainView::keyevent(std::string press)
             {
                 //NEW tab
 
-                Tab *newTab = new Tab(); //TODO unique тоже
+                auto newTab = std::make_unique<Tab>();
                 newTab->setBPM(120);
 
                 //newTab->connectTracks();
                 auto track = std::make_unique<Track>();
-                track->setParent(newTab);
+                track->setParent(newTab.get());
                 std::string iName("NewInstrument");
                 track->setName(iName);
                 track->setInstrument(25);
@@ -315,7 +299,7 @@ void MainView::keyevent(std::string press)
                 newTab->connectTracks();
 
                 changeCurrentView(tabsView.get());
-                tabsView->setTab(newTab);
+                tabsView->setTab(std::move(newTab));
                 if (CONF_PARAM("skipTabView")=="1")
                 tabsView->onTabCommand(TabCommand::OpenTrack); // keyevent("opentrack");
                 //getMaster()->changeChild(tabsView);
@@ -552,16 +536,16 @@ void TestsView::openTestNumber(int num) {
         std::ifstream importFile(fn);
          if (importFile.is_open() == false)
              std::cout << "Failed to open";
-        Tab *forLoad=new Tab();
+        auto forLoad = std::make_unique<Tab>();
         Gp4Import importer;
-        importer.import(importFile,forLoad);
+        importer.import(importFile, forLoad.get());
         forLoad->postGTP();
         forLoad->connectTracks();
         qDebug() << "file v 4 was opened: "<<fn.c_str();
 
         MainView *mainView = (MainView*)getMaster()->getFirstChild();
         mainView->changeCurrentView(tabsView);
-        tabsView->setTab(forLoad);
+        tabsView->setTab(std::move(forLoad));
         if (CONF_PARAM("skipTabView")=="1")
         tabsView->onTabCommand(TabCommand::OpenTrack);
     }

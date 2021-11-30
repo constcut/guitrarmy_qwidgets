@@ -159,9 +159,9 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         clock_t afterT = getTime();
         int diffT = afterT - beforeT;
         qDebug() <<"Repair chains "<<diffT;
-        Tab *tab = tabParrent->getTab();
+        auto& tab = tabParrent->getTab();
         tab->connectTracks();
-        auto generatedMidi = exportMidi(tabParrent->getTab(),shiftTheCursor);
+        auto generatedMidi = exportMidi(tab.get(), shiftTheCursor);
 
         /*
         if ((CONF_PARAM("mergeMidiTracks")=="1") || (press=="playMerge")){
@@ -254,7 +254,7 @@ void saveAsFromTrack(TabView* tabParent) {
     GmyFile gmyFile;
     std::string  gfileName = saveFileName.toStdString();
     std::ofstream file(gfileName);
-    gmyFile.saveToFile(&file,tabParent->getTab());
+    gmyFile.saveToFile(&file,tabParent->getTab().get());
     return;
 }
 
@@ -880,23 +880,23 @@ int changeTrackInstrument(Tab* pTab) {
 void TabView::onTabCommand(TabCommand command) {
     //TODO undo для команд таблатуры так же
     if (command == TabCommand::SaveAs)
-        saveAs(pTab);
+        saveAs(pTab.get());
     else if (command == TabCommand::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
-        setSignTillEnd(pTab);
+        setSignTillEnd(pTab.get());
     else if (command == TabCommand::Volume)
-        ::changeTrackVolume(pTab);
+        ::changeTrackVolume(pTab.get());
     else if (command == TabCommand::Name)
-        ::changeTrackName(pTab);
+        ::changeTrackName(pTab.get());
     else if (command == TabCommand::DeleteTrack)
-        ::deleteTrack(pTab);
+        ::deleteTrack(pTab.get());
     else if (command == TabCommand::AddMarker)
-        setMarker(pTab);
+        setMarker(pTab.get());
     else if (command == TabCommand::Instument)
-        getMaster()->setComboBox(1,"instruments",240,5,200,30, changeTrackInstrument(pTab)); //Only UI feature
+        getMaster()->setComboBox(1,"instruments",240,5,200,30, changeTrackInstrument(pTab.get())); //Only UI feature
     else if (command == TabCommand::Panoram)
-        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab)); //Как и выше сбивает UI при отмене ввода
+        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab.get())); //Как и выше сбивает UI при отмене ввода
     else if (command == TabCommand::BPM) {
-        auto newBpm = changeTrackBpm(pTab);
+        auto newBpm = changeTrackBpm(pTab.get());
         bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(newBpm));
     }         
@@ -905,16 +905,16 @@ void TabView::onTabCommand(TabCommand command) {
     else if (command == TabCommand::NewTrack) {
        pTab->createNewTrack(); refreshTabStats(); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
-        playPressedQt(pTab, localThr, pTab->getCurrentBar(), this);
+        playPressedQt(pTab.get(), localThr, pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
-        generateMidiQt(pTab, statusLabel.get());
+        generateMidiQt(pTab.get(), statusLabel.get());
     else if (command == TabCommand::GotoBar)
-        goToBar(pTab);
+        goToBar(pTab.get());
     //if (press == "alt");//TODO
     else if (command == TabCommand::Tune)
         setTune(pTab->at(pTab->getCurrentTrack()).get());
     else if (command == TabCommand::CloseReprise)
-        closeReprise(pTab);
+        closeReprise(pTab.get());
     else
         pTab->onTabCommand(command);
 }

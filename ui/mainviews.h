@@ -99,7 +99,6 @@ protected:
     virtual void onTabCommand(TabCommand command);
     virtual void onTrackCommand(TrackCommand command);
 
-    void setTabLoaded(Tab *tab);
 
     bool isPlaying();
 

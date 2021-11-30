@@ -542,5 +542,5 @@ void TrackView::prepareThread(size_t shiftTheCursor)
     size_t& cursorBeat = pTrack->cursorBeat();
 
     localThr->setInc(&cursor,&cursorBeat);
-    localThr->setupValues(tabParrent->getTab(),pTrack,shiftTheCursor);
+    localThr->setupValues(tabParrent->getTab().get(),pTrack,shiftTheCursor);
 }

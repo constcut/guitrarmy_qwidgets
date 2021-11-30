@@ -365,20 +365,7 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
             {
                 if ( testGP4 (gp4File,outGp4,doTheLogs) == false )
                   log <<"Test gp4 "<<newLine.c_str()<<" failed";
-                /*
-                GTabLoader loader;
-                //HERE IS LEAK
-                if (loader.open(gp4File) == false)
-                    log <<"G4+ failed file "<<newLine.c_str();
-
-
-                auto mid = exportMidi(loader.getTab());
-                std::ofstream outMidiFile(outGp4plus);
-                if (outMidiFile.is_open() == false)
-                    log <<"failed to open for output "<<outGp4plus.c_str();
-                mid->writeStream(outMidiFile);
-                outMidiFile.close();
-                */
+                //Add tabloader test
             }
 
             if (v==3)

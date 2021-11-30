@@ -84,7 +84,7 @@ int scaleCoef = 1;
 
 
 //Tab view
-TabView::TabView():GView(0,0,0,0),pTab(0)
+TabView::TabView():GView(0,0,0,0)
 {
     statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
     bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
@@ -115,8 +115,8 @@ void TabView::setUI()
     }
 }
 
-void TabView::setTab(Tab* point2Tab) {
-    pTab = point2Tab;
+void TabView::setTab(std::unique_ptr<Tab> point2Tab) {
+    pTab = std::move(point2Tab);
     refreshTabStats();
 }
 
