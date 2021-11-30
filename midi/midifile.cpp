@@ -3,15 +3,15 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include <QDebug>
-
-//TODO logs turned off yet
 
 
 bool midiLog = false;
 
-void reverseEndian(void *p,int s) { //TODO remove https://stackoverflow.com/questions/3823921/convert-big-endian-to-little-endian-when-reading-from-a-binary-file
+/*
+void reverseEndian(void _*_ p,int s) {
     char *bytes = (char*)p;
     if (s == 4){
         char b = bytes[0];
@@ -26,6 +26,13 @@ void reverseEndian(void *p,int s) { //TODO remove https://stackoverflow.com/ques
         bytes[0] = bytes[1];
         bytes[1] = b;
     }
+}*/ //TODO check midi file read-write stays the same - then wipe
+
+
+template <class T>
+void reverseEndian(T *objp) {
+    unsigned char *memp = reinterpret_cast<unsigned char*>(objp);
+    std::reverse(memp, memp + sizeof(T));
 }
 
 
@@ -50,13 +57,13 @@ bool MidiFile::readStream(std::ifstream & ifile)
 {
     ifile.read((char*)midiHeader.chunkId, 4);
     ifile.read((char*)&(midiHeader.chunkSize), 4);
-    reverseEndian(&(midiHeader.chunkSize), 4);
+    reverseEndian(&(midiHeader.chunkSize));
     ifile.read((char*)&(midiHeader.formatType), 2);
-    reverseEndian(&(midiHeader.formatType), 2);
+    reverseEndian(&(midiHeader.formatType));
     ifile.read((char*)&(midiHeader.nTracks), 2);
-    reverseEndian(&(midiHeader.nTracks), 2);
+    reverseEndian(&(midiHeader.nTracks));
     ifile.read((char*)&(midiHeader.timeDevision), 2);
-    reverseEndian(&(midiHeader.timeDevision), 2);
+    reverseEndian(&(midiHeader.timeDevision));
 	
 	//allocate tracks:
 	for (int nT=0; nT < midiHeader.nTracks; ++nT)
@@ -82,9 +89,9 @@ bool MidiFile::readStream(std::ifstream & ifile)
 
             if (midiLog)  qDebug() << "Track " << i << " header " << at(i)->trackHeader.chunkId;
 
-            size_t trackSize = 0;
+            uint32_t trackSize = 0;
             ifile.read((char*)&trackSize, 4);
-            reverseEndian(&trackSize, 4);
+            reverseEndian(&trackSize);
 
             if (midiLog)  qDebug() << "Size of track " << trackSize;
 
@@ -141,7 +148,6 @@ size_t MidiFile::writeStream(std::ofstream &ofile) {
 
         ofile.write((const char*)at(i)->trackHeader.chunkId,4);
         writeReversedEndian((const char*)&at(i)->trackHeader.trackSize, 4, ofile);
-        //reverseEndian(&getV(i)->trackHeader.trackSize, 4);
 
 		bytesWritten += 8;
         size_t amountOfEvents = at(i)->size();

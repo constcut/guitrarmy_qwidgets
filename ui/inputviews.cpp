@@ -26,22 +26,17 @@
 
 #include <QDebug>
 
-//TODO
 
 
-
-//for record - clean later
 #ifdef WIN32
 #include <windows.h>
 #endif
 
 
 #include "mainviews.h"
-//dont like it..
 #include "mainwindow.h"
 
 #include "midi/midiengine.h"
-
 
 
 //TUNER=====================
@@ -67,12 +62,10 @@ void TunerInstance::setFreq(double newFreq)
 {
     freq = newFreq;
 
-    MasterView *master = (MasterView*)masterRepainter;
-    GLabel *lab = (GLabel*)label;
 
-    lab->setText(std::to_string(freq));
+    label->setText(std::to_string(freq));
 
-    master->pleaseRepaint();
+    masterRepainter->pleaseRepaint();
 }
 
 double TunerInstance::getFreq()
@@ -80,7 +73,7 @@ double TunerInstance::getFreq()
     return freq;
 }
 
-void TunerInstance::setViews(void *mast, void *lab)
+void TunerInstance::setViews(MasterView* mast, GLabel* lab)
 {
     masterRepainter = mast;
     label = lab;

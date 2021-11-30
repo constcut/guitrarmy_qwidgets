@@ -624,6 +624,10 @@ public:
     void keyevent(std::string press);
 };
 
+
+class BendPoints;
+class Note;
+
 class BendInput : public GView
 {
 protected:
@@ -636,8 +640,8 @@ public:
     static BendPoints *ptrToBend;
     static Note *ptrToNote;
 
-    static void setPtrBend(void *ptr);
-    static void setPtrNote(void *ptr);
+    static void setPtrBend(BendPoints* ptr);
+    static void setPtrNote(Note* ptr);
 
     void fillBend(int type, int height);
 

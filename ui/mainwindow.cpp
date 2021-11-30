@@ -324,9 +324,8 @@ void MainWindow::createMainToolbar()
 
 }
 
-QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
+QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
 {
-    GPannel *pan = (GPannel*)pannel;
 
     QDockWidget *dockTab = QWIDGET_ALLOC QDockWidget(dockname.c_str(),this);
     QMainWindow *dockWin = QWIDGET_ALLOC QMainWindow(0);
@@ -429,9 +428,8 @@ QDockWidget *MainWindow::createToolDock(std::string dockname,void *pannel)
     return dockTab;
 }
 
-QMenu *MainWindow::createToolMenu(void *pannel)
+QMenu *MainWindow::createToolMenu(GPannel *pan)
 {
-    GPannel *pan = (GPannel*)pannel;
 
     QMenu *menu = QWIDGET_ALLOC QMenu(0);
 

@@ -8,12 +8,15 @@
 
 //Tuner
 
+class MasterView;
+class GLabel;
+
 class TunerInstance
 {
     //singleton
 protected:
-    void *masterRepainter;
-    void *label;
+    MasterView* masterRepainter;
+    GLabel* label;
 //#include <QMutex> //for tuner only
 
     double freq;
@@ -27,7 +30,7 @@ public:
     void setFreq(double newFreq);
     double getFreq();
 
-    void setViews(void *mast, void *lab);
+    void setViews(MasterView* mast, GLabel* lab);
 
 };
 

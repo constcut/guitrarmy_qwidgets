@@ -34,7 +34,7 @@ class MainWindow;
 
 
 
-
+class GPannel;
 
 
 class MainWindow : public QMainWindow, public MasterView
@@ -65,22 +65,22 @@ CenterView *center;
 
 public:
 
-    void pushForceKey(std::string keyevent);
+    void pushForceKey(std::string keyevent) override;
 
     CenterView* getCenterView() { return center; }
     void setCenterView(CenterView* newCenter) { center = newCenter; }
 
-    bool eventFilter(QObject *object, QEvent *e);
+    bool eventFilter(QObject *object, QEvent *e) override;
 
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
    QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
 
-    void moveEvent(QMoveEvent *ev);
-    virtual void setStatusBarMessage(int index, std::string text, int timeOut=0);
+    void moveEvent(QMoveEvent *ev) override;
+    virtual void setStatusBarMessage(int index, std::string text, int timeOut=0) override;
 
-    void pleaseRepaint()
+    void pleaseRepaint() override
     {
         update();
     }
@@ -107,17 +107,17 @@ public:
     //==============
     
     //handling events
-    void paintEvent(QPaintEvent *event);
-    void mousePressEvent( QMouseEvent * event );
-    void mouseDoubleClickEvent( QMouseEvent * event );
-    void keyPressEvent ( QKeyEvent * event );
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent( QMouseEvent * event ) override;
+    void mouseDoubleClickEvent( QMouseEvent * event ) override;
+    void keyPressEvent ( QKeyEvent * event ) override;
 
-    void mouseReleaseEvent(QMouseEvent *mEvent);
+    void mouseReleaseEvent(QMouseEvent *mEvent) override;
 
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     bool gestureEvent(QGestureEvent *event);
 
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 
 
     void createUI();
@@ -128,10 +128,10 @@ public:
     void createMainToolbar();
     void createFloDocks();
 
-    QDockWidget* createToolDock(std::string dockname,void *pannel);
-    QMenu *createToolMenu(void *pannel);
+    QDockWidget* createToolDock(std::string dockname, GPannel *pannel);
+    QMenu *createToolMenu(GPannel *pannel);
 
-    void setViewPannel(int val)
+    void setViewPannel(int val) override
     {
         if (win)
             win->setCurrentIndex(val);
@@ -169,43 +169,5 @@ private:
 };
 
 
-
-/*
-class NewStyle : public QCommonStyle
-{
-public:
-    virtual int pixelMetric(PixelMetric pm, const QStyleOption* option, const QWidget* widget) const override
-    {
-        if ((pm == QStyle::PM_ToolBarExtensionExtent) ||
-            (pm == QStyle::PM_ToolBarSeparatorExtent) ||
-                (pm == QStyle::PM_ToolBarHandleExtent))
-        {
-
-            return 100;
-        }
-        return QCommonStyle::pixelMetric(pm, option, widget);
-    }
-
-    QIcon standardIcon(StandardPixmap standardIcon, const QStyleOption * option = 0, const QWidget * widget = 0);
-
-};
-
-QIcon NewStyle::standardIcon(StandardPixmap standardIcon, const QStyleOption * option = 0, const QWidget * widget = 0)
-{
-    std::string iconPlace = ":/icons/^" + std::string(".png");
-
-    QIcon icon(iconPlace.c_str());
-
-    switch (standardIcon)
-       {
-       case QStyle::SP_ToolBarHorizontalExtensionButton :
-           return icon;
-
-       case QStyle::SP_ToolBarVerticalExtensionButton :
-           return icon;
-       }
-       return QCommonStyle::standardIcon(standardIcon, option, widget);
-}
-*/
 
 #endif // MAINWINDOW_H

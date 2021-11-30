@@ -30,13 +30,13 @@ Note *BendInput::ptrToNote = 0;
 
 Beat *ChangesInput::ptrToBeat = 0;
 
-void BendInput::setPtrBend(void *ptr)
+void BendInput::setPtrBend(BendPoints* ptr)
 {
-    ptrToBend = (BendPoints*)ptr;
+    ptrToBend = ptr;
 }
-void BendInput::setPtrNote(void *ptr)
+void BendInput::setPtrNote(Note *ptr)
 {
-    ptrToNote = (Note*)ptr;
+    ptrToNote = ptr;
 }
 
 void ChangesInput::setPtrBeat(Beat *beatPtr)

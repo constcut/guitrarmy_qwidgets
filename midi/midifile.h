@@ -14,10 +14,10 @@ class MidiFile : public std::vector<std::unique_ptr<MidiTrack>> {
 public:
     struct midiHeader {
         char chunkId[5]; //4
-        long chunkSize; //4b
-        short formatType; //2
-        short nTracks; //2
-        short timeDevision; //2
+        int32_t chunkSize; //4b
+        int16_t formatType; //2
+        int16_t nTracks; //2
+        int16_t timeDevision; //2
         //read from stream or string
     };
 
