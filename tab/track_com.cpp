@@ -228,37 +228,30 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         this->at(barN)->setSignNum(value2);
     }
 
-    if (type == ReversableCommand::InsertBeat)
+    if (type == ReversableCommand::InsertBeat) //TODO тут точно ошибка
     {
         int len = beatN;
         if (!len)
         {
-            auto addition = std::move(command.outerBar);
-            this->insertBefore(std::move(addition), barN);
-            this->connectAll();
+            //Это какая-то другая комманда, вероятно удаление такта
+            //auto addition = std::move(command.outerBar);
+            //this->insertBefore(std::move(addition), barN);
+            //this->connectAll();
         }
     }
 
-    /* //TODO do not remove!!
-    if (type == DeleteBar)
+
+    if (type == ReversableCommand::DeleteBar)
     {
-        auto addition = std::move(command.outerBarEnd);
-        auto firstBar  = std::move(command.outerBar);
-        //sicky
-        for (;addition != firstBar; addition=(Bar*)addition->getPrev()) //TODO big issue :(
-        {
-            if (addition == 0)
-                break;
+        for (auto it = command.storedBars->end() - 1; it != command.storedBars->begin(); --it)
+            insertBefore(std::move(*it), barN);
+        this->insertBefore(std::move(command.storedBars->front()),barN);
 
-            qDebug() << "Addition addr "<<(addition.get());
-
-            this->insertBefore(std::move(addition),barN);
-        }
-        this->insertBefore(std::move(firstBar),barN);
         this->connectAll();
         this->cursor()=barN;
     }
 
+  /* //TODO do not remove!!
     if (type == FigureOutName)
     {
         auto firstBeat = std::move(command.outerBeat);
@@ -410,6 +403,11 @@ void Track::moveSelectionRight() {
 
 
 void Track::insertBar() {
+    //TODO найти старый код, чтобы удостовериться что всё будет работать правильно
+}
+
+
+void Track::insertNewPause() {
     auto beat = std::make_unique<Beat>();
     beat->setPause(true);
     beat->setDuration(4);
@@ -638,7 +636,9 @@ void Track::setTrackPause() {
 void Track::deleteBar() {
     SingleCommand command(ReversableCommand::DeleteBar);
     command.setPosition(0, _cursor,0);
-    command.outerBar = std::move(at(_cursor));
+
+    command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
+    command.storedBars->push_back(std::move(at(_cursor)));
     commandSequence.push_back(std::move(command));
 
     //attention question for memoryleaks
@@ -655,8 +655,10 @@ void Track::deleteSelectedBars() {
             --_cursor; //attention
         SingleCommand command(ReversableCommand::DeleteRangeOfBars);
         command.setPosition(0, _selectionBarFirst,0);
-        command.outerBar = std::move(at(_selectionBarFirst));
-        command.outerBarEnd = std::move(at(_selectionBarLast));
+
+        command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
+        for (int i = _selectionBarFirst; i <= _selectionBarLast; ++i)
+            command.storedBars->push_back(std::move(at(i)));
         commandSequence.push_back(std::move(command));
         for (int i = _selectionBarLast; i >= _selectionBarFirst; --i)
             remove(i);
@@ -672,16 +674,20 @@ void Track::deleteSelectedBeats() {
         connectAll();
         SingleCommand command(ReversableCommand::DeleteRangeOfBeats);
         command.setPosition(0,_selectionBarFirst,_selectionBeatFirst);
-        command.outerBeat =  std::move(at(_selectionBarFirst)->at(_selectionBeatFirst)); //firstBeat =
-        command.outerBeatEnd  = std::move(at(_selectionBarLast)->at(_selectionBeatLast)); // = lastBeat
+
+        command.storedBeats = std::make_unique<SingleCommand::BeatsBuffer>();
+        for (int i = _selectionBeatFirst; i <= _selectionBeatLast; ++i) {
+            command.storedBeats->push_back(std::move(at(_selectionBarFirst)->at(_selectionBeatFirst)));
+        }
         at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst).get());
         at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast).get());
 
         bool wholeFirst = false;
         bool wholeLast = false;
 
-        if (_selectionBeatFirst==0)
+        if (_selectionBeatFirst == 0)
             wholeFirst = true;
+
         if (_selectionBeatLast == at(_selectionBarLast)->size()-1)
             wholeLast = true;
 
@@ -696,7 +702,6 @@ void Track::deleteSelectedBeats() {
             else
                 for (int bI = _selectionBeatLast; bI >= _selectionBeatFirst; --bI)
                     at(_selectionBarFirst)->remove(bI);
-
         }
         else
         { //first and last remove depending on condition
@@ -711,10 +716,10 @@ void Track::deleteSelectedBeats() {
             }
 
             ///GET range of bars
-
-
-            command.startBar = std::move(at(_selectionBarFirst+1));
-            command.endBar = std::move(at(_selectionBarLast-1));
+            command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
+            for (int i = _selectionBarFirst+1; i <= _selectionBarLast-1; ++i) {
+                command.storedBars->push_back(std::move(at(_selectionBarFirst+1)));
+            }
 
             for (int bI = _selectionBarLast-1; bI > _selectionBarFirst; --bI)
                 remove(bI);

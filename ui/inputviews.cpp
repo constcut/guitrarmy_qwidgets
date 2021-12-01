@@ -1547,10 +1547,7 @@ void MorzeInput::onclick(int x1, int y1)
             bar->setRepeat(2, 2);
 
             playBar();
-
-            //does it cleans?
         }
-
     }
 }
 

@@ -178,6 +178,7 @@ public:
     void moveSelectionLeft();
     void moveSelectionRight();
     void insertBar();
+    void insertNewPause();
     void moveToNextBar();
     void moveToPrevBar();
     void moveToPrevPage();
@@ -237,6 +238,7 @@ private:
         {TrackCommand::SelectionExpandLeft, &Track::moveSelectionLeft},
         {TrackCommand::SelectionExpandRight, &Track::moveSelectionRight},
         {TrackCommand::InsertBar, &Track::insertBar},
+        //{TrackCommand::InsertNewPause, &Track::insertNewPause}, //TODO
         {TrackCommand::NextBar, &Track::moveToNextBar},
         {TrackCommand::PrevBar, &Track::moveToPrevBar},
         {TrackCommand::PrevPage, &Track::moveToPrevPage},

@@ -139,46 +139,41 @@ class Note;
 class Bar;
 class Beat;
 
-class SingleCommand
-{
+class SingleCommand //TODO rename reversable
+{ //Или вместо варианта общий класс от которого наследоваться
     ReversableCommand commandType;
-
     std::uint8_t commandValue;
     std::uint8_t commandValue2;
-    //position
 
-    //yet set exceed - optimize to file format
     std::uint8_t track;
-    int bar;
-    int beat;
-    std::uint8_t string; //note
+    std::uint8_t bar;
+    std::uint8_t beat;
+    std::uint8_t string;
 
 public:
 
-    //special store
+    //TODO хранить не в каждой каммоманде, а только в особых, хранить комманды как variant
     using NotesBuffer = std::vector<std::unique_ptr<Note>>;
     std::unique_ptr<NotesBuffer> storedNotes;
 
-    std::unique_ptr<Beat> outerBeat;
-    std::unique_ptr<Beat> outerBeatEnd;
-    std::unique_ptr<Bar> outerBar;
-    std::unique_ptr<Bar> outerBarEnd;
+    using BeatsBuffer = std::vector<std::unique_ptr<Beat>>;
+    std::unique_ptr<BeatsBuffer> storedBeats;
 
-    //could be refacted
-    std::unique_ptr<Bar> startBar; //TODO найти разницу с outerBar \ END
-    std::unique_ptr<Bar> endBar;
+    using BarsBuffer = std::vector<std::unique_ptr<Bar>>;
+    std::unique_ptr<BarsBuffer> storedBars;
+
 
     void requestStoredNotes(){
         storedNotes = std::make_unique<NotesBuffer>();
     }
 
-    SingleCommand():commandType(ReversableCommand::Empty),commandValue(0),track(0),bar(0),beat(0),string(0)
+    SingleCommand() : commandType(ReversableCommand::Empty),
+        commandValue(0),track(0),bar(0),beat(0),string(0)
     {}
 
     SingleCommand(ReversableCommand newType, std::uint8_t newValue=0):
-        commandType(newType),commandValue(newValue),track(0),bar(0),beat(0),string(0)
-    {
-    }
+        commandType(newType), commandValue(newValue), track(0), bar(0), beat(0), string(0)
+    {}
 
     void setType(ReversableCommand newType) { commandType = newType; }
     ReversableCommand getType() { return commandType; }
@@ -189,9 +184,7 @@ public:
     void setValue2(std::uint8_t newValue) { commandValue2 = newValue; }
     std::uint8_t getValue2() { return commandValue2; }
 
-
-    void setPosition(std::uint8_t trackN, int barN, int beatN, std::uint8_t stringN=255)
-    {
+    void setPosition(std::uint8_t trackN, std::uint8_t barN, std::uint8_t beatN, std::uint8_t stringN=255) {
         track = trackN;
         bar = barN;
         beat = beatN;
@@ -199,10 +192,9 @@ public:
     }
 
     std::uint8_t getTrackNum() { return track; }
-    int getBarNum() { return bar; }
-    int getBeatNum() { return beat; }
+    std::uint8_t getBarNum() { return bar; }
+    std::uint8_t getBeatNum() { return beat; }
     std::uint8_t getStringNum() { return string; }
-
 };
 
 #endif // TABCOMMANDS_H
