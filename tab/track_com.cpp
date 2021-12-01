@@ -251,116 +251,13 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         this->cursor()=barN;
     }
 
-  /* //TODO do not remove!!
-    if (type == FigureOutName)
+    if (type == ReversableCommand::DeleteRangeOfBeats)
     {
-        auto firstBeat = std::move(command.outerBeat);
-        auto lastBeat  = std::move(command.outerBeatEnd);
-
-        Bar *firstPa = (firstBeat->getParent());
-        Bar *lastPa = (lastBeat->getParent());//s
-
-        Beat *curBeat = lastBeat;
-
-        if (firstPa == lastPa)
-        {
-            if (value && value2)
-                this->insertBefore(firstPa,barN);
-            else
-            {
-                while(curBeat != firstBeat)
-                {
-                    this->at(barN)->insertBefore(curBeat,beatN);
-                    curBeat = (Beat*)curBeat->getPrev(); //TODO make getPrev\next work with uniques too ptr to uniqe probably
-                    if (curBeat == 0)
-                        break;
-                }
-                if (curBeat==firstBeat)
-                    this->at(barN)->insertBefore(curBeat,beatN);
-            }
-        }
-        else
-        {
-            if (value==0)
-                ++barN; //sift when first not full
-
-            Bar *curBar = (Bar*)lastPa->getPrev();
-
-            if (value2){
-                this->insertBefore(lastPa,barN);
-            }
-            else{
-                while(curBeat->getParent() == lastPa){
-                    this->at(barN)->insertBefore(curBeat,0);
-                    curBeat = (Beat*)curBeat->getPrev();
-                    if (curBeat == 0)
-                    {
-                        //what is this
-                        if(curBar)
-                        curBeat = curBar->at(curBar->size()-1); //issuepossible
-                        break;
-                    }
-                }
-            }
-
-
-            Bar *firstInSeq = command.startBar;
-            Bar *lastInSeq  = command.endBar;
-
-            if ((lastInSeq != firstPa) || (firstInSeq != lastPa)) {
-                Bar *currentBar = lastInSeq;
-
-                while (currentBar != firstInSeq)
-                {
-                    this->insertBefore(currentBar,barN);
-
-                    currentBar = (Bar*)currentBar->getPrev();
-                    if (currentBar==0)
-                        break;
-                }
-
-                if (currentBar == firstInSeq)
-                    this->insertBefore(currentBar,barN);
-            }
-
-
-
-           if (value) {    //first is full
-               this->insertBefore(firstPa,barN);
-           }
-           else {
-               --barN;
-               //curBeat = curBeat->getPrev(); //slide into first pa property
-
-
-               curBeat = firstBeat;
-               //insert here
-               int counter = 0;
-
-               if (curBeat)
-               while (curBeat->getParent() == firstPa)
-               {
-                   this->at(barN)->
-                           insertBefore(curBeat,
-                                        this->at(barN)->size()
-                                                    -counter);
-
-                   ++counter;
-                   curBeat = (Beat*)curBeat->getNext();
-                   if (curBeat==0)
-                       break;
-               }
-           }
-        }
-
-       this->connectAll();
-       this->cursor()=barN;
-       if (this->displayIndex() > this->cursor())
-           this->displayIndex() = this->cursor();
-       //from here till first beat insert at barN
-
+        //auto& firstBeat = command.storedBeats->front();
+        //auto& lastBeat  = command.storedBeats->back();
+        //TODO к сожалению этот участок придётся переписать, позже сверимся со старой версией с декабря
+        //Кажется при хранении битов надо так же хранить такты которые были удалены
     }
-    */
 
     //TODO 25-26 effect events + all clipboard operations
 }

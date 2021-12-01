@@ -105,33 +105,31 @@ enum class TrackCommand {
 
 enum class ReversableCommand { //Если будет конфликт имён убрать в клас хранитель
     Empty = 0,
-    SwitchEffectNote,
-    SwitchEffectBeat,
-    SetFret,
-    SetDuration,
-    SetDurationDetail,
-    SetDot,
-    SetPause,
-    DeleteNote,
-    Pasty,
-    Cut,
-    Intrument,
-    Pan,
-    Volume,
-    Drums,
-    Bpm,
-    InsertNewBar,
-    ChangeNoteState,
-    InsertNewPause,
-    SetSign,
-    InsertBeat,
-    DeleteBar,
-    DeleteRangeOfBars,
-    DeleteRangeOfBeats
+    SwitchEffectNote = 1,
+    SwitchEffectBeat = 2,
+    SetFret = 3,
+    SetDuration = 4,
+    SetDurationDetail = 5,
+    SetDot = 6,
+    SetPause = 7,
+    DeleteNote = 8,
+    Pasty = 9,
+    Cut = 10,
+    Intrument = 11,
+    Pan = 12,
+    Volume = 13,
+    Drums = 14,
+    Bpm = 15,
+    InsertNewBar = 16,
+    ChangeNoteState = 17,
+    InsertNewPause = 18,
+    SetSign = 19,
+    InsertBeat = 20,
+    DeleteBar = 21,
+    DeleteRangeOfBars = 22,
+    DeleteRangeOfBeats = 23
 };
 
-
-//      ReversableCommand::
 
 
 
@@ -139,8 +137,9 @@ class Note;
 class Bar;
 class Beat;
 
-class SingleCommand //TODO rename reversable
-{ //Или вместо варианта общий класс от которого наследоваться
+
+class SingleCommand
+{
     ReversableCommand commandType;
     std::uint8_t commandValue;
     std::uint8_t commandValue2;
@@ -153,6 +152,7 @@ class SingleCommand //TODO rename reversable
 public:
 
     //TODO хранить не в каждой каммоманде, а только в особых, хранить комманды как variant
+    //Или вместо варианта общий класс от которого наследоваться
     using NotesBuffer = std::vector<std::unique_ptr<Note>>;
     std::unique_ptr<NotesBuffer> storedNotes;
 
