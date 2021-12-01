@@ -248,12 +248,9 @@ public:
     virtual void setUI()
     {
 
-        for (size_t i = 0; i < buttons.size(); ++i)
-        {
-            //autocoef
-
+        for (size_t i = 0; i < buttons.size(); ++i)  {
            if (mainView->getMaster())
-            mainView->getMaster()->SetButton(i,buttons[i].getText(),
+                mainView->getMaster()->SetButton(i,buttons[i].getText(),
                                    buttons[i].getX(),buttons[i].getY(),
                                    buttons[i].getW(),buttons[i].getH(),"");
 

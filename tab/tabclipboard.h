@@ -6,6 +6,16 @@
 
 class Bar;
 
+enum class ClipboardAction {
+    //types 0 index bar //TODO enum on clipboard an recovery work
+    //      1 index beat
+    //      2 index bars
+    //      3 index beats
+
+    //      4 ptr bar
+};
+
+
 class AClipboard
 {
 protected:
@@ -13,7 +23,7 @@ protected:
     //first just use ints, then can review it on refactoring
     int type;
     int n1,m1,k1;
-    int n2,m2,k2;
+    int n2,m2,k2; //TODO rename
 
     Bar* ptr;
 
