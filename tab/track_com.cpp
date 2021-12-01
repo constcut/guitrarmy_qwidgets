@@ -1,5 +1,6 @@
 #include "tab.h"
 
+#include "g0/config.h"
 #include "midi/midifile.h"
 #include "tab/gmyfile.h"
 #include "tab/tabloader.h"
@@ -802,8 +803,8 @@ void Track::decDuration() {
 
 void Track::saveFromTrack() {
     GmyFile gmyFile;
-    std::string gfilename =  std::string(getTestsLocation())  + "first.gmy";
-    std::cerr << "Test loc " << getTestsLocation() << std::endl;
+    std::string gfilename =  std::string(AConfig::getInstance().globals.testsLocation)  + "first.gmy";
+    std::cerr << "Test loc " << AConfig::getInstance().globals.testsLocation << std::endl;
     std::ofstream file(gfilename.c_str());
     Tab* pTab =  parent; //TODO инкапсулировать в обычный класс, а не шаблон
     gmyFile.saveToFile(file, pTab);

@@ -2,37 +2,31 @@
 #define CONFIG_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <vector>
-#include <memory>
-
-#include <QImage>
 
 #define CONF_PARAM(z) AConfig::getInstance().values[ z ]
 
+void setTestLocation(std::string newTL);
 
+struct GlobalVariables { //TODO полностью влить в конфигурацию
+    std::string testsLocation;
+    std::string invertedLocation;
+    std::string theUserId;
+    bool isMobile;
+    struct ScreenSize
+    {
+        int width;
+        int height;
+        int dpi; //not set yet
+        double scale; //move here from configuration
 
-
-//TODO sepparate this Qt part from config
-class ImagePreloader
-{
-protected:
-    std::map<std::string, std::unique_ptr<QImage>> imageMap;
-    bool inv;
-
-public:
-    ImagePreloader():inv(false){}
-
-    void loadImage(std::string imageName);
-    void loadImages();
-
-    QImage *getImage(std::string imageName);
-
-    void invertAll();
-
-    void setInvert(bool toInvert) {inv=toInvert;}
+    } screenSize;
+    std::string platform;
 };
 
+
+void initGlobals();
 
 
 class AConfig
@@ -45,10 +39,10 @@ public:
     std::unordered_map<std::string,std::string> values;
     void addLine(std::string anotherLine);
 
-    ImagePreloader imageLoader; //TODO sepparate so config works without qt
-
     double scaleCoef;
-    double timeCoef;
+    double timeCoef; //TODO setters getters
+
+    GlobalVariables globals;
 
 public:
 

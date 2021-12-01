@@ -2,7 +2,7 @@
 #define COMMONVIEWS_H
 
 #include "gview.h"
-
+#include "g0/tests.h"
 #include "inputviews.h"
 
 #include <memory>

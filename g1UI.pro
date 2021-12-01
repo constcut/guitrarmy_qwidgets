@@ -43,6 +43,7 @@ SOURCES += main.cpp\
     tab/track.cpp \
     tab/track_com.cpp \
     libs/sf/tsf.cpp \
+    ui/imagepreloader.cpp \
     ui/mainwindow.cpp \
     ui/gview.cpp \
     tab/gmyfile.cpp \
@@ -63,13 +64,13 @@ SOURCES += main.cpp\
     ui/centerview.cpp \
     ui/inputviews.cpp \
     midi/midiengine.cpp \
-    g0/build.cpp \
     g0/rec.cpp \
     ui/trackview.cpp
 
 
 HEADERS  += ui/mainwindow.h \
     g0/config.h \
+    g0/tests.h \
     midi/miditrack.h \
     tab/effects.h \
     tab/tabclipboard.h \
@@ -88,9 +89,9 @@ HEADERS  += ui/mainwindow.h \
     midi/midifile.h \
     tab/tab.h \
     ui/athread.h \
-    g0/buildheader.h \
     libs/sf/tml.h \
     libs/sf/tsf.h \
+    ui/imagepreloader.h \
     ui/mainviews.h \
     midi/midirender.h \
     ui/tabviews.h \

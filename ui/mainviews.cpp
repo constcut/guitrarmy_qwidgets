@@ -111,7 +111,7 @@ void MainView::keyevent(std::string press)
 
             if (tabsView->gotChanges()==false) {
                 GmyFile gmyFile; 
-                std::string gfileName =  std::string(getTestsLocation())  + "first.gmy";
+                std::string gfileName =  std::string(AConfig::getInstance().globals.testsLocation)  + "first.gmy";
                 if (QFile::exists(gfileName.c_str()))
                 {
                     std::ifstream file(gfileName.c_str(), std::ios::binary);
@@ -160,7 +160,7 @@ void MainView::keyevent(std::string press)
                 s = fd->selectedFiles().at(0);
 
                         //fd->getOpenFileName(0, QString::fromLocal8Bit("�������"),
-                         //            getTestsLocation(),
+                         //            AConfig::getInstance().globals.testsLocation,
                                   //   "Gx files (*.g*)");
 
                 clock_t afterT = getTime();
@@ -617,7 +617,7 @@ void InfoView::onclick(int x1, int y1)
     {
 
 
-        QString crashName = getTestsLocation() + QString("crashs.glog");
+        QString crashName = AConfig::getInstance().globals.testsLocation.c_str() + QString("crashs.glog");
         if (QFile::exists(crashName))
         {
             QFile logData;
@@ -659,7 +659,7 @@ void InfoView::onclick(int x1, int y1)
 
         std::string sendData = "crashlog";
 
-        QString crashName = getTestsLocation() + QString("crashs.glog");
+        QString crashName = AConfig::getInstance().globals.testsLocation.c_str() + QString("crashs.glog");
         if (QFile::exists(crashName))
         {
             QFile logData;

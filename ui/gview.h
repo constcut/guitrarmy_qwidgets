@@ -4,6 +4,7 @@
 
 #include "tab/tab.h"
 #include "g0/config.h"
+#include "ui/imagepreloader.h"
 
 #include "tab/tabcommands.h"
 
@@ -97,7 +98,7 @@ public:
 
     void draw(QPainter *painter)
     {
-       QImage *img = (QImage*) AConfig::getInstance().imageLoader.getImage(imageName);
+       QImage *img = (QImage*) ImagePreloader::getInstance().getImage(imageName);
        if (img)
            painter->drawImage(x,y,*img);
     }

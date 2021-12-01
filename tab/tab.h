@@ -4,6 +4,7 @@
 #include "types.h"
 
 #include <unordered_map>
+#include <list>
 #include "tab/tabcommands.h" //move into g0
 
 #include "track.h"

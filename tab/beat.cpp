@@ -1,5 +1,5 @@
 #include "beat.h"
-
+#include <iostream>
 
 void BendPoints::insertNewPoint(BendPoint bendPoint)
 {

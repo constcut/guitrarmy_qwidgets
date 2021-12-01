@@ -59,6 +59,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "ui/imagepreloader.h"
+
 
 #define QWIDGET_ALLOC new
 //https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger
@@ -214,10 +216,10 @@ void MainWindow::createMenuTool()
     std::stringstream menuStyleStr;
     int menuPlatformCoef = 1;
 
-if (globals.platform == "windows") //check
-{
-    menuPlatformCoef = 4;
-}
+    if (AConfig::getInstance().globals.platform == "windows") //check
+    {
+        menuPlatformCoef = 4;
+    }
 
     menuStyleStr <<"QMenu { font-size:"<<(int)(autoCoef*30/menuPlatformCoef)<<"px;}QToolBar {border: 1px solid black;}";
     menuToolBar->setStyleSheet(menuStyleStr.str().c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
@@ -225,7 +227,7 @@ if (globals.platform == "windows") //check
     int iconSize=36*autoCoef;//36
 
 
-    if (globals.isMobile == false)
+    if (AConfig::getInstance().globals.isMobile == false)
     {
         iconSize = 36; //36 debug
         autoCoef = 1.0;
@@ -1107,7 +1109,7 @@ void MainWindow::actionNow(QAction *action)
   }
 
   if (textOut == "save config"){
-    std::string confFileName = std::string(getTestsLocation()) + "g.config";
+    std::string confFileName = std::string(AConfig::getInstance().globals.testsLocation) + "g.config";
     std::ofstream confFile(confFileName);
     AConfig::getInstance().save(confFile);
     return;
@@ -1709,7 +1711,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
         {
 
             ///QByteArray compress = qCompress(collector,7);
-            QString defaultRecFile = QString(getTestsLocation()) + QString("record.temp");
+            QString defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString("record.temp");
             QFile f; f.setFileName(defaultRecFile);
             ///int compressedSize = compress.size();
 
@@ -1914,7 +1916,7 @@ void MainWindow::startAudioOutput(std::string localName)
         defaultRecFile = localName.c_str();
     }
     else
-       defaultRecFile = QString(getTestsLocation()) + QString(localName.c_str());
+       defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString(localName.c_str());
 
     audioFile.setFileName(defaultRecFile);
 
@@ -1984,7 +1986,7 @@ void MainWindow::stopAudioInput()
 
 
     ///QByteArray compress = qCompress(audioInfo->collector,7);
-    QString defaultRecFile = QString(getTestsLocation()) + QString(saveName.c_str());
+    QString defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString(saveName.c_str());
     QFile f; f.setFileName(defaultRecFile);
     ///int compressedSize = compress.size();
 
@@ -2014,7 +2016,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 {
 
     std::string iconPlace = "";
-    //std::string(getTestsLocation()) + std::string("Icons/") + button + std::string(".png");
+    //std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/") + button + std::string(".png");
 
     std::string iconsSet;
     if (CONF_PARAM("iconsSet")=="1")
@@ -2043,7 +2045,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     //no invert while
 
-    QImage *imgs =(QImage*)AConfig::getInstance().imageLoader.getImage(button);
+    QImage *imgs =(QImage*)ImagePreloader::getInstance().getImage(button);
     QPixmap result;
     if (imgs) {
         QImage scI = *imgs;
@@ -2142,15 +2144,15 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     if (button=="pattern")
     {
         //inputs group
-        std::string icon1Place = std::string(getTestsLocation()) + std::string("Icons/")
+        std::string icon1Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
                 + std::string("tap.png");
         QIcon icon1(icon1Place.c_str());
 
-        std::string icon2Place = std::string(getTestsLocation()) + std::string("Icons/")
+        std::string icon2Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
                 + std::string("record.png");
         QIcon icon2(icon2Place.c_str());
 
-        std::string icon3Place = std::string(getTestsLocation()) + std::string("Icons/")
+        std::string icon3Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
                 + std::string("morze.png");
         QIcon icon3(icon3Place.c_str());
 
@@ -2181,11 +2183,11 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     if (button=="config")
     {
         //conf group
-        std::string icon1Place = std::string(getTestsLocation()) + std::string("Icons/")
+        std::string icon1Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
                 + std::string("info.png");
         QIcon icon1(icon1Place.c_str());
 
-        std::string icon2Place = std::string(getTestsLocation()) + std::string("Icons/")
+        std::string icon2Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
                 + std::string("tests.png");
         QIcon icon2(icon2Place.c_str());
 
@@ -2251,7 +2253,7 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
     }
 
     QToolButton *but = QWIDGET_ALLOC QToolButton(wi);
-    std::string iconPlace = "";//std::string(getTestsLocation()) + std::string("Icons/") + button + std::string(".png");
+    std::string iconPlace = "";//std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/") + button + std::string(".png");
     iconPlace = ":/icons/"+ button + std::string(".png");
     QIcon icon(iconPlace.c_str());
     but->setIcon(icon);

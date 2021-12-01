@@ -9,7 +9,6 @@ bool midiExportLog = false;
 
 std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
     auto output = std::make_unique<MidiFile>();
-    clock_t afterT = getTime();
     //time line track
     {
         auto timeLineTrack = std::make_unique<MidiTrack>();
@@ -125,10 +124,6 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
 
     if (soloTurnedOn==false)
         indecesToSkip.clear();
-
-    clock_t after2T = getTime();
-    int diffT = after2T - afterT;
-    //qDebug() <<"File pre-generation "<<diffT;
 
     //Main generation
 

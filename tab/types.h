@@ -1,22 +1,10 @@
 #ifndef TYPES_H
 #define TYPES_H 13
 
-#include "g0/buildheader.h"
 
 #include <vector>
-#include <string>
-#include <list> 
-#include <iostream>
 #include <memory>
 
-
-class AConfig;
-
-int getTime();
-bool testScenario();
-void connectConfigs(AConfig& config);
-bool midiPrint(std::string fileName);
-bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v);
 
 
 template<typename T>

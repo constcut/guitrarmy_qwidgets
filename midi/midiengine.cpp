@@ -1,5 +1,5 @@
 #include "midiengine.h"
-#include "g0/buildheader.h" //TODO get rid everywhere
+#include "g0/config.h"
 
 #include <QMediaPlayer>
 
@@ -87,7 +87,7 @@ void MidiEngine::openDefaultFile()
     //if (midiPlayer==nullptr)
         //midiPlayer = std::make_unique<QMediaPlayer>();
 
-    std::string command = std::string(getTestsLocation()) + "midiOutput.mid";
+    std::string command = std::string(AConfig::getInstance().globals.testsLocation) + "midiOutput.mid";
     QString playerPath = command.c_str(); // "/sdcard/p/tests/midiOutput.mid";
     midiPlayer.setMedia(QUrl::fromLocalFile(playerPath));
     return;
@@ -97,7 +97,7 @@ void MidiEngine::openDefaultFile()
 
  #ifdef WIN32
  std::stringstream command;
-     command<<"open \""<<getInvertedLocation()<<"midiOutput.mid\" type sequencer alias gMIDI";
+     command<<"open \""<<AConfig::getInstance().globals.invertedLocation<<"midiOutput.mid\" type sequencer alias gMIDI";
 
     mciSendStringA(command.str().c_str(),0,0,0);
 #endif

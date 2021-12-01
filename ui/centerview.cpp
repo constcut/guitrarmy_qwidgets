@@ -11,6 +11,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #define QWIDGET_ALLOC new
 //https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger
@@ -21,7 +22,7 @@ void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 
 void drawImage(QPainter* src, int x, int y, std::string imageName)
 {
-    QImage *img = (QImage*) AConfig::getInstance().imageLoader.getImage(imageName);
+    QImage *img = (QImage*) ImagePreloader::getInstance().getImage(imageName);
     if (img)
         src->drawImage(x,y,*img);
 }
@@ -955,7 +956,7 @@ void CenterView::pushForceKey(std::string keyevent)
 
     if (keyevent=="ctrl+b")
     {
-        QString baseFileName = getTestsLocation() + QString("base.txt");
+        QString baseFileName = AConfig::getInstance().globals.testsLocation.c_str() + QString("base.txt");
 
         QFile baseFile;
         baseFile.setFileName(baseFileName);
@@ -1020,7 +1021,7 @@ void CenterView::pushForceKey(std::string keyevent)
     if (keyevent=="alt+b")
     {
 
-        QString testsLoc = getTestsLocation() + QString("gb");//QString("gtp")
+        QString testsLoc = AConfig::getInstance().globals.testsLocation.c_str() + QString("gb");//QString("gtp")
 
         QString directoryName = testsLoc; //"D:/base/gbase1/gtp4";
 
@@ -1030,7 +1031,7 @@ void CenterView::pushForceKey(std::string keyevent)
         QString filter = "*";  filters.push_back(filter); //all files yet, then refact good
         QStringList files = searchDir.entryList(filters,QDir::Files | QDir::NoSymLinks);
 
-        QString baseFileName = getTestsLocation() + QString("base.txt");
+        QString baseFileName = AConfig::getInstance().globals.testsLocation.c_str() + QString("base.txt");
 
         QFile baseFile;
         baseFile.setFileName(baseFileName);
@@ -1736,7 +1737,7 @@ void CenterView::showHelp()
         }
 
         QStringList pathsBrowse;
-        pathsBrowse << ":/info/"; //getTestsLocation();
+        pathsBrowse << ":/info/"; //AConfig::getInstance().globals.testsLocation;
 
         welcomeText->setText(wholeFile);
         welcomeText->setSearchPaths(pathsBrowse);

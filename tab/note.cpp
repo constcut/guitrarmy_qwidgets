@@ -1,5 +1,7 @@
 #include "note.h"
 
+#include <iostream>
+
 void Note::clone(Note *from)
 {
     fret = from->fret;

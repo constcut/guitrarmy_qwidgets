@@ -187,7 +187,7 @@ void checkBase()
     {
 
         return; //release version
-        QString testsLoc = getTestsLocation() + QString("gb");//QString("gtp")
+        QString testsLoc = AConfig::getInstance().globals.testsLocation + QString("gb");//QString("gtp")
         //
         QDir    curDir(testsLoc);
 

@@ -1,3 +1,4 @@
+#include "tests.h"
 
 #include <iostream>
 
@@ -23,9 +24,28 @@
 
 #endif
 
-//#include <strstream>
 
+#include <QTime>
+#include <QElapsedTimer>
 
+QElapsedTimer timer;
+
+int getTime()
+{
+    //QTime time;
+
+    static bool firstRun = true;
+    if (firstRun)
+    {
+        timer.start();
+        firstRun=false;
+    }
+
+    int result = timer.elapsed();
+    if (result < 0) result *= -1;
+
+    return result;
+}
 
 
 //configuration connectors
@@ -140,7 +160,6 @@ UINT playMIDIFile(HWND hWndNotify, LPSTR lpszMIDIFileName, UINT replay=0)
 
 
 
-
 bool midiPrint(std::string fileName)
 {
     std::ifstream ifile(fileName.c_str(), std::ifstream::binary);
@@ -158,6 +177,7 @@ bool midiPrint(std::string fileName)
     midiFile.readStream(ifile);
     std::cout << "Reading file finished";
     midiFile.printToStream(std::cout);
+    return true;
 }
 
 
@@ -303,7 +323,7 @@ bool greatCheck()
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //getTestsLocation();
+            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //AConfig::getInstance().globals.testsLocation;
 
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");

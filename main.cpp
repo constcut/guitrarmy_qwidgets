@@ -4,6 +4,7 @@
 #include "ui/mainviews.h"
 
 #include "g0/config.h"
+#include "ui/imagepreloader.h"
 
 #include "tab/tabclipboard.h"
 
@@ -39,7 +40,7 @@
 
 #include "midi/midirender.h"
 
-
+//TODO расчесать инициализацию, создать отдельные файлы для неё
 
 //OMGC its a nightmare
 
@@ -49,7 +50,7 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
     signal(signum, SIG_DFL);
 
 
-    std::string logName = getTestsLocation() + std::string("log.txt");
+    std::string logName = AConfig::getInstance().globals.testsLocation + std::string("log.txt");
 
 
     QFile logF;
@@ -72,8 +73,7 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
 
     std::cout << std::endl << time.c_str() << std::endl;
 
-    QString baseLocation = getTestsLocation();
-
+    QString baseLocation = AConfig::getInstance().globals.testsLocation.c_str();
     QString crashName = baseLocation + QString("crashs.glog");
     crashLog.setFileName(crashName);
 
@@ -225,17 +225,19 @@ int main(int argc, char *argv[])
     }
 
     configuration.printValues();
-    configuration.imageLoader.loadImages();
+
+    ImagePreloader& imageLoader = ImagePreloader::getInstance();
+    imageLoader.loadImages();
 
 
     MainWindow w;
-    a.setApplicationVersion(getGuitarmyVersion());
-    a.setOrganizationName("Guitarmy union");
+    a.setApplicationVersion("Guitarmy v 0.5 final");
+    a.setOrganizationName("KK");
 
-    if (globals.isMobile == false) //for Desktops
+    if (AConfig::getInstance().globals.isMobile == false) //for Desktops
         w.setGeometry(30,30,800,480);
 
-    if (globals.platform == "windows")
+    if (AConfig::getInstance().globals.platform == "windows")
         MidiEngine midInit;
 
     auto mainViewLayer1 = std::make_unique<MainView>(); //Sorry for this layers, MainView and CenterView are not used to be supported furter
@@ -253,10 +255,10 @@ int main(int argc, char *argv[])
     QIcon winIcon(winIconName.c_str());
     w.setWindowIcon(winIcon);
 
-    std::string logName = getTestsLocation() + std::string("log.txt"); //TODO log init
+    std::string logName = AConfig::getInstance().globals.testsLocation + std::string("log.txt"); //TODO log init
     //TODO add init logger form gtab3
 
-    if (globals.platform == "android")
+    if (AConfig::getInstance().globals.platform == "android")
         if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
             logName = "/sdcard/Guitarmy.log";
 
@@ -268,7 +270,7 @@ int main(int argc, char *argv[])
     w.grabGesture(Qt::PanGesture);
     w.grabGesture(Qt::PinchGesture);
 
-    if (globals.platform == "android") {
+    if (AConfig::getInstance().globals.platform == "android") {
         w.show();
         if (CONF_PARAM("fullscreen")=="1")
             w.showFullScreen();
@@ -278,7 +280,7 @@ int main(int argc, char *argv[])
 
     //and_help.setLandscape();
 
-    w.setWindowTitle(getGuitarmyVersion());
+    w.setWindowTitle("Guitarmy");
     signal(SIGSEGV, posix_death_signal);
     signal(SIGILL, posix_death_signal);
     signal(SIGFPE, posix_death_signal);
