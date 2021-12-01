@@ -586,7 +586,7 @@ void CenterView::setComboBox(int index, std::string params, int x1, int y1, int 
 
     int VType = getCurrentViewType();
 
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     int inWidAmount = uiWidgets.at(VType).size();
     if (inWidAmount > index)
@@ -684,7 +684,7 @@ int CenterView::getComboBoxValue(int index)
 void CenterView::SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
 {
     int VType = getCurrentViewType();
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     if (uiWidgets.at(VType).size()>index)
     {
@@ -905,7 +905,7 @@ int CenterView::getStatusBarHeight()
 
 int CenterView::getWidth()
 {
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     if (ownChild==0)
     {
@@ -921,7 +921,7 @@ int CenterView::getWidth()
 
 int CenterView::getHeight()
 {
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     if (ownChild==0)
     {
@@ -956,7 +956,7 @@ void CenterView::pushForceKey(std::string keyevent)
 
     if (keyevent=="ctrl+b")
     {
-        QString baseFileName = AConfig::getInstance().globals.testsLocation.c_str() + QString("base.txt");
+        QString baseFileName = AConfig::getInst().testsLocation.c_str() + QString("base.txt");
 
         QFile baseFile;
         baseFile.setFileName(baseFileName);
@@ -1021,7 +1021,7 @@ void CenterView::pushForceKey(std::string keyevent)
     if (keyevent=="alt+b")
     {
 
-        QString testsLoc = AConfig::getInstance().globals.testsLocation.c_str() + QString("gb");//QString("gtp")
+        QString testsLoc = AConfig::getInst().testsLocation.c_str() + QString("gb");//QString("gtp")
 
         QString directoryName = testsLoc; //"D:/base/gbase1/gtp4";
 
@@ -1031,7 +1031,7 @@ void CenterView::pushForceKey(std::string keyevent)
         QString filter = "*";  filters.push_back(filter); //all files yet, then refact good
         QStringList files = searchDir.entryList(filters,QDir::Files | QDir::NoSymLinks);
 
-        QString baseFileName = AConfig::getInstance().globals.testsLocation.c_str() + QString("base.txt");
+        QString baseFileName = AConfig::getInst().testsLocation.c_str() + QString("base.txt");
 
         QFile baseFile;
         baseFile.setFileName(baseFileName);
@@ -1146,16 +1146,16 @@ void CenterView::pushForceKey(std::string keyevent)
     welcomeText = nullptr;
     if (confEdit)
     {
-        AConfig::getInstance().cleanValues();
+        AConfig::getInst().cleanValues();
         QTextDocument *confDocument = confEdit->document();
 
         for (size_t i = 0; i < confDocument->lineCount(); ++i)
         {
            QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
-           AConfig::getInstance().addLine(oneMoreLine.toStdString());
+           AConfig::getInst().addLine(oneMoreLine.toStdString());
         }
 
-        AConfig::getInstance().checkConfig();
+        AConfig::getInst().checkConfig();
         confEdit = nullptr;
     }
 
@@ -1327,7 +1327,7 @@ void CenterView::paintEvent(QPaintEvent *event)
     drawImage(&painter, 0,0, "bg");
     changeColor(CONF_PARAM("colors.default"), &painter);
 
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     if (ownChild==0) {
         scaleCoef /= 2;
@@ -1402,16 +1402,16 @@ void CenterView::paintEvent(QPaintEvent *event)
             if (confEdit)
             {
                 confEdit->setVisible(true);
-                AConfig::getInstance().cleanValues();
+                AConfig::getInst().cleanValues();
                 QTextDocument *confDocument = confEdit->document();
 
                 for (size_t i = 0; i < confDocument->lineCount(); ++i)
                 {
                    QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
-                   AConfig::getInstance().addLine(oneMoreLine.toStdString());
+                   AConfig::getInst().addLine(oneMoreLine.toStdString());
                 }
 
-                AConfig::getInstance().checkConfig();
+                AConfig::getInst().checkConfig();
 
                 confEdit = nullptr;
             }
@@ -1444,7 +1444,7 @@ void CenterView::mousePressEvent( QMouseEvent * event )
 
     if(event->buttons()&Qt::LeftButton)
     {
-        double scaleCoef = AConfig::getInstance().getScaleCoef();
+        double scaleCoef = AConfig::getInst().getScaleCoef();
 
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
@@ -1558,7 +1558,7 @@ void CenterView::mouseMoveEvent( QMouseEvent *event )
 
 void CenterView::mouseReleaseEvent(QMouseEvent *mEvent)
 {
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     int xPress = mEvent->pos().x()  / scaleCoef;
     int yPress = mEvent->pos().y() / scaleCoef;
@@ -1737,7 +1737,7 @@ void CenterView::showHelp()
         }
 
         QStringList pathsBrowse;
-        pathsBrowse << ":/info/"; //AConfig::getInstance().globals.testsLocation;
+        pathsBrowse << ":/info/"; //AConfig::getInstance().testsLocation;
 
         welcomeText->setText(wholeFile);
         welcomeText->setSearchPaths(pathsBrowse);
@@ -1756,8 +1756,8 @@ void CenterView::showConf()
 
         QString qs;
 
-        for (auto it = AConfig::getInstance().values.begin();
-             it!= AConfig::getInstance().values.end(); ++it)
+        for (auto it = AConfig::getInst().values.begin();
+             it!= AConfig::getInst().values.end(); ++it)
         {
             qs += (*it).first.c_str();
             qs += " = ";

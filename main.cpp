@@ -50,7 +50,7 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
     signal(signum, SIG_DFL);
 
 
-    std::string logName = AConfig::getInstance().globals.testsLocation + std::string("log.txt");
+    std::string logName = AConfig::getInst().testsLocation + std::string("log.txt");
 
 
     QFile logF;
@@ -73,7 +73,7 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
 
     std::cout << std::endl << time.c_str() << std::endl;
 
-    QString baseLocation = AConfig::getInstance().globals.testsLocation.c_str();
+    QString baseLocation = AConfig::getInst().testsLocation.c_str();
     QString crashName = baseLocation + QString("crashs.glog");
     crashLog.setFileName(crashName);
 
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
     setTestLocation(currentPath);
 
 
-    AConfig& configuration = AConfig::getInstance();
+    AConfig& configuration = AConfig::getInst();
     configuration.checkConfig();
     std::string confFileName = currentPath + "g.config";
     if (QFile::exists(confFileName.c_str())) {
@@ -234,10 +234,10 @@ int main(int argc, char *argv[])
     a.setApplicationVersion("Guitarmy v 0.5 final");
     a.setOrganizationName("KK");
 
-    if (AConfig::getInstance().globals.isMobile == false) //for Desktops
+    if (AConfig::getInst().isMobile == false) //for Desktops
         w.setGeometry(30,30,800,480);
 
-    if (AConfig::getInstance().globals.platform == "windows")
+    if (AConfig::getInst().platform == "windows")
         MidiEngine midInit;
 
     auto mainViewLayer1 = std::make_unique<MainView>(); //Sorry for this layers, MainView and CenterView are not used to be supported furter
@@ -255,10 +255,10 @@ int main(int argc, char *argv[])
     QIcon winIcon(winIconName.c_str());
     w.setWindowIcon(winIcon);
 
-    std::string logName = AConfig::getInstance().globals.testsLocation + std::string("log.txt"); //TODO log init
+    std::string logName = AConfig::getInst().testsLocation + std::string("log.txt"); //TODO log init
     //TODO add init logger form gtab3
 
-    if (AConfig::getInstance().globals.platform == "android")
+    if (AConfig::getInst().platform == "android")
         if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
             logName = "/sdcard/Guitarmy.log";
 
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
     w.grabGesture(Qt::PanGesture);
     w.grabGesture(Qt::PinchGesture);
 
-    if (AConfig::getInstance().globals.platform == "android") {
+    if (AConfig::getInst().platform == "android") {
         w.show();
         if (CONF_PARAM("fullscreen")=="1")
             w.showFullScreen();

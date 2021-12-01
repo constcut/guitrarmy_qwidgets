@@ -323,7 +323,7 @@ bool greatCheck()
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //AConfig::getInstance().globals.testsLocation;
+            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //AConfig::getInstance().testsLocation;
 
             std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
             std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");

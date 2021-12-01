@@ -189,7 +189,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         qDebug() <<"Generate midi "<<diffT;
 
         MidiEngine::closeDefaultFile();
-        std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+        std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
         std::ofstream outFile2(fullOutName, std::ios::binary);
 
@@ -204,7 +204,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         if (CONF_PARAM("midi.config").empty() == false){
             qDebug() << "Midi config " << CONF_PARAM("midi.config").c_str();
             //MidiToPcm generator(CONF_PARAM("midi.config"));
-            std::string outputSound = AConfig::getInstance().globals.testsLocation + std::string("waveOutput.wav");
+            std::string outputSound = AConfig::getInst().testsLocation + std::string("waveOutput.wav");
             //generator.convert(fullOutName,outputSound); //TODO sf mit
 
             MidiRender render;
@@ -419,7 +419,7 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
         pTab->connectTracks();
         auto generatedMidi = exportMidi(pTab,shiftTheCursor);
         MidiEngine::closeDefaultFile();
-        std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+        std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
         std::ofstream outFile2(fullOutName, std::ios::binary);
         if (!outFile2.is_open())
             qDebug() << "Failed to open out file :(";
@@ -448,7 +448,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
     auto generatedMidi = exportMidi(pTab);
 
     MidiEngine::closeDefaultFile();
-    std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+    std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
     std::ofstream outFile2(fullOutName, std::ios::binary);
 
     if (! outFile2.is_open()){

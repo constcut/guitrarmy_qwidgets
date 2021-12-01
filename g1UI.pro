@@ -29,6 +29,7 @@ win32:LIBS += -lWinMM
 
 SOURCES += main.cpp\
     g0/config.cpp \
+    g0/tests.cpp \
     midi/miditrack.cpp \
     tab/effects.cpp \
     tab/tabclipboard.cpp \
@@ -49,7 +50,6 @@ SOURCES += main.cpp\
     tab/gmyfile.cpp \
     tab/gtpfiles.cpp \
     midi/midifile.cpp \
-    g0/scenario.cpp \
     tab/tab.cpp \
     ui/athread.cpp \
     ui/gpannel.cpp \

@@ -111,7 +111,7 @@ void MainView::keyevent(std::string press)
 
             if (tabsView->gotChanges()==false) {
                 GmyFile gmyFile; 
-                std::string gfileName =  std::string(AConfig::getInstance().globals.testsLocation)  + "first.gmy";
+                std::string gfileName =  std::string(AConfig::getInst().testsLocation)  + "first.gmy";
                 if (QFile::exists(gfileName.c_str()))
                 {
                     std::ifstream file(gfileName.c_str(), std::ios::binary);
@@ -160,7 +160,7 @@ void MainView::keyevent(std::string press)
                 s = fd->selectedFiles().at(0);
 
                         //fd->getOpenFileName(0, QString::fromLocal8Bit("�������"),
-                         //            AConfig::getInstance().globals.testsLocation,
+                         //            AConfig::getInstance().testsLocation,
                                   //   "Gx files (*.g*)");
 
                 clock_t afterT = getTime();
@@ -359,7 +359,7 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 ConfigView::ConfigView():GView()
 {
-    AConfig& config = AConfig::getInstance();
+    AConfig& config = AConfig::getInst();
     connectConfigs(config);
 
     std::string sP = config.logsNames[0] + " " +
@@ -380,7 +380,7 @@ void ConfigView::keyevent(std::string press)
     //if (press == "m")
         //getMaster()->resetToFirstChild();
 
-    AConfig& config = AConfig::getInstance();
+    AConfig& config = AConfig::getInst();
 
     if (press == "1")
     {
@@ -617,7 +617,7 @@ void InfoView::onclick(int x1, int y1)
     {
 
 
-        QString crashName = AConfig::getInstance().globals.testsLocation.c_str() + QString("crashs.glog");
+        QString crashName = AConfig::getInst().testsLocation.c_str() + QString("crashs.glog");
         if (QFile::exists(crashName))
         {
             QFile logData;
@@ -659,7 +659,7 @@ void InfoView::onclick(int x1, int y1)
 
         std::string sendData = "crashlog";
 
-        QString crashName = AConfig::getInstance().globals.testsLocation.c_str() + QString("crashs.glog");
+        QString crashName = AConfig::getInst().testsLocation.c_str() + QString("crashs.glog");
         if (QFile::exists(crashName))
         {
             QFile logData;

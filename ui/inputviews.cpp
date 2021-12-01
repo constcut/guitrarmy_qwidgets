@@ -196,7 +196,7 @@ void PatternInput::playBar() {
 
 
     MidiEngine::closeDefaultFile();
-    std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+    std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
     auto outMidi = exportMidi(&patternTab);
@@ -418,7 +418,7 @@ void TapRyView::measureTime()
             //ok
             double theScale = 100.0/waited;
             //AConfig::getInstance().setTimeCoef(1);
-            AConfig::getInstance().setTimeCoef(theScale);
+            AConfig::getInst().setTimeCoef(theScale);
 
             qDebug() <<"itsays time coef to "<<theScale;
         }
@@ -427,7 +427,7 @@ void TapRyView::measureTime()
             //scale
            double theScale = 100.0/waited;
            //int scale = theScale;
-           AConfig::getInstance().setTimeCoef(theScale);
+           AConfig::getInst().setTimeCoef(theScale);
 
            qDebug() <<"itsays time coef to "<<theScale;
         }
@@ -790,7 +790,7 @@ void TapRyView::copyAndPlayBar()
 
 
     MidiEngine::closeDefaultFile();
-    std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+    std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
     auto outMidi = exportMidi(&patternTab);
@@ -901,7 +901,7 @@ void TapRyView::keyevent(std::string press)
 
 
         MidiEngine::closeDefaultFile();
-        std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+        std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
 
         std::ofstream outFile(fullOutName);
@@ -1024,7 +1024,7 @@ void TapRyView::onclick(int x1, int y1)
 
 void RecordView::setUI()
 {
-    QString testsLoc = AConfig::getInstance().globals.testsLocation.c_str();//! MOVE TO records folder
+    QString testsLoc = AConfig::getInst().testsLocation.c_str();//! MOVE TO records folder
     QDir    curDir(testsLoc);
 
     QStringList filters;
@@ -1065,7 +1065,7 @@ void RecordView::loadCurrentFile()
     parameters.push_back(eLev3Value);
     parameters.push_back(wavePosition);
 
-    std::string wavePath = std::string(AConfig::getInstance().globals.testsLocation) + currentFile;
+    std::string wavePath = std::string(AConfig::getInst().testsLocation) + currentFile;
 
     waveItself.loadFile(wavePath,&parameters);
 
@@ -1331,7 +1331,7 @@ void RecordView::onclick(int x1, int y1)
                 QString container = "audio/x-wav";
                 recorderPtr->setEncodingSettings(audioSettings,QVideoEncoderSettings(), container);
 
-                std::string wavePath = std::string(AConfig::getInstance().globals.testsLocation) + std::string("rec.wav");
+                std::string wavePath = std::string(AConfig::getInst().testsLocation) + std::string("rec.wav");
                 recorderPtr->setOutputLocation(QUrl::fromLocalFile(wavePath.c_str()));
             }
 
@@ -1386,7 +1386,7 @@ void RecordView::onclick(int x1, int y1)
 
         #ifdef WIN32
             mciSendStringA("stop rec", 0, 0, 0);
-            std::string command = std::string("save recaudio \"") + AConfig::getInstance().globals.invertedLocation + "rec.wav\"";
+            std::string command = std::string("save recaudio \"") + AConfig::getInstance().invertedLocation + "rec.wav\"";
             mciSendStringA(command.c_str(), 0, 0, 0);
             mciSendStringA("close rec", 0, 0, 0);
 
@@ -1436,7 +1436,7 @@ void MorzeInput::playBar()
 
 
         MidiEngine::closeDefaultFile();
-        std::string fullOutName = AConfig::getInstance().globals.testsLocation + std::string("midiOutput.mid");
+        std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
         std::ofstream outFile(fullOutName);
         auto outMidi = exportMidi(&morzeTab);

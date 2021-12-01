@@ -5,28 +5,12 @@
 #include <unordered_map>
 #include <vector>
 
-#define CONF_PARAM(z) AConfig::getInstance().values[ z ]
+#define CONF_PARAM(z) AConfig::getInst().values[ z ]
 
 void setTestLocation(std::string newTL);
 
-struct GlobalVariables { //TODO полностью влить в конфигурацию
-    std::string testsLocation;
-    std::string invertedLocation;
-    std::string theUserId;
-    bool isMobile;
-    struct ScreenSize
-    {
-        int width;
-        int height;
-        int dpi; //not set yet
-        double scale; //move here from configuration
-
-    } screenSize;
-    std::string platform;
-};
-
-
 void initGlobals();
+
 
 
 class AConfig
@@ -42,7 +26,21 @@ public:
     double scaleCoef;
     double timeCoef; //TODO setters getters
 
-    GlobalVariables globals;
+//Previus global variables:
+
+    std::string testsLocation;
+    std::string invertedLocation;
+    std::string theUserId;
+    bool isMobile;
+    struct ScreenSize
+    {
+        int width;
+        int height;
+        int dpi; //not set yet
+        double scale;
+
+    } screenSize;
+    std::string platform;
 
 public:
 
@@ -66,7 +64,7 @@ public:
 
 
 public:
-        static AConfig& getInstance() {
+        static AConfig& getInst() {
             static AConfig instance;
             return instance;
         }

@@ -216,10 +216,8 @@ void MainWindow::createMenuTool()
     std::stringstream menuStyleStr;
     int menuPlatformCoef = 1;
 
-    if (AConfig::getInstance().globals.platform == "windows") //check
-    {
+    if (AConfig::getInst().platform == "windows") //check
         menuPlatformCoef = 4;
-    }
 
     menuStyleStr <<"QMenu { font-size:"<<(int)(autoCoef*30/menuPlatformCoef)<<"px;}QToolBar {border: 1px solid black;}";
     menuToolBar->setStyleSheet(menuStyleStr.str().c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
@@ -227,7 +225,7 @@ void MainWindow::createMenuTool()
     int iconSize=36*autoCoef;//36
 
 
-    if (AConfig::getInstance().globals.isMobile == false)
+    if (AConfig::getInst().isMobile == false)
     {
         iconSize = 36; //36 debug
         autoCoef = 1.0;
@@ -236,7 +234,7 @@ void MainWindow::createMenuTool()
 
     menuToolBar->setIconSize(QSize(iconSize,iconSize));
 
-    AConfig::getInstance().setScaleCoef(autoCoef);
+    AConfig::getInst().setScaleCoef(autoCoef);
 
 
     if (CONF_PARAM("toolBar") == "0")
@@ -517,7 +515,7 @@ void MainWindow::createUI()
     win2->setKeyPress(center);
     win2->setPushItem(true);
 
-    double coef = AConfig::getInstance().getScaleCoef();
+    double coef = AConfig::getInst().getScaleCoef();
 
     int initWidth = 770 * coef;
     int initHeightMin = 300 * coef;
@@ -986,12 +984,12 @@ void MainWindow::actionNow(QAction *action)
 
   if (textOut=="zoomIn")
   {
-      double currentScale = AConfig::getInstance().getScaleCoef();
+      double currentScale = AConfig::getInst().getScaleCoef();
 
       if (currentScale <= 4.0)
       {
           currentScale += 0.25;
-          AConfig::getInstance().setScaleCoef(currentScale);
+          AConfig::getInst().setScaleCoef(currentScale);
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
@@ -1006,12 +1004,12 @@ void MainWindow::actionNow(QAction *action)
   }
   if (textOut=="zoomOut")
   {
-      double currentScale = AConfig::getInstance().getScaleCoef();
+      double currentScale = AConfig::getInst().getScaleCoef();
 
       if (currentScale >= 0.5)
       {
           currentScale -= 0.25;
-          AConfig::getInstance().setScaleCoef(currentScale);
+          AConfig::getInst().setScaleCoef(currentScale);
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
@@ -1070,7 +1068,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "darkSkin")
   {
     DarkSkin skin;
-    skin.setIntoConfig(AConfig::getInstance());
+    skin.setIntoConfig(AConfig::getInst());
 #ifndef __ANDROID_API__
     recreateUI(); //to remember the bug
 #endif
@@ -1080,7 +1078,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "lightSkin")
   {
       LightSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInst());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1090,7 +1088,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicSkin")
   {
       ClassicSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInst());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1100,7 +1098,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicInvSkin")
   {
       ClassicInvertedSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInst());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1109,9 +1107,9 @@ void MainWindow::actionNow(QAction *action)
   }
 
   if (textOut == "save config"){
-    std::string confFileName = std::string(AConfig::getInstance().globals.testsLocation) + "g.config";
+    std::string confFileName = std::string(AConfig::getInst().testsLocation) + "g.config";
     std::ofstream confFile(confFileName);
-    AConfig::getInstance().save(confFile);
+    AConfig::getInst().save(confFile);
     return;
   }
 
@@ -1305,7 +1303,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         //painter.fillRect(0,0,width(),height()); //TODO
     }
 
-    double scaleCoef = AConfig::getInstance().getScaleCoef();
+    double scaleCoef = AConfig::getInst().getScaleCoef();
 
     qreal scaleX = scaleCoef;
     qreal scaleY = scaleCoef;
@@ -1322,7 +1320,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *mEvent)
 {
-   double scaleCoef = AConfig::getInstance().getScaleCoef();
+   double scaleCoef = AConfig::getInst().getScaleCoef();
 
    int xPress = mEvent->pos().x()  / scaleCoef;
    int yPress = mEvent->pos().y() / scaleCoef;
@@ -1439,7 +1437,7 @@ void MainWindow::mousePressEvent( QMouseEvent * event )
 
     if(event->buttons()&Qt::LeftButton)
     {
-        double scaleCoef = AConfig::getInstance().getScaleCoef();
+        double scaleCoef = AConfig::getInst().getScaleCoef();
 
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
@@ -1513,7 +1511,7 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
            double dScale = scale;
            //dScale += 1.0;
 
-           double nowScale = AConfig::getInstance().getScaleCoef();
+           double nowScale = AConfig::getInst().getScaleCoef();
 
 
            if (CONF_PARAM("turnPinchZoomOn")=="1")
@@ -1535,7 +1533,7 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
                        nowScale *=dScale;
                    }
 
-                   AConfig::getInstance().setScaleCoef(nowScale);
+                   AConfig::getInst().setScaleCoef(nowScale);
                    update();
            }
 
@@ -1711,7 +1709,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
         {
 
             ///QByteArray compress = qCompress(collector,7);
-            QString defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString("record.temp");
+            QString defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString("record.temp");
             QFile f; f.setFileName(defaultRecFile);
             ///int compressedSize = compress.size();
 
@@ -1916,7 +1914,7 @@ void MainWindow::startAudioOutput(std::string localName)
         defaultRecFile = localName.c_str();
     }
     else
-       defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString(localName.c_str());
+       defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString(localName.c_str());
 
     audioFile.setFileName(defaultRecFile);
 
@@ -1986,7 +1984,7 @@ void MainWindow::stopAudioInput()
 
 
     ///QByteArray compress = qCompress(audioInfo->collector,7);
-    QString defaultRecFile = QString(AConfig::getInstance().globals.testsLocation.c_str()) + QString(saveName.c_str());
+    QString defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString(saveName.c_str());
     QFile f; f.setFileName(defaultRecFile);
     ///int compressedSize = compress.size();
 
@@ -2016,7 +2014,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 {
 
     std::string iconPlace = "";
-    //std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/") + button + std::string(".png");
+    //std::string(AConfig::getInstance().testsLocation) + std::string("Icons/") + button + std::string(".png");
 
     std::string iconsSet;
     if (CONF_PARAM("iconsSet")=="1")
@@ -2144,15 +2142,15 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     if (button=="pattern")
     {
         //inputs group
-        std::string icon1Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
+        std::string icon1Place = std::string(AConfig::getInst().testsLocation) + std::string("Icons/")
                 + std::string("tap.png");
         QIcon icon1(icon1Place.c_str());
 
-        std::string icon2Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
+        std::string icon2Place = std::string(AConfig::getInst().testsLocation) + std::string("Icons/")
                 + std::string("record.png");
         QIcon icon2(icon2Place.c_str());
 
-        std::string icon3Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
+        std::string icon3Place = std::string(AConfig::getInst().testsLocation) + std::string("Icons/")
                 + std::string("morze.png");
         QIcon icon3(icon3Place.c_str());
 
@@ -2183,11 +2181,11 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
     if (button=="config")
     {
         //conf group
-        std::string icon1Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
+        std::string icon1Place = std::string(AConfig::getInst().testsLocation) + std::string("Icons/")
                 + std::string("info.png");
         QIcon icon1(icon1Place.c_str());
 
-        std::string icon2Place = std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/")
+        std::string icon2Place = std::string(AConfig::getInst().testsLocation) + std::string("Icons/")
                 + std::string("tests.png");
         QIcon icon2(icon2Place.c_str());
 
@@ -2253,7 +2251,7 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
     }
 
     QToolButton *but = QWIDGET_ALLOC QToolButton(wi);
-    std::string iconPlace = "";//std::string(AConfig::getInstance().globals.testsLocation) + std::string("Icons/") + button + std::string(".png");
+    std::string iconPlace = "";//std::string(AConfig::getInstance().testsLocation) + std::string("Icons/") + button + std::string(".png");
     iconPlace = ":/icons/"+ button + std::string(".png");
     QIcon icon(iconPlace.c_str());
     but->setIcon(icon);

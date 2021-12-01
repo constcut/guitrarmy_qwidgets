@@ -9,34 +9,33 @@
 
 void initGlobals()
 {
-    AConfig& conf = AConfig::getInstance();
+    AConfig& conf = AConfig::getInst();
 
-    conf.globals.invertedLocation = "";
-    conf.globals.testsLocation = "";
-    conf.globals.theUserId = "";
+    conf.invertedLocation = "";
+    conf.testsLocation = "";
+    conf.theUserId = "";
 
-    conf.globals.screenSize.height=0;
-    conf.globals.screenSize.width=0;
-    conf.globals.screenSize.dpi=0;
+    conf.screenSize.height=0;
+    conf.screenSize.width=0;
+    conf.screenSize.dpi=0;
 
-    conf.globals.isMobile = false; //desktop actually is default
+    conf.isMobile = false; //desktop actually is default
 
 #ifdef __ANDROID_API__
     globals.isMobile = true;
 #endif
-    conf.globals.platform = "other";
+    conf.platform = "other";
 #ifdef linux
-    conf.globals.platform = "linux";  //not very sure
+    conf.platform = "linux";  //not very sure
 #endif
 #ifdef WIN32
-   conf.globals.platform = "windows";
+   conf.platform = "windows";
 #endif
 #ifdef __ANDROID_API__
-   conf.globals.platform = "android";
+   conf.platform = "android";
 #endif
 
 }
-
 
 
 void setTestLocation(std::string newTL)
@@ -44,9 +43,9 @@ void setTestLocation(std::string newTL)
     std::string invertedLocation="";
 
     std::cout << "setCurrent location to "<<newTL.c_str()<<std::endl;
-    AConfig& conf = AConfig::getInstance();
+    AConfig& conf = AConfig::getInst();
 
-    conf.globals.testsLocation = newTL;
+    conf.testsLocation = newTL;
 
     //invert
     invertedLocation.clear();
@@ -57,7 +56,7 @@ void setTestLocation(std::string newTL)
         else
             invertedLocation.push_back(newTL[i]);
 
-    conf.globals.invertedLocation = invertedLocation;
+    conf.invertedLocation = invertedLocation;
 }
 
 

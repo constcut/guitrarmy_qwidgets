@@ -87,7 +87,7 @@ void MidiEngine::openDefaultFile()
     //if (midiPlayer==nullptr)
         //midiPlayer = std::make_unique<QMediaPlayer>();
 
-    std::string command = std::string(AConfig::getInstance().globals.testsLocation) + "midiOutput.mid";
+    std::string command = std::string(AConfig::getInst().testsLocation) + "midiOutput.mid";
     QString playerPath = command.c_str(); // "/sdcard/p/tests/midiOutput.mid";
     midiPlayer.setMedia(QUrl::fromLocalFile(playerPath));
     return;
@@ -97,7 +97,7 @@ void MidiEngine::openDefaultFile()
 
  #ifdef WIN32
  std::stringstream command;
-     command<<"open \""<<AConfig::getInstance().globals.invertedLocation<<"midiOutput.mid\" type sequencer alias gMIDI";
+     command<<"open \""<<AConfig::getInstance().invertedLocation<<"midiOutput.mid\" type sequencer alias gMIDI";
 
     mciSendStringA(command.str().c_str(),0,0,0);
 #endif

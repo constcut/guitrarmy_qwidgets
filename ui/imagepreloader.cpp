@@ -13,7 +13,7 @@ void ImagePreloader::loadImage(std::string imageName)
    std::string fullImageName = "";
 
 
-   //std::string(AConfig::getInstance().globals.testsLocation)
+   //std::string(AConfig::getInstance().testsLocation)
           // + std::string("Icons/") + imageName +std::string(".png");
 
    std::string iconsSet;
