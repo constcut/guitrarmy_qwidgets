@@ -97,7 +97,7 @@ public:
 
     void draw(QPainter *painter)
     {
-       QImage *img = (QImage*) AConfig::getInstance()->imageLoader.getImage(imageName);
+       QImage *img = (QImage*) AConfig::getInstance().imageLoader.getImage(imageName);
        if (img)
            painter->drawImage(x,y,*img);
     }

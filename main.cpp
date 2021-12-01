@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
     setTestLocation(currentPath);
 
 
-    AConfig configuration;
+    AConfig& configuration = AConfig::getInstance();
     configuration.checkConfig();
     std::string confFileName = currentPath + "g.config";
     if (QFile::exists(confFileName.c_str())) {
@@ -225,7 +225,6 @@ int main(int argc, char *argv[])
     }
 
     configuration.printValues();
-    AConfig::setInstance(&configuration);
     configuration.imageLoader.loadImages();
 
 

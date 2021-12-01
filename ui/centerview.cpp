@@ -21,7 +21,7 @@ void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 
 void drawImage(QPainter* src, int x, int y, std::string imageName)
 {
-    QImage *img = (QImage*) AConfig::getInstance()->imageLoader.getImage(imageName);
+    QImage *img = (QImage*) AConfig::getInstance().imageLoader.getImage(imageName);
     if (img)
         src->drawImage(x,y,*img);
 }
@@ -585,7 +585,7 @@ void CenterView::setComboBox(int index, std::string params, int x1, int y1, int 
 
     int VType = getCurrentViewType();
 
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     int inWidAmount = uiWidgets.at(VType).size();
     if (inWidAmount > index)
@@ -683,7 +683,7 @@ int CenterView::getComboBoxValue(int index)
 void CenterView::SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
 {
     int VType = getCurrentViewType();
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     if (uiWidgets.at(VType).size()>index)
     {
@@ -904,7 +904,7 @@ int CenterView::getStatusBarHeight()
 
 int CenterView::getWidth()
 {
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     if (ownChild==0)
     {
@@ -920,7 +920,7 @@ int CenterView::getWidth()
 
 int CenterView::getHeight()
 {
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     if (ownChild==0)
     {
@@ -1145,16 +1145,16 @@ void CenterView::pushForceKey(std::string keyevent)
     welcomeText = nullptr;
     if (confEdit)
     {
-        AConfig::getInstance()->cleanValues();
+        AConfig::getInstance().cleanValues();
         QTextDocument *confDocument = confEdit->document();
 
         for (size_t i = 0; i < confDocument->lineCount(); ++i)
         {
            QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
-           AConfig::getInstance()->addLine(oneMoreLine.toStdString());
+           AConfig::getInstance().addLine(oneMoreLine.toStdString());
         }
 
-        AConfig::getInstance()->checkConfig();
+        AConfig::getInstance().checkConfig();
         confEdit = nullptr;
     }
 
@@ -1326,7 +1326,7 @@ void CenterView::paintEvent(QPaintEvent *event)
     drawImage(&painter, 0,0, "bg");
     changeColor(CONF_PARAM("colors.default"), &painter);
 
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     if (ownChild==0) {
         scaleCoef /= 2;
@@ -1401,16 +1401,16 @@ void CenterView::paintEvent(QPaintEvent *event)
             if (confEdit)
             {
                 confEdit->setVisible(true);
-                AConfig::getInstance()->cleanValues();
+                AConfig::getInstance().cleanValues();
                 QTextDocument *confDocument = confEdit->document();
 
                 for (size_t i = 0; i < confDocument->lineCount(); ++i)
                 {
                    QString oneMoreLine = confDocument->findBlockByLineNumber(i).text();
-                   AConfig::getInstance()->addLine(oneMoreLine.toStdString());
+                   AConfig::getInstance().addLine(oneMoreLine.toStdString());
                 }
 
-                AConfig::getInstance()->checkConfig();
+                AConfig::getInstance().checkConfig();
 
                 confEdit = nullptr;
             }
@@ -1443,7 +1443,7 @@ void CenterView::mousePressEvent( QMouseEvent * event )
 
     if(event->buttons()&Qt::LeftButton)
     {
-        double scaleCoef = AConfig::getInstance()->getScaleCoef();
+        double scaleCoef = AConfig::getInstance().getScaleCoef();
 
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
@@ -1557,7 +1557,7 @@ void CenterView::mouseMoveEvent( QMouseEvent *event )
 
 void CenterView::mouseReleaseEvent(QMouseEvent *mEvent)
 {
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     int xPress = mEvent->pos().x()  / scaleCoef;
     int yPress = mEvent->pos().y() / scaleCoef;
@@ -1753,11 +1753,10 @@ void CenterView::showConf()
         confEdit = std::make_unique<QTextEdit>(this);
         confEdit->show();
 
-        size_t i = 0;
         QString qs;
 
-        for (std::map<std::string,std::string>::iterator it = AConfig::getInstance()->values.begin();
-             it!= AConfig::getInstance()->values.end(); ++it)
+        for (auto it = AConfig::getInstance().values.begin();
+             it!= AConfig::getInstance().values.end(); ++it)
         {
             qs += (*it).first.c_str();
             qs += " = ";

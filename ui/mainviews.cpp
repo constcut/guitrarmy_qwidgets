@@ -359,7 +359,8 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 ConfigView::ConfigView():GView()
 {
-    AConfig *confValues = new AConfig(); //TODO перенести внутрь
+    AConfig& inst = AConfig::getInstance();
+    AConfig* confValues = &inst;
     connectConfigs(confValues);
 
     configPointer = confValues;
@@ -442,23 +443,23 @@ void ConfigView::onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
     /*
     if (labScaleMinus->hit(x1,y1))
     {
-        double currentScale = AConfig::getInstance()->getScaleCoef();
+        double currentScale = AConfig::getInstance().getScaleCoef();
 
         if (currentScale >= 0.5)
         {
             currentScale -= 0.25;
-            AConfig::getInstance()->setScaleCoef(currentScale);
+            AConfig::getInstance().setScaleCoef(currentScale);
         }
     }
 
     if (labScalePlus->hit(x1,y1))
     {
-        double currentScale = AConfig::getInstance()->getScaleCoef();
+        double currentScale = AConfig::getInstance().getScaleCoef();
 
         if (currentScale <= 4.0)
         {
             currentScale += 0.25;
-            AConfig::getInstance()->setScaleCoef(currentScale);
+            AConfig::getInstance().setScaleCoef(currentScale);
         }
     }
     */
@@ -481,8 +482,8 @@ void ConfigView::draw([[maybe_unused]]QPainter *painter)
     //int curY = 75;
 
     /*
-    for (std::map<std::string,std::string>::iterator itV=AConfig::getInstance()->values.begin();
-         itV!=AConfig::getInstance()->values.end(); ++itV, ++i)
+    for (std::map<std::string,std::string>::iterator itV=AConfig::getInstance().values.begin();
+         itV!=AConfig::getInstance().values.end(); ++itV, ++i)
     {
             stri ngExtended line;
             line << itV->first.c_str()<<"="<<itV->second.c_str();

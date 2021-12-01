@@ -8,7 +8,8 @@
 
 #include <QImage>
 
-#define CONF_PARAM(z) AConfig::getInstance()->values[ z ]
+#define CONF_PARAM(z) AConfig::getInstance().values[ z ]
+
 
 
 
@@ -33,6 +34,7 @@ public:
 };
 
 
+
 class AConfig
 {
 public:
@@ -40,18 +42,15 @@ public:
     std::string logsNames[10];
     int topIndex;
 
-    //value names
-    std::map<std::string,std::string> values;
+    std::unordered_map<std::string,std::string> values;
     void addLine(std::string anotherLine);
 
     ImagePreloader imageLoader; //TODO sepparate so config works without qt
 
     double scaleCoef;
-
     double timeCoef;
 
 public:
-    AConfig();
 
     void connectLog(bool *ptrValue, int index=-1,std::string logName="unknown");
 
@@ -71,10 +70,21 @@ public:
 
     void cleanValues() { values.clear(); }
 
-    static AConfig *inst;
-    static void setInstance(AConfig *conf) { inst = conf; }
-    static AConfig *getInstance() { return inst; }
+
+public:
+        static AConfig& getInstance() {
+            static AConfig instance;
+            return instance;
+        }
+
+private:
+        AConfig(): topIndex(-1),scaleCoef(1.0),timeCoef(1) {}
+        AConfig(const AConfig& root) = delete;
+        AConfig& operator=(const AConfig&) = delete;
+
 };
+
+
 
 class Skin
 {

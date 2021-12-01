@@ -61,7 +61,7 @@ GLabel::GLabel(int x, int y, std::string text, std::string pressSyn, bool showBo
         //later preloaded images should apear
         //REFACT: use map
 
-       QImage* imgPtr = AConfig::getInstance()->imageLoader.getImage(text);
+       QImage* imgPtr = AConfig::getInstance().imageLoader.getImage(text);
 
         /*
         if ((text =="prevBeat") || (text =="nextBeat") || (text =="upString") || (text =="downString") ||

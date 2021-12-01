@@ -417,8 +417,8 @@ void TapRyView::measureTime()
         {
             //ok
             double theScale = 100.0/waited;
-            //AConfig::getInstance()->setTimeCoef(1);
-            AConfig::getInstance()->setTimeCoef(theScale);
+            //AConfig::getInstance().setTimeCoef(1);
+            AConfig::getInstance().setTimeCoef(theScale);
 
             qDebug() <<"itsays time coef to "<<theScale;
         }
@@ -427,7 +427,7 @@ void TapRyView::measureTime()
             //scale
            double theScale = 100.0/waited;
            //int scale = theScale;
-           AConfig::getInstance()->setTimeCoef(theScale);
+           AConfig::getInstance().setTimeCoef(theScale);
 
            qDebug() <<"itsays time coef to "<<theScale;
         }
@@ -953,7 +953,7 @@ void TapRyView::onclick(int x1, int y1)
         //sX<<"Click time "<<timez;
         //labStat->setText(sX.c_str());
 
-        int timeNow= timez; //*AConfig::getInstance()->getTimeCoef();
+        int timeNow= timez; //*AConfig::getInstance().getTimeCoef();
         intPair newPair;
         newPair.first = timeNow;
         newPair.second = leftPress.hit(x1,y1) ? 1: 2;

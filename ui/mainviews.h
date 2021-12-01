@@ -346,7 +346,7 @@ public:
 
          if (mainView->getMaster())
          {
-             double scaleCoef = AConfig::getInstance()->getScaleCoef();
+             double scaleCoef = AConfig::getInstance().getScaleCoef();
              ySh += 50;
              ySh *= scaleCoef; // YET FOR VIEWS MUST DONE REQUEST
              //REFACT

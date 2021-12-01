@@ -234,7 +234,7 @@ if (globals.platform == "windows") //check
 
     menuToolBar->setIconSize(QSize(iconSize,iconSize));
 
-    AConfig::getInstance()->setScaleCoef(autoCoef);
+    AConfig::getInstance().setScaleCoef(autoCoef);
 
 
     if (CONF_PARAM("toolBar") == "0")
@@ -515,7 +515,7 @@ void MainWindow::createUI()
     win2->setKeyPress(center);
     win2->setPushItem(true);
 
-    double coef = AConfig::getInstance()->getScaleCoef();
+    double coef = AConfig::getInstance().getScaleCoef();
 
     int initWidth = 770 * coef;
     int initHeightMin = 300 * coef;
@@ -984,12 +984,12 @@ void MainWindow::actionNow(QAction *action)
 
   if (textOut=="zoomIn")
   {
-      double currentScale = AConfig::getInstance()->getScaleCoef();
+      double currentScale = AConfig::getInstance().getScaleCoef();
 
       if (currentScale <= 4.0)
       {
           currentScale += 0.25;
-          AConfig::getInstance()->setScaleCoef(currentScale);
+          AConfig::getInstance().setScaleCoef(currentScale);
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
@@ -1004,12 +1004,12 @@ void MainWindow::actionNow(QAction *action)
   }
   if (textOut=="zoomOut")
   {
-      double currentScale = AConfig::getInstance()->getScaleCoef();
+      double currentScale = AConfig::getInstance().getScaleCoef();
 
       if (currentScale >= 0.5)
       {
           currentScale -= 0.25;
-          AConfig::getInstance()->setScaleCoef(currentScale);
+          AConfig::getInstance().setScaleCoef(currentScale);
 
           int initWidth = 770 * currentScale;
           int initHeightMin = 300 * currentScale;
@@ -1068,7 +1068,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "darkSkin")
   {
     DarkSkin skin;
-    skin.setIntoConfig(AConfig::getInstance());
+    skin.setIntoConfig(&AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //to remember the bug
 #endif
@@ -1078,7 +1078,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "lightSkin")
   {
       LightSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(&AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1088,7 +1088,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicSkin")
   {
       ClassicSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(&AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1098,7 +1098,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicInvSkin")
   {
       ClassicInvertedSkin skin;
-      skin.setIntoConfig(AConfig::getInstance());
+      skin.setIntoConfig(&AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1109,7 +1109,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "save config"){
     std::string confFileName = std::string(getTestsLocation()) + "g.config";
     std::ofstream confFile(confFileName);
-    AConfig::getInstance()->save(confFile);
+    AConfig::getInstance().save(confFile);
     return;
   }
 
@@ -1303,7 +1303,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         //painter.fillRect(0,0,width(),height()); //TODO
     }
 
-    double scaleCoef = AConfig::getInstance()->getScaleCoef();
+    double scaleCoef = AConfig::getInstance().getScaleCoef();
 
     qreal scaleX = scaleCoef;
     qreal scaleY = scaleCoef;
@@ -1320,7 +1320,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *mEvent)
 {
-   double scaleCoef = AConfig::getInstance()->getScaleCoef();
+   double scaleCoef = AConfig::getInstance().getScaleCoef();
 
    int xPress = mEvent->pos().x()  / scaleCoef;
    int yPress = mEvent->pos().y() / scaleCoef;
@@ -1437,7 +1437,7 @@ void MainWindow::mousePressEvent( QMouseEvent * event )
 
     if(event->buttons()&Qt::LeftButton)
     {
-        double scaleCoef = AConfig::getInstance()->getScaleCoef();
+        double scaleCoef = AConfig::getInstance().getScaleCoef();
 
         lastPressX = xPress/scaleCoef;
         lastPressY = yPress/scaleCoef;
@@ -1511,7 +1511,7 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
            double dScale = scale;
            //dScale += 1.0;
 
-           double nowScale = AConfig::getInstance()->getScaleCoef();
+           double nowScale = AConfig::getInstance().getScaleCoef();
 
 
            if (CONF_PARAM("turnPinchZoomOn")=="1")
@@ -1533,7 +1533,7 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
                        nowScale *=dScale;
                    }
 
-                   AConfig::getInstance()->setScaleCoef(nowScale);
+                   AConfig::getInstance().setScaleCoef(nowScale);
                    update();
            }
 
@@ -2043,7 +2043,7 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
 
     //no invert while
 
-    QImage *imgs =(QImage*)AConfig::getInstance()->imageLoader.getImage(button);
+    QImage *imgs =(QImage*)AConfig::getInstance().imageLoader.getImage(button);
     QPixmap result;
     if (imgs) {
         QImage scI = *imgs;

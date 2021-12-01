@@ -9,12 +9,6 @@
 
 
 
-AConfig *AConfig::inst;
-
-AConfig::AConfig():topIndex(-1),scaleCoef(1.0),timeCoef(1)
-{
-}
-
 void AConfig::connectLog(bool *ptrValue, int index,std::string logName)
 {
     if (index==-1)
@@ -107,7 +101,7 @@ void AConfig::addLine(std::string anotherLine)
 void AConfig::save(std::ofstream &file)
 {
      //file.opened();
-     for (std::map<std::string,std::string>::iterator it = values.begin();
+     for (auto it = values.begin();
           it!= values.end(); ++it)
      {
          std::string curLine = curLine + (*it).first + " = " + (*it).second + "\n";
@@ -119,7 +113,7 @@ void AConfig::save(std::ofstream &file)
 void AConfig::printValues()
 {
     qDebug()<<"Configuration parameters";
-    for (std::map<std::string,std::string>::iterator it = values.begin();
+    for (auto it = values.begin();
          it!= values.end(); ++it)
     {
         qDebug()<< (*it).first.c_str() <<" = "<<(*it).second.c_str();
@@ -129,9 +123,7 @@ void AConfig::printValues()
 
  void AConfig::addValue(std::string name, std::string val)
  {
-    std::map<std::string,std::string>::iterator it;
-    it = values.find(name);
-    if (it == values.end())
+    if (values.count(name) == 0)
     {
         std::pair<std::string,std::string> newLine;
         newLine.first = name;
@@ -139,7 +131,6 @@ void AConfig::printValues()
         values.insert(newLine);
        // std::map<std::string,std::string>:
     }
-
  }
 
 void AConfig::checkConfig()

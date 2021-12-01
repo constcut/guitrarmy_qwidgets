@@ -380,7 +380,7 @@ void TrackView::draw(QPainter *painter)
     int stringsN = track1->tuning.getStringsAmount();
 
     int pannelShift = getMaster()->getToolBarHeight();
-    //double scaleValue = AConfig::getInstance()->getScaleCoef();
+    //double scaleValue = AConfig::getInstance().getScaleCoef();
     //pannelShift /= scaleValue;
 
     int xSh=0;
