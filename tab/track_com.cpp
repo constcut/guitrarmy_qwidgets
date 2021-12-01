@@ -31,7 +31,7 @@ void Track::switchEffect(Effect effect) {
         effectFlag = !effectFlag;
         this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.setEffectAt(effect, effectFlag);
 
-        SingleCommand command(ReversableCommand::SwitchEffectNote, ind); //note effect
+        ReversableCommand command(ReversableType::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
         commandSequence.push_back(std::move(command));
     }
@@ -50,7 +50,7 @@ void Track::switchBeatEffect(Effect beatEffect) { //TODO insure it fits
     effect = !effect;
     this->at(_cursor)->at(_cursorBeat)->effPack.setEffectAt(beatEffect,effect);
 
-    SingleCommand command(ReversableCommand::SwitchEffectBeat,effIndex); //beat effect
+    ReversableCommand command(ReversableType::SwitchEffectBeat,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
     commandSequence.push_back(std::move(command));
 }
@@ -73,7 +73,7 @@ void Track::switchNoteState(NoteStates noteState)
         newNote->setFret(0);
         newNote->setStringNumber(stringCursor+1);
         this->at(cursor)->at(cursorBeat)->push_back(std::move(newNote));
-        SingleCommand command(ReversableCommand::SetFret, 255);
+        ReversableCommand command(ReversableType::SetFret, 255);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(std::move(command));
         return;
@@ -85,15 +85,15 @@ void Track::switchNoteState(NoteStates noteState)
     else
         note->setState(changeState);
 
-    SingleCommand command(ReversableCommand::ChangeNoteState,state);
+    ReversableCommand command(ReversableType::ChangeNoteState,state);
     command.setPosition(0,cursor,cursorBeat,stringCursor+1);
     commandSequence.push_back(std::move(command));
 }
 
 
-void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor() etc
+void Track::reverseCommand(ReversableCommand command) //TODO get rid of this->cursor() etc
 {
-    ReversableCommand type = command.getType();
+    ReversableType type = command.getType();
     std::uint8_t value = command.getValue();
     std::uint8_t value2 = command.getValue2();
 
@@ -101,7 +101,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
     int beatN = command.getBeatNum();
     std::uint8_t stringN = command.getStringNum();
 
-    if (type == ReversableCommand::SwitchEffectNote) //eff
+    if (type == ReversableType::SwitchEffectNote) //eff
     {
         auto ind = static_cast<Effect>(value);
         bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.getEffectAt(ind);
@@ -109,7 +109,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         this->at(barN)->at(beatN)->getNote(stringN)->effPack.setEffectAt(ind,effect);
     }
 
-    if (type == ReversableCommand::SwitchEffectBeat) //beat eff
+    if (type == ReversableType::SwitchEffectBeat) //beat eff
     {
         auto ind = static_cast<Effect>(value);
         bool effect = this->at(barN)->at(beatN)->effPack.getEffectAt(ind);
@@ -117,7 +117,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         this->at(barN)->at(beatN)->effPack.setEffectAt(ind,effect);
     }
 
-    if (type == ReversableCommand::SetFret) //fret
+    if (type == ReversableType::SetFret) //fret
     {
         if (value != 255)
             this->at(barN)->at(beatN)->setFret(value,stringN);
@@ -126,28 +126,28 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
 
     }
 
-    if (type == ReversableCommand::SetDuration) //duration
+    if (type == ReversableType::SetDuration) //duration
     {
         this->at(barN)->at(beatN)->setDuration(value);
     }
 
-    if (type == ReversableCommand::SetDurationDetail) //detail
+    if (type == ReversableType::SetDurationDetail) //detail
     {
         this->at(barN)->at(beatN)->setDurationDetail(value);
     }
 
-    if (type == ReversableCommand::SetDot) //dot
+    if (type == ReversableType::SetDot) //dot
     {
         this->at(barN)->at(beatN)->setDotted(value);
     }
 
-    if (type == ReversableCommand::SetPause) //pause
+    if (type == ReversableType::SetPause) //pause
     {
-        if (command.storedNotes)
+        if (command.storedNotes.empty() == false)
         {
-            for (size_t i = 0; i < command.storedNotes->size(); ++i)
+            for (size_t i = 0; i < command.storedNotes.size(); ++i)
             {
-                auto note = std::move(command.storedNotes->operator [](i));
+                auto note = std::move(command.storedNotes.at(i));
                 this->at(barN)->at(beatN)->push_back(std::move(note));
             }
 
@@ -155,11 +155,11 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         }
     }
 
-    if (type == ReversableCommand::DeleteNote)
+    if (type == ReversableType::DeleteNote)
     {
-        if (command.storedNotes) //delete note
+        if (command.storedNotes.empty() == false) //delete note
         {
-            auto note = std::move(command.storedNotes->operator [](0));
+            auto note = std::move(command.storedNotes.at(0));
             this->at(barN)->at(beatN)->push_back(std::move(note));
 
             this->at(barN)->at(beatN)->setPause(false);
@@ -184,7 +184,7 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         }
     }
 
-    if (type == ReversableCommand::Pasty)
+    if (type == ReversableType::Pasty)
     {
         int len = beatN; //param
         if (!len)
@@ -207,13 +207,13 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
             --_cursor;
     }
 
-    if (type == ReversableCommand::ChangeNoteState)
+    if (type == ReversableType::ChangeNoteState)
     {
         Note *note = (this->at(barN)->at(beatN)->getNote(stringN));
         note->setState(value);
     }
 
-    if (type == ReversableCommand::InsertNewPause)
+    if (type == ReversableType::InsertNewPause)
     {
         this->at(barN)->remove(beatN);
         this->connectAll();
@@ -222,13 +222,13 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
         //may be shift cursorBeat (when activate <> undo)
     }
 
-    if (type == ReversableCommand::SetSign)
+    if (type == ReversableType::SetSign)
     {
         this->at(barN)->setSignDenum(value);
         this->at(barN)->setSignNum(value2);
     }
 
-    if (type == ReversableCommand::InsertBeat) //TODO тут точно ошибка
+    if (type == ReversableType::InsertBeat) //TODO тут точно ошибка
     {
         int len = beatN;
         if (!len)
@@ -241,17 +241,17 @@ void Track::reverseCommand(SingleCommand command) //TODO get rid of this->cursor
     }
 
 
-    if (type == ReversableCommand::DeleteBar)
+    if (type == ReversableType::DeleteBar)
     {
-        for (auto it = command.storedBars->end() - 1; it != command.storedBars->begin(); --it)
+        for (auto it = command.storedBars.end() - 1; it != command.storedBars.begin(); --it)
             insertBefore(std::move(*it), barN);
-        this->insertBefore(std::move(command.storedBars->front()),barN);
+        this->insertBefore(std::move(command.storedBars.front()),barN);
 
         this->connectAll();
         this->cursor()=barN;
     }
 
-    if (type == ReversableCommand::DeleteRangeOfBeats)
+    if (type == ReversableType::DeleteRangeOfBeats)
     {
         //auto& firstBeat = command.storedBeats->front();
         //auto& lastBeat  = command.storedBeats->back();
@@ -314,7 +314,7 @@ void Track::insertNewPause() {
     at(_cursor)->insertBefore(std::move(beat), _cursorBeat);
     connectAll(); //autochain cries
 
-    SingleCommand command(ReversableCommand::InsertNewPause);
+    ReversableCommand command(ReversableType::InsertNewPause);
     command.setPosition(0, _cursor, _cursorBeat);
     commandSequence.push_back(std::move(command));
 }
@@ -448,7 +448,7 @@ void Track::moveToNextBeat() {
                 beat->setDurationDetail(0);
                 bar->push_back(std::move(beat));
 
-                SingleCommand command(ReversableCommand::InsertNewPause);
+                ReversableCommand command(ReversableType::InsertNewPause);
                 command.setPosition(0,_cursor,_cursorBeat);
                 commandSequence.push_back(std::move(command));
 
@@ -473,7 +473,7 @@ void Track::moveToNextBeat() {
                     newBar->push_back(std::move(beat));
                     push_back(std::move(newBar));
 
-                    SingleCommand command(ReversableCommand::InsertNewBar);
+                    ReversableCommand command(ReversableType::InsertNewBar);
                     command.setPosition(0, _cursor+1,0);
                     commandSequence.push_back(std::move(command));
 
@@ -516,12 +516,11 @@ void Track::moveToNextBeat() {
 
 
 void Track::setTrackPause() {
-    SingleCommand command(ReversableCommand::SetPause);
+    ReversableCommand command(ReversableType::SetPause);
     command.setPosition(0, _cursor, _cursorBeat);
-    command.requestStoredNotes();
     for (size_t i = 0; i < at(_cursor)->at(_cursorBeat)->size(); ++i) {
         auto note = std::move(at(_cursor)->at(_cursorBeat)->at(i));
-        command.storedNotes->push_back(std::move(note));
+        command.storedNotes.push_back(std::move(note));
     }
     commandSequence.push_back(std::move(command));
     at(_cursor)->at(_cursorBeat)->setPause(true);
@@ -531,11 +530,10 @@ void Track::setTrackPause() {
 
 
 void Track::deleteBar() {
-    SingleCommand command(ReversableCommand::DeleteBar);
+    ReversableCommand command(ReversableType::DeleteBar);
     command.setPosition(0, _cursor,0);
 
-    command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
-    command.storedBars->push_back(std::move(at(_cursor)));
+    command.storedBars.push_back(std::move(at(_cursor)));
     commandSequence.push_back(std::move(command));
 
     //attention question for memoryleaks
@@ -550,12 +548,11 @@ void Track::deleteSelectedBars() {
     if (_selectionBarFirst != -1)  {
         if (_selectionBarFirst > 0)
             --_cursor; //attention
-        SingleCommand command(ReversableCommand::DeleteRangeOfBars);
+        ReversableCommand command(ReversableType::DeleteRangeOfBars);
         command.setPosition(0, _selectionBarFirst,0);
 
-        command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
         for (int i = _selectionBarFirst; i <= _selectionBarLast; ++i)
-            command.storedBars->push_back(std::move(at(i)));
+            command.storedBars.push_back(std::move(at(i)));
         commandSequence.push_back(std::move(command));
         for (int i = _selectionBarLast; i >= _selectionBarFirst; --i)
             remove(i);
@@ -569,12 +566,11 @@ void Track::deleteSelectedBeats() {
     if (_selectionBarFirst != -1) {
 
         connectAll();
-        SingleCommand command(ReversableCommand::DeleteRangeOfBeats);
+        ReversableCommand command(ReversableType::DeleteRangeOfBeats);
         command.setPosition(0,_selectionBarFirst,_selectionBeatFirst);
 
-        command.storedBeats = std::make_unique<SingleCommand::BeatsBuffer>();
         for (int i = _selectionBeatFirst; i <= _selectionBeatLast; ++i) {
-            command.storedBeats->push_back(std::move(at(_selectionBarFirst)->at(_selectionBeatFirst)));
+            command.storedBeats.push_back(std::move(at(_selectionBarFirst)->at(_selectionBeatFirst)));
         }
         at(_selectionBarFirst)->at(_selectionBeatFirst)->setParent(at(_selectionBarFirst).get());
         at(_selectionBarLast)->at(_selectionBeatLast)->setParent(at(_selectionBarLast).get());
@@ -613,9 +609,8 @@ void Track::deleteSelectedBeats() {
             }
 
             ///GET range of bars
-            command.storedBars = std::make_unique<SingleCommand::BarsBuffer>();
             for (int i = _selectionBarFirst+1; i <= _selectionBarLast-1; ++i) {
-                command.storedBars->push_back(std::move(at(_selectionBarFirst+1)));
+                command.storedBars.push_back(std::move(at(_selectionBarFirst+1)));
             }
 
             for (int bI = _selectionBarLast-1; bI > _selectionBarFirst; --bI)
@@ -640,11 +635,10 @@ void Track::deleteSelectedBeats() {
 void Track::deleteNote() {
     if (at(_cursor)->at(_cursorBeat)->size())
     {
-        SingleCommand command(ReversableCommand::DeleteNote);
+        ReversableCommand command(ReversableType::DeleteNote);
         command.setPosition(0,_cursor,_cursorBeat);
-        command.requestStoredNotes();
         auto note = std::move(at(_cursor)->at(_cursorBeat)->at(_stringCursor+1));
-        command.storedNotes->push_back(std::move(note));
+        command.storedNotes.push_back(std::move(note));
         if (note->getFret()!=255) {
             //delete one note
             at(_cursor)->at(_cursorBeat)->deleteNote(_stringCursor+1);//shift from 0 to 1
@@ -665,7 +659,7 @@ void Track::deleteNote() {
             connectAll(); //oups?
             beat = nullptr  ;//cleanup
 
-            SingleCommand command(ReversableCommand::DeleteNote,packedValue);
+            ReversableCommand command(ReversableType::DeleteNote,packedValue);
             command.setPosition(0,_cursor,_cursorBeat,dot); //wow wow know it
             commandSequence.push_back(std::move(command));
 
@@ -681,7 +675,7 @@ void Track::deleteNote() {
 void Track::incDuration() {
     std::uint8_t beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
 
-    SingleCommand command(ReversableCommand::SetDuration, beatDur);
+    ReversableCommand command(ReversableType::SetDuration, beatDur);
     command.setPosition(0,_cursor, _cursorBeat);
     commandSequence.push_back(std::move(command));
 
@@ -694,7 +688,7 @@ void Track::incDuration() {
 
 void Track::decDuration() {
     std::uint8_t beatDur = at(_cursor)->at(_cursorBeat)->getDuration();
-    SingleCommand command(ReversableCommand::SetDuration,beatDur);
+    ReversableCommand command(ReversableType::SetDuration,beatDur);
     command.setPosition(0, _cursor, _cursorBeat);
     commandSequence.push_back(std::move(command));
     if (beatDur < 6)
@@ -730,7 +724,7 @@ void Track::newBar() {
     addBeat->setPause(true);
     addition->push_back(std::move(addBeat));
 
-    SingleCommand command(ReversableCommand::InsertNewBar);
+    ReversableCommand command(ReversableType::InsertNewBar);
     command.setPosition(0,_cursor,0);
     commandSequence.push_back(std::move(command));
     insertBefore(std::move(addition), _cursor);
@@ -743,7 +737,7 @@ void Track::newBar() {
 void Track::setDotOnBeat() {
     auto& beat = at(_cursor)->at(_cursorBeat);
     std::uint8_t dotted = beat->getDotted();
-    SingleCommand command(ReversableCommand::SetDot, dotted);
+    ReversableCommand command(ReversableType::SetDot, dotted);
     command.setPosition(0,_cursor, _cursorBeat);
     commandSequence.push_back(std::move(command));
     if (dotted & 1)
@@ -756,7 +750,7 @@ void Track::setDotOnBeat() {
 void Track::setTriolOnBeat() {
     auto& beat = at(_cursor)->at(_cursorBeat);
     std::uint8_t curDetail = beat->getDurationDetail();
-    SingleCommand command(ReversableCommand::SetDurationDetail,curDetail);
+    ReversableCommand command(ReversableType::SetDurationDetail,curDetail);
     command.setPosition(0,_cursor,_cursorBeat);
     commandSequence.push_back(std::move(command));
     if (curDetail == 3)
@@ -855,7 +849,7 @@ void Track::clipboardPaste() {
             insertBefore(std::move(addition), _cursor);
             connectAll();
             //AClipboard::current()->setType(-1); //refact attention
-            SingleCommand command(ReversableCommand::InsertNewBar);
+            ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,0);
             commandSequence.push_back(std::move(command));
             return;
@@ -874,7 +868,7 @@ void Track::clipboardPaste() {
             track->connectAll();
             AClipboard::current()->setClipboardType(ClipboardType::NotSet); //refact attention
 
-            SingleCommand command(ReversableCommand::InsertNewBar);
+            ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,0);
             commandSequence.push_back(std::move(command));
 
@@ -911,7 +905,7 @@ void Track::clipboardPaste() {
 
                 track->insertBefore(std::move(addition), _cursor);
 
-                SingleCommand command(ReversableCommand::InsertNewBar);
+                ReversableCommand command(ReversableType::InsertNewBar);
                 command.setPosition(0, _cursor,0);
                 commandSequence.push_back(std::move(command));
 
@@ -959,7 +953,7 @@ void Track::clipboardPaste() {
                 }
 
             int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
-            SingleCommand command(ReversableCommand::InsertNewBar);
+            ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,barsRange);
             commandSequence.push_back(std::move(command));
             //tricke mech
@@ -979,7 +973,7 @@ void Track::clipboardPaste() {
             }
 
             int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
-            SingleCommand command(ReversableCommand::InsertNewBar);
+            ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,barsRange+1);
             commandSequence.push_back(std::move(command));
 
@@ -994,7 +988,7 @@ void Track::clipboardPaste() {
 
 void Track::undoOnTrack() {
     if (commandSequence.size()) {
-        SingleCommand lastCommand = std::move(commandSequence[commandSequence.size()-1]);
+        ReversableCommand lastCommand = std::move(commandSequence[commandSequence.size()-1]);
         commandSequence.pop_back();
         reverseCommand(std::move(lastCommand));
     }
@@ -1026,7 +1020,7 @@ void Track::setBarSign(int newNum, int newDen) {
     bar->setSignDenum(newDen);
     if ((bar->getSignDenum() != oldDen) ||
         (bar->getSignNum() != oldNum)) {
-        SingleCommand command(ReversableCommand::SetSign);
+        ReversableCommand command(ReversableType::SetSign);
         command.setPosition(0,_cursor,0);
         command.setValue(oldDen);
         command.setValue2(oldNum);

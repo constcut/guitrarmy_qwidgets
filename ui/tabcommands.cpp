@@ -70,7 +70,7 @@ void changeBarSignsQt(Track* pTrack, int&  selectionBarFirst, int& selectionBarL
 
 
 
-void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, size_t cursorBeat, size_t stringCursor, std::vector<SingleCommand>& commandSequence) {
+void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, size_t cursorBeat, size_t stringCursor, std::vector<ReversableCommand>& commandSequence) {
 
     //group operations
     if (digitPress>=0) {
@@ -93,7 +93,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
     if ( pTrack->at(cursor)->size() > cursorBeat ) {
         std::uint8_t lastFret = pTrack->at(cursor)->at(cursorBeat)->getFret(stringCursor+1);
 
-        SingleCommand command(ReversableCommand::SetFret,lastFret);
+        ReversableCommand command(ReversableType::SetFret,lastFret);
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(std::move(command));
         pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);

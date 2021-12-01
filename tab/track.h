@@ -167,9 +167,9 @@ public:
     void switchEffect(Effect effect);
     void switchBeatEffect(Effect effect);
     void switchNoteState(NoteStates changeState);
-    void reverseCommand(SingleCommand command);
+    void reverseCommand(ReversableCommand command);
 
-    std::vector<SingleCommand> commandSequence;
+    std::vector<ReversableCommand> commandSequence;
 
     void onTrackCommand(TrackCommand command);
 

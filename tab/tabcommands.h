@@ -103,7 +103,7 @@ enum class TrackCommand {
 
 
 
-enum class ReversableCommand { //Если будет конфликт имён убрать в клас хранитель
+enum class ReversableType { //Если будет конфликт имён убрать в клас хранитель
     Empty = 0,
     SwitchEffectNote = 1,
     SwitchEffectBeat = 2,
@@ -138,9 +138,9 @@ class Bar;
 class Beat;
 
 
-class SingleCommand
+class ReversableCommand
 {
-    ReversableCommand commandType;
+    ReversableType commandType;
     std::uint8_t commandValue;
     std::uint8_t commandValue2;
 
@@ -154,29 +154,26 @@ public:
     //TODO хранить не в каждой каммоманде, а только в особых, хранить комманды как variant
     //Или вместо варианта общий класс от которого наследоваться
     using NotesBuffer = std::vector<std::unique_ptr<Note>>;
-    std::unique_ptr<NotesBuffer> storedNotes;
+    NotesBuffer storedNotes;
 
     using BeatsBuffer = std::vector<std::unique_ptr<Beat>>;
-    std::unique_ptr<BeatsBuffer> storedBeats;
+    BeatsBuffer storedBeats;
 
     using BarsBuffer = std::vector<std::unique_ptr<Bar>>;
-    std::unique_ptr<BarsBuffer> storedBars;
+    BarsBuffer storedBars;
 
 
-    void requestStoredNotes(){
-        storedNotes = std::make_unique<NotesBuffer>();
-    }
 
-    SingleCommand() : commandType(ReversableCommand::Empty),
+    ReversableCommand() : commandType(ReversableType::Empty),
         commandValue(0),track(0),bar(0),beat(0),string(0)
     {}
 
-    SingleCommand(ReversableCommand newType, std::uint8_t newValue=0):
+    ReversableCommand(ReversableType newType, std::uint8_t newValue=0):
         commandType(newType), commandValue(newValue), track(0), bar(0), beat(0), string(0)
     {}
 
-    void setType(ReversableCommand newType) { commandType = newType; }
-    ReversableCommand getType() { return commandType; }
+    void setType(ReversableType newType) { commandType = newType; }
+    ReversableType getType() { return commandType; }
 
     void setValue(std::uint8_t newValue) { commandValue = newValue; }
     std::uint8_t getValue() { return commandValue; }
