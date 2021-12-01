@@ -4,7 +4,7 @@
 #include "tab/tab.h"
 #include "gview.h"
 
-#include "g0/rec.h"
+#include "audio/rec.h"
 
 #include <QStringList>
 #include <QAudioRecorder>

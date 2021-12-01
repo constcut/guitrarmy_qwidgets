@@ -6,10 +6,10 @@
 
 #include <QInputDialog>
 
-#include "g0/wavefile.h"
-#include "g0/fft.h"
+#include "audio/wavefile.h"
+#include "audio/fft.h"
 
-#include "g0/waveanalys.h"
+#include "audio/waveanalys.h"
 
 #include "midi/midiexport.h"
 
@@ -19,7 +19,7 @@
 #include <QMessageBox>
 #include <QDir>
 
-#include "g0/rec.h"
+#include "audio/rec.h"
 
 #include <fstream>
 

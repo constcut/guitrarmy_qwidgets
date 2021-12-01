@@ -8,16 +8,14 @@
 
 #include <unordered_map>
 #include "tab/tabcommands.h"
+#include "audio/audiospeaker.h"
 
 
 #include <QWidget>
 #include <QMutex>
-
 #include <QByteArray>
-#include <QIODevice>
-#include <QAudioFormat>
-#include <QAudioInput>
 
+#include <QAudioInput>
 #include <QGesture>
 
 #include <QTextBrowser>
@@ -29,64 +27,8 @@
 
 #include <QScrollArea>
 
-class AudioInfo : public QIODevice
-{
-    Q_OBJECT
 
-protected:
-
-public: //temp operations
-    QByteArray collector;
-
-public:
-    AudioInfo(const QAudioFormat &format, QObject *parent);
-    ~AudioInfo();
-
-    void start();
-    void stop();
-
-    qreal level() const { return m_level; }
-
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
-
-private:
-    const QAudioFormat m_format;
-    quint32 m_maxAmplitude;
-    qreal m_level; // 0.0 <= m_level <= 1.0
-
-signals:
-    void update();
-};
-
-
-class AudioSpeaker : public QIODevice
-{
-    Q_OBJECT
-
-public:
-    AudioSpeaker(const QAudioFormat &format, QObject *parent=0);
-    ~AudioSpeaker();
-
-    void start();
-    void stop();
-
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
-    qint64 bytesAvailable() const;
-
-    void setAudioBufer(QByteArray &aStream);
-
-private:
-    void generateData(const QAudioFormat &format, qint64 durationUs, int sampleRate);
-
-private:
-    qint64 m_pos;
-    QByteArray m_buffer;
-};
-
-
-class GQButton : public QPushButton
+class GQButton : public QPushButton //TODO в отдельные файлы
 {
     Q_OBJECT
 protected:
@@ -151,7 +93,7 @@ protected:
 
     std::list<std::vector<std::string> > playlist;
 
-    std::unique_ptr<AudioInfo> audioInfo;
+    std::unique_ptr<AudioInfo> audioInfo;  //Выделить фрагменты аудиодвижка в один класс, использовать его здесь
     std::unique_ptr<QAudioInput> audioInput;
 
     int lastPressX,lastPressY;
@@ -169,8 +111,6 @@ protected:
     std::unordered_map<std::string, TabCommand> tabCommands;
     std::unordered_map<std::string, TrackCommand> trackCommands;
 
-    //std::vector<QPushButton*> testButtons;
-    //std::vector<QComboBox*> patternInstruments;
 
     int lastCheckedView;
 

@@ -6,7 +6,7 @@
 
 
 #       core gui
-QT   += widgets multimedia network
+QT += widgets multimedia network
 CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 
@@ -28,6 +28,7 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
+    audio/audiospeaker.cpp \
     g0/config.cpp \
     g0/tests.cpp \
     midi/miditrack.cpp \
@@ -57,18 +58,19 @@ SOURCES += main.cpp\
     midi/midirender.cpp \
     ui/tabviews.cpp \
     ui/tabcommands.cpp \
-    g0/wavefile.cpp \
-    g0/fft.cpp \
-    g0/waveanalys.cpp \
+    audio/wavefile.cpp \
+    audio/fft.cpp \
+    audio/waveanalys.cpp \
     android_helper.cpp \
     ui/centerview.cpp \
     ui/inputviews.cpp \
     midi/midiengine.cpp \
-    g0/rec.cpp \
+    audio/rec.cpp \
     ui/trackview.cpp
 
 
 HEADERS  += ui/mainwindow.h \
+    audio/audiospeaker.h \
     g0/config.h \
     g0/tests.h \
     midi/miditrack.h \
@@ -96,14 +98,14 @@ HEADERS  += ui/mainwindow.h \
     midi/midirender.h \
     ui/tabviews.h \
     tab/tabcommands.h \
-    g0/wavefile.h \
-    g0/fft.h \
-    g0/waveanalys.h \
+    audio/wavefile.h \
+    audio/fft.h \
+    audio/waveanalys.h \
     android_helper.h \
     ui/centerview.h \
     ui/inputviews.h \
     midi/midiengine.h \
-    g0/rec.h \
+    audio/rec.h \
     ui/trackview.h
 
 
