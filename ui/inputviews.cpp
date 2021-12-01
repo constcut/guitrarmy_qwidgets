@@ -156,7 +156,7 @@ void PatternInput::createBar()
     barView->setShifts(250,300-55-30);
 
     AClipboard::current()->setPtr(bar.get());
-    AClipboard::current()->setType(4); //ptr
+    AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
 }
 
@@ -172,7 +172,7 @@ void PatternInput::playBar() {
     patternTrack->setPan(8);
 
     AClipboard::current()->setPtr(bar.get());
-    AClipboard::current()->setType(4); //ptr
+    AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
     if (butRepeat->isChecked())
     {
@@ -752,7 +752,7 @@ void TapRyView::createBar()
         else barView->setBar(ryBar.get());
 
     AClipboard::current()->setPtr(ryBar.get());
-    AClipboard::current()->setType(4); //ptr
+    AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
 }
 
@@ -1541,10 +1541,10 @@ void MorzeInput::onclick(int x1, int y1)
             barView->setShifts(100,200-55);
 
             AClipboard::current()->setPtr(bar.get());
-            AClipboard::current()->setType(4); //ptr
+            AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
             bar->setRepeat(1);
-            bar->setRepeat(2,2);
+            bar->setRepeat(2, 2);
 
             playBar();
 

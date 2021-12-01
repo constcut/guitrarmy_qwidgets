@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QComboBox>
 
+
 class GQButton : public QPushButton //TODO в отдельные файлы
 {
     Q_OBJECT
@@ -30,6 +31,7 @@ public slots:
     void buttonWasClicked();
 
 };
+
 
 class GQCombo : public QComboBox
 {

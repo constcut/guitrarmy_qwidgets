@@ -2,3 +2,4 @@
 
 AClipboard *AClipboard::currentClip;
 
+//TODO flush function

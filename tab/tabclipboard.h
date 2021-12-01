@@ -1,18 +1,17 @@
 #ifndef TABCLIPBOARD_H
 #define TABCLIPBOARD_H
 
-//first one
-//index clipboard
 
 class Bar;
 
-enum class ClipboardAction {
-    //types 0 index bar //TODO enum on clipboard an recovery work
-    //      1 index beat
-    //      2 index bars
-    //      3 index beats
 
-    //      4 ptr bar
+enum class ClipboardType {
+    NotSet = -1,
+    SingleBarCopy = 0,
+    SingleBeatCopy = 1,
+    BarsCopy = 2,
+    BeatsCopy = 3,
+    BarPointer = 4,
 };
 
 
@@ -20,64 +19,65 @@ class AClipboard
 {
 protected:
 
-    //first just use ints, then can review it on refactoring
-    int type;
-    int n1,m1,k1;
-    int n2,m2,k2; //TODO rename
+    ClipboardType type;
+
+    int track1 = -1, bar1 = -1, beat1 = -1;
+    int track2 = -1, bar2 = -1, beat2 = -1;
 
     Bar* ptr;
 
-    static AClipboard *currentClip;
+    static AClipboard *currentClip; //TODO multiple (stack)
 
 public:
+
     AClipboard():
-        type(-1),
-        n1(-1),m1(-1),k1(-1),
-        n2(-1),m2(-1),k2(-1),
-        ptr(0)
-    {
-    }
+        type(ClipboardType::NotSet), ptr(nullptr)
+    {}
 
     static AClipboard* current() { return currentClip; }
-    static void setCurrentClip(AClipboard* newClip) {currentClip=newClip;}
+    static void setCurrentClip(AClipboard* newClip) { currentClip=newClip; }
 
 
-    void setType(int newType) { type = newType; }
-    //types 0 index bar //TODO enum on clipboard an recovery work
-    //      1 index beat
-    //      2 index bars
-    //      3 index beats
+    void setClipboardType(ClipboardType newType) {
+        type = newType;
+        if (type == ClipboardType::NotSet)
+            flush();
+    }
 
-    //      4 ptr bar
-    //
+    void flush() {
+        track1 = bar1 = beat1 = -1;
+        track2 = bar2 = beat2 = -1;
+    }
 
-    int getType() { return type; }
+    ClipboardType getClipboardType() { return type; }
 
     void setPtr(Bar *newPtr) { ptr=newPtr; }
     Bar* getPtr() { return ptr; }
 
     void setBeginIndexes(int track, int bar, int beat=-1)
     {
-        n1=track;
-        m1=bar;
-        if (beat!=-1) k1=beat;
+        track1 = track;
+        bar1 = bar;
+        if (beat != -1)
+            beat1 = beat;
     }
 
     void setEndIndexes(int track, int bar, int beat=-1)
     {
-        n2=track;
-        m2=bar;
-        if (beat!=-1) k2=beat;
+        track2 = track;
+        bar2 = bar;
+        if (beat != -1)
+            beat2 = beat;
     }
 
-    int getTrackIndex() { return n1; }
-    int getBarIndex() { return m1; }
-    int getBeatIndex() { return k1; }
+    int getTrackIndex() { return track1; }
+    int getBarIndex() { return bar1; }
+    int getBeatIndex() { return beat1; }
 
 
-    int getSecondBarI() { return m2; }
-    int getSecondBeatI() { return k2; }
-    int getSecondTrackI() { return n1; }
+    int getSecondBarI() { return track2; }
+    int getSecondBeatI() { return bar2; }
+    int getSecondTrackI() { return beat2; }
 };
 
 
