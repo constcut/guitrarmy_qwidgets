@@ -45,6 +45,7 @@ SOURCES += main.cpp\
     tab/track.cpp \
     tab/track_com.cpp \
     libs/sf/tsf.cpp \
+    ui/components.cpp \
     ui/imagepreloader.cpp \
     ui/mainwindow.cpp \
     ui/gview.cpp \
@@ -84,6 +85,7 @@ HEADERS  += ui/mainwindow.h \
     tab/note.h \
     tab/track.h \
     tab/types.h \
+    ui/components.h \
     ui/gpannel.h \
     ui/gview.h \
     tab/gmyfile.h \

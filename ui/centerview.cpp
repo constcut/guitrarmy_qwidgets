@@ -27,50 +27,7 @@ void drawImage(QPainter* src, int x, int y, std::string imageName)
         src->drawImage(x,y,*img);
 }
 
-GQCombo::GQCombo(QWidget *pa):QComboBox(pa)
-{
-    elementNumber = -1;
-    pushItem=false;
-    keyPress = 0;
-    connect(this,SIGNAL(activated(int)),SLOT(elementChosen(int)));
-    //connect(this,SIGNAL(currentIndexChanged(int)),SLOT(elementChosen(int)));
-}
 
-void GQCombo::elementChosen(int index)
-{
-    qDebug()<<"log from combo "<<elementNumber<<" "<<index;
-    std::string line = "com:" + std::to_string(elementNumber) + ":" + std::to_string(index);
-    if (keyPress) {
-        if (pushItem==false)
-        keyPress->pushForceKey(line.c_str());
-        else {
-            QString itemStr = this->currentText();
-            std::string itemStd = itemStr.toStdString();
-            keyPress->pushForceKey(itemStd);
-        }
-    }
-}
-
-GQButton::GQButton(QWidget *pa):QPushButton(pa)
-{
-    buttonNumber=-1;
-    keyPress = 0;
-    connect(this, SIGNAL (clicked()), SLOT (buttonWasClicked()));
-}
-
-void GQButton::buttonWasClicked() {
-    if (buttonNumber!= -1) {
-        if (pressSyn.empty() == false) {
-             keyPress->pushForceKey(pressSyn);
-        }
-        else
-            if (keyPress) {
-                keyPress->pushForceKey("b:" + std::to_string(buttonNumber));
-                //audio_qDebug()<<"log from button"<<genPress.c_str();
-            }
-    }
-
-}
 
 void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue)
 {
@@ -79,24 +36,15 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
     newBox->setParams("params not set");
 
     int VType = getCurrentViewType();
-
     renewComboParams(newBox,params);
 
-
-    QString style; /*  "QComboBox{ font-size: 10; }\
-            QComboBox{ background-color: green; }\
- QComboBox:focus:pressed{ background-color: darkgreen; }\
- QComboBox:focus{ background-color: white; }\
- QComboBox:hover{ background-color: dark blue; }"; */
-
+    QString style;
     std::stringstream styleString;
-
     styleString << "QComboBox{ font-size: 10; }"
                 << "QComboBox{ background-color:" << CONF_PARAM("colors.combo.background") << "; }"
                 << "QComboBox:focus:pressed{ background-color:" << CONF_PARAM("colors.combo.pressed")<< "; }"
                 << "QComboBox:focus{ background-color:"  << CONF_PARAM("colors.combo.focus")<< "; }"
                 << "QComboBox:hover{ background-color:"  << CONF_PARAM("colors.combo.focus")<< "; }";
-
 
     style = QString(styleString.str().c_str());
 
@@ -108,19 +56,12 @@ void CenterView::addComboBox(std::string params, int x1, int y1, int w1, int h1,
     static QFont comboFont("Arial",10);
 
     newBox->setFont(comboFont);
-
-
-    //avoid first call
     newBox->setElementNum(uiWidgets.at(VType).size());
     newBox->setKeyPress(this);
-
     newBox->show();
-
     uiWidgets.at(VType).push_back(newBox);
-
-
-   // patternInstruments.push_back(newBox);
 }
+
 
 void CenterView::ViewWasChanged()
 {

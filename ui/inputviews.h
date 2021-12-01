@@ -2,14 +2,13 @@
 #define INPUTVIEWS_H
 
 #include "tab/tab.h"
-#include "gview.h"
+#include "ui/barview.h"
 
 #include "audio/rec.h"
 
 #include <QStringList>
 #include <QAudioRecorder>
 
-class BarView;
 
 class PatternInput : public GView
 {

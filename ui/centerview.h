@@ -1,12 +1,11 @@
 #ifndef CENTERVIEW_H
 #define CENTERVIEW_H
 
-#include "gview.h"
-
-#include "mainviews.h"
-#include "tabviews.h"
-
 #include <unordered_map>
+
+#include "gview.h"
+#include "tabviews.h"
+#include "components.h"
 #include "tab/tabcommands.h"
 #include "audio/audiospeaker.h"
 
@@ -21,68 +20,11 @@
 #include <QTextBrowser>
 #include <QTextEdit>
 
-#include <QPushButton>
-#include <QComboBox>
 
 
 #include <QScrollArea>
 
 
-class GQButton : public QPushButton //TODO в отдельные файлы
-{
-    Q_OBJECT
-protected:
-        int buttonNumber;
-        std::string pressSyn;
-        MasterView *keyPress;
-public:
-    GQButton(QWidget *pa=0);
-
-    void setButtonNum(int newBN)
-    {    buttonNumber = newBN; }
-
-    void setKeyPress(MasterView *mast)
-    { keyPress = mast;}
-
-    void setPressSyn(std::string newSyn)
-    { pressSyn = newSyn; }
-
-public slots:
-
-    void buttonWasClicked();
-
-};
-
-class GQCombo : public QComboBox
-{
-    Q_OBJECT
-protected:
-    int elementNumber;
-    MasterView *keyPress;
-
-    std::string params;
-    bool pushItem;
-public:
-
-    bool getPushItem() {return pushItem;}//option
-    void setPushItem(bool pushNew){pushItem=pushNew;}
-
-    void setElementNum(int newBN)
-    {    elementNumber = newBN; }
-
-    void setKeyPress(MasterView *mast)
-    { keyPress = mast;}
-
-    void setParams(std::string newParams)
-    {params = newParams;}
-
-    std::string getParams(){return params;}
-
-    GQCombo(QWidget *pa=0);
-
-public slots:
-    void elementChosen(int index);
-};
 
 class CenterView : public QWidget, public MasterView
 {
@@ -125,13 +67,10 @@ public:
     {   fatherScroll = fScroll;}
 
 
-    void checkView()
-    {
+    void checkView(){
         int newView = getCurrentViewType();
-
         if (newView != lastCheckedView)
             ViewWasChanged();
-
         lastCheckedView = newView;
     }
 
@@ -144,8 +83,6 @@ public:
 
     void renewComboParams(int index, std::string params);
     void renewComboParams(GQCombo *newBox, std::string params);
-
-
 
     int getComboBoxValue(int index);
 
@@ -195,10 +132,7 @@ public:
     void stopAudioInput();
 
     void initAudioInput();
-    //==============
-    //==============
 
-    //handling events
     void paintEvent(QPaintEvent *event);
     void mousePressEvent( QMouseEvent * event );
     void mouseDoubleClickEvent( QMouseEvent * event );
@@ -212,7 +146,6 @@ public:
 public slots:
 
     void threadFinished();
-
 };
 
 #endif // CENTERVIEW_H
