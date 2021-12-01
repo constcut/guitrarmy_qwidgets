@@ -359,22 +359,19 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
 ConfigView::ConfigView():GView()
 {
-    AConfig& inst = AConfig::getInstance();
-    AConfig* confValues = &inst;
-    connectConfigs(confValues);
+    AConfig& config = AConfig::getInstance();
+    connectConfigs(config);
 
-    configPointer = confValues;
-
-    std::string sP = confValues->logsNames[0] + " " +
-        std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
+    std::string sP = config.logsNames[0] + " " +
+        std::to_string((int)*(config.logs[0]))  + " press 1 to chng";
     labA = std::make_unique<GLabel>(20,80+200-55,sP.c_str());
 
-    sP = confValues->logsNames[2] + " " +
-        std::to_string((int)*(confValues->logs[2]))  + " press 1 to chng";
+    sP = config.logsNames[2] + " " +
+        std::to_string((int)*(config.logs[2]))  + " press 1 to chng";
     labC = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
 
-    sP = confValues->logsNames[3] + " " +
-        std::to_string((int)*(confValues->logs[3]))  + " press 1 to chng";
+    sP = config.logsNames[3] + " " +
+        std::to_string((int)*(config.logs[3]))  + " press 1 to chng";
     labD = std::make_unique<GLabel>(20,120+200-55,sP.c_str());
 }
 
@@ -383,50 +380,49 @@ void ConfigView::keyevent(std::string press)
     //if (press == "m")
         //getMaster()->resetToFirstChild();
 
-    AConfig *confValues = this->configPointer;
+    AConfig& config = AConfig::getInstance();
 
     if (press == "1")
     {
-      bool *x = this->configPointer->logs[0];
+      bool *x = config.logs[0];
       bool inv = !(*x);
       *x = inv;
 
-      std::string sP =confValues->logsNames[0] + " " +
-        std::to_string((int)*(confValues->logs[0]))  + " press 1 to chng";
+      std::string sP =config.logsNames[0] + " " +
+        std::to_string((int)*(config.logs[0]))  + " press 1 to chng";
       labA->setText(sP.c_str());
     }
     if (press == "2")
     {
-      bool *x = this->configPointer->logs[1];
+      bool *x = config.logs[1];
       bool inv = !(*x);
       *x = inv;
 
-      std::string sP =confValues->logsNames[1] + " " +
-        std::to_string((int)*(confValues->logs[1]))  + " press 2 to chng";
+      std::string sP =config.logsNames[1] + " " +
+        std::to_string((int)*(config.logs[1]))  + " press 2 to chng";
 
       labB->setText(sP.c_str());
     }
     if (press == "3")
     {
-      bool *x = this->configPointer->logs[2];
+      bool *x = config.logs[2];
       bool inv = !(*x);
       *x = inv;
 
-
-      std::string sP =confValues->logsNames[2] + " " +
-        std::to_string((int)*(confValues->logs[2]))  + " press 3 to chng";
+      std::string sP =config.logsNames[2] + " " +
+        std::to_string((int)*(config.logs[2]))  + " press 3 to chng";
 
       labC->setText(sP.c_str());
     }
     if (press == "4")
     {
-      bool *x = this->configPointer->logs[3];
+      bool *x = config.logs[3];
       bool inv = !(*x);
       *x = inv;
 
 
-      std::string sP =confValues->logsNames[3] + " " +
-        std::to_string((int)*(confValues->logs[3]))  + " press 4 to chng";
+      std::string sP =config.logsNames[3] + " " +
+        std::to_string((int)*(config.logs[3]))  + " press 4 to chng";
 
 
       labD->setText(sP.c_str());

@@ -1068,7 +1068,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "darkSkin")
   {
     DarkSkin skin;
-    skin.setIntoConfig(&AConfig::getInstance());
+    skin.setIntoConfig(AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //to remember the bug
 #endif
@@ -1078,7 +1078,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "lightSkin")
   {
       LightSkin skin;
-      skin.setIntoConfig(&AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1088,7 +1088,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicSkin")
   {
       ClassicSkin skin;
-      skin.setIntoConfig(&AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif
@@ -1098,7 +1098,7 @@ void MainWindow::actionNow(QAction *action)
   if (textOut == "classicInvSkin")
   {
       ClassicInvertedSkin skin;
-      skin.setIntoConfig(&AConfig::getInstance());
+      skin.setIntoConfig(AConfig::getInstance());
 #ifndef __ANDROID_API__
     recreateUI(); //refact return back
 #endif

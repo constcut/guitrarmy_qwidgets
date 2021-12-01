@@ -14,7 +14,7 @@ class AConfig;
 
 int getTime();
 bool testScenario();
-void connectConfigs(AConfig *config);
+void connectConfigs(AConfig& config);
 bool midiPrint(std::string fileName);
 bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v);
 

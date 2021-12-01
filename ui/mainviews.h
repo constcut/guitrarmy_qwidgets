@@ -135,7 +135,6 @@ public:
 class ConfigView : public GView
 {
 protected:
-    AConfig* configPointer;
 
     std::unique_ptr<GLabel> labA, labB;
     std::unique_ptr<GLabel> labC, labD;

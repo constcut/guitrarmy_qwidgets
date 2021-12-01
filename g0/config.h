@@ -96,10 +96,10 @@ public:
     //
     virtual void init()=0;
 
-    void setIntoConfig(AConfig *conf)
+    void setIntoConfig(AConfig& conf)
     {
         for (size_t i=0; i < configLines.size(); ++i)
-            conf->addLine(configLines[i]);
+            conf.addLine(configLines[i]);
     }
 };
 

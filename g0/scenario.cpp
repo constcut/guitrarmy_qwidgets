@@ -385,12 +385,13 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
     return true;
 }
 
-void connectConfigs(AConfig *config)
+void connectConfigs(AConfig& config)
 {
-    config->connectLog(&tabLog,0,"tab");
+    //TODO update this ugly way to store all possible logs
+    config.connectLog(&tabLog,0,"tab");
     //config->connectLog(&museLog,1,"amusic");
-    config->connectLog(&midiLog,2,"midi");
-    config->connectLog(&gtpLog,3,"gtp");
+    config.connectLog(&midiLog,2,"midi");
+    config.connectLog(&gtpLog,3,"gtp");
 }
 
 
