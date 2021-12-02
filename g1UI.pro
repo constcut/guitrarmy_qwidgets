@@ -115,12 +115,7 @@ HEADERS  += ui/mainwindow.h \
 DISTFILES += \
     g0/todo.txt \
     android/AndroidManifest.xml \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradlew \
     android/res/values/libs.xml \
-    android/build.gradle \
-    android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat \
     libs/sf/LICENSE \
     libs/sf/README.md \
     android/src/in/guitarmy/app/AndroidHelper.java

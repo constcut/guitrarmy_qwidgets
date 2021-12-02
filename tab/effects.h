@@ -9,7 +9,7 @@ enum class Effect {
     None = 0,
     Vibrato = 1,
     PalmMute = 2,
-    Hammer = 3, //TODO it kind of slide
+    Hammer = 3, 
     Slide = 4,
     LegatoSlide = 5,
     SlideDownV1 = 6,

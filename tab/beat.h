@@ -3,6 +3,7 @@
 
 #include <memory.h>  //TODO find modern way
 #include <vector>
+#include <string>
 
 #include "types.h"
 #include "note.h"

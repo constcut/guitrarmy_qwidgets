@@ -6,6 +6,7 @@ bool tabLog = false;
 #include <QDebug>
 #include <algorithm>
 #include <map>
+#include <iostream>
 
 
  void Tab::printToStream(std::ostream &stream)
@@ -23,7 +24,7 @@ bool tabLog = false;
 
      BpmChangeKnot(int newBpm, int newTime):bpm(newBpm),time(newTime){}
 
-     bool operator<(const BpmChangeKnot& another){  return time < another.time; }
+     bool operator<(const BpmChangeKnot& another) const {  return time < another.time; }
  };
 
 

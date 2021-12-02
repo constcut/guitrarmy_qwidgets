@@ -1,5 +1,6 @@
 #include "bar.h"
 
+#include <iostream>
 #include <QDebug>
 
 bool barLog = false;

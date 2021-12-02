@@ -22,7 +22,7 @@ void initGlobals()
     conf.isMobile = false; //desktop actually is default
 
 #ifdef __ANDROID_API__
-    globals.isMobile = true;
+    conf.isMobile = true;
 #endif
     conf.platform = "other";
 #ifdef linux

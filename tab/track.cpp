@@ -1,13 +1,14 @@
 #include "track.h"
 
+#include <iostream>
 #include <QDebug>
 
 bool trackLog = false;
 
 
-void Track::printToStream(std::ostream &stream)
+void Track::printToStream(std::ostream& stream)
 {
-    stream << "Outputing #"<<size()<<" Bars."<<std::endl;
+    stream << "Outputing #" << size() << " Bars."<< std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
 }
