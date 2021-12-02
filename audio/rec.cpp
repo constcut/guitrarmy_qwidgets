@@ -281,7 +281,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             fft.countAmplitude();
 
             fft.findPeaks(7.8125); // /2.0
-            peaks=fft.getPeaks();
+            peaks = &fft.getPeaks();
 
             //stri ngExtended sX;
             double peaksSumm = 0.0;

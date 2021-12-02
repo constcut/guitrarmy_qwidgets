@@ -14,7 +14,6 @@
 #include <QMediaPlayer>
 #include <QAudioFormat>
 
-#include "audio/wavefile.h"
 
 #include <QStandardPaths>
 #include <QScreen>

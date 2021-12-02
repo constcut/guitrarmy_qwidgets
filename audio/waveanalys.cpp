@@ -906,7 +906,7 @@ int signMF(long mass)
              four->findPeaks();
 
              QSharedPointer<LocalFreqTable> localFreq(new LocalFreqTable());
-             localFreq->addPeaks(four->getPeaks());
+             localFreq->addPeaks(&four->getPeaks());
              localFreq->sortPeaks();
              localFreq->recountHarmonicalUnion();
              localFreq->voteNow();
@@ -949,7 +949,7 @@ int signMF(long mass)
              four->findPeaks();
 
              QSharedPointer<LocalFreqTable> localFreq(new LocalFreqTable());
-             localFreq->addPeaks(four->getPeaks());
+             localFreq->addPeaks(&four->getPeaks());
              localFreq->sortPeaks();
              localFreq->recountHarmonicalUnion();
              localFreq->voteNow();

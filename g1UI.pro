@@ -59,7 +59,6 @@ SOURCES += main.cpp\
     midi/midirender.cpp \
     ui/tabviews.cpp \
     ui/tabcommands.cpp \
-    audio/wavefile.cpp \
     audio/fft.cpp \
     audio/waveanalys.cpp \
     android_helper.cpp \
@@ -100,7 +99,6 @@ HEADERS  += ui/mainwindow.h \
     midi/midirender.h \
     ui/tabviews.h \
     tab/tabcommands.h \
-    audio/wavefile.h \
     audio/fft.h \
     audio/waveanalys.h \
     android_helper.h \

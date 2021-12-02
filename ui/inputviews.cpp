@@ -6,7 +6,6 @@
 
 #include <QInputDialog>
 
-#include "audio/wavefile.h"
 #include "audio/fft.h"
 
 #include "audio/waveanalys.h"

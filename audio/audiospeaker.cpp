@@ -106,7 +106,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
             fft.transform(&sourceData[minusLastFrame]);
             fft.countAmplitude();
             fft.findPeaks(7.8125/2.0);
-            std::vector<Peak> *peaks=fft.getPeaks();
+            std::vector<Peak> *peaks = &fft.getPeaks();
 
             LocalFreqTable localFreq;
             localFreq.addPeaks(peaks);

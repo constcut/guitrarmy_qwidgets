@@ -359,54 +359,33 @@ double Index_to_frequency_old(unsigned int p_nBaseFreq, unsigned int p_nSamples,
 ///////////////////////////////////////////////////////////
 
 
-FFT::FFT(int size): decibels(0),amplitude(0),amplitudeScale(0),sqrd(0),halfFoubricatedSource(0),destReal(0),destImg(0),autoCleanFlag(true)
-
+FFT::FFT(int size) : N(size)
 {
-    N = size;
-    this->destImg = new double[N]; //TODO vectors
-    this->destReal = new double[N];
-    this->amplitude = new double[N/2];
-    this->decibels = new double[N/2];
-    this->sqrd = new double[N/2];
-    this->amplitudeScale = new double[N/2];
-    this->halfFoubricatedSource = new double[N];
-    this->peaks = 0;
+    destImg = std::vector<double>(N, 0.0);
+    destReal = std::vector<double>(N, 0.0);
+    amplitude = std::vector<double>(N/2, 0.0);
+    decibels = std::vector<double>(N/2, 0.0);
+    sqrd = std::vector<double>(N/2, 0.0);
+    amplitudeScale = std::vector<double>(N/2, 0.0);
+    halfFoubricatedSource = std::vector<double>(N, 0.0);
+
 }
 
 
 FFT::~FFT()
 {
-    if (autoCleanFlag==true)
-    {
-        if (decibels != 0) delete[] decibels;
-        if (amplitude != 0) delete[] amplitude;
-        if (amplitudeScale != 0) delete[] amplitudeScale;
-        if (sqrd != 0) delete[] sqrd;
-        if (halfFoubricatedSource != 0) delete[] halfFoubricatedSource;
-        if (destReal != 0) delete[] destReal;
-        if (destImg != 0) delete[] destImg;
-        if (peaks != 0) delete peaks;
-        //peaks!
-    }
+
 }
 
 bool FFT::transform(short int *place)
 {
-//qWarning()<<
-        if (place!=0)
-        {
-            if (halfFoubricatedSource==0)
-                halfFoubricatedSource= new double[N];
-
-          for (int i=0; i < N; ++i)
-              halfFoubricatedSource[i]=(double)(place[i]);
-
-          fft_double_old(N,false,halfFoubricatedSource,0,destReal,destImg);
-        }
+    if (place!=0) {
+        for (int i=0; i < N; ++i)
+          halfFoubricatedSource[i]=(double)(place[i]);
+        fft_double_old(N,false,halfFoubricatedSource.data(),0,destReal.data(),destImg.data());
+    }
     else
-        {
-            return false;
-        }
+        return false;
     return true;
 }
 
@@ -414,14 +393,14 @@ bool FFT::countDecibels()
 {
     for (size_t i = 0; i < N/2; ++i)
         decibels[i] = Decibels(this->destReal[i],this->destImg[i])/256;
-        return true;
+    return true;
 }
 
 bool FFT::countAmplitude()
 {
     for (size_t i = 0; i < N/2; ++i)
         this->amplitude[i] = Amplitude(this->destReal[i],this->destImg[i],N)/256;
-        return true;
+    return true;
 }
 
 FFT::AmplitudeValue FFT::getMaxAmplitude()
@@ -436,7 +415,7 @@ bool FFT::countAmplitudeScale()
 {
     for (size_t i = 0; i < N/2; ++i)
         amplitudeScale[i] = AmplitudeScaled(this->destReal[i],this->destImg[i],N,256);
-         return true; //scale?
+    return true; //scale?
 }
 
 bool FFT::countSQRD()
@@ -444,45 +423,44 @@ bool FFT::countSQRD()
 
     for (size_t i = 0; i < N/2; ++i)
         sqrd[i] = mag_sqrd(this->destReal[i],this->destImg[i]);
-         return true;
+    return true;
 }
 
 double *FFT::getDecibels()
 {
-     return this->decibels;
+     return decibels.data();
 }
 
 double *FFT::getAmplitude()
 {
-     return amplitude;
+     return amplitude.data();
 }
 
 double *FFT::getAmplitudeScale()
 {
-     return this->amplitudeScale;
+     return amplitudeScale.data();
 }
 
 double *FFT::getSQRD()
 {
-     return this->sqrd;
+     return sqrd.data();
 }
 
 double *FFT::getRealPart()
 {
-     return this->destReal;
+     return destReal.data();
 }
 
 double *FFT::getImgPart()
 {
-    return this->destImg;
+    return destImg.data();
 }
 
 int FFT::findPeaks(double coefRate)
 {
-    if (peaks==0) peaks = new std::vector<Peak>;
-    peaks->clear();
+    peaks.clear();
 
-    unsigned int stupidSkiper = 0;
+    unsigned int skippedCount = 0;
     double max = 0;
     double maxPos = -1;
     double *source = getAmplitude();
@@ -497,47 +475,47 @@ int FFT::findPeaks(double coefRate)
 
     for (int i=1;i < 3*(this->N-1)/8; ++i)
     {
+        bool needSkip = false;
         if (source[i]>max)
         {
-
-                if (peaks->empty() == false)
-                {
-                    for (size_t j = 0; j < peaks->size(); ++j)
-                    {
-                       if ((*peaks)[j].getPosition() == i) goto skip;
-                    }
-                }
+            if (peaks.empty() == false)
+                for (size_t j = 0; j < peaks.size(); ++j)
+                   if (peaks[j].getPosition() == i)  {
+                       needSkip = true;
+                       break;
+                   }
+            if (needSkip == false) {
                 max = source[i];
                 maxPos = i;
+            }
         }
-        skip:
-        ++stupidSkiper;
+        if (needSkip == true)
+            ++skippedCount;
     }
 
     {
         Peak p(maxPos,max,coefRate);
 
-        //if ((maxPos*7.8125) > 20000.0) return peaks->size(); //check this condition 5.383
+        //if ((maxPos*7.8125) > 20000.0) return peaks.size(); //check this condition 5.383
 
-        peaks->push_back(p);
-
-        //return peaks->size();
+        peaks.push_back(p);
+        //return peaks.size();
 
         //or 14 instead 21? - 10 is ok!
-        if (peaks->size() < 14)  goto iteration; //check check
-        if (peaks->size() >= 14)  return peaks->size(); //for each 2 waiting notes (28 for 4?)
+        if (peaks.size() < 14)  goto iteration; //check check
+        if (peaks.size() >= 14)  return peaks.size(); //for each 2 waiting notes (28 for 4?)
         //if (max > 7*(*peaks)[0].getAmplitude()/100)
             //goto iteration;
     }
 
 
-    return peaks->size();
+    return peaks.size();
 
 }
 
-std::vector<Peak> *FFT::getPeaks()
+std::vector<Peak>& FFT::getPeaks()
 {
-    return (peaks);
+    return peaks;
 }
 /*****************************************************************************
 *                                                                            *

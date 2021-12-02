@@ -74,24 +74,20 @@ private:
 class FFT
 {
 public:
-    std::vector<Peak> *peaks;
+    std::vector<Peak> peaks;
     unsigned short N;
 
     static FreqTable freqTab;
 
-    double *decibels;
-    double *amplitude;
-    double *amplitudeScale;
-    double *sqrd;
+    std::vector<double> decibels;
+    std::vector<double> amplitude;
+    std::vector<double> amplitudeScale;
+    std::vector<double> sqrd;
+    std::vector<double> halfFoubricatedSource;
 
-    double *halfFoubricatedSource;
+    std::vector<double> destReal;
+    std::vector<double> destImg;
 
-    double *destReal, *destImg;
-    bool autoCleanFlag;
-
-    //current max freq
-   // double maxAmplitude;
-  //  int maxAmplitudeIndex;
 
 public:
     FFT(int size);
@@ -112,7 +108,7 @@ public:
     double *getImgPart();
 
     int findPeaks(double coefRate=7.8125);
-    std::vector<Peak> *getPeaks();
+    std::vector<Peak>& getPeaks();
 
     struct AmplitudeValue
     {
