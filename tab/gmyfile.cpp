@@ -6,6 +6,10 @@
 
 //TODO log turned off
 
+bool logFlag = false;
+
+
+
 
 GmyFile::GmyFile()
 {
@@ -44,7 +48,7 @@ void readBendGMY(std::ifstream& file, BendPoints *bend)
     size_t pointsCount = 0;
      file.read((char*)&pointsCount,1); //cannot be more then 255
 
-    qDebug()<< "Type "<<bendType<<"; N= "<<pointsCount;
+    if (logFlag) qDebug()<< "Type "<<bendType<<"; N= "<<pointsCount;
     bend->setType(bendType); //trem yet not handled anyway
 
     for (size_t pointInd=0; pointInd<pointsCount; ++pointInd)
@@ -57,7 +61,7 @@ void readBendGMY(std::ifstream& file, BendPoints *bend)
          file.read((char*)&verticalPosition,1);
          file.read((char*)&vibratoFlag,1);
 
-        qDebug() << "Point# "<< pointInd << "; absPos="<<absolutePosition<<"; vertPos="
+        if (logFlag) qDebug() << "Point# "<< pointInd << "; absPos="<<absolutePosition<<"; vertPos="
                <<verticalPosition<<"; vibrato- "<<vibratoFlag;
 
         BendPoint point;
@@ -67,7 +71,7 @@ void readBendGMY(std::ifstream& file, BendPoints *bend)
         bend->push_back(point);
     }
 
-    qDebug() << "Beng if (gtpLog)  logging finished with " << bend->size();
+    if (logFlag) qDebug() << "Beng if (gtpLog)  logging finished with " << bend->size();
 }
 
 
@@ -117,14 +121,14 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
         std::uint8_t stringsCount = track->tuning.getStringsAmount();
          file.write((char*)&stringsCount,1);
 
-        qDebug() << "Write strings count "<<stringsCount;
+        if (logFlag) qDebug() << "Write strings count "<<stringsCount;
 
         for (std::uint8_t sI=0; sI < stringsCount; ++ sI)
         {
             std::uint8_t tune = track->tuning.getTune(sI);
              file.write((char*)&tune,1);
 
-            qDebug() <<"Write tune "<<tune<<" for i="<<sI;
+            if (logFlag) qDebug() <<"Write tune "<<tune<<" for i="<<sI;
         }
 
         //maximum frets
@@ -134,7 +138,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
         std::uint8_t capoSet = track->getGPCOMPInts(4);
          file.write((char*)&capoSet,1);
 
-        qDebug() << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet;
+        if (logFlag) qDebug() << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet;
 
         bool isDrums = track->isDrums();
          file.write((char*)&isDrums,1);
@@ -149,7 +153,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
          file.write((char*)&pan,1);
          file.write((char*)&vol,1);
 
-        qDebug() <<"IsD "<<isDrums<<"; instr-"<<
+        if (logFlag) qDebug() <<"IsD "<<isDrums<<"; instr-"<<
                 (int)track->getInstrument()<<
               "; +2more sets ";
 
@@ -169,7 +173,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
             if (i == 0) //first track
             {
-                qDebug() <<"First track bar "<<j;
+                if (logFlag) qDebug() <<"First track bar "<<j;
                 std::uint8_t barHead = 0;
 
                 std::uint8_t barNum = bar->getSignNum();
@@ -212,7 +216,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
                 //Now according to barHead WRITE DOWN information
 
-                qDebug()<< "Bar head "<<barHead;
+                if (logFlag) qDebug()<< "Bar head "<<barHead;
                  file.write((char*)&barHead,1);
 
                 if (barHead & 1)
@@ -407,7 +411,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         if ((firstBytes[0]!='G') ||
             (firstBytes[1]!='A'))
         {
-            qDebug() << "Attempt to open not guitarmy file";
+            if (logFlag) qDebug() << "Attempt to open not guitarmy file";
             return false;
         }
     }
@@ -416,7 +420,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
      file.read((char*)&byteZero,1);
     if (byteZero != 0)
     {
-        qDebug() << "Not a base format version";
+        if (logFlag) qDebug() << "Not a base format version";
         return false;
     }
 
@@ -473,13 +477,13 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         //tuning
         track->tuning.setStringsAmount(stringsCount);
 
-        qDebug()<<"Strings amount "<<stringsCount;
+        if (logFlag) qDebug()<<"Strings amount "<<stringsCount;
         for (std::uint8_t sI=0; sI < stringsCount; ++sI)
         {
             std::uint8_t tune = 0;
              file.read((char*)&tune,1);
             track->tuning.setTune(sI,tune);
-            qDebug() << "Read tune "<<sI<<" "<<tune;
+            if (logFlag) qDebug() << "Read tune "<<sI<<" "<<tune;
         }
 
         //maximum frets
@@ -492,7 +496,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         track->setGPCOMPInts(4,capoSet);
 
 
-        qDebug() << "read fret limits "<<fretsLimit<<"; capo "<<capoSet;
+        if (logFlag) qDebug() << "read fret limits "<<fretsLimit<<"; capo "<<capoSet;
 
         //extract from midi table -
             /// instrument
@@ -529,7 +533,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         track->setPan(pan);
 
 
-        qDebug()<<" Read instr "<<instr<<" isD "<<isDrums<<"; pan "<<
+        if (logFlag) qDebug()<<" Read instr "<<instr<<" isD "<<isDrums<<"; pan "<<
               pan<<"; volume "<<volume;
 
         for (size_t j = 0; j < barsCount; ++j)
@@ -554,7 +558,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                 std::uint8_t barHead = 0;
                  file.read((char*)&barHead,1);
 
-                qDebug() << "Read bar head "<<barHead;
+                if (logFlag) qDebug() << "Read bar head "<<barHead;
 
                 std::uint8_t barNum =0;
                 std::uint8_t barDen =0;
@@ -620,7 +624,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
 
             if (barLen == 0)
             {
-                qDebug() << "Bars len";
+                if (logFlag) qDebug() << "Bars len";
                 auto emptyBeat = std::make_unique<Beat>();
                 emptyBeat->setPause(true);
                 emptyBeat->setDuration(3);
@@ -662,7 +666,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                 loadString(file,beatText);
                 if (beatText.empty())
                 {
-                    qDebug() <<"beatText "<< beatText.c_str()
+                    if (logFlag) qDebug() <<"beatText "<< beatText.c_str()
                 }
                 */
                 //EffectsPack effPackBeat = beat->getEffects();

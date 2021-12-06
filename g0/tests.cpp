@@ -253,7 +253,6 @@ bool testGP4(std::string fileName, std::string outFileName, std::string gmyFile=
         return false;
     }
 
-
     Tab tab;
     Gp4Import importer; //(tabFile,tab);
     //swtich to different versions of importers 3\4\5
@@ -267,12 +266,14 @@ bool testGP4(std::string fileName, std::string outFileName, std::string gmyFile=
     size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
+    if (bytesWritten == 0) {
+        std::cerr << "ERROR empty file " << std::endl;
+    }
 
     if (gmyFile.empty() == false) {
         std::ofstream gmyOut(gmyFile, std::ios::binary);
         GmyFile g;
         g.saveToFile(gmyOut, &tab);
-
     }
 
     return true;

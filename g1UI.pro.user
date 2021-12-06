@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 5.0.3, 2021-12-02T20:01:06. -->
+<!-- Written by QtCreator 5.0.3, 2021-12-06T18:08:36. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -8,7 +8,7 @@
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
-  <value type="int">0</value>
+  <value type="int">1</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.EditorSettings</variable>
@@ -480,8 +480,8 @@
   <variable>ProjectExplorer.Project.Target.2</variable>
   <valuemap type="QVariantMap">
    <value type="QString" key="DeviceType">Desktop</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop Qt 6.1.2 GCC 64bit</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop Qt 6.1.2 GCC 64bit</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Replacement for &quot;Desktop Qt 6.1.2 GCC 64bit&quot;</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Replacement for &quot;Desktop Qt 6.1.2 GCC 64bit&quot;</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">qt.qt6.612.gcc_64_kit</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
@@ -646,8 +646,8 @@
   <variable>ProjectExplorer.Project.Target.3</variable>
   <valuemap type="QVariantMap">
    <value type="QString" key="DeviceType">Desktop</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop Qt 5.12.11 GCC 64bit</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop Qt 5.12.11 GCC 64bit</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Replacement for &quot;Desktop Qt 5.12.11 GCC 64bit&quot;</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Replacement for &quot;Desktop Qt 5.12.11 GCC 64bit&quot;</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">qt.qt5.51211.gcc_64_kit</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>

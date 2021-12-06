@@ -14,7 +14,7 @@ bool checkHasRegression() {
 
     std::unordered_map<size_t, size_t> groupLength = {
         {1, 12},
-        {2, 38},
+        {2, 39},
         {3, 70},
         {4, 109}
     };
@@ -45,11 +45,14 @@ bool checkHasRegression() {
             tab.postGTP();
             tab.connectTracks(); //new for chains refac
 
+            size_t bytesWritten = 0;
             auto f = exportMidi(&tab);
-            std::ofstream midiOut(midiFile, std::ios::binary);
-            size_t bytesWritten = f->writeStream(midiOut);
-            std::cerr << "MidiSize: " << bytesWritten << " to " << testName <<  std::endl;
-            //TODO сделать сравнение со старой версией, убедиться что за последние 10 дней работы не было внесено новой регрессии
+            {
+                std::ofstream midiOut(midiFile, std::ios::binary);
+                bytesWritten = f->writeStream(midiOut);
+                std::cerr << "MidiSize: " << bytesWritten << " to " << testName <<  std::endl;
+                //TODO сделать сравнение со старой версией, убедиться что за последние 10 дней работы не было внесено новой регрессии
+            }
             auto fSize = std::filesystem::file_size(midiFileCheck);
 
             if (fSize != bytesWritten) {
