@@ -135,6 +135,9 @@ QByteArray MidiRender::renderShortNext(int len)
                 case TML_NOTE_OFF: //stop a note
                     tsf_note_off(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
                     break;
+
+                default:
+                    std::cerr << "EVENT NOT HANDLED: " << g_MidiMessage->type << std::endl;
             }
         }
         tsf_render_short(soundFont, (short*)stream, SampleBlock, 0);

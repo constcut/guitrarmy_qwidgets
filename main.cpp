@@ -38,6 +38,8 @@
 #include <QDebug>
 
 #include "midi/midirender.h"
+#include "g0/regression.h"
+
 
 //TODO расчесать инициализацию, создать отдельные файлы для неё
 
@@ -289,6 +291,14 @@ int main(int argc, char *argv[])
     if (CONF_PARAM("skipTabView")=="1")
         w.getCenterView()->pushForceKey("opentrack");
 
+    //greatCheckScenarioCase(1, 1, 12, 4);
+    //greatCheckScenarioCase(2, 1, 38, 4);
+    if (checkMidiHasRegression()) {
+        qDebug() << "Midi has regression, terminating";
+        return 0;
+    }
+    else
+        qDebug() << "Midi has no regression";
 
     int out = 0;
     try{

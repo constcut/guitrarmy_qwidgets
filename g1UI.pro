@@ -30,7 +30,9 @@ win32:LIBS += -lWinMM
 SOURCES += main.cpp\
     audio/audiospeaker.cpp \
     g0/config.cpp \
+    g0/regression.cpp \
     g0/tests.cpp \
+    g0/threads.cpp \
     midi/miditrack.cpp \
     tab/effects.cpp \
     tab/tabclipboard.cpp \
@@ -72,7 +74,9 @@ SOURCES += main.cpp\
 HEADERS  += ui/mainwindow.h \
     audio/audiospeaker.h \
     g0/config.h \
+    g0/regression.h \
     g0/tests.h \
+    g0/threads.h \
     midi/miditrack.h \
     tab/effects.h \
     tab/tabclipboard.h \

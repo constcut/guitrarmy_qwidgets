@@ -309,9 +309,9 @@ bool greatCheck()
 
     //phase 1
     size_t from = 1; //1
-    size_t to = 70; //70
+    size_t to = 11; //70
 
-    int scen = 3;
+    int scen = 1;
 
 
     std::cerr << "Starting big check" << std::endl;
@@ -370,8 +370,8 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
             std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
 
             std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
-            std::string outGp4 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
-            std::string outGp4plus = testLocation +  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4p.mid");
+            std::string outGp4 =  testLocation + std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
+            std::string outGp4plus = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
             std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
 
 

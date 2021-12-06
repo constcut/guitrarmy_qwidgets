@@ -536,9 +536,6 @@ std::vector<Peak>& FFT::getPeaks()
 
 
 
-
-
-
 /*\\\ PUBLIC MEMBER FUNCTIONS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 
