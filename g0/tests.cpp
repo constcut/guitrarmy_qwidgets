@@ -6,6 +6,7 @@
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
 #include "g0/config.h"
+#include "tab/gmyfile.h"
 
 #include "tab/tabloader.h"
 
@@ -238,7 +239,7 @@ bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
 }
 
 
-bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
+bool testGP4(std::string fileName, std::string outFileName, std::string gmyFile="")
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -266,6 +267,13 @@ bool testGP4(std::string fileName, std::string outFileName, bool outputLog)
     size_t bytesWritten = f->writeStream(midiOut);
 
     std::cerr << "Bytes midi written " << bytesWritten << " to " << outFileName <<  std::endl;
+
+    if (gmyFile.empty() == false) {
+        std::ofstream gmyOut(gmyFile, std::ios::binary);
+        GmyFile g;
+        g.saveToFile(gmyOut, &tab);
+
+    }
 
     return true;
 }
@@ -339,7 +347,7 @@ bool greatCheck()
             //log<<"TestFile "<<gp3File.c_str();
             //if ( testMidi(midiFile,outMid,log) == false ) return 0;
             if ( testGP3 (gp3File,outGp3,doTheLogs)  == false ) return 0; //last true - no out
-            if ( testGP4 (gp4File,outGp4,doTheLogs)  == false ) return 0; //last true - no out
+            //if ( testGP4 (gp4File,outGp4,doTheLogs)  == false ) return 0; //last true - no out
             if ( testGP5 (gp5File,outGp5,doTheLogs) == false ) return 0;
 
             std::cout << "done"<<std::endl;
@@ -373,6 +381,8 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
             std::string outGp4 =  testLocation + std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
             std::string outGp4plus = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
             std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
+            std::string gmyOut = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".gmy");
+
 
 
             //log<<"TestFile "<<newLine.c_str();
@@ -383,7 +393,7 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
 
             if (v==4)
             {
-                if ( testGP4 (gp4File,outGp4,doTheLogs) == false )
+                if ( testGP4 (gp4File, outGp4, gmyOut) == false )
                   log <<"Test gp4 "<<newLine.c_str()<<" failed";
                 //Add tabloader test
             }

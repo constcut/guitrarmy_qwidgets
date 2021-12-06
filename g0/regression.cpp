@@ -8,6 +8,7 @@
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
 #include "midi/midiexport.h"
+#include "tab/gmyfile.h"
 
 bool checkHasRegression() {
 
@@ -19,7 +20,9 @@ bool checkHasRegression() {
     };
 
     Gp4Import importer;
-    uint16_t regressionCount = 0;
+    GmyFile exporter;
+    uint16_t regressionCountMidi = 0;
+    uint32_t regressionCountGmy = 0;
     for (size_t groupIdx = 1; groupIdx <= 4; ++groupIdx) {
         size_t from = 1;
         size_t to = groupLength[groupIdx] - 1;
@@ -38,7 +41,7 @@ bool checkHasRegression() {
             itfile.open(gp4File.c_str(),std::ifstream::binary);
 
             Tab tab;
-            importer.import(itfile,&tab); //Перегрузить на просто ссылку и на умный указатель TODO
+            importer.import(itfile, &tab); //Перегрузить на просто ссылку и на умный указатель TODO
             tab.postGTP();
             tab.connectTracks(); //new for chains refac
 
@@ -50,19 +53,36 @@ bool checkHasRegression() {
             auto fSize = std::filesystem::file_size(midiFileCheck);
 
             if (fSize != bytesWritten) {
-                std::cerr << "Files " << testName << " got a regression " << std::endl;
-                ++regressionCount;
-                return true;
+                std::cerr << "Files " << testName << " got a MIDI regression " << std::endl;
+                ++regressionCountMidi;
             }
             else {
                 //TODO compare binnary each byte
             }
 
+            std::string gmyFile = testLocation + std::string("regression_check/") + testName + std::string(".gmy");
+            std::string gmyFileCheck = testLocation + std::string("regression/") + testName + std::string(".gmy");
+
+            {
+                std::ofstream gmyOut(gmyFile, std::ios::binary);
+                exporter.saveToFile(gmyOut, &tab);
+            }
+
+
+            auto sizeNew = std::filesystem::file_size(gmyFile);
+            auto sizeOld = std::filesystem::file_size(gmyFileCheck);
+
+            if (sizeNew != sizeOld) {
+                std::cerr << "Files " << testName << " got a GMY regression " << std::endl;
+                ++regressionCountGmy;
+            }
+
         }
     }
 
-    if (regressionCount) {
-        std::cerr << "Total " << regressionCount << " files got regression" << std::endl;
+    if (regressionCountMidi || regressionCountGmy) {
+        std::cerr << "Total " << regressionCountMidi << " files got MIDI regression"
+                  << std::endl << "Total " << regressionCountGmy << " files got GMY regression" << std::endl;
         return true;
     }
     return false;
