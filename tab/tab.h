@@ -191,6 +191,26 @@ public: //later cover under midlayer TabCommandsHandler
         macroCommands.push_back(command);
     }
 
+    void playCommand(MacroCommand& command) {
+        if (std::holds_alternative<TabCommand>(command)) {
+            onTabCommand(std::get<TabCommand>(command)); //TODO не повторять макрокомманду
+        }
+        else if (std::holds_alternative<TrackCommand>(command)) {
+            at(currentTrack)->onTrackCommand(std::get<TrackCommand>(command));
+        }
+        else if (std::holds_alternative<IntCommand<TabCommand>>(command)) {
+            auto paramCommand = std::get<IntCommand<TabCommand>>(command);
+            //TODO возможно тоже сделать хэндлеры? Чтобы не плодить море if
+        }
+        else if (std::holds_alternative<TwoIntCommand<TabCommand>>(command)) {
+            auto paramCommand = std::get<TwoIntCommand<TabCommand>>(command);
+            //TODO
+        } else if (std::holds_alternative<StringCommand<TabCommand>>(command)) {
+            auto paramCommand = std::get<StringCommand<TabCommand>>(command);
+            //TODO
+        }
+    }
+
 private:
     std::unordered_map<TabCommand, void (Tab::*)()> handlers =  {
         {TabCommand::Mute, &Tab::muteTrack},

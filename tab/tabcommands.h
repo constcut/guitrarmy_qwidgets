@@ -129,6 +129,11 @@ using MacroCommand = std::variant<TabCommand, TrackCommand, StringCommand<TabCom
     IntCommand<TabCommand>, TwoIntCommand<TabCommand>, StringCommand<TrackCommand>, TwoIntCommand<TrackCommand>>;
 
 
+//TODO
+
+void saveMacroComannds(const std::vector<MacroCommand>& commands, std::ofstream& os);
+std::vector<MacroCommand> loadMacroCommands(std::ifstream& is);
+
 
 enum class ReversableType { //Если будет конфликт имён убрать в клас хранитель
     Empty = 0,
@@ -221,5 +226,7 @@ public:
     std::uint8_t getBeatNum() { return beat; }
     std::uint8_t getStringNum() { return string; }
 };
+
+
 
 #endif // TABCOMMANDS_H
