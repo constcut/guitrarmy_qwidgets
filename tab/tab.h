@@ -5,8 +5,8 @@
 
 #include <unordered_map>
 #include <list>
-#include "tab/tabcommands.h"
 
+#include "tab/tabcommands.h"
 #include "track.h"
 
 int updateDurationWithDetail(std::uint8_t detail, int base);
@@ -55,6 +55,8 @@ struct TimeLineKnot
 
     TimeLineKnot(std::uint8_t newType, int newValue):type(newType),value(newValue){}
 };
+
+
 
 
 class Tab : public ChainContainer<Track, void>
@@ -167,17 +169,27 @@ public: //later cover under midlayer TabCommandsHandler
 
     void deleteTrack();
 
-    void setSignsTillEnd(int num, int denom);
-    void changeTrackVolume(int newVol);
+    void setSignsTillEnd(size_t num, size_t denom);
+    void changeTrackVolume(size_t newVol);
     void changeTrackName(std::string newName);
-    void changeTrackInstrument(int val);
-    void changeTrackPanoram(int val);
+    void changeTrackInstrument(size_t val);
+    void changeTrackPanoram(size_t val);
     void setMarker(std::string text);
 
     void gotoBar(size_t pos);
     void saveAs(std::string filename);
     void closeReprise(size_t count);
 
+
+    void addMacro(TrackCommand command) {
+        macroCommands.push_back(command);
+    }
+    void addMacro(StringCommand<TrackCommand> command) {
+        macroCommands.push_back(command);
+    }
+    void addMacro(TwoIntCommand<TrackCommand> command) {
+        macroCommands.push_back(command);
+    }
 
 private:
     std::unordered_map<TabCommand, void (Tab::*)()> handlers =  {
@@ -190,6 +202,9 @@ private:
         {TabCommand::PauseMidi, &Tab::midiPause},
         {TabCommand::OpenReprise, &Tab::openReprise},
         {TabCommand::Drums, &Tab::changeDrumsFlag}};
+
+
+    std::vector<MacroCommand> macroCommands;
 };
 
 

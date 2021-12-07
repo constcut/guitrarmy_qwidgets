@@ -203,8 +203,8 @@ public:
     //void setBendOnNote(); //TODO + changes + chord
 
     void setTextOnBeat(std::string newText);
-    void setBarSign(int num, int denom);
-    void changeBarSigns(int num, int denom);
+    void setBarSign(size_t num, size_t denom);
+    void changeBarSigns(size_t num, size_t denom);
 
     void clipboardCopyBar(); //refact name
     void clipboarCopyBeat();
@@ -277,7 +277,7 @@ private:
         {TrackCommand::Copy, &Track::clipboardCopyBar},
         {TrackCommand::CopyBeat, &Track::clipboarCopyBeat},
         {TrackCommand::CopyBars, &Track::clipboardCopyBars},
-        {TrackCommand::Past, &Track::clipboardPaste},
+        {TrackCommand::Paste, &Track::clipboardPaste},
         {TrackCommand::Undo, &Track::undoOnTrack},
         {TrackCommand::SaveFile, &Track::saveFromTrack}};
 };

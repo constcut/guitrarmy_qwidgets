@@ -811,7 +811,7 @@ CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
         {"copy", TrackCommand::Copy},
         {"copyBeat", TrackCommand::CopyBeat},
         {"copyBars", TrackCommand::CopyBars},
-        {"paste", TrackCommand::Past},
+        {"paste", TrackCommand::Paste},
         {"undo", TrackCommand::Undo}
         //TODO map not working too
     };

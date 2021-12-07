@@ -264,6 +264,7 @@ void Track::reverseCommand(ReversableCommand command) //TODO get rid of this->cu
 
 
 void Track::gotoTrackStart() {
+    parent->addMacro(TrackCommand::GotoStart);
     _cursor = 0;
     _cursorBeat = 0;
     _displayIndex = 0;
@@ -305,6 +306,7 @@ void Track::insertBar() {
 
 
 void Track::insertNewPause() {
+    //parent->addMacro(TrackCommand::InsertNewPause); //TODO
     auto beat = std::make_unique<Beat>();
     beat->setPause(true);
     beat->setDuration(4);
@@ -761,6 +763,7 @@ void Track::setTriolOnBeat() {
 
 
 void Track::setTextOnBeat(std::string newText) {
+    parent->addMacro(StringCommand<TrackCommand>{TrackCommand::Text, newText});
     auto& beat = at(_cursor)->at(_cursorBeat);
     beat->setGPCOMPText(newText);
 }
@@ -997,12 +1000,14 @@ void Track::undoOnTrack() {
 
 
 void Track::onTrackCommand(TrackCommand command) {
+    parent->addMacro(command);
     if (handlers.count(command))
         (this->*handlers.at(command))();
 }
 
 
-void Track::changeBarSigns(int newNum, int newDen) {
+void Track::changeBarSigns(size_t newNum, size_t newDen) {
+    parent->addMacro(TwoIntCommand<TrackCommand>{TrackCommand::SetSignForSelected, newNum, newDen});
     if ((_selectionBarFirst != -1) && (_selectionBarLast != -1))
        for (int i = _selectionBarFirst; i <= _selectionBarLast; ++i) {
            at(i)->setSignNum(newNum);
@@ -1012,7 +1017,8 @@ void Track::changeBarSigns(int newNum, int newDen) {
 }
 
 
-void Track::setBarSign(int newNum, int newDen) {
+void Track::setBarSign(size_t newNum, size_t newDen) {
+    parent->addMacro(TwoIntCommand<TrackCommand>{TrackCommand::SetBarSign, newNum, newDen});
     auto& bar = at(_cursor);
     std::uint8_t oldDen = bar->getSignDenum();
     std::uint8_t oldNum = bar->getSignNum();

@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <variant>
+#include <string>
 
 
 enum class TabCommand {
@@ -89,7 +91,7 @@ enum class TrackCommand {
     Copy,
     CopyBeat,
     CopyBars,
-    Past,
+    Paste,
     Undo,
     //Next commands yet not implemented
     QuickOpen,
@@ -100,6 +102,31 @@ enum class TrackCommand {
     DownM,
     Figering
 };
+
+
+
+template<typename CommandType>
+struct StringCommand {
+    CommandType type;
+    std::string parameter;
+};
+
+template<typename CommandType>
+struct IntCommand {
+    CommandType type;
+    size_t parameter;
+};
+
+template<typename CommandType>
+struct TwoIntCommand {
+    CommandType type;
+    size_t parameter1;
+    size_t parameter2;
+};
+
+
+using MacroCommand = std::variant<TabCommand, TrackCommand, StringCommand<TabCommand>,
+    IntCommand<TabCommand>, TwoIntCommand<TabCommand>, StringCommand<TrackCommand>, TwoIntCommand<TrackCommand>>;
 
 
 
@@ -133,12 +160,13 @@ enum class ReversableType { //Если будет конфликт имён уб
 
 
 
+
 class Note;
 class Bar;
 class Beat;
 
 
-class ReversableCommand
+class ReversableCommand //TODO variant
 {
     ReversableType commandType;
     std::uint8_t commandValue;

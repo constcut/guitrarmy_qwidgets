@@ -13,7 +13,8 @@
 //TODO prepare undo operations
 //They have to be for all possible commands
 
-void Tab::setSignsTillEnd(int num, int denom) {
+void Tab::setSignsTillEnd(size_t num, size_t denom) {
+    macroCommands.push_back(TwoIntCommand<TabCommand>{TabCommand::SetSignTillEnd, num, denom});
     for (size_t i = currentBar; i < this->at(0)->size(); ++i){
         this->at(0)->at(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
         this->at(0)->at(i)->setSignNum(num);
@@ -73,21 +74,25 @@ void Tab::changeDrumsFlag() {
 
 
 
-void Tab::changeTrackVolume(int newVol) {
+void Tab::changeTrackVolume(size_t newVol) {
+    macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Volume, newVol});
      at(currentTrack)->setVolume(newVol);
 }
 
 
 void Tab::changeTrackName(std::string newName) {
+    macroCommands.push_back(StringCommand<TabCommand>{TabCommand::Instument, newName});
     at(currentTrack)->setName(newName);
 }
 
 
-void Tab::changeTrackInstrument(int val) {
+void Tab::changeTrackInstrument(size_t val) {
+    macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Instument, val});
     at(currentTrack)->setInstrument(val);
 }
 
-void Tab::changeTrackPanoram(int val) {
+void Tab::changeTrackPanoram(size_t val) {
+    macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Panoram, val});
     at(currentTrack)->setPan(val);
 }
 
@@ -175,6 +180,7 @@ void Tab::openReprise() {
 
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
+    macroCommands.push_back(IntCommand<TabCommand>{TabCommand::CloseReprise, count});
     auto& firstTrackBar = this->at(0)->at(currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
@@ -191,12 +197,14 @@ void Tab::closeReprise(size_t count) { //TODO argument repeat times
 
 
 void Tab::gotoBar(size_t pos) {
+    macroCommands.push_back(IntCommand<TabCommand>{TabCommand::GotoBar, pos});
     currentBar = pos;
     displayBar = pos;
 }
 
 
 void Tab::saveAs(std::string filename) {
+    macroCommands.push_back(StringCommand<TabCommand>{TabCommand::SaveAs, filename});
     std::ofstream file(filename);
     GmyFile gmyFile;
     gmyFile.saveToFile(file, this);
@@ -205,6 +213,7 @@ void Tab::saveAs(std::string filename) {
 
 
 void Tab::onTabCommand(TabCommand command) {
+    macroCommands.push_back(command);
     if (handlers.count(command))
         (this->*handlers.at(command))();
 }
