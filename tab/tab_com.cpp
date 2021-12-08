@@ -81,7 +81,7 @@ void Tab::changeTrackVolume(size_t newVol) {
 
 
 void Tab::changeTrackName(std::string newName) {
-    macroCommands.push_back(StringCommand<TabCommand>{TabCommand::Instument, newName});
+    macroCommands.push_back(StringCommand<TabCommand>{TabCommand::Name, newName});
     at(currentTrack)->setName(newName);
 }
 

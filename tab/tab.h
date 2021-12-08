@@ -200,14 +200,17 @@ public: //later cover under midlayer TabCommandsHandler
         }
         else if (std::holds_alternative<IntCommand<TabCommand>>(command)) {
             auto paramCommand = std::get<IntCommand<TabCommand>>(command);
-            //TODO возможно тоже сделать хэндлеры? Чтобы не плодить море if
+            if (intHandlers.count(paramCommand.type))
+                (this->*intHandlers.at(paramCommand.type))(paramCommand.parameter);
         }
         else if (std::holds_alternative<TwoIntCommand<TabCommand>>(command)) {
             auto paramCommand = std::get<TwoIntCommand<TabCommand>>(command);
-            //TODO
+            if (twoIntHandlers.count(paramCommand.type))
+                (this->*twoIntHandlers.at(paramCommand.type))(paramCommand.parameter1, paramCommand.parameter2);
         } else if (std::holds_alternative<StringCommand<TabCommand>>(command)) {
             auto paramCommand = std::get<StringCommand<TabCommand>>(command);
-            //TODO
+            if (stringHandlers.count(paramCommand.type))
+                (this->*stringHandlers.at(paramCommand.type))(paramCommand.parameter);
         }
     }
 
@@ -226,6 +229,23 @@ private:
         {TabCommand::Drums, &Tab::changeDrumsFlag},
         {TabCommand::NewTrack, &Tab::createNewTrack}};
 
+
+    std::unordered_map<TabCommand, void (Tab::*)(size_t)> intHandlers =  {
+        {TabCommand::Instument, &Tab::changeTrackInstrument},
+        {TabCommand::GotoBar, &Tab::gotoBar},
+        {TabCommand::CloseReprise, &Tab::closeReprise},
+        {TabCommand::Panoram, &Tab::changeTrackPanoram},
+        {TabCommand::Volume, &Tab::changeTrackVolume},
+    };
+
+    std::unordered_map<TabCommand, void (Tab::*)(size_t, size_t)> twoIntHandlers =  {
+        {TabCommand::SetSignTillEnd, &Tab::setSignsTillEnd},
+    };
+
+    std::unordered_map<TabCommand, void (Tab::*)(std::string)> stringHandlers =  {
+        {TabCommand::Name, &Tab::changeTrackName},
+        {TabCommand::Name, &Tab::saveAs}
+    };
 
     std::vector<MacroCommand> macroCommands;
 };
