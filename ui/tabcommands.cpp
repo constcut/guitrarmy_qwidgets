@@ -1,4 +1,4 @@
-#include "tab/tabcommands.h"
+#include "tab/commands.h"
 
 #include "tabviews.h"
 #include "mainviews.h"

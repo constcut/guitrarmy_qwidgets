@@ -7,7 +7,7 @@
 #include "gview.h"
 #include "ui/gpannel.h"
 #include "tab/tabclipboard.h"
-#include "tab/tabcommands.h"
+#include "tab/commands.h"
 
 #include "trackview.h"
 

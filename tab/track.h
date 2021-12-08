@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include <unordered_map>
-#include "tabcommands.h" //move into g0
+#include "commands.h" //move into g0
 #include "bar.h"
 
 class Tab;

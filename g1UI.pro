@@ -34,6 +34,7 @@ SOURCES += main.cpp\
     g0/tests.cpp \
     g0/threads.cpp \
     midi/miditrack.cpp \
+    tab/commands.cpp \
     tab/effects.cpp \
     tab/tabclipboard.cpp \
     tab/tabloader.cpp \
@@ -78,6 +79,7 @@ HEADERS  += ui/mainwindow.h \
     g0/tests.h \
     g0/threads.h \
     midi/miditrack.h \
+    tab/commands.h \
     tab/effects.h \
     tab/tabclipboard.h \
     tab/tabloader.h \
@@ -102,7 +104,6 @@ HEADERS  += ui/mainwindow.h \
     ui/mainviews.h \
     midi/midirender.h \
     ui/tabviews.h \
-    tab/tabcommands.h \
     audio/fft.h \
     audio/waveanalys.h \
     android_helper.h \

@@ -6,7 +6,7 @@
 #include "g0/config.h"
 #include "ui/imagepreloader.h"
 
-#include "tab/tabcommands.h"
+#include "tab/commands.h"
 
 #include <QPainter>
 #include "athread.h"

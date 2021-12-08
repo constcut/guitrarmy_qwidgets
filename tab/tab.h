@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <list>
 
-#include "tab/tabcommands.h"
+#include "tab/commands.h"
 #include "track.h"
 
 int updateDurationWithDetail(std::uint8_t detail, int base);
