@@ -299,7 +299,7 @@ void macroSimpleTest1() {
         qDebug() << "ERROR: Tab commands failed!";
     }
     else
-        qDebug() << "Simple tab commands fine";
+        qDebug() << "1 Simple tab commands fine";
 }
 
 
@@ -311,6 +311,9 @@ void macroSimpleTest2() {
     t.changeTrackName("check");
     auto commands = writeAndReadMacro(t.getMacro());
     Tab t2;
+
+    qDebug() << "Commands size " << commands.size();
+
     for (auto& c: commands)
         t2.playCommand(c);
     if (t2.at(0)->getName() != "check") {
@@ -318,7 +321,7 @@ void macroSimpleTest2() {
         qDebug() << "Track name was " << t2.at(0)->getName().c_str();
     }
     else
-        qDebug() << "Simple tab commands fine";
+        qDebug() << "2 Simple tab commands fine";
 }
 
 
@@ -335,7 +338,7 @@ void macroSimpleTest3() {
         qDebug() << "Track instrument was " << t2.at(0)->getInstrument();
     }
     else
-        qDebug() << "Simple tab commands fine";
+        qDebug() << "3 Simple tab commands fine";
 }
 
 
@@ -353,7 +356,7 @@ void macroSimpleTest4() {
                  << " " <<  t2.at(0)->at(0)->getSignDenum();
     }
     else
-        qDebug() << "Simple tab commands fine";
+        qDebug() << "4 Simple tab commands fine";
 }
 
 

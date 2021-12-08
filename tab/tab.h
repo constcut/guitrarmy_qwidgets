@@ -9,6 +9,8 @@
 #include "tab/commands.h"
 #include "track.h"
 
+#include <QDebug> //TODO удалить
+
 int updateDurationWithDetail(std::uint8_t detail, int base);
 
 class Track;
@@ -212,6 +214,8 @@ public: //later cover under midlayer TabCommandsHandler
             if (stringHandlers.count(paramCommand.type))
                 (this->*stringHandlers.at(paramCommand.type))(paramCommand.parameter);
         }
+        else
+            qDebug() << "unhandled";
     }
 
     const std::vector<MacroCommand>& getMacro() const { return macroCommands; }

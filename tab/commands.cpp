@@ -111,6 +111,7 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         {
             size_t tabInt;
             is.read((char*)&tabInt, 4);
+            qDebug() << "Read int " << tabInt;
             macro = IntCommand<TabCommand>{static_cast<TabCommand>(enumType), tabInt };
         }
         break;
@@ -170,16 +171,7 @@ std::vector<MacroCommand> loadMacroCommands(std::ifstream& is) {
     while (is.eof() == false) {
         MacroCommand macro;
         is >> macro;
-
-        if (is.eof())
-            break;
-
         commands.push_back(macro);
-
-        if (std::holds_alternative<TabCommand>(macro)) {
-            //qDebug() << "Tab command read " << static_cast<int>(std::get<TabCommand>(macro));
-        }
-        //break;
     }
     return commands;
 }
