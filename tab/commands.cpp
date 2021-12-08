@@ -34,8 +34,17 @@ std::ostream& operator<<(std::ostream& os, const TrackCommand& command) {
 }
 
 std::ostream& operator<<(std::ostream& os, const StringCommand<TabCommand>& command) {
+
+    //uint32_t commandType = static_cast<int>(CommandPack::StringTabCommand);
+    //os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
+
     uint32_t commandType = static_cast<int>(CommandPack::StringTabCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os << command.parameter;
+    //os.write((const char*)&command.parameter, 4);
+
     return os;
 }
 
@@ -46,8 +55,12 @@ std::ostream& operator<<(std::ostream& os, const StringCommand<TrackCommand>& co
 }
 
 std::ostream& operator<<(std::ostream& os, const IntCommand<TabCommand>& command) {
+
     uint32_t commandType = static_cast<int>(CommandPack::IntTabCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os.write((const char*)&command.parameter, 4); //TODO может изменить с size_t, тк он вроде 64
     return os;
 }
 
@@ -59,7 +72,11 @@ std::ostream& operator<<(std::ostream& os, const IntCommand<TrackCommand>& comma
 
 std::ostream& operator<<(std::ostream& os, const TwoIntCommand<TabCommand>& command) {
     uint32_t commandType = static_cast<int>(CommandPack::TwoIntTabCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter1 << command.parameter2;
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os.write((const char*)&command.parameter1, 4);
+    os.write((const char*)&command.parameter2, 4);
     return os;
 }
 
@@ -81,7 +98,7 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
     if (is.eof())
         return is;
 
-    qDebug() << "Reading " << commandType << " " << enumType;
+    qDebug() << "Reading: " << commandType << " " << enumType;
 
     switch(type) {
         case CommandPack::SingleTabCommand:
@@ -92,8 +109,8 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         break;
         case CommandPack::IntTabCommand:
         {
-            size_t tabInt;;
-            is >> tabInt;
+            size_t tabInt;
+            is.read((char*)&tabInt, 4);
             macro = IntCommand<TabCommand>{static_cast<TabCommand>(enumType), tabInt };
         }
         break;
@@ -108,6 +125,7 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         {
             std::string tabString;
             is >> tabString;
+            qDebug() << "String read: " << tabString.c_str();
             macro = StringCommand<TabCommand>{static_cast<TabCommand>(enumType), tabString };
         }
         break;
@@ -120,7 +138,8 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         case CommandPack::TwoIntTabCommand:
         {
             size_t int1, int2;
-            is >> int1 >> int2;
+            is.read((char*)&int1, 4);
+            is.read((char*)&int2, 4);
             macro = TwoIntCommand<TabCommand>{static_cast<TabCommand>(enumType), int1, int2 };
         }
         break;
@@ -158,7 +177,7 @@ std::vector<MacroCommand> loadMacroCommands(std::ifstream& is) {
         commands.push_back(macro);
 
         if (std::holds_alternative<TabCommand>(macro)) {
-            qDebug() << "Tab command read " << static_cast<int>(std::get<TabCommand>(macro));
+            //qDebug() << "Tab command read " << static_cast<int>(std::get<TabCommand>(macro));
         }
         //break;
     }

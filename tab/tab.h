@@ -193,7 +193,7 @@ public: //later cover under midlayer TabCommandsHandler
 
     void playCommand(MacroCommand& command) {
         if (std::holds_alternative<TabCommand>(command)) {
-            onTabCommand(std::get<TabCommand>(command)); //TODO не повторять макрокомманду
+            onTabCommand(std::get<TabCommand>(command)); //TODO флаг записи
         }
         else if (std::holds_alternative<TrackCommand>(command)) {
             at(currentTrack)->onTrackCommand(std::get<TrackCommand>(command));

@@ -269,6 +269,94 @@ void initNewTab(MainWindow& w) {
 }
 
 
+std::vector<MacroCommand> writeAndReadMacro(const std::vector<MacroCommand>& commands) {
+    {
+        std::ofstream os("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+        saveMacroComannds(commands, os);
+        //qDebug() << commands.size() << " commands written";
+    }
+    std::vector<MacroCommand> readCommands;
+    {
+        std::ifstream is("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+        readCommands = loadMacroCommands(is);
+        //qDebug() << readCommands.size() << " commands read";
+    }
+    return readCommands;
+}
+
+
+void macroSimpleTest1() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.onTabCommand(TabCommand::Solo);
+
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+
+    if (t2.at(0)->getStatus() != 2) {
+        qDebug() << "ERROR: Tab commands failed!";
+    }
+    else
+        qDebug() << "Simple tab commands fine";
+}
+
+
+
+
+void macroSimpleTest2() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.changeTrackName("check");
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->getName() != "check") {
+        qDebug() << "ERROR: Tab commands failed!";
+        qDebug() << "Track name was " << t2.at(0)->getName().c_str();
+    }
+    else
+        qDebug() << "Simple tab commands fine";
+}
+
+
+void macroSimpleTest3() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.changeTrackInstrument(38);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->getInstrument() != 38) {
+        qDebug() << "ERROR: Tab commands failed!";
+        qDebug() << "Track instrument was " << t2.at(0)->getInstrument();
+    }
+    else
+        qDebug() << "Simple tab commands fine";
+}
+
+
+void macroSimpleTest4() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.setSignsTillEnd(2, 2);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->at(0)->getSignNum() != 2 || t2.at(0)->at(0)->getSignDenum() != 2) {
+        qDebug() << "ERROR: Tab commands failed!";
+        qDebug() << "Num den were " << t2.at(0)->at(0)->getSignNum()
+                 << " " <<  t2.at(0)->at(0)->getSignDenum();
+    }
+    else
+        qDebug() << "Simple tab commands fine";
+}
+
+
 
 
 void runRegressionTests() {
@@ -282,29 +370,9 @@ void runRegressionTests() {
         qDebug() << "Has no regression";
 
     //TODO midi read write test (streaming operator check)
-
-    {
-        Tab t;
-        t.onTabCommand(TabCommand::NewTrack);
-        t.onTabCommand(TabCommand::Solo);
-        {
-            std::ofstream os("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
-            saveMacroComannds(t.getMacro(), os);
-            qDebug() << t.getMacro().size() << " commands written";
-        }
-        {
-            Tab t2;
-            std::ifstream is("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
-            auto commands = loadMacroCommands(is);
-            for (auto& c: commands)
-                t2.playCommand(c);
-            qDebug() << commands.size() << " commands read";
-            if (t2.at(0)->getStatus() != 2) {
-                qDebug() << "ERROR: Tab commands failed!";
-            }
-            else
-                qDebug() << "Simple tab commands fine";
-        }
-    }
+    macroSimpleTest1(); //Tab commands plain
+    macroSimpleTest2(); //String tab command
+    macroSimpleTest3(); //Int tab command
+    macroSimpleTest4(); //Two int command
 }
 
