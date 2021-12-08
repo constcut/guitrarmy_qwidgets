@@ -19,38 +19,34 @@ enum CommandPack {
 std::ostream& operator<<(std::ostream& os, const TabCommand& command) {
     uint32_t commandType = static_cast<int>(CommandPack::SingleTabCommand);
     uint32_t commandValue = static_cast<uint32_t>(command);
-
     os.write((const char*)& commandType, 4);
     os.write((const char*)& commandValue, 4);
-
-    qDebug() << "Written TabCommand: " << commandType <<  " " << static_cast<uint32_t>(command);
     return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const TrackCommand& command) {
     uint32_t commandType = static_cast<int>(CommandPack::SingleTrackCommand);
-    os << commandType << static_cast<uint32_t>(command);
+    uint32_t commandValue = static_cast<uint32_t>(command);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
     return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const StringCommand<TabCommand>& command) {
-
-    //uint32_t commandType = static_cast<int>(CommandPack::StringTabCommand);
-    //os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
-
     uint32_t commandType = static_cast<int>(CommandPack::StringTabCommand);
     uint32_t commandValue = static_cast<uint32_t>(command.type);
     os.write((const char*)& commandType, 4);
     os.write((const char*)& commandValue, 4);
     os << command.parameter;
-    //os.write((const char*)&command.parameter, 4);
-
     return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const StringCommand<TrackCommand>& command) {
-    uint32_t commandType = static_cast<int>(CommandPack::SingleTrackCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
+    uint32_t commandType = static_cast<int>(CommandPack::StringTrackCommand);
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os << command.parameter;
     return os;
 }
 
@@ -66,7 +62,10 @@ std::ostream& operator<<(std::ostream& os, const IntCommand<TabCommand>& command
 
 std::ostream& operator<<(std::ostream& os, const IntCommand<TrackCommand>& command) {
     uint32_t commandType = static_cast<int>(CommandPack::IntTrackCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter;
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os.write((const char*)&command.parameter, 4); //TODO может изменить с size_t, тк он вроде 64
     return os;
 }
 
@@ -82,7 +81,11 @@ std::ostream& operator<<(std::ostream& os, const TwoIntCommand<TabCommand>& comm
 
 std::ostream& operator<<(std::ostream& os, const TwoIntCommand<TrackCommand>& command) {
     uint32_t commandType = static_cast<int>(CommandPack::TwoIntTrackCommand);
-    os << commandType << static_cast<uint32_t>(command.type) << command.parameter1 << command.parameter2;
+    uint32_t commandValue = static_cast<uint32_t>(command.type);
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+    os.write((const char*)&command.parameter1, 4);
+    os.write((const char*)&command.parameter2, 4);
     return os;
 }
 
@@ -98,7 +101,7 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
     if (is.eof())
         return is;
 
-    qDebug() << "Reading: " << commandType << " " << enumType;
+    //qDebug() << "Reading: " << commandType << " " << enumType;
 
     switch(type) {
         case CommandPack::SingleTabCommand:
@@ -109,24 +112,24 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         break;
         case CommandPack::IntTabCommand:
         {
-            size_t tabInt;
+            size_t tabInt = 0;
             is.read((char*)&tabInt, 4);
-            qDebug() << "Read int " << tabInt;
+            //qDebug() << "Int read " << tabInt;
             macro = IntCommand<TabCommand>{static_cast<TabCommand>(enumType), tabInt };
         }
         break;
         case CommandPack::IntTrackCommand:
         {
-            size_t trackInt;
-            is >> trackInt;
-            macro = IntCommand<TabCommand>{static_cast<TabCommand>(enumType), trackInt };
+            //YET dont exists
+            //size_t trackInt;
+            //is.read((char*)&trackInt, 4);
+            //macro = IntCommand<TrackCommand>{static_cast<TrackCommand>(enumType), trackInt };
         }
         break;
         case CommandPack::StringTabCommand:
         {
             std::string tabString;
             is >> tabString;
-            qDebug() << "String read: " << tabString.c_str();
             macro = StringCommand<TabCommand>{static_cast<TabCommand>(enumType), tabString };
         }
         break;
@@ -147,7 +150,8 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
         case CommandPack::TwoIntTrackCommand:
         {
             size_t int1, int2;
-            is >> int1 >> int2;
+            is.read((char*)&int1, 4);
+            is.read((char*)&int2, 4);
             macro = TwoIntCommand<TrackCommand>{static_cast<TrackCommand>(enumType), int1, int2 };
         }
         break;

@@ -231,6 +231,21 @@ public:
     void UpStroke();
     void DownStroke();
 
+
+    void playCommand(MacroCommand& command) {
+        //TODO Возможно тут же обрабатывать и единичную комманду?
+        if (std::holds_alternative<TwoIntCommand<TrackCommand>>(command)) {
+            auto paramCommand = std::get<TwoIntCommand<TrackCommand>>(command);
+            if (twoIntHandlers.count(paramCommand.type))
+                (this->*twoIntHandlers.at(paramCommand.type))(paramCommand.parameter1, paramCommand.parameter2);
+        } else if (std::holds_alternative<StringCommand<TrackCommand>>(command)) {
+            auto paramCommand = std::get<StringCommand<TrackCommand>>(command);
+            if (stringHandlers.count(paramCommand.type))
+                (this->*stringHandlers.at(paramCommand.type))(paramCommand.parameter);
+        }
+    }
+
+
 private:
     //TODO внимательно проверить
     std::unordered_map<TrackCommand, void (Track::*)()> handlers =  {
@@ -280,6 +295,20 @@ private:
         {TrackCommand::Paste, &Track::clipboardPaste},
         {TrackCommand::Undo, &Track::undoOnTrack},
         {TrackCommand::SaveFile, &Track::saveFromTrack}};
+
+
+    std::unordered_map<TrackCommand, void (Tab::*)(size_t)> intHandlers =  {
+    };
+
+    std::unordered_map<TrackCommand, void (Track::*)(size_t, size_t)> twoIntHandlers =  {
+        {TrackCommand::SetSignForSelected , &Track::changeBarSigns},
+        {TrackCommand::SetBarSign , &Track::setBarSign}
+    };
+
+    std::unordered_map<TrackCommand, void (Track::*)(std::string)> stringHandlers =  {
+        {TrackCommand::Text, &Track::setTextOnBeat},
+    };
+
 };
 
 #endif // TRACK_H

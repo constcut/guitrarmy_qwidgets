@@ -311,9 +311,7 @@ void macroSimpleTest2() {
     t.changeTrackName("check");
     auto commands = writeAndReadMacro(t.getMacro());
     Tab t2;
-
-    qDebug() << "Commands size " << commands.size();
-
+    //qDebug() << "Commands size " << commands.size();
     for (auto& c: commands)
         t2.playCommand(c);
     if (t2.at(0)->getName() != "check") {
@@ -361,6 +359,60 @@ void macroSimpleTest4() {
 
 
 
+void macroTrackTest1() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->setBarSign(2, 2);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->at(0)->getSignNum() != 2 || t2.at(0)->at(0)->getSignDenum() != 2) {
+        qDebug() << "ERROR: Track commands failed!";
+        qDebug() << "Num den were " << t2.at(0)->at(0)->getSignNum()
+                 << " " <<  t2.at(0)->at(0)->getSignDenum();
+    }
+    else
+        qDebug() << "1 Simple track commands fine";
+}
+
+
+
+void macroTrackTest2() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->setTextOnBeat("some");
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    std::string str;
+    t2.at(0)->at(0)->at(0)->getGPCOMPText(str);
+    if (str != "some") {
+        qDebug() << "ERROR: Track commands failed!";
+        qDebug() << str.c_str() << " vs some";
+    }
+    else
+        qDebug() << "2 Simple track commands fine";
+}
+
+void macroTrackTest3() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->onTrackCommand(TrackCommand::DecDuration);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+
+    if (t2.at(0)->at(0)->at(0)->getDuration() != 4) {
+        qDebug() << "ERROR: Track commands failed!";
+        qDebug() << t2.at(0)->at(0)->at(0)->getDuration() << " vs X";
+    }
+    else
+        qDebug() << "3 Simple track commands fine";
+}
+
 
 void runRegressionTests() {
     //greatCheckScenarioCase(1, 1, 12, 4);
@@ -377,5 +429,9 @@ void runRegressionTests() {
     macroSimpleTest2(); //String tab command
     macroSimpleTest3(); //Int tab command
     macroSimpleTest4(); //Two int command
+
+    macroTrackTest1();
+    macroTrackTest2();
+    macroTrackTest3();
 }
 
