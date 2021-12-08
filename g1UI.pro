@@ -33,6 +33,7 @@ SOURCES += main.cpp\
     g0/regression.cpp \
     g0/tests.cpp \
     g0/threads.cpp \
+    init.cpp \
     midi/miditrack.cpp \
     tab/commands.cpp \
     tab/effects.cpp \
@@ -78,6 +79,7 @@ HEADERS  += ui/mainwindow.h \
     g0/regression.h \
     g0/tests.h \
     g0/threads.h \
+    init.h \
     midi/miditrack.h \
     tab/commands.h \
     tab/effects.h \
