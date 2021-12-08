@@ -211,6 +211,8 @@ public: //later cover under midlayer TabCommandsHandler
         }
     }
 
+    const std::vector<MacroCommand>& getMacro() const { return macroCommands; }
+
 private:
     std::unordered_map<TabCommand, void (Tab::*)()> handlers =  {
         {TabCommand::Mute, &Tab::muteTrack},
@@ -221,7 +223,8 @@ private:
         {TabCommand::MoveDown, &Tab::moveCursorOfTrackDown},
         {TabCommand::PauseMidi, &Tab::midiPause},
         {TabCommand::OpenReprise, &Tab::openReprise},
-        {TabCommand::Drums, &Tab::changeDrumsFlag}};
+        {TabCommand::Drums, &Tab::changeDrumsFlag},
+        {TabCommand::NewTrack, &Tab::createNewTrack}};
 
 
     std::vector<MacroCommand> macroCommands;

@@ -2,6 +2,8 @@
 
 #include "tab/tab.h" //Из-за reversable отделить их от обычных комманд
 
+#include <QDebug>
+
 enum CommandPack {
     SingleTabCommand=0,
     SingleTrackCommand,
@@ -16,7 +18,12 @@ enum CommandPack {
 
 std::ostream& operator<<(std::ostream& os, const TabCommand& command) {
     uint32_t commandType = static_cast<int>(CommandPack::SingleTabCommand);
-    os << commandType << static_cast<uint32_t>(command);
+    uint32_t commandValue = static_cast<uint32_t>(command);
+
+    os.write((const char*)& commandType, 4);
+    os.write((const char*)& commandValue, 4);
+
+    qDebug() << "Written TabCommand: " << commandType <<  " " << static_cast<uint32_t>(command);
     return os;
 }
 
@@ -65,10 +72,16 @@ std::ostream& operator<<(std::ostream& os, const TwoIntCommand<TrackCommand>& co
 
 std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
     uint32_t commandType;
-    is >> commandType;
+    //is >> commandType;
+    is.read((char*)&commandType, 4); //TODO 1
     auto type = static_cast<CommandPack>(commandType);
     uint32_t enumType;
-    is >> enumType;
+    is.read((char*)&enumType, 4);
+
+    if (is.eof())
+        return is;
+
+    qDebug() << "Reading " << commandType << " " << enumType;
 
     switch(type) {
         case CommandPack::SingleTabCommand:
@@ -118,6 +131,8 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
             macro = TwoIntCommand<TrackCommand>{static_cast<TrackCommand>(enumType), int1, int2 };
         }
         break;
+    default:
+        qDebug() << "ERROR: unknown command type";
     }
 
     return is;
@@ -136,7 +151,16 @@ std::vector<MacroCommand> loadMacroCommands(std::ifstream& is) {
     while (is.eof() == false) {
         MacroCommand macro;
         is >> macro;
+
+        if (is.eof())
+            break;
+
         commands.push_back(macro);
+
+        if (std::holds_alternative<TabCommand>(macro)) {
+            qDebug() << "Tab command read " << static_cast<int>(std::get<TabCommand>(macro));
+        }
+        //break;
     }
     return commands;
 }

@@ -300,6 +300,33 @@ int main(int argc, char *argv[])
     else
         qDebug() << "Has no regression";
 
+    //TODO midi read write test (streaming operator check)
+
+    {
+        Tab t;
+        t.onTabCommand(TabCommand::NewTrack);
+        t.onTabCommand(TabCommand::Solo);
+        {
+            std::ofstream os("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+            saveMacroComannds(t.getMacro(), os);
+            qDebug() << t.getMacro().size() << " commands written";
+        }
+        {
+            Tab t2;
+            std::ifstream is("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+            auto commands = loadMacroCommands(is);
+            for (auto& c: commands)
+                t2.playCommand(c);
+            qDebug() << commands.size() << " commands read";
+            if (t2.at(0)->getStatus() != 2) {
+                qDebug() << "ERROR: Tab commands failed!";
+            }
+            else
+                qDebug() << "Simple tab commands fine";
+        }
+    }
+
+
     int out = 0;
     try{
        out = a.exec();

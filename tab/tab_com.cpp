@@ -35,7 +35,7 @@ void Tab::soloTrack() { //Move into Tab
     if (curStat==2)
         this->at(displayTrack)->setStatus(0);
     else
-        this->at(displayTrack)->setStatus(2);
+        this->at(displayTrack)->setStatus(2); //Make enum TODO
 }
 
 void Tab::moveCursorInTrackRight() {
@@ -115,8 +115,26 @@ void Tab::createNewTrack() {
     track->tuning.setTune(4,45);
     track->tuning.setTune(5,40);
 
-    for (size_t barI=0; barI < pTab->at(0)->size(); ++barI) {
+    if (pTab->size()) {
+        for (size_t barI=0; barI < pTab->at(0)->size(); ++barI) {
 
+            auto bar = std::make_unique<Bar>();
+
+            bar->flush();
+            bar->setSignDenum(4); bar->setSignNum(4); //TODO реальные размеры
+            bar->setRepeat(0);
+
+            auto beat = std::make_unique<Beat>();
+
+            beat->setPause(true);
+            beat->setDotted(0);
+            beat->setDuration(3);
+            beat->setDurationDetail(0);
+            bar->push_back(std::move(beat));
+            track->push_back(std::move(bar));
+        }
+    }
+    else {
         auto bar = std::make_unique<Bar>();
 
         bar->flush();
@@ -132,6 +150,8 @@ void Tab::createNewTrack() {
         bar->push_back(std::move(beat));
         track->push_back(std::move(bar));
     }
+
+
     pTab->push_back(std::move(track));
     pTab->connectTracks();
 }
