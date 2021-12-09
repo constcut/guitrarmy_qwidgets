@@ -2,6 +2,7 @@
 
 #define TSF_IMPLEMENTATION 1
 #include "libs/sf/tsf.h"
+#define TML_IMPLEMENTATION 1
 #include "libs/sf/tml.h"
 
 #include <QElapsedTimer>
@@ -129,6 +130,7 @@ QByteArray MidiRender::renderShortNext(int len)
 
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
 
+
                     if (g_MidiMessage->channel != 9) {
                         g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
                         if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
@@ -143,7 +145,7 @@ QByteArray MidiRender::renderShortNext(int len)
                         if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, (c->bank & 0x7FFF), g_MidiMessage->program);
 
                         //std::cout << "Preset Index " << preset_index << std::endl;
-                        //TODO make experiments with sepparated lib
+                        //TODO make experiments with sepparated lib (подозреваю что дело может быть в константе 128)
                         g_MidiChannelPreset[g_MidiMessage->channel] = preset_index;
                         if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
                                 g_MidiChannelPreset[g_MidiMessage->channel] = 0;

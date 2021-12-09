@@ -165,7 +165,6 @@ TMLDEF tml_message* tml_load_tsf_stream(struct tsf_stream* stream);
 // ---------------------------------------------------------------------------------------------------------
 #endif //TML_INCLUDE_TML_INL
 
-#define TML_IMPLEMENTATION
 #ifdef TML_IMPLEMENTATION
 
 #if !defined(TML_MALLOC) || !defined(TML_FREE) || !defined(TML_REALLOC)
