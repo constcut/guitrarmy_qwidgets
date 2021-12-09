@@ -162,10 +162,8 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
         if (track->isDrums())
         {
             ++drumsTrack;
-            size_t realInd = 9; //8 + drumsTrack; //9 and 10
-            //if (realInd > 10)
-                //realInd = 10; //TODO review this part? WOuld it be broken if we have many tracks?
-            exportTrack(track.get(), mTrack.get(), realInd,startCursorBar);
+            size_t realInd = 9;
+            exportTrack(track.get(), mTrack.get(), realInd, startCursorBar);
         }
         else
             exportTrack(track.get(), mTrack.get(), i, startCursorBar);

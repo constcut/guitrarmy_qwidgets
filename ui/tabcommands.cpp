@@ -101,7 +101,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
         std::uint8_t tune = pTrack->tuning.getTune(stringCursor);
         int chan = 0;
         if (pTrack->isDrums()) {
-            chan = 9; //tune to 0 attention refact error
+            chan = 10; //tune to 0 attention refact error
             tune = 0;
         }
         std::uint8_t midiNote = inputedNote->getMidiNote(tune);
@@ -208,7 +208,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
 
             MidiRender render;
             std::string sfPath = AConfig::getInst().testsLocation + "instrument.sf2";
-            //sfPath = "/usr/share/sounds/sf2/FluidR3_GM.sf2";
+            sfPath = "/usr/share/sounds/sf2/FluidR3_GM.sf2";
             render.openSoundFont(sfPath.c_str());
             auto midiPath = AConfig::getInst().testsLocation + "midiOutput.mid";
             auto qa = render.renderShort(midiPath.c_str());

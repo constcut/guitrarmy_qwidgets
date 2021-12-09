@@ -36,7 +36,9 @@ bool MidiRender::openSoundFont(QString sfFilename)
 
     if (sf == nullptr)
         return false;
-    tsf_set_output(sf, TSF_STEREO_INTERLEAVED, freq, -18.0f);
+
+    tsf_channel_set_bank_preset(sf, 9, 128, 0);
+    tsf_set_output(sf, TSF_STEREO_INTERLEAVED, freq, -6.0f); //Volume -6 dB
 
     soundFont = sf;
     return true;
@@ -118,16 +120,38 @@ QByteArray MidiRender::renderShortNext(int len)
     {
         if (SampleBlock > SampleCount) SampleBlock = SampleCount; //this is a moment when would have tail can cut
 
-        for (msRendered += SampleBlock * (1000.0 / freq); g_MidiMessage && msRendered>= g_MidiMessage->time; g_MidiMessage = g_MidiMessage->next)
+        for (msRendered += SampleBlock * (1000.0 / freq); g_MidiMessage && msRendered>= g_MidiMessage->time;
+             g_MidiMessage = g_MidiMessage->next)
         {
 
             switch (g_MidiMessage->type)
             {
 
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
-                    g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
-                    if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
-                            g_MidiChannelPreset[g_MidiMessage->channel] = 0;
+
+                    if (g_MidiMessage->channel != 9) {
+                        g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
+                        if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
+                                g_MidiChannelPreset[g_MidiMessage->channel] = 0;
+                    }
+                    else {
+                        int preset_index;
+                        struct tsf_channel *c = tsf_channel_init(soundFont, g_MidiMessage->channel);
+                        preset_index = tsf_get_presetindex(soundFont, 128 | (c->bank & 0x7FFF), g_MidiMessage->program);
+                        if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, 128, g_MidiMessage->program);
+                        if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, 128, 0);
+                        if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, (c->bank & 0x7FFF), g_MidiMessage->program);
+
+                        //std::cout << "Preset Index " << preset_index << std::endl;
+                        //TODO make experiments with sepparated lib
+                        g_MidiChannelPreset[g_MidiMessage->channel] = preset_index;
+                        if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
+                                g_MidiChannelPreset[g_MidiMessage->channel] = 0;
+                        if (preset_index != -1)
+                            c->presetIndex = (unsigned short)preset_index;
+                    }
+
+                    //tsf_channel_set_presetnumber(soundFont, g_MidiMessage->channel, g_MidiMessage->program, (g_MidiMessage->channel == 9));
                     break;
                 case TML_NOTE_ON: //play a note
                     tsf_note_on(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
@@ -141,6 +165,10 @@ QByteArray MidiRender::renderShortNext(int len)
                 case TML_PITCH_BEND: //pitch wheel modification
                     tsf_channel_set_pitchwheel(soundFont, g_MidiMessage->channel, g_MidiMessage->pitch_bend);
                     break;
+
+                case TML_SET_TEMPO:
+                //Unhandled
+                break;
 
                 default:
                     std::cerr << "EVENT NOT HANDLED: " << static_cast<int>(g_MidiMessage->type) << std::endl;
