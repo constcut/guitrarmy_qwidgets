@@ -25,6 +25,19 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     initMainWindow(w, a);
+
+    auto mainViewLayer1 = std::make_unique<MainView>(); //Sorry for this layers, MainView and CenterView are not used to be supported furter
+    mainViewLayer1->setMaster(w.getCenterView());           //This is abadoned part of a project, that would be fully replaces with QML
+    w.getCenterView()->changeChild(mainViewLayer1.get());
+    w.getCenterView()->setStatusSetter(&w);
+    auto mainViewLayer2 = std::make_unique<MainView>();
+    mainViewLayer2->setDependent();
+    auto centerView = std::make_unique<CenterView>(w.getCenterView());
+    w.getCenterView()->ownChild = centerView.get();
+    w.getCenterView()->ownChild ->changeChild(mainViewLayer2.get());
+    w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());
+
+
     initMidi(); //Раньше было посередие initMainWindow
     setWindowIcon(w);
     configureScreen(w);

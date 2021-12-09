@@ -209,17 +209,7 @@ void initMainWindow(MainWindow& w, QApplication& a) {
     if (AConfig::getInst().isMobile == false) //for Desktops
         w.setGeometry(30,30,800,480);
     //block2
-    static auto mainViewLayer1 = std::make_unique<MainView>(); //Sorry for this layers, MainView and CenterView are not used to be supported furter
-    mainViewLayer1->setMaster(w.getCenterView());           //This is abadoned part of a project, that would be fully replaces with QML
-    w.getCenterView()->changeChild(mainViewLayer1.get());
-    w.getCenterView()->setStatusSetter(&w);
-    static auto mainViewLayer2 = std::make_unique<MainView>();
-    mainViewLayer2->setDependent();
-    static auto centerView = std::make_unique<CenterView>(w.getCenterView());
-    w.getCenterView()->ownChild = centerView.get();
-    w.getCenterView()->ownChild ->changeChild(mainViewLayer2.get());
-    w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());
-    //block 3
+
     w.setAttribute(Qt::WA_AcceptTouchEvents);
     w.grabGesture(Qt::SwipeGesture);
     w.grabGesture(Qt::TapAndHoldGesture);
