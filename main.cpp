@@ -43,10 +43,14 @@ int main(int argc, char *argv[])
     QString allOutDir = tempDir.path() + "/all_out/";
     dir.mkdir(allOutDir);
 
+    QString resourseSf = ":/sf/instrument.sf2";
+    QString copySf = tempDir.path() + "/instrument.sf2";
+    QFile::copy(resourseSf, copySf);
+
     std::unordered_map<size_t, size_t> groupLength = {
         {1, 12},
         {2, 39},
-        {3, 70},
+        {3, 71},
         {4, 109}
     };
     for (size_t groupIdx = 1; groupIdx <= 4; ++groupIdx) {

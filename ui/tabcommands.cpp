@@ -207,7 +207,8 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
             //generator.convert(fullOutName,outputSound); //TODO sf mit
 
             MidiRender render;
-            render.openSoundFont("/usr/share/sounds/sf2/FluidR3_GM.sf2");
+            std::string sfPath = AConfig::getInst().testsLocation + "instrument.sf2";
+            render.openSoundFont(sfPath.c_str());
             auto midiPath = AConfig::getInst().testsLocation + "midiOutput.mid";
             auto qa = render.renderShort(midiPath.c_str());
             qDebug() << "Generated " << qa.size() << " bytes ";
