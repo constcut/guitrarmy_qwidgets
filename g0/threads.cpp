@@ -1,5 +1,7 @@
 #include "threads.h"
 
+#include "tab/tab.h"
+
 AThread::AThread()
 {
 
