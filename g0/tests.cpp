@@ -332,11 +332,11 @@ bool greatCheck()
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //AConfig::getInstance().testsLocation;
+            std::string testLocation = AConfig::getInst().testsLocation;
 
-            std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
-            std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
-            std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
+            //std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
+            std::string gp4File = testLocation  +std::string(newLine.c_str()) + std::string(".gp4");
+            //std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
             std::string outGp3 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
             std::string outGp4 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen4.mid");
             std::string outGp5 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
@@ -347,9 +347,9 @@ bool greatCheck()
 
             //log<<"TestFile "<<gp3File.c_str();
             //if ( testMidi(midiFile,outMid,log) == false ) return 0;
-            if ( testGP3 (gp3File,outGp3,doTheLogs)  == false ) return 0; //last true - no out
-            //if ( testGP4 (gp4File,outGp4,doTheLogs)  == false ) return 0; //last true - no out
-            if ( testGP5 (gp5File,outGp5,doTheLogs) == false ) return 0;
+            //if ( testGP3 (gp3File,outGp3,doTheLogs)  == false ) return 0; //last true - no out
+            if ( testGP4 (gp4File,outGp4)  == false ) return 0; //last true - no out
+            //if ( testGP5 (gp5File,outGp5,doTheLogs) == false ) return 0;
 
             std::cout << "done"<<std::endl;
         }
@@ -366,6 +366,9 @@ bool greatCheck()
 
 bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t v)
 {
+    if (scen == 4)
+        return false; //yet not in resourses
+
     bool doTheLogs = false;
     for (uint32_t i = from; i <= to; ++i)
     {
@@ -373,24 +376,24 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
         {
             std::string newLine = std::to_string(scen) + "." + std::to_string(i);
 
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/";
-            std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
-            std::string gp4File = testLocation + std::string("g4/") +std::string(newLine.c_str()) + std::string(".gp4");
-            std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
+            std::string testLocation = AConfig::getInst().testsLocation;
+            //std::string gp5File = testLocation + std::string("g5/") +std::string(newLine.c_str()) + std::string(".gp5");
+            std::string gp4File = testLocation +std::string(newLine.c_str()) + std::string(".gp4");
+            //std::string gp3File = testLocation + std::string("g3/") +std::string(newLine.c_str()) + std::string(".gp3");
 
-            std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
-            std::string outGp4 =  testLocation + std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
-            std::string outGp4plus = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
-            std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
-            std::string gmyOut = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".gmy");
+            //std::string outGp5 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen5.mid");
+            std::string outGp4 =  testLocation + std::string("all_out/") + std::string(newLine.c_str()) + std::string(".mid");
+            //std::string outGp4plus = testLocation +  std::string("regression/") + std::string(newLine.c_str()) + std::string(".mid");
+            //std::string outGp3 =  std::string("all_out/") + std::string(newLine.c_str()) + std::string("_gen3.mid");
+            std::string gmyOut = testLocation +  std::string("all_out/") + std::string(newLine.c_str()) + std::string(".gmy");
 
 
 
             //log<<"TestFile "<<newLine.c_str();
-
-            if (v==5)
+            //resourses yet contain only gp4, later solve it
+            /*if (v==5)
             if ( testGP5 (gp5File,outGp5,doTheLogs) == false )
-                log <<"Test gp5 "<<newLine.c_str()<<" failed";
+                log <<"Test gp5 "<<newLine.c_str()<<" failed";*/
 
             if (v==4)
             {
@@ -399,9 +402,10 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
                 //Add tabloader test
             }
 
+            /*
             if (v==3)
                 if ( testGP3 (gp3File,outGp3,doTheLogs) == false )
-                    log <<"Test gp3 "<<newLine.c_str()<<" failed";
+                    log <<"Test gp3 "<<newLine.c_str()<<" failed";*/
 
             //std::cout << "test file done"<<std::endl;
         }

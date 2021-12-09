@@ -35,6 +35,14 @@ int main(int argc, char *argv[])
 
     QTemporaryDir tempDir;
     setTestLocation(tempDir.path().toStdString() + "/");
+    QDir dir;
+    QString regressionDir = tempDir.path() + "/regression/";
+    dir.mkdir(regressionDir);
+    QString regressionCheckDir = tempDir.path() + "/regression_check/";
+    dir.mkdir(regressionCheckDir);
+    QString allOutDir = tempDir.path() + "/all_out/";
+    dir.mkdir(allOutDir);
+
     std::unordered_map<size_t, size_t> groupLength = {
         {1, 12},
         {2, 39},
@@ -49,6 +57,15 @@ int main(int argc, char *argv[])
             QString resourse = QString(":/own_tests/") + testName.c_str() + ".gp4";
             QString copy = tempDir.path() + "/" + testName.c_str() + ".gp4";
             QFile::copy(resourse, copy);
+
+            if (groupIdx <= 2) {
+                QString resourse1 = QString(":/regression/") + testName.c_str() + ".mid";
+                QString resourse2 = QString(":/regression/") + testName.c_str() + ".gmy";
+                QString copy1 = regressionDir + testName.c_str() + ".mid";
+                QString copy2 = regressionDir + testName.c_str() + ".gmy";
+                QFile::copy(resourse1, copy1);
+                QFile::copy(resourse2, copy2);
+            }
         }
     }
 

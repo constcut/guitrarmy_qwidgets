@@ -9,6 +9,7 @@
 #include "tab/gtpfiles.h"
 #include "midi/midiexport.h"
 #include "tab/gmyfile.h"
+#include "g0/config.h"
 
 bool checkHasRegression() {
 
@@ -32,10 +33,10 @@ bool checkHasRegression() {
 
         for (size_t fileIndx = from; fileIndx <= to; ++fileIndx) {
             std::string testName = std::to_string(groupIdx) + "." + std::to_string(fileIndx);
-            std::string testLocation = "/home/punnalyse/dev/g/_wgtab/gtab/og/"; //AConfig::getInstance().testsLocation;
+            std::string testLocation = AConfig::getInst().testsLocation;
             std::string midiFile = testLocation + std::string("regression_check/") + testName + std::string(".mid");
             std::string midiFileCheck = testLocation + std::string("regression/") + testName + std::string(".mid");
-            std::string gp4File = testLocation + std::string("g4/") + testName + std::string(".gp4");
+            std::string gp4File = testLocation + testName + std::string(".gp4");
 
             std::ifstream itfile;
             itfile.open(gp4File.c_str(),std::ifstream::binary);
