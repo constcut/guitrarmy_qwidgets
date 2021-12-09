@@ -4,7 +4,7 @@
 #include <QApplication>
 #include "ui/mainwindow.h"
 
-void runRegressionTests();
+
 void setPosixSignals();
 void preloadImages();
 void loadConfig();

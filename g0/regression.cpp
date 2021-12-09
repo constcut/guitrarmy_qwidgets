@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <filesystem>
+#include <iostream>
 
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
@@ -91,3 +92,174 @@ bool checkHasRegression() {
     }
     return false;
 }
+
+
+
+std::vector<MacroCommand> writeAndReadMacro(const std::vector<MacroCommand>& commands) {
+    auto tempMacroPath = AConfig::getInst().testsLocation + "macro";
+    {
+        std::ofstream os(tempMacroPath, std::ios::binary);
+        saveMacroComannds(commands, os);
+        //qDebug() << commands.size() << " commands written";
+    }
+    std::vector<MacroCommand> readCommands;
+    {
+        std::ifstream is(tempMacroPath, std::ios::binary);
+        readCommands = loadMacroCommands(is);
+        //qDebug() << readCommands.size() << " commands read";
+    }
+    return readCommands;
+}
+
+
+void macroSimpleTest1() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.onTabCommand(TabCommand::Solo);
+
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+
+    if (t2.at(0)->getStatus() != 2) {
+        std::cerr << "ERROR: Tab commands failed!" << std::endl;
+    }
+    else
+        std::cout << "1 Simple tab commands fine" << std::endl;
+}
+
+
+
+
+void macroSimpleTest2() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.changeTrackName("check");
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    //qDebug() << "Commands size " << commands.size();
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->getName() != "check") {
+        std::cerr <<"ERROR: Tab commands failed!" << std::endl;
+        std::cerr <<"Track name was " << t2.at(0)->getName().c_str() << std::endl;
+    }
+    else
+        std::cout << "2 Simple tab commands fine"<< std::endl;
+}
+
+
+void macroSimpleTest3() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.changeTrackInstrument(38);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->getInstrument() != 38) {
+        std::cerr << "ERROR: Tab commands failed!" << std::endl;
+        std::cerr << "Track instrument was " << t2.at(0)->getInstrument() << std::endl;
+    }
+    else
+        std::cout << "3 Simple tab commands fine" << std::endl;
+}
+
+
+void macroSimpleTest4() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.setSignsTillEnd(2, 2);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->at(0)->getSignNum() != 2 || t2.at(0)->at(0)->getSignDenum() != 2) {
+        std::cerr << "ERROR: Tab commands failed!" << std::endl;
+        std::cerr << "Num den were " << t2.at(0)->at(0)->getSignNum()
+                 << " " <<  t2.at(0)->at(0)->getSignDenum()<< std::endl;
+    }
+    else
+        std::cout << "4 Simple tab commands fine" << std::endl;
+}
+
+
+
+void macroTrackTest1() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->setBarSign(2, 2);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    if (t2.at(0)->at(0)->getSignNum() != 2 || t2.at(0)->at(0)->getSignDenum() != 2) {
+        std::cerr << "ERROR: Track commands failed!" << std::endl;
+        std::cerr << "Num den were " << t2.at(0)->at(0)->getSignNum()
+                 << " " <<  t2.at(0)->at(0)->getSignDenum() << std::endl;
+    }
+    else
+        std::cout << "1 Simple track commands fine" << std::endl;
+}
+
+
+
+void macroTrackTest2() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->setTextOnBeat("some");
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+    std::string str;
+    t2.at(0)->at(0)->at(0)->getGPCOMPText(str);
+    if (str != "some") {
+        std::cerr << "ERROR: Track commands failed!" << std::endl;
+        std::cerr << str.c_str() << " vs some" << std::endl;
+    }
+    else
+        std::cout << "2 Simple track commands fine" << std::endl;
+}
+
+void macroTrackTest3() {
+    Tab t;
+    t.onTabCommand(TabCommand::NewTrack);
+    t.at(0)->onTrackCommand(TrackCommand::DecDuration);
+    auto commands = writeAndReadMacro(t.getMacro());
+    Tab t2;
+    for (auto& c: commands)
+        t2.playCommand(c);
+
+    if (t2.at(0)->at(0)->at(0)->getDuration() != 4) {
+        std::cerr << "ERROR: Track commands failed!" << std::endl;
+        std::cerr << t2.at(0)->at(0)->at(0)->getDuration() << " vs X" << std::endl;
+    }
+    else
+        std::cout << "3 Simple track commands fine" << std::endl;
+}
+
+
+void runRegressionTests() {
+    //greatCheckScenarioCase(1, 1, 12, 4);
+    //greatCheckScenarioCase(2, 1, 38, 4);
+    if (checkHasRegression()) {
+        std::cerr << "Has regression, terminating" << std::endl;
+        return;
+    }
+    else
+        std::cout << "Has no regression" << std::endl;
+
+    //TODO midi read write test (streaming operator check)
+    macroSimpleTest1(); //Tab commands plain
+    macroSimpleTest2(); //String tab command
+    macroSimpleTest3(); //Int tab command
+    macroSimpleTest4(); //Two int command
+
+    macroTrackTest1();
+    macroTrackTest2();
+    macroTrackTest3();
+}
+
+

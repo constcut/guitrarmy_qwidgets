@@ -4,6 +4,7 @@
 #include "ui/mainwindow.h"
 #include "g0/config.h"
 #include "init.h"
+#include "g0/regression.h"
 
 #include <QTemporaryDir>
 #include <iostream>
