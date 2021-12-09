@@ -114,7 +114,6 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
 
 void saveRawAudio(QByteArray& ba, QString location) {
     QString defaultRecFile = location;
-    //QString("/home/punnalyse/.local/share/applications/wavOutput.graw");
     QFile f;
     f.setFileName(defaultRecFile);
     ///int compressedSize = compress.size(); //TODO compress
@@ -209,7 +208,8 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
 
             MidiRender render;
             render.openSoundFont("/usr/share/sounds/sf2/FluidR3_GM.sf2");
-            auto qa = render.renderShort("/home/punnalyse/.local/share/applications/midiOutput.mid");
+            auto midiPath = AConfig::getInst().testsLocation + "midiOutput.mid";
+            auto qa = render.renderShort(midiPath.c_str());
             qDebug() << "Generated " << qa.size() << " bytes ";
             saveRawAudio(qa, outputSound.c_str());
         }

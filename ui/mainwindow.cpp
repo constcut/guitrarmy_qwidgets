@@ -1659,7 +1659,7 @@ void MainWindow::startAudioOutput(std::string localName)
     QString defaultRecFile;
 
     if (localName.empty()) {
-        localName = "/home/punnalyse/.local/share/applications/wavOutput.graw";
+        localName = AConfig::getInst().testsLocation + std::string("waveOutput.wav");
         defaultRecFile = localName.c_str();
     }
     else

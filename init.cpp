@@ -270,14 +270,15 @@ void initNewTab(MainWindow& w) {
 
 
 std::vector<MacroCommand> writeAndReadMacro(const std::vector<MacroCommand>& commands) {
+    auto tempMacroPath = AConfig::getInst().testsLocation + "macro";
     {
-        std::ofstream os("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+        std::ofstream os(tempMacroPath, std::ios::binary);
         saveMacroComannds(commands, os);
         //qDebug() << commands.size() << " commands written";
     }
     std::vector<MacroCommand> readCommands;
     {
-        std::ifstream is("/home/punnalyse/dev/g/_wgtab/gtab/og/macro", std::ios::binary);
+        std::ifstream is(tempMacroPath, std::ios::binary);
         readCommands = loadMacroCommands(is);
         //qDebug() << readCommands.size() << " commands read";
     }

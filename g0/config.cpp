@@ -293,7 +293,6 @@ void AConfig::checkConfig()
 
     //После разделения аудио от интерфейса возможно удастся генерировать налету
     addValue("midi.config","on"); //TODO оно работает но медленно, при прегенерации ждать очень долго
-    //Also there are issues with non piano :((( Maybe we had to go timidity++ later :(
 }
 
 

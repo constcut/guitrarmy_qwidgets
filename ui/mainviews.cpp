@@ -504,17 +504,16 @@ void ConfigView::draw([[maybe_unused]]QPainter *painter)
 void TestsView::openTestNumber(int num) {
     if (tabsView->gotChanges()==false) {
 
-        qDebug() << "Opening test "<<buttons[num].getText().c_str(); //std::string(":/own_tests/")
+        qDebug() << "Opening test "<<buttons[num].getText().c_str();
 
-        //TODO repair normal test location that would work for WIN\LIN\ANDOIRD
-#ifndef WIN32
-     std::string fn = std::string("/home/punnalyse/dev/g/_wgtab/gtab/own_tests/") + buttons[num].getText().c_str() + ".gp4";
-#else
-     std::string fn = std::string("C:\\dev\\guitrarmy_qwidgets\\own_tests\\") + buttons[num].getText().c_str() + ".gp4";
-#endif
+        std::string fn = AConfig::getInst().testsLocation + buttons[num].getText().c_str() + ".gp4";
+        //WIN? inverted?
+
         std::ifstream importFile(fn, std::ios::binary);
-         if (importFile.is_open() == false)
-             std::cout << "Failed to open";
+         if (importFile.is_open() == false) {
+             std::cerr << "Failed to open " << fn << std::endl;
+         }
+
         auto forLoad = std::make_unique<Tab>();
         Gp4Import importer;
         importer.import(importFile, forLoad.get());
