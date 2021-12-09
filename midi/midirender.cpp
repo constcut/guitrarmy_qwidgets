@@ -1,7 +1,8 @@
 #include "midirender.h"
 
-#include "libs/sf/tml.h"
+#define TSF_IMPLEMENTATION 1
 #include "libs/sf/tsf.h"
+#include "libs/sf/tml.h"
 
 #include <QElapsedTimer>
 #include <QDebug>
@@ -112,7 +113,8 @@ QByteArray MidiRender::renderShortNext(int len)
     char *stream = result.data();
 
     int SampleBlock, SampleCount = (len / (2 * sizeof(short)));
-    for (SampleBlock = TSF_RENDER_EFFECTSAMPLEBLOCK; SampleCount; SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(short))))
+    //TSF_RENDER_EFFECTSAMPLEBLOCK
+    for (SampleBlock = 64; SampleCount; SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(short))))
     {
         if (SampleBlock > SampleCount) SampleBlock = SampleCount; //this is a moment when would have tail can cut
 
@@ -121,13 +123,11 @@ QByteArray MidiRender::renderShortNext(int len)
 
             switch (g_MidiMessage->type)
             {
-                //TODO check other file like awake there are missin volume, panoram anf some other things
 
-                //Возможно проблема в ситуациях, когда инструмент не устанавливается изначально
-                //Вести логи - изучить. По крайней мере многие клавиши у нас работают
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
                     g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
-                    if (g_MidiChannelPreset[g_MidiMessage->channel] < 0) g_MidiChannelPreset[g_MidiMessage->channel] = 0;
+                    if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
+                            g_MidiChannelPreset[g_MidiMessage->channel] = 0;
                     break;
                 case TML_NOTE_ON: //play a note
                     tsf_note_on(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
@@ -135,9 +135,15 @@ QByteArray MidiRender::renderShortNext(int len)
                 case TML_NOTE_OFF: //stop a note
                     tsf_note_off(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key);
                     break;
+                case TML_CONTROL_CHANGE:
+                    tsf_channel_midi_control(soundFont, g_MidiMessage->channel, g_MidiMessage->control, g_MidiMessage->control_value);
+                    break;
+                case TML_PITCH_BEND: //pitch wheel modification
+                    tsf_channel_set_pitchwheel(soundFont, g_MidiMessage->channel, g_MidiMessage->pitch_bend);
+                    break;
 
                 default:
-                    std::cerr << "EVENT NOT HANDLED: " << g_MidiMessage->type << std::endl;
+                    std::cerr << "EVENT NOT HANDLED: " << static_cast<int>(g_MidiMessage->type) << std::endl;
             }
         }
         tsf_render_short(soundFont, (short*)stream, SampleBlock, 0);
@@ -159,7 +165,7 @@ QByteArray MidiRender::renderFloatNext(int len)
     char *stream = result.data();
 
     int SampleBlock, SampleCount = (len / (2 * sizeof(float)));
-    for (SampleBlock = TSF_RENDER_EFFECTSAMPLEBLOCK; SampleCount; SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(float))))
+    for (SampleBlock = 64; SampleCount; SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(float))))
     {
         if (SampleBlock > SampleCount) SampleBlock = SampleCount; //this is a moment when would have tail can cut
 
@@ -233,7 +239,7 @@ QByteArray MidiRender::renderMemoryFloatNext(int len)
 
 
     int SampleBlock, SampleCount = (len / (2 * sizeof(float)));
-    for (SampleBlock = TSF_RENDER_EFFECTSAMPLEBLOCK; SampleCount;
+    for (SampleBlock = 64; SampleCount;
          SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(float))))
     {
         if (SampleBlock > SampleCount) SampleBlock = SampleCount;
@@ -276,7 +282,7 @@ QByteArray MidiRender::renderMemoryShortNext(int len)
     char *stream = result.data();
 
     int SampleBlock, SampleCount = (len / (2 * sizeof(short)));
-    for (SampleBlock = TSF_RENDER_EFFECTSAMPLEBLOCK; SampleCount;
+    for (SampleBlock = 64; SampleCount;
          SampleCount -= SampleBlock, stream += (SampleBlock * (2 * sizeof(short))))
     {
         if (SampleBlock > SampleCount) SampleBlock = SampleCount;

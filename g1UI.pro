@@ -48,7 +48,6 @@ SOURCES += main.cpp\
     tab/tab_com.cpp \
     tab/track.cpp \
     tab/track_com.cpp \
-    libs/sf/tsf.cpp \
     ui/components.cpp \
     ui/imagepreloader.cpp \
     ui/mainwindow.cpp \

@@ -208,6 +208,8 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
 
             MidiRender render;
             std::string sfPath = AConfig::getInst().testsLocation + "instrument.sf2";
+            sfPath = "/usr/share/sounds/sf2/FluidR3_GM.sf2";
+
             render.openSoundFont(sfPath.c_str());
             auto midiPath = AConfig::getInst().testsLocation + "midiOutput.mid";
             auto qa = render.renderShort(midiPath.c_str());
