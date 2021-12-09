@@ -130,7 +130,6 @@ QByteArray MidiRender::renderShortNext(int len)
 
                 case TML_PROGRAM_CHANGE: //channel program (preset) change
 
-
                     if (g_MidiMessage->channel != 9) {
                         g_MidiChannelPreset[g_MidiMessage->channel] = tsf_get_presetindex(soundFont, 0, g_MidiMessage->program);
                         if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
@@ -138,22 +137,14 @@ QByteArray MidiRender::renderShortNext(int len)
                     }
                     else {
                         int preset_index;
-                        struct tsf_channel *c = tsf_channel_init(soundFont, g_MidiMessage->channel);
-                        preset_index = tsf_get_presetindex(soundFont, 128 | (c->bank & 0x7FFF), g_MidiMessage->program);
-                        if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, 128, g_MidiMessage->program);
+                        preset_index = tsf_get_presetindex(soundFont, 128, g_MidiMessage->program);
                         if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, 128, 0);
-                        if (preset_index == -1) preset_index = tsf_get_presetindex(soundFont, (c->bank & 0x7FFF), g_MidiMessage->program);
-
-                        //std::cout << "Preset Index " << preset_index << std::endl;
-                        //TODO make experiments with sepparated lib (подозреваю что дело может быть в константе 128)
                         g_MidiChannelPreset[g_MidiMessage->channel] = preset_index;
                         if (g_MidiChannelPreset[g_MidiMessage->channel] < 0)
                                 g_MidiChannelPreset[g_MidiMessage->channel] = 0;
-                        if (preset_index != -1)
-                            c->presetIndex = (unsigned short)preset_index;
                     }
 
-                    //tsf_channel_set_presetnumber(soundFont, g_MidiMessage->channel, g_MidiMessage->program, (g_MidiMessage->channel == 9));
+                    tsf_channel_set_presetnumber(soundFont, g_MidiMessage->channel, g_MidiMessage->program, (g_MidiMessage->channel == 9));
                     break;
                 case TML_NOTE_ON: //play a note
                     tsf_note_on(soundFont, g_MidiChannelPreset[g_MidiMessage->channel], g_MidiMessage->key, g_MidiMessage->velocity / 127.0f);
