@@ -283,7 +283,7 @@ void AConfig::checkConfig()
     addValue("showStatusViewHint","0");
 
     addValue("upsideDownNotes","1");
-    addValue("showNotesView","1");
+    addValue("showNotesView","0");
 
     addValue("mergeMidiTracks","0");
 
