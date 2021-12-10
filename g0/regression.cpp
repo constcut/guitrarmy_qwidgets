@@ -288,11 +288,11 @@ bool checkMidiIORegression() {
 
             MidiFile mid;
             {
-                std::ifstream is(midiFile);
+                std::ifstream is(midiFile, std::ios::binary);
                 mid.readStream(is);
             }
             {
-                std::ofstream os(midiFileCheck);
+                std::ofstream os(midiFileCheck, std::ios::binary);
                 mid.writeStream(os);
             }
              auto originalSize = std::filesystem::file_size(midiFile);

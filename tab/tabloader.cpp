@@ -82,7 +82,12 @@ bool GTabLoader::open(std::string fileName)
             if ((versionIndex == 5) || (versionIndex == 51))
             {
                 Gp5Import gImp;
-                loaded = gImp.import(file,tab.get(),versionIndex);
+                try {
+                    loaded = gImp.import(file,tab.get(),versionIndex);
+                }
+                catch(...) {
+                    loaded = false;
+                }
             }
             if (versionIndex == 4)
             {
@@ -92,7 +97,12 @@ bool GTabLoader::open(std::string fileName)
             if (versionIndex == 3)
             {
                 Gp3Import gImp;
-                loaded = gImp.import(file,tab.get(),versionIndex);
+                try {
+                    loaded = gImp.import(file,tab.get(),versionIndex);
+                }
+                catch(...) {
+                    loaded = false;
+                }
             }
             if (loaded)
             {

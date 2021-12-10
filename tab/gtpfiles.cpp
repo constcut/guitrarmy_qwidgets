@@ -18,9 +18,13 @@ std::string readString(std::ifstream &file, size_t stringLen)
 {
    //for current max
    //refact dynamic
+    if (stringLen >= 20480)
+        throw std::runtime_error("GP5 read string fail");
 
    if (gtpLog)  qDebug() <<"Reaging string "<<stringLen<<" bytes";
    file.read((char*)miniBufer,stringLen);//changed attention
+
+
    miniBufer[stringLen] = 0;
 
    if (gtpLog)  qDebug() << "Readen string "<<miniBufer;
@@ -3481,6 +3485,9 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
         }
         //++cursorBar;
         //cursorBeat = &cursorBar->getV(0);
+
+        if (beatsInPair > 10000)
+            throw std::runtime_error("gp3 beats in pair issue");
 
         for (size_t ind = 0; ind < beatsInPair; ++ind)
         {
