@@ -4,4 +4,6 @@
 bool checkHasRegression();
 void runRegressionTests();
 
+bool checkMidiIORegression();
+
 #endif // REGRESSION_H

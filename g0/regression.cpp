@@ -263,3 +263,51 @@ void runRegressionTests() {
 }
 
 
+
+bool checkMidiIORegression() {
+
+    bool fine = true;
+
+    std::unordered_map<size_t, size_t> groupLength = {
+        {1, 12},
+        {2, 39}
+    };
+
+    for (size_t groupIdx = 1; groupIdx <= 2; ++groupIdx) {
+        size_t from = 1;
+        size_t to = groupLength[groupIdx] - 1;
+
+        if (groupIdx == 3)
+            break;
+
+        for (size_t fileIndx = from; fileIndx <= to; ++fileIndx) {
+            std::string testLocation = AConfig::getInst().testsLocation;
+            std::string testName = std::to_string(groupIdx) + "." + std::to_string(fileIndx);
+            std::string midiFile = testLocation + std::string("regression_check/") + testName + std::string(".mid");
+            std::string midiFileCheck = testLocation + std::string("regression/") + testName + std::string(".mid");
+
+            MidiFile mid;
+            {
+                std::ifstream is(midiFile);
+                mid.readStream(is);
+            }
+            {
+                std::ofstream os(midiFileCheck);
+                mid.writeStream(os);
+            }
+             auto originalSize = std::filesystem::file_size(midiFile);
+             auto outputSize = std::filesystem::file_size(midiFileCheck);
+
+             if (originalSize != outputSize) {
+                std::cerr << "Midi IO fail " << testName << std::endl;
+                fine = false;
+             }
+        }
+    }
+
+    if (fine)
+        std::cout << "There is not MidiIO regression" << std::endl;
+
+    return fine;
+}
+

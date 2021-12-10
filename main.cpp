@@ -88,7 +88,8 @@ int main(int argc, char *argv[])
     }
 
     runRegressionTests();
-    std::cout << "TEST LOCATION " << AConfig::getInst().testsLocation << std::endl;
+    checkMidiIORegression();
+    //std::cout << "TEST LOCATION " << AConfig::getInst().testsLocation << std::endl;
 
     int out = 0;
     try{
