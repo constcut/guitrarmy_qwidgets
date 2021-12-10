@@ -5,6 +5,7 @@
 #include "g0/config.h"
 #include "init.h"
 #include "g0/regression.h"
+#include "g0/base.h"
 
 #include <QTemporaryDir>
 #include <iostream>
@@ -90,6 +91,8 @@ int main(int argc, char *argv[])
     runRegressionTests();
     checkMidiIORegression();
     //std::cout << "TEST LOCATION " << AConfig::getInst().testsLocation << std::endl;
+    checkBase("/home/punnalyse/dev/g/base/gb/", 10000);
+
 
     int out = 0;
     try{

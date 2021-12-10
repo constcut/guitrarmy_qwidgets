@@ -105,7 +105,7 @@ bool GTabLoader::open(std::string fileName)
         }
         else
         {
-            qDebug() << "unknown format";
+            //qDebug() << "unknown format";
             file.close();
             return false;
         }

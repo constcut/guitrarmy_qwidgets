@@ -29,6 +29,7 @@ win32:LIBS += -lWinMM
 
 SOURCES += main.cpp\
     audio/audiospeaker.cpp \
+    g0/base.cpp \
     g0/config.cpp \
     g0/regression.cpp \
     g0/tests.cpp \
@@ -74,6 +75,7 @@ SOURCES += main.cpp\
 
 HEADERS  += ui/mainwindow.h \
     audio/audiospeaker.h \
+    g0/base.h \
     g0/config.h \
     g0/regression.h \
     g0/tests.h \
