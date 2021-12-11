@@ -12,10 +12,10 @@
 
 
 
-void checkBase(std::string path, size_t count) {
+void checkBase(std::string path, size_t count) { //TODO сделать классом, убрать все словари внутрь
+                                                 //Инициализировать лямбды заранее, если возможно (или сделать из них функции с четкии типами)
 
     const std::filesystem::path basePath{path};
-
     size_t filesCount = 0;
     size_t fineFiles = 0;
     GTabLoader loader;
@@ -23,7 +23,7 @@ void checkBase(std::string path, size_t count) {
     std::unordered_map<std::string, size_t> noteStats;
     std::unordered_map<uint8_t, size_t> midiNoteStats;
     std::unordered_map<uint8_t, size_t> drumNoteStats;
-    std::map<std::pair<uint8_t, uint8_t>, size_t> barSizeStats;
+    std::map<std::pair<uint8_t, uint8_t>, size_t> barSizeStats; //TODO as tune
     std::unordered_map<uint8_t, size_t> durStats;
     std::unordered_map<uint8_t, size_t> pauseDurStats;
     std::unordered_map<uint8_t, size_t> stringStats;
@@ -33,8 +33,6 @@ void checkBase(std::string path, size_t count) {
     std::unordered_map<uint8_t, size_t> absMelStats;
     std::unordered_map<int, size_t> harmStats;
     std::unordered_map<uint8_t, size_t> absHarmStats;
-    //TODO scale for the whole track + harm/mel stats no abs
-
     std::vector noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     auto addToMap = [](auto& container, auto value) {
@@ -44,12 +42,59 @@ void checkBase(std::string path, size_t count) {
             container[value] = 1;
     };
 
-    //TODO lambda for parse track, bar, beat, note [&]
+    auto makeNoteStats = [&](auto& note, size_t beatSize, bool isDrums, auto& tune, int& prevNote) {
+        auto stringNum = note->getStringNumber();
+        if (isDrums == false) {
+            addToMap(stringStats, stringNum);
+            auto midiNote = note->getMidiNote(tune.getTune(stringNum));
+
+            if (beatSize == 1) {
+                if (prevNote != -1) {
+                    int diff = midiNote - prevNote;
+                    addToMap(melStats, diff);
+                    addToMap(absMelStats, std::abs(diff));
+                }
+                prevNote = midiNote;
+            }
+            else
+                prevNote = -1;
+            addToMap(midiNoteStats, midiNote);
+            addToMap(noteStats, noteNames[midiNote % 12]);
+            addToMap(fretStats, note->getFret());
+        }
+        else {
+            addToMap(drumNoteStats, note->getFret());
+        }
+    };
+
+    auto makeBeatStats = [&](auto& beat, auto& tune) {
+        if (beat->getPause())
+            addToMap(pauseDurStats, beat->getDuration());
+        else {
+            addToMap(durStats, beat->getDuration());
+            if (beat->size() == 2) {
+                auto& note1 = beat->at(0);
+                auto stringNum1 = note1->getStringNumber();
+                auto& note2 = beat->at(1);
+                auto stringNum2 = note2->getStringNumber();
+                auto midiNote1 = note1->getMidiNote(tune.getTune(stringNum1));
+                auto midiNote2 = note2->getMidiNote(tune.getTune(stringNum2));
+                int diff = midiNote2 - midiNote1;
+                addToMap(harmStats, diff);
+                addToMap(absHarmStats, std::abs(diff));
+            }
+        }
+    };
+
+    auto addTuneStats = [&](auto& tune) {
+        std::string tuneString;
+        for (size_t tuneI = 0; tuneI < tune.getStringsAmount(); ++tuneI)
+            tuneString += noteNames[tune.getTune(tuneI) % 12];
+        addToMap(tuneStats, tuneString);
+    };
 
     for(auto const& file: std::filesystem::directory_iterator{basePath}) {
         ++filesCount;
-        //if (filesCount < 129100)
-            //continue;
         if (filesCount >= count)
             break;
 
@@ -57,82 +102,28 @@ void checkBase(std::string path, size_t count) {
         if (loader.open(filePath)) { //TODO в отдельную функцию
             auto tab = std::move(loader.getTab());
             ++fineFiles;
-
             addToMap(bpmStats, tab->getBPM());
 
             for (size_t i = 0; i < tab->size(); ++i) {
                 auto& track = tab->at(i);
                 auto tune = track->tuning;
-
-                std::string tuneString;
-                for (size_t tuneI = 0; tuneI < tune.getStringsAmount(); ++tuneI)
-                    tuneString += noteNames[tune.getTune(tuneI) % 12];
-                addToMap(tuneStats, tuneString);
+                addTuneStats(tune);
 
                 int prevNote = -1;
                 for (size_t barI = 0; barI < track->size(); ++barI) {
                     auto& bar = track->at(barI);
-
-                    if (i == 0) //Не повторяемся
+                    if (i == 0)
                         addToMap(barSizeStats, std::make_pair(bar->getSignNum(), bar->getSignDenum()));
 
                     for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                         auto& beat = bar->at(beatI);
-
-                        if (beat->getPause()) {
-                            addToMap(pauseDurStats, beat->getDuration());
-                            continue;
-                        }
-                        else {
-                            addToMap(durStats, beat->getDuration());
-
-                            if (beat->size() == 2) {
-                                auto& note1 = beat->at(0);
-                                auto stringNum1 = note1->getStringNumber();
-                                auto& note2 = beat->at(1);
-                                auto stringNum2 = note2->getStringNumber();
-                                auto midiNote1 = note1->getMidiNote(tune.getTune(stringNum1));
-                                auto midiNote2 = note2->getMidiNote(tune.getTune(stringNum2));
-                                int diff = midiNote2 - midiNote1;
-                                addToMap(harmStats, diff);
-                                addToMap(absHarmStats, std::abs(diff));
-                            }
-                        }
-
-
-                        for (size_t noteI = 0; noteI < beat->size(); ++noteI) {
-                            auto& note = beat->at(noteI);
-                            auto stringNum = note->getStringNumber();
-
-                            if (track->isDrums() == false) {
-                                addToMap(stringStats, stringNum);
-                                auto midiNote = note->getMidiNote(tune.getTune(stringNum));
-
-                                if (beat->size() == 1) {
-                                    if (prevNote != -1) {
-                                        int diff = midiNote - prevNote;
-                                        addToMap(melStats, diff);
-                                        addToMap(absMelStats, std::abs(diff));
-                                    }
-                                    prevNote = midiNote;
-                                }
-                                else {
-                                    prevNote = -1;
-                                }
-
-                                addToMap(midiNoteStats, midiNote);
-                                addToMap(noteStats, noteNames[midiNote % 12]);
-                                addToMap(fretStats, note->getFret());
-                            }
-                            else {
-                                addToMap(drumNoteStats, note->getFret());
-                            }
-                        }
+                        makeBeatStats(beat, tune);
+                        for (size_t noteI = 0; noteI < beat->size(); ++noteI)
+                            makeNoteStats(beat->at(noteI), beat->size(), track->isDrums(), tune, prevNote);
                     }
                 }
             }
         }
-
         if (filesCount % 100 == 0)
             std::cout << filesCount << " files done" << std::endl;
     }
@@ -142,7 +133,7 @@ void checkBase(std::string path, size_t count) {
         std::cout << container.size() << " " << name << std::endl;
         std::ofstream os("/home/punnalyse/dev/g/base/" + name + ".csv");
         os << "value,count" << std::endl;
-        using ValuePair = std::pair<uint8_t, size_t>;
+        using ValuePair = std::pair<uint8_t, size_t>; //TODO попробовать сделать универсально
         std::vector<ValuePair> sortedData(container.begin(), container.end());
         std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
         for (auto& p: sortedData)
@@ -159,6 +150,8 @@ void checkBase(std::string path, size_t count) {
         for (auto& p: sortedData)
             os << p.first << "," << p.second << std::endl;
     };
+
+    std::cout << "Total files processed: " << fineFiles << std::endl;
 
     saveStatsUInt(bpmStats, "bpm");
     saveStatsStr(noteStats, "notes");
