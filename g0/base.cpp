@@ -20,14 +20,22 @@ void checkBase(std::string path, size_t count) {
     size_t fineFiles = 0;
     GTabLoader loader;
     std::unordered_map<uint8_t, size_t> bpmStats;
-    std::unordered_map<uint8_t, size_t> noteStats;
+    std::unordered_map<std::string, size_t> noteStats;
     std::unordered_map<uint8_t, size_t> midiNoteStats;
     std::unordered_map<uint8_t, size_t> drumNoteStats;
     std::map<std::pair<uint8_t, uint8_t>, size_t> barSizeStats;
     std::unordered_map<uint8_t, size_t> durStats;
+    std::unordered_map<uint8_t, size_t> pauseDurStats;
     std::unordered_map<uint8_t, size_t> stringStats;
     std::unordered_map<uint8_t, size_t> fretStats;
-    //std::map<
+    std::unordered_map<std::string, size_t> tuneStats;
+    std::unordered_map<int, size_t> melStats;
+    std::unordered_map<uint8_t, size_t> absMelStats;
+    std::unordered_map<int, size_t> harmStats;
+    std::unordered_map<uint8_t, size_t> absHarmStats;
+    //TODO scale for the whole track + harm/mel stats no abs
+
+    std::vector noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     auto addToMap = [](auto& container, auto value) {
         if (container.count(value))
@@ -36,9 +44,11 @@ void checkBase(std::string path, size_t count) {
             container[value] = 1;
     };
 
+    //TODO lambda for parse track, bar, beat, note [&]
+
     for(auto const& file: std::filesystem::directory_iterator{basePath}) {
         ++filesCount;
-        //if (filesCount < 150000)
+        //if (filesCount < 129100)
             //continue;
         if (filesCount >= count)
             break;
@@ -54,6 +64,12 @@ void checkBase(std::string path, size_t count) {
                 auto& track = tab->at(i);
                 auto tune = track->tuning;
 
+                std::string tuneString;
+                for (size_t tuneI = 0; tuneI < tune.getStringsAmount(); ++tuneI)
+                    tuneString += noteNames[tune.getTune(tuneI) % 12];
+                addToMap(tuneStats, tuneString);
+
+                int prevNote = -1;
                 for (size_t barI = 0; barI < track->size(); ++barI) {
                     auto& bar = track->at(barI);
 
@@ -62,10 +78,27 @@ void checkBase(std::string path, size_t count) {
 
                     for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                         auto& beat = bar->at(beatI);
-                        addToMap(durStats, beat->getDuration());
 
-                        if (beat->getPause())
-                            continue; //TODO More stats
+                        if (beat->getPause()) {
+                            addToMap(pauseDurStats, beat->getDuration());
+                            continue;
+                        }
+                        else {
+                            addToMap(durStats, beat->getDuration());
+
+                            if (beat->size() == 2) {
+                                auto& note1 = beat->at(0);
+                                auto stringNum1 = note1->getStringNumber();
+                                auto& note2 = beat->at(1);
+                                auto stringNum2 = note2->getStringNumber();
+                                auto midiNote1 = note1->getMidiNote(tune.getTune(stringNum1));
+                                auto midiNote2 = note2->getMidiNote(tune.getTune(stringNum2));
+                                int diff = midiNote2 - midiNote1;
+                                addToMap(harmStats, diff);
+                                addToMap(absHarmStats, std::abs(diff));
+                            }
+                        }
+
 
                         for (size_t noteI = 0; noteI < beat->size(); ++noteI) {
                             auto& note = beat->at(noteI);
@@ -74,10 +107,22 @@ void checkBase(std::string path, size_t count) {
                             if (track->isDrums() == false) {
                                 addToMap(stringStats, stringNum);
                                 auto midiNote = note->getMidiNote(tune.getTune(stringNum));
+
+                                if (beat->size() == 1) {
+                                    if (prevNote != -1) {
+                                        int diff = midiNote - prevNote;
+                                        addToMap(melStats, diff);
+                                        addToMap(absMelStats, std::abs(diff));
+                                    }
+                                    prevNote = midiNote;
+                                }
+                                else {
+                                    prevNote = -1;
+                                }
+
                                 addToMap(midiNoteStats, midiNote);
-                                addToMap(noteStats, midiNote % 12);
+                                addToMap(noteStats, noteNames[midiNote % 12]);
                                 addToMap(fretStats, note->getFret());
-                                //TODO melodic, harmonic
                             }
                             else {
                                 addToMap(drumNoteStats, note->getFret());
@@ -85,56 +130,50 @@ void checkBase(std::string path, size_t count) {
                         }
                     }
                 }
-                //TODO - scale + tuning
             }
         }
 
         if (filesCount % 100 == 0)
             std::cout << filesCount << " files done" << std::endl;
     }
-        //std::cout << dir_entry << '\n';
 
 
-
-    //std::vector<BpmPair> sortedBPM(bpmStats.begin(), bpmStats.end());
-
-    auto saveStats = [](auto& container, std::ofstream& os) {
+    auto saveStatsUInt = [](auto& container, std::string name) {
+        std::cout << container.size() << " " << name << std::endl;
+        std::ofstream os("/home/punnalyse/dev/g/base/" + name + ".csv");
         os << "value,count" << std::endl;
         using ValuePair = std::pair<uint8_t, size_t>;
         std::vector<ValuePair> sortedData(container.begin(), container.end());
         std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
-        for (auto& p: sortedData) //sortedData
+        for (auto& p: sortedData)
             os << (int)p.first << "," << p.second << std::endl;
     };
 
-    //TODO lamda for most of
-    std::ofstream bpmCsv("/home/punnalyse/dev/g/base/bpm.csv");
-    std::ofstream notesCsv("/home/punnalyse/dev/g/base/notes.csv");
-    std::ofstream midiNotesCsv("/home/punnalyse/dev/g/base/midiNotes.csv");
-    std::ofstream drumNotesCsv("/home/punnalyse/dev/g/base/drumNotes.csv");
-    std::ofstream barSizeCsv("/home/punnalyse/dev/g/base/barSize.csv");
-    std::ofstream durCsv("/home/punnalyse/dev/g/base/durSize.csv");
-    std::ofstream stringCsv("/home/punnalyse/dev/g/base/strings.csv");
-    std::ofstream fretCsv("/home/punnalyse/dev/g/base/fret.csv");
+    auto saveStatsStr = [](auto& container, std::string name) {
+        std::cout << container.size() << " " << name << std::endl;
+        std::ofstream os("/home/punnalyse/dev/g/base/" + name + ".csv");
+        os << "value,count" << std::endl;
+        using ValuePair = std::pair<std::string, size_t>;
+        std::vector<ValuePair> sortedData(container.begin(), container.end());
+        std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
+        for (auto& p: sortedData)
+            os << p.first << "," << p.second << std::endl;
+    };
 
-    std::cout << "Total " << fineFiles << " loaded files" << std::endl;
-    std::cout << bpmStats.size() << " bpm records" << std::endl;
-    std::cout << noteStats.size() << " note records" << std::endl;
-    std::cout << midiNoteStats.size() << " midi note records" << std::endl;
-    std::cout << drumNoteStats.size() << " drum note records" << std::endl;
+    saveStatsUInt(bpmStats, "bpm");
+    saveStatsStr(noteStats, "notes");
+    saveStatsUInt(midiNoteStats, "midiNotes");
+    saveStatsUInt(drumNoteStats, "drumNotes");
+    saveStatsUInt(durStats, "durSize");
+    saveStatsUInt(pauseDurStats, "pauseDurSize");
+    saveStatsUInt(stringStats, "strings");
+    saveStatsUInt(fretStats, "frets");
+    saveStatsStr(tuneStats, "tunes");
+    saveStatsUInt(absMelStats, "absMelody");
+    saveStatsUInt(absHarmStats, "absHarmony");
+
     std::cout << barSizeStats.size() << " bar size records" << std::endl;
-    std::cout << durStats.size() << " duration records" << std::endl;
-    std::cout << stringStats.size() << " string records" << std::endl;
-    std::cout << fretStats.size() << " fret records" << std::endl;
-
-    saveStats(bpmStats, bpmCsv);
-    saveStats(noteStats, notesCsv);
-    saveStats(midiNoteStats, midiNotesCsv);
-    saveStats(drumNoteStats, drumNotesCsv);
-    saveStats(durStats, durCsv);
-    saveStats(stringStats, stringCsv);
-    saveStats(fretStats, fretCsv);
-
+    std::ofstream barSizeCsv("/home/punnalyse/dev/g/base/barSize.csv");
     barSizeCsv << "value,count" << std::endl;
     for (auto& p: barSizeStats)
         barSizeCsv << (int)p.first.first << "+" << (int)p.first.second << "," << p.second << std::endl;

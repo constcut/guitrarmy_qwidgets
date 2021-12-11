@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     runRegressionTests();
     checkMidiIORegression();
     //std::cout << "TEST LOCATION " << AConfig::getInst().testsLocation << std::endl;
-    checkBase("/home/punnalyse/dev/g/base/gb/", 166000); //166000
+    checkBase("/home/punnalyse/dev/g/base/gb/", 1000); //166000
 
 
     int out = 0;

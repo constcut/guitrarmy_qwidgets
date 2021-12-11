@@ -2662,6 +2662,9 @@ bool Gp5Import::import(std::ifstream& file, Tab *tab, std::uint8_t knownVersion)
           if (gtpLog)
             qDebug()<<" PRE-Reader "<<preReader;
 
+          if (preReader > 10000)
+              throw std::runtime_error("pre reader exceeds");
+
           Beat readerBeat;
           //Bar readerBar;
           for (size_t i = 0; i < preReader; ++i)
