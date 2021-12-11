@@ -12,11 +12,14 @@ class BaseStatistics {
 
 public:
 
-    void checkBase(std::string path, size_t count);
+    void start(std::string path, size_t count);
 
     void reset();
 
 private:
+
+    std::string _path;
+
     std::unordered_map<uint8_t, size_t> bpmStats;
     std::unordered_map<std::string, size_t> noteStats;
     std::unordered_map<uint8_t, size_t> midiNoteStats;
@@ -38,7 +41,12 @@ private:
 
     void writeAllCSV();
 
+    void makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune);
+    void makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize, bool isDrums,
+                       GuitarTuning& tune,int& prevNote);
 
+    void addTuneStats(GuitarTuning& tune);
+    void makeTabStats(std::unique_ptr<Tab>& tab);
 };
 
 #endif // BASE_H
