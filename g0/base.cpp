@@ -109,7 +109,7 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
     for (size_t i = 0; i < tab->size(); ++i) {
         auto& track = tab->at(i);
         auto tune = track->tuning;
-        addToMap(instrumentStats,track->getVolume());
+        addToMap(instrumentStats,track->getInstrument());
         if (track->isDrums() == false)
             addTuneStats(tune);
 
