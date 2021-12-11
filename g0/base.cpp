@@ -47,9 +47,9 @@ void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tu
     }
     else {
         if (dur < durationNames.size())
-            addToMap(pauseDurStats, durationNames[dur]);
+            addToMap(durStats, durationNames[dur]);
         else
-            addToMap(pauseDurStats, std::to_string(dur));
+            addToMap(durStats, std::to_string(dur));
 
         if (beat->size() == 2) {
             auto& note1 = beat->at(0);
