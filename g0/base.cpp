@@ -1,13 +1,5 @@
 #include "base.h"
 
-#include <filesystem>
-#include <iostream>
-#include <unordered_map>
-
-#include <algorithm>
-#include <map>
-
-
 
 auto addToMap = [](auto& container, auto value) {
     if (container.count(value))
@@ -140,7 +132,7 @@ void BaseStatistics::start(std::string path, size_t count) {
             break;
 
         std::string filePath = file.path();
-        if (loader.open(filePath)) { //TODO в отдельную функцию
+        if (loader.open(filePath)) {
             auto tab = std::move(loader.getTab());
             ++fineFiles;
             makeTabStats(tab);
@@ -155,42 +147,18 @@ void BaseStatistics::start(std::string path, size_t count) {
 
 
 void BaseStatistics::writeAllCSV() {
-
-
-    auto saveStatsUInt = [this](auto& container, std::string name) {
-        std::cout << container.size() << " " << name << std::endl;
-        std::ofstream os(_path + name + ".csv");
-        os << "value,count" << std::endl;
-        using ValuePair = std::pair<uint8_t, size_t>; //TODO попробовать сделать универсально
-        std::vector<ValuePair> sortedData(container.begin(), container.end());
-        std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
-        for (auto& p: sortedData)
-            os << (int)p.first << "," << p.second << std::endl;
-    };
-    //TODO template function for first type of unordered_map
-    auto saveStatsStr = [this](auto& container, std::string name) {
-        std::cout << container.size() << " " << name << std::endl;
-        std::ofstream os(_path + name + ".csv");
-        os << "value,count" << std::endl;
-        using ValuePair = std::pair<std::string, size_t>;
-        std::vector<ValuePair> sortedData(container.begin(), container.end());
-        std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
-        for (auto& p: sortedData)
-            os << p.first << "," << p.second << std::endl;
-    };
-
-    saveStatsUInt(bpmStats, "bpm");
-    saveStatsStr(noteStats, "notes");
-    saveStatsUInt(midiNoteStats, "midiNotes");
-    saveStatsUInt(drumNoteStats, "drumNotes");
-    saveStatsUInt(durStats, "durSize");
-    saveStatsUInt(pauseDurStats, "pauseDurSize");
-    saveStatsUInt(stringStats, "strings");
-    saveStatsUInt(fretStats, "frets");
-    saveStatsStr(tuneStats, "tunes");
-    saveStatsUInt(absMelStats, "absMelody");
-    saveStatsUInt(absHarmStats, "absHarmony");
-    saveStatsStr(barSizeStats, "barSize");
-    saveStatsUInt(instrumentStats, "instruments");
-    saveStatsUInt(notesVolumeStats, "noteVolumes");
+    saveStats(bpmStats, "bpm");
+    saveStats(noteStats, "notes");
+    saveStats(midiNoteStats, "midiNotes");
+    saveStats(drumNoteStats, "drumNotes");
+    saveStats(durStats, "durSize");
+    saveStats(pauseDurStats, "pauseDurSize");
+    saveStats(stringStats, "strings");
+    saveStats(fretStats, "frets");
+    saveStats(tuneStats, "tunes");
+    saveStats(absMelStats, "absMelody");
+    saveStats(absHarmStats, "absHarmony");
+    saveStats(barSizeStats, "barSize");
+    saveStats(instrumentStats, "instruments");
+    saveStats(notesVolumeStats, "noteVolumes");
 }
