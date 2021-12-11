@@ -38,10 +38,19 @@ void BaseStatistics::reset() {
 //TODO total notes
 
 void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {
-    if (beat->getPause())
-        addToMap(pauseDurStats, durationNames[beat->getDuration()]);
+    auto dur = beat->getDuration();
+    if (beat->getPause()) {
+        if (dur < durationNames.size())
+            addToMap(pauseDurStats, durationNames[dur]);
+        else
+            addToMap(pauseDurStats, std::to_string(dur));
+    }
     else {
-        addToMap(durStats, durationNames[beat->getDuration()]);
+        if (dur < durationNames.size())
+            addToMap(pauseDurStats, durationNames[dur]);
+        else
+            addToMap(pauseDurStats, std::to_string(dur));
+
         if (beat->size() == 2) {
             auto& note1 = beat->at(0);
             auto stringNum1 = note1->getStringNumber();

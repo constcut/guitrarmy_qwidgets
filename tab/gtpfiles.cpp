@@ -160,6 +160,9 @@ void readBendGTP(std::ifstream *file, BendPoints *bend)
     else
         bend->setType(0);
 
+    if (pointsCount > 1000)
+        throw std::runtime_error("bend points count exceeds");
+
     for (size_t pointInd=0; pointInd<pointsCount; ++pointInd)
     {
         size_t absolutePosition = 0;
