@@ -2356,7 +2356,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index
 }
 
 
-bool Gp5Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
+bool Gp5Import::import(std::ifstream& file, Tab *tab, std::uint8_t knownVersion)
 {
     if (gtpLog)  qDebug() << "Starting GP5 import";
 
