@@ -14,7 +14,7 @@ void BaseStatistics::reset() {
     noteStats.clear();
     midiNoteStats.clear();
     drumNoteStats.clear();
-    barSizeStats.clear(); //Так же как tune TODO
+    barSizeStats.clear();
     durStats.clear();
     pauseDurStats.clear();
     stringStats.clear();
@@ -31,13 +31,17 @@ void BaseStatistics::reset() {
 //TODO effects on beats
 //TODO effects on notes
 //TODO scales
-//TODO bpm change from-to (as string)
+
+//TODO total tracks
+//TODO total bars
+//TODO total beats
+//TODO total notes
 
 void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {
     if (beat->getPause())
-        addToMap(pauseDurStats, beat->getDuration());
+        addToMap(pauseDurStats, durationNames[beat->getDuration()]);
     else {
-        addToMap(durStats, beat->getDuration());
+        addToMap(durStats, durationNames[beat->getDuration()]);
         if (beat->size() == 2) {
             auto& note1 = beat->at(0);
             auto stringNum1 = note1->getStringNumber();
@@ -157,7 +161,9 @@ void BaseStatistics::writeAllCSV() {
     saveStats(fretStats, "frets");
     saveStats(tuneStats, "tunes");
     saveStats(absMelStats, "absMelody");
+    saveStats(melStats, "melody");
     saveStats(absHarmStats, "absHarmony");
+    saveStats(harmStats, "harmony");
     saveStats(barSizeStats, "barSize");
     saveStats(instrumentStats, "instruments");
     saveStats(notesVolumeStats, "noteVolumes");
