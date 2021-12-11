@@ -169,5 +169,5 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
     std::ofstream barSizeCsv("/home/punnalyse/dev/g/base/barSize.csv");
     barSizeCsv << "value,count" << std::endl;
     for (auto& p: barSizeStats)
-        barSizeCsv << (int)p.first.first << "+" << (int)p.first.second << "," << p.second << std::endl;
+        barSizeCsv << (int)p.first.first << "/" << (int)p.first.second << "," << p.second << std::endl;
 }
