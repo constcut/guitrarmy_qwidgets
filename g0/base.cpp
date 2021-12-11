@@ -99,11 +99,12 @@ void checkBase(std::string path, size_t count) {
     //std::vector<BpmPair> sortedBPM(bpmStats.begin(), bpmStats.end());
 
     auto saveStats = [](auto& container, std::ofstream& os) {
+        os << "value,count" << std::endl;
         using ValuePair = std::pair<uint8_t, size_t>;
         std::vector<ValuePair> sortedData(container.begin(), container.end());
         std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
-        for (auto& p: container) //sortedData
-            os << p.first << "," << p.second << std::endl;
+        for (auto& p: sortedData) //sortedData
+            os << (int)p.first << "," << p.second << std::endl;
     };
 
     //TODO lamda for most of
@@ -134,6 +135,7 @@ void checkBase(std::string path, size_t count) {
     saveStats(stringStats, stringCsv);
     saveStats(fretStats, fretCsv);
 
+    barSizeCsv << "value,count" << std::endl;
     for (auto& p: barSizeStats)
-        barSizeCsv << p.first.first << "," << p.first.second << "," << p.second << std::endl;
+        barSizeCsv << (int)p.first.first << "+" << (int)p.first.second << "," << p.second << std::endl;
 }
