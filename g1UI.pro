@@ -81,6 +81,7 @@ HEADERS  += ui/mainwindow.h \
     g0/tests.h \
     g0/threads.h \
     init.h \
+    midi/midiexport.h \
     midi/miditrack.h \
     tab/commands.h \
     tab/effects.h \

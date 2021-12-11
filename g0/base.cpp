@@ -3,44 +3,34 @@
 #include <filesystem>
 #include <iostream>
 #include <unordered_map>
-#include <vector>
+
 #include <algorithm>
 #include <map>
 
-#include "tab/tab.h"
-#include "tab/tabloader.h"
 
 
 
-void checkBase(std::string path, size_t count) { //TODO сделать классом, убрать все словари внутрь
-                                                 //Инициализировать лямбды заранее, если возможно (или сделать из них функции с четкии типами)
+
+auto addToMap = [](auto& container, auto value) {
+    if (container.count(value))
+        container[value] += 1;
+    else
+        container[value] = 1;
+};
+
+
+//TODO effects on beats
+//TODO effects on notes
+//TODO scales
+//TODO bpm change from-to (as string)
+
+//void makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {}
+
+void BaseStatistics::checkBase(std::string path, size_t count) {
 
     const std::filesystem::path basePath{path};
     size_t filesCount = 0;
     size_t fineFiles = 0;
-    GTabLoader loader;
-    std::unordered_map<uint8_t, size_t> bpmStats;
-    std::unordered_map<std::string, size_t> noteStats;
-    std::unordered_map<uint8_t, size_t> midiNoteStats;
-    std::unordered_map<uint8_t, size_t> drumNoteStats;
-    std::map<std::pair<uint8_t, uint8_t>, size_t> barSizeStats; //TODO as tune
-    std::unordered_map<uint8_t, size_t> durStats;
-    std::unordered_map<uint8_t, size_t> pauseDurStats;
-    std::unordered_map<uint8_t, size_t> stringStats;
-    std::unordered_map<uint8_t, size_t> fretStats;
-    std::unordered_map<std::string, size_t> tuneStats;
-    std::unordered_map<int, size_t> melStats;
-    std::unordered_map<uint8_t, size_t> absMelStats;
-    std::unordered_map<int, size_t> harmStats;
-    std::unordered_map<uint8_t, size_t> absHarmStats;
-    std::vector noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-
-    auto addToMap = [](auto& container, auto value) {
-        if (container.count(value))
-            container[value] += 1;
-        else
-            container[value] = 1;
-    };
 
     auto makeNoteStats = [&](auto& note, size_t beatSize, bool isDrums, auto& tune, int& prevNote) {
         auto stringNum = note->getStringNumber();
@@ -61,6 +51,7 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
             addToMap(midiNoteStats, midiNote);
             addToMap(noteStats, noteNames[midiNote % 12]);
             addToMap(fretStats, note->getFret());
+            addToMap(notesVolumeStats, note->getVolume());
         }
         else {
             addToMap(drumNoteStats, note->getFret());
@@ -107,13 +98,18 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
             for (size_t i = 0; i < tab->size(); ++i) {
                 auto& track = tab->at(i);
                 auto tune = track->tuning;
-                addTuneStats(tune);
+
+                addToMap(instrumentStats,track->getVolume());
+
+                if (track->isDrums() == false)
+                    addTuneStats(tune);
 
                 int prevNote = -1;
                 for (size_t barI = 0; barI < track->size(); ++barI) {
                     auto& bar = track->at(barI);
                     if (i == 0)
-                        addToMap(barSizeStats, std::make_pair(bar->getSignNum(), bar->getSignDenum()));
+                        addToMap(barSizeStats, std::to_string(bar->getSignNum()) + "/" +
+                                 std::to_string(bar->getSignDenum()));
 
                     for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                         auto& beat = bar->at(beatI);
@@ -128,6 +124,14 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
             std::cout << filesCount << " files done" << std::endl;
     }
 
+
+    std::cout << "Total files processed: " << fineFiles << std::endl;
+}
+
+
+void BaseStatistics::writeAllCSV() {
+
+    //TODO задавать путь заране
 
     auto saveStatsUInt = [](auto& container, std::string name) {
         std::cout << container.size() << " " << name << std::endl;
@@ -151,7 +155,6 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
             os << p.first << "," << p.second << std::endl;
     };
 
-    std::cout << "Total files processed: " << fineFiles << std::endl;
 
     saveStatsUInt(bpmStats, "bpm");
     saveStatsStr(noteStats, "notes");
@@ -164,10 +167,5 @@ void checkBase(std::string path, size_t count) { //TODO сделать клас�
     saveStatsStr(tuneStats, "tunes");
     saveStatsUInt(absMelStats, "absMelody");
     saveStatsUInt(absHarmStats, "absHarmony");
-
-    std::cout << barSizeStats.size() << " bar size records" << std::endl;
-    std::ofstream barSizeCsv("/home/punnalyse/dev/g/base/barSize.csv");
-    barSizeCsv << "value,count" << std::endl;
-    for (auto& p: barSizeStats)
-        barSizeCsv << (int)p.first.first << "/" << (int)p.first.second << "," << p.second << std::endl;
+    saveStatsStr(barSizeStats, "barSize");
 }
