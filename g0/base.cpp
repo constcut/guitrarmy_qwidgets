@@ -19,10 +19,10 @@ void checkBase(std::string path, size_t count) {
     size_t filesCount = 0;
     size_t fineFiles = 0;
     GTabLoader loader;
-    std::unordered_map<int, size_t> bpmStats;
-    std::unordered_map<int, size_t> noteStats;
-    std::unordered_map<int, size_t> midiNoteStats;
-    std::unordered_map<int, size_t> drumNoteStats;
+    std::unordered_map<uint8_t, size_t> bpmStats;
+    std::unordered_map<uint8_t, size_t> noteStats;
+    std::unordered_map<uint8_t, size_t> midiNoteStats;
+    std::unordered_map<uint8_t, size_t> drumNoteStats;
     std::map<std::pair<uint8_t, uint8_t>, size_t> barSizeStats;
     std::unordered_map<uint8_t, size_t> durStats;
     std::unordered_map<uint8_t, size_t> stringStats;
@@ -64,6 +64,9 @@ void checkBase(std::string path, size_t count) {
                         auto& beat = bar->at(beatI);
                         addToMap(durStats, beat->getDuration());
 
+                        if (beat->getPause())
+                            continue; //TODO More stats
+
                         for (size_t noteI = 0; noteI < beat->size(); ++noteI) {
                             auto& note = beat->at(noteI);
                             auto stringNum = note->getStringNumber();
@@ -92,9 +95,13 @@ void checkBase(std::string path, size_t count) {
         //std::cout << dir_entry << '\n';
 
 
+
+    //std::vector<BpmPair> sortedBPM(bpmStats.begin(), bpmStats.end());
+
     auto saveStats = [](auto& container, std::ofstream& os) {
-        //std::vector sortedData(container.begin(), container.end());
-        //std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
+        using ValuePair = std::pair<uint8_t, size_t>;
+        std::vector<ValuePair> sortedData(container.begin(), container.end());
+        std::sort(sortedData.begin(), sortedData.end(), [](auto lhs, auto rhs) { return lhs.second > rhs.second; });
         for (auto& p: container) //sortedData
             os << p.first << "," << p.second << std::endl;
     };
