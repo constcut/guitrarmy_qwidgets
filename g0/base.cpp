@@ -142,6 +142,31 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
     }
 }
 
+std::string BaseStatistics::nameScale(int16_t freqNote) {
+    auto foundIt = trackScale.find(freqNote);
+    std::string scaleString;
+
+    int prevValue = -1;
+    for (auto it = foundIt; it != trackScale.end(); ++it) {
+        if (prevValue == -1)
+            prevValue = it->first;
+        else {
+            auto diff = it->first - prevValue;
+            scaleString += std::to_string(diff);
+            prevValue = it->first;
+        }
+    }
+
+    if (foundIt != trackScale.begin())
+        for (auto it = trackScale.begin(); it != foundIt; ++it) {
+            auto diff = (it->first + 12) - prevValue;
+            scaleString += std::to_string(diff);
+            prevValue = it->first + 12;
+        }
+
+    return scaleString;
+}
+
 
 void BaseStatistics::addTrackScaleAndClear() {
 

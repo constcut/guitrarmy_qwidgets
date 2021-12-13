@@ -70,6 +70,7 @@ private:
     void addTuneStats(GuitarTuning& tune);
 
     void addTrackScaleAndClear();
+    std::string nameScale(int16_t freqNote);
 
     void writeAllCSV();
 
