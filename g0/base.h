@@ -44,6 +44,9 @@ private:
     std::unordered_map<int16_t, size_t> totalBeatsStats;
     std::unordered_map<int16_t, size_t> totalNotesStats;
     std::unordered_map<std::string, size_t> noteEffectsStats;
+    std::unordered_map<std::string, size_t> scalesStats;
+    std::unordered_map<std::string, size_t> trackMostFreqNoteStats;
+
 
     const std::vector<std::string> noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     const std::vector<std::string> durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};
@@ -52,6 +55,8 @@ private:
                                                  "HarmonicsV3", "HarmonicsV4", "HarmonicsV5", "HarmonicsV6", "Bend", "LetRing",
                                                  "Tremolo", "FadeIn", "GhostNote", "GraceNote", "Stokatto", "TremoloPick",
                                                  "UpStroke", "DownStroke", "Accented", "Changed", "Tap", "Slap", "Pop"};
+
+    std::unordered_map<int16_t, size_t> trackScale;
 
     GTabLoader loader;
 
@@ -63,6 +68,8 @@ private:
                        GuitarTuning& tune,int& prevNote);
 
     void addTuneStats(GuitarTuning& tune);
+
+    void addTrackScaleAndClear();
 
     void writeAllCSV();
 

@@ -31,6 +31,8 @@ void BaseStatistics::reset() {
     totalBeatsStats.clear();
     totalNotesStats.clear();
     noteEffectsStats.clear();
+    scalesStats.clear();
+    trackMostFreqNoteStats.clear();
 }
 
 //TODO effects on notes
@@ -86,6 +88,7 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
             prevNote = -1;
         addToMap(midiNoteStats, midiNote);
         addToMap(noteStats, noteNames[midiNote % 12]);
+        addToMap(trackScale, midiNote % 12);
         addToMap(fretStats, note->getFret());
         addToMap(notesVolumeStats, note->getVolume());
 
@@ -119,14 +122,12 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
             addTuneStats(tune);
         if (i == 0)
             addToMap(totalBarsStats, track->size());
-
         int prevNote = -1;
         for (size_t barI = 0; barI < track->size(); ++barI) {
             auto& bar = track->at(barI);
             if (i == 0)
                 addToMap(barSizeStats, std::to_string(bar->getSignNum()) + "/" +
                          std::to_string(bar->getSignDenum()));
-
             addToMap(totalBeatsStats, bar->size());
             for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                 auto& beat = bar->at(beatI);
@@ -136,7 +137,37 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
                     makeNoteStats(beat->at(noteI), beat->size(), track->isDrums(), tune, prevNote);
             }
         }
+        if (track->isDrums() == false)
+            addTrackScaleAndClear();
     }
+}
+
+
+void BaseStatistics::addTrackScaleAndClear() {
+
+    if (trackScale.empty())
+        return;
+
+    auto mostFrequent = std::max_element(trackScale.begin(), trackScale.end(),
+    [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
+        return lhs.second < rhs.second; });
+
+    std::string noteName = noteNames[mostFrequent->first];
+    addToMap(trackMostFreqNoteStats, noteName);
+
+    if(trackScale.size() == 7)
+        addToMap(scalesStats, "Diatonic " + noteName);
+    else if (trackScale.size() == 5)
+        addToMap(scalesStats, "Pentatonic " + noteName);
+    else if (trackScale.size() == 12)
+        addToMap(scalesStats, "Chromatic " + noteName);
+    else if (trackScale.size() < 5)
+        addToMap(scalesStats, "Incomplete " + noteName);
+    else if (trackScale.size() == 6)
+        addToMap(scalesStats, "Pentatonic Modulation " + noteName);
+    else
+        addToMap(scalesStats, "Modulation " + noteName);
+    trackScale.clear();
 }
 
 
@@ -190,4 +221,6 @@ void BaseStatistics::writeAllCSV() {
     saveStats(totalBeatsStats, "totalBeats");
     saveStats(totalNotesStats, "totalNotes");
     saveStats(noteEffectsStats, "noteEffects");
+    saveStats(scalesStats, "scales");
+    saveStats(trackMostFreqNoteStats, "trackMostFreqNote");
 }
