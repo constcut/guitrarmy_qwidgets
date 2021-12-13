@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <map>
 
 #include "tab/tabloader.h"
 #include "tab/tab.h"
@@ -56,7 +57,7 @@ private:
                                                  "Tremolo", "FadeIn", "GhostNote", "GraceNote", "Stokatto", "TremoloPick",
                                                  "UpStroke", "DownStroke", "Accented", "Changed", "Tap", "Slap", "Pop"};
 
-    std::unordered_map<int16_t, size_t> trackScale;
+    std::map<int16_t, size_t> trackScale;
 
     GTabLoader loader;
 
@@ -70,7 +71,7 @@ private:
     void addTuneStats(GuitarTuning& tune);
 
     void addTrackScaleAndClear();
-    std::string nameScale(int16_t freqNote);
+    std::string scaleStructure(int16_t freqNote);
 
     void writeAllCSV();
 

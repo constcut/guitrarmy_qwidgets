@@ -35,8 +35,6 @@ void BaseStatistics::reset() {
     trackMostFreqNoteStats.clear();
 }
 
-//TODO effects on notes
-//TODO scales
 
 
 void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {
@@ -142,7 +140,7 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
     }
 }
 
-std::string BaseStatistics::nameScale(int16_t freqNote) {
+std::string BaseStatistics::scaleStructure(int16_t freqNote) {
     auto foundIt = trackScale.find(freqNote);
     std::string scaleString;
 
@@ -168,6 +166,39 @@ std::string BaseStatistics::nameScale(int16_t freqNote) {
 }
 
 
+std::string nameDiatonicScale(std::string structure) {
+    if (structure == "2212221")
+        return "Ionian major";
+    else if (structure == "2122212")
+        return "Dorian minor";
+    else if (structure == "1222122")
+        return "Frigian minor";
+    else if (structure == "2221221")
+        return "Lidian major";
+    else if (structure == "2212212")
+        return "Miksolidian major";
+    else if (structure == "2122122")
+        return "Eolian minor";
+    else if (structure == "1221222")
+        return "Lokrian";
+    return structure;
+}
+
+std::string namePentanotincScale(std::string structure) {
+    if (structure == "22323")
+        return "Major pentatonic";
+    else if (structure == "32232")
+        return "Minor pentatonic";
+    else if (structure == "23232")
+        return "Pentatonic V3";
+    else if (structure == "32322")
+        return "Pentatonic V4";
+    else if (structure == "23223")
+        return "Pentatonic V5";
+    return structure;
+}
+
+
 void BaseStatistics::addTrackScaleAndClear() {
 
     if (trackScale.empty())
@@ -177,13 +208,19 @@ void BaseStatistics::addTrackScaleAndClear() {
     [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
         return lhs.second < rhs.second; });
 
+
+
     std::string noteName = noteNames[mostFrequent->first];
     addToMap(trackMostFreqNoteStats, noteName);
 
-    if(trackScale.size() == 7)
-        addToMap(scalesStats, "Diatonic " + noteName);
-    else if (trackScale.size() == 5)
-        addToMap(scalesStats, "Pentatonic " + noteName);
+    if(trackScale.size() == 7) {
+        auto structure = scaleStructure(mostFrequent->first);
+        addToMap(scalesStats, nameDiatonicScale(structure) + " " + noteName);
+    }
+    else if (trackScale.size() == 5) {
+        auto structure = scaleStructure(mostFrequent->first);
+        addToMap(scalesStats, namePentanotincScale(structure) + noteName);
+    }
     else if (trackScale.size() == 12)
         addToMap(scalesStats, "Chromatic " + noteName);
     else if (trackScale.size() < 5)
@@ -191,7 +228,7 @@ void BaseStatistics::addTrackScaleAndClear() {
     else if (trackScale.size() == 6)
         addToMap(scalesStats, "Pentatonic Modulation " + noteName);
     else
-        addToMap(scalesStats, "Modulation " + noteName);
+        addToMap(scalesStats, "Diatonic Modulation " + noteName);
     trackScale.clear();
 }
 
