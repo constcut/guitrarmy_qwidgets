@@ -26,16 +26,16 @@ void BaseStatistics::reset() {
     absHarmStats.clear();
     instrumentStats.clear();
     notesVolumeStats.clear();
+    totalTracksStats.clear();
+    totalBarsStats.clear();
+    totalBeatsStats.clear();
+    totalNotesStats.clear();
 }
 
 //TODO effects on beats
 //TODO effects on notes
 //TODO scales
 
-//TODO total tracks
-//TODO total bars
-//TODO total beats
-//TODO total notes
 
 void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {
     auto dur = beat->getDuration();
@@ -105,6 +105,7 @@ void BaseStatistics::addTuneStats(GuitarTuning& tune) {
 
 void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
     addToMap(bpmStats, tab->getBPM());
+    addToMap(totalTracksStats, tab->size());
 
     for (size_t i = 0; i < tab->size(); ++i) {
         auto& track = tab->at(i);
@@ -112,6 +113,8 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
         addToMap(instrumentStats,track->getInstrument());
         if (track->isDrums() == false)
             addTuneStats(tune);
+        if (i == 0)
+            addToMap(totalBarsStats, track->size());
 
         int prevNote = -1;
         for (size_t barI = 0; barI < track->size(); ++barI) {
@@ -120,9 +123,11 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
                 addToMap(barSizeStats, std::to_string(bar->getSignNum()) + "/" +
                          std::to_string(bar->getSignDenum()));
 
+            addToMap(totalBeatsStats, bar->size());
             for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                 auto& beat = bar->at(beatI);
                 makeBeatStats(beat, tune);
+                addToMap(totalNotesStats, beat->size());
                 for (size_t noteI = 0; noteI < beat->size(); ++noteI)
                     makeNoteStats(beat->at(noteI), beat->size(), track->isDrums(), tune, prevNote);
             }
@@ -176,4 +181,8 @@ void BaseStatistics::writeAllCSV() {
     saveStats(barSizeStats, "barSize");
     saveStats(instrumentStats, "instruments");
     saveStats(notesVolumeStats, "noteVolumes");
+    saveStats(totalTracksStats, "totalTracks");
+    saveStats(totalBarsStats, "totalBars");
+    saveStats(totalBeatsStats, "totalBeats");
+    saveStats(totalNotesStats, "totalNotes");
 }

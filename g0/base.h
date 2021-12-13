@@ -39,6 +39,10 @@ private:
     std::unordered_map<int16_t, size_t> absHarmStats;
     std::unordered_map<int16_t, size_t> instrumentStats;
     std::unordered_map<int16_t, size_t> notesVolumeStats;
+    std::unordered_map<int16_t, size_t> totalTracksStats;
+    std::unordered_map<int16_t, size_t> totalBarsStats;
+    std::unordered_map<int16_t, size_t> totalBeatsStats;
+    std::unordered_map<int16_t, size_t> totalNotesStats;
 
     const std::vector<std::string> noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     const std::vector<std::string> durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};
