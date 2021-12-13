@@ -30,9 +30,9 @@ void BaseStatistics::reset() {
     totalBarsStats.clear();
     totalBeatsStats.clear();
     totalNotesStats.clear();
+    noteEffectsStats.clear();
 }
 
-//TODO effects on beats
 //TODO effects on notes
 //TODO scales
 
@@ -88,6 +88,10 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
         addToMap(noteStats, noteNames[midiNote % 12]);
         addToMap(fretStats, note->getFret());
         addToMap(notesVolumeStats, note->getVolume());
+
+        for (int16_t i = 1; i < 31; ++i)
+            if (note->effPack == static_cast<Effect>(i))
+                addToMap(noteEffectsStats, effectNames[i]);
     }
     else {
         addToMap(drumNoteStats, note->getFret());
@@ -185,4 +189,5 @@ void BaseStatistics::writeAllCSV() {
     saveStats(totalBarsStats, "totalBars");
     saveStats(totalBeatsStats, "totalBeats");
     saveStats(totalNotesStats, "totalNotes");
+    saveStats(noteEffectsStats, "noteEffects");
 }

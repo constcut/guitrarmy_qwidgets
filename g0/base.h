@@ -43,9 +43,15 @@ private:
     std::unordered_map<int16_t, size_t> totalBarsStats;
     std::unordered_map<int16_t, size_t> totalBeatsStats;
     std::unordered_map<int16_t, size_t> totalNotesStats;
+    std::unordered_map<std::string, size_t> noteEffectsStats;
 
     const std::vector<std::string> noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     const std::vector<std::string> durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};
+    const std::vector<std::string> effectNames = {"None", "Vibrato", "PalmMute", "Unknown", "LegatoSlide", "Slide", "SlideDown1",
+                                                 "SlideUp1", "SlideDown2", "SlideUp2", "Legato", "Harmonics", "HarmoincsV2",
+                                                 "HarmonicsV3", "HarmonicsV4", "HarmonicsV5", "HarmonicsV6", "Bend", "LetRing",
+                                                 "Tremolo", "FadeIn", "GhostNote", "GraceNote", "Stokatto", "TremoloPick",
+                                                 "UpStroke", "DownStroke", "Accented", "Changed", "Tap", "Slap", "Pop"};
 
     GTabLoader loader;
 
