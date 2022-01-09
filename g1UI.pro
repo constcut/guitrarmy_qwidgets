@@ -53,23 +53,23 @@ SOURCES += main.cpp\
     tab/TabClipboard.cpp \
     tab/TabLoader.cpp \
     tab/Track.cpp \
-    ui/barview.cpp \
+    ui/BarView.cpp \
+    ui/CenterView.cpp \
+    ui/Components.cpp \
+    ui/GPannel.cpp \
+    ui/GView.cpp \
+    ui/ImagePreloader.cpp \
+    ui/InputViews.cpp \
+    ui/MainViews.cpp \
+    ui/MainWindow.cpp \
+    ui/TabCommands.cpp \
+    ui/TabViews.cpp \
+    ui/TrackView.cpp \
     tab/tab_com.cpp \
-    tab/track_com.cpp \
-    ui/components.cpp \
-    ui/imagepreloader.cpp \
-    ui/mainwindow.cpp \
-    ui/gview.cpp \
-    ui/gpannel.cpp \
-    ui/mainviews.cpp \
-    ui/tabviews.cpp \
-    ui/tabcommands.cpp \
-    ui/centerview.cpp \
-    ui/inputviews.cpp \
-    ui/trackview.cpp
+    tab/track_com.cpp
 
 
-HEADERS  += ui/mainwindow.h \
+HEADERS  += \
     audio/AudioSpeaker.hpp \
     g0/Base.hpp \
     g0/Config.hpp \
@@ -95,18 +95,19 @@ HEADERS  += ui/mainwindow.h \
     tab/TabLoader.hpp \
     tab/Track.hpp \
     tab/Types.hpp \
-    ui/barview.h \
-    ui/components.h \
-    ui/gpannel.h \
-    ui/gview.h \
+    ui/BarView.hpp \
+    ui/CenterView.hpp \
+    ui/Components.hpp \
     libs/sf/tml.h \
     libs/sf/tsf.h \
-    ui/imagepreloader.h \
-    ui/mainviews.h \
-    ui/tabviews.h \
-    ui/centerview.h \
-    ui/inputviews.h \
-    ui/trackview.h
+    ui/GPannel.hpp \
+    ui/GView.hpp \
+    ui/ImagePreloader.hpp \
+    ui/InputViews.hpp \
+    ui/MainViews.hpp \
+    ui/MainWindow.hpp \
+    ui/TabViews.hpp \
+    ui/TrackView.hpp
 
 
 

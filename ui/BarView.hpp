@@ -1,7 +1,7 @@
 #ifndef BARVIEW_H
 #define BARVIEW_H
 
-#include "gview.h"
+#include "GView.hpp"
 
 
 class BarView : public GView

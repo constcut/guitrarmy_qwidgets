@@ -1,4 +1,4 @@
-#include "ui/gpannel.h"
+#include "ui/GPannel.hpp"
 
 
 #include <QDebug>

@@ -7,7 +7,7 @@
 #include "g0/Config.hpp"
 #include "g0/Regression.hpp"
 #include "g0/Base.hpp"
-#include "ui/mainwindow.h"
+#include "ui/MainWindow.hpp"
 
 
 

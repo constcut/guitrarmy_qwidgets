@@ -1,4 +1,4 @@
-﻿#include "mainwindow.h"
+﻿#include "MainWindow.hpp"
 //Reduce all endless headers TODO
 #include <QPainter>
 #include <QKeyEvent>
@@ -8,10 +8,10 @@
 
 #include <vector>
 
-#include "ui/gview.h"
+#include "ui/GView.hpp"
 
-#include "ui/mainviews.h"
-#include "ui/tabviews.h"
+#include "ui/MainViews.hpp"
+#include "ui/TabViews.hpp"
 
 #include <QTapGesture>
 #include <QSwipeGesture>
@@ -36,7 +36,7 @@
 
 #include <QMenuBar>
 
-#include "ui/gpannel.h"
+#include "ui/GPannel.hpp"
 
 #include <QScroller>
 #include <QInputDialog>
@@ -50,7 +50,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "ui/imagepreloader.h"
+#include "ui/ImagePreloader.hpp"
 
 
 #define QWIDGET_ALLOC new
@@ -781,7 +781,6 @@ int MainWindow::getCurrentViewType()
 
         if (dynamic_cast<InfoView*>(gview) != 0)
             return 7;
-
 
         if (dynamic_cast<TestsView*>(gview) != 0)
             return 8;

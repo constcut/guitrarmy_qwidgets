@@ -1,9 +1,9 @@
 #ifndef COMMONVIEWS_H
 #define COMMONVIEWS_H
 
-#include "gview.h"
+#include "GView.hpp"
 #include "g0/Tests.hpp"
-#include "inputviews.h"
+#include "InputViews.hpp"
 
 #include <memory>
 

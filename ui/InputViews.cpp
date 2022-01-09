@@ -1,6 +1,6 @@
-#include "inputviews.h"
+#include "InputViews.hpp"
 
-#include "tabviews.h"
+#include "TabViews.hpp"
 #include "tab/TabClipboard.hpp"
 #include "midi/MidiFile.hpp"
 
@@ -26,8 +26,8 @@
 #endif
 
 
-#include "mainviews.h"
-#include "mainwindow.h"
+#include "MainViews.hpp"
+#include "MainWindow.hpp"
 
 #include "midi/MidiEngine.hpp"
 

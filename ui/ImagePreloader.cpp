@@ -1,4 +1,4 @@
-#include "imagepreloader.h"
+#include "ImagePreloader.hpp"
 
 #include <QImage>
 #include <QFile>

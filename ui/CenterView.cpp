@@ -1,4 +1,4 @@
-#include "centerview.h"
+#include "CenterView.hpp"
 
 
 #include <QTextBlock>

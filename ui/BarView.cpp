@@ -1,5 +1,5 @@
-#include "barview.h"
-#include "tabviews.h"
+#include "BarView.hpp"
+#include "TabViews.hpp"
 
 
 ///////////Bars------------------------------

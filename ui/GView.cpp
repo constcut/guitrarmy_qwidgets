@@ -1,4 +1,4 @@
-#include "gview.h"
+#include "GView.hpp"
 
 #include <QFileDialog>
 
@@ -13,7 +13,7 @@
 
 #include "tab/TabLoader.hpp" //loader
 
-#include "athread.h"
+#include "g0/Threads.hpp"
 
 #include <QDebug>
 

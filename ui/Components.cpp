@@ -1,4 +1,4 @@
-#include "components.h"
+#include "Components.hpp"
 
 
 GQButton::GQButton(QWidget *pa):QPushButton(pa)

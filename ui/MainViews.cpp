@@ -1,4 +1,4 @@
-#include "mainviews.h"
+#include "MainViews.hpp"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -11,7 +11,7 @@
 #include "tab/GmyFile.hpp"
 #include "tab/TabLoader.hpp" //loader
 
-#include "tabviews.h"
+#include "TabViews.hpp"
 
 #include <fstream>
 
@@ -21,7 +21,7 @@
 //TODO
 
 
-#include "mainwindow.h"
+#include "MainWindow.hpp"
 
 void changeColor(const std::string& color, QPainter* src);
 void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);

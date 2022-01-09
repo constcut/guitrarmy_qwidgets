@@ -1,7 +1,7 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#include "mainviews.h"
+#include "MainViews.hpp"
 
 #include <QPushButton>
 #include <QComboBox>

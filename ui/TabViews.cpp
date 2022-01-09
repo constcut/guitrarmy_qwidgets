@@ -1,4 +1,4 @@
-#include "tabviews.h"
+#include "TabViews.hpp"
 
 #include "tab/Tab.hpp"
 #include "midi/MidiFile.hpp"
@@ -7,8 +7,8 @@
 #include "tab/TabLoader.hpp" //loader
 #include "midi/MidiEngine.hpp"
 
-#include "athread.h"
-#include "mainviews.h"
+#include "g0/Threads.hpp"
+#include "MainViews.hpp"
 
 #include <QInputDialog>
 #include <QMessageBox>

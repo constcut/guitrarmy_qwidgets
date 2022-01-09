@@ -4,10 +4,12 @@
 #include <vector>
 #include <memory>
 
-#include "gview.h"
-#include "ui/gpannel.h"
+#include "GView.hpp"
+#include "ui/GPannel.hpp"
 #include "tab/Commands.hpp"
-#include "barview.h"
+#include "BarView.hpp"
+
+#include "g0/Threads.hpp"
 
 
 class TabView;

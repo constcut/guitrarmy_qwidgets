@@ -1,3 +1,6 @@
+#ifndef THREADS_HPP
+#define THREADS_HPP
+
 #include <vector>
 #include <stdint.h>
 
@@ -98,4 +101,4 @@ public:
     }
 };
 
-
+#endif

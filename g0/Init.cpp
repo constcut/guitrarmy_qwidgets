@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "g0/Config.hpp"
-#include "ui/imagepreloader.h"
+#include "ui/ImagePreloader.hpp"
 #include "g0/Regression.hpp"
 #include "tab/TabLoader.hpp"
 #include "midi/MidiEngine.hpp"

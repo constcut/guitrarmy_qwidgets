@@ -2,7 +2,7 @@
 #define INIT_H
 
 #include <QApplication>
-#include "ui/mainwindow.h"
+#include "ui/MainWindow.hpp"
 
 
 void setPosixSignals();

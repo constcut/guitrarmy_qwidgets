@@ -1,7 +1,7 @@
 #include "tab/Commands.hpp"
 
-#include "tabviews.h"
-#include "mainviews.h"
+#include "TabViews.hpp"
+#include "MainViews.hpp"
 
 //other dep
 #include "midi/MidiFile.hpp"

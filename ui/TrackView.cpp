@@ -1,5 +1,5 @@
-#include "trackview.h"
-#include "tabviews.h"
+#include "TrackView.hpp"
+#include "TabViews.hpp"
 
 
 void TrackView::launchThread()
