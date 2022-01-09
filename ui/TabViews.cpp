@@ -4,8 +4,7 @@
 #include "midi/MidiFile.hpp"
 #include "g0/Config.hpp"
 #include "tab/GmyFile.hpp"
-#include "tab/TabLoader.hpp" //loader
-#include "midi/MidiEngine.hpp"
+#include "tab/TabLoader.hpp"
 
 #include "g0/Threads.hpp"
 #include "MainViews.hpp"
@@ -124,7 +123,6 @@ void TabView::setTab(std::unique_ptr<Tab> point2Tab) {
 }
 
 void TabView::refreshTabStats() {
-    MidiEngine::stopDefaultFile();
     stopAllThreads();
     setPlaying(false);
 

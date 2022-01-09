@@ -36,7 +36,6 @@ SOURCES += main.cpp\
     g0/Tests.cpp \
     g0/Threads.cpp \
     libs/sf/tsf.cpp \
-    midi/MidiEngine.cpp \
     midi/MidiExport.cpp \
     midi/MidiFile.cpp \
     midi/MidiRender.cpp \
@@ -77,7 +76,6 @@ HEADERS  += \
     g0/Regression.hpp \
     g0/Tests.hpp \
     g0/Threads.hpp \
-    midi/MidiEngine.hpp \
     midi/MidiExport.hpp \
     midi/MidiFile.hpp \
     midi/MidiRender.hpp \

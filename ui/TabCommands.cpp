@@ -8,7 +8,6 @@
 #include "tab/TabLoader.hpp"
 #include "tab/GmyFile.hpp"
 
-#include "midi/MidiEngine.hpp"
 #include "midi/MidiExport.hpp"
 
 #include <QInputDialog>
@@ -106,8 +105,9 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
             chan = 10; //tune to 0 attention refact error
             tune = 0;
         }
-        std::uint8_t midiNote = inputedNote->getMidiNote(tune);
-        MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
+        //STARTMIDI
+        //std::uint8_t midiNote = inputedNote->getMidiNote(tune);
+        //MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
         ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
         //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
     }
@@ -188,8 +188,6 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         diffT = after2T - afterT;
         diffT /= (CLOCKS_PER_SEC/1000);
         qDebug() <<"Generate midi "<<diffT;
-
-        MidiEngine::closeDefaultFile();
         std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
         std::ofstream outFile2(fullOutName, std::ios::binary);
@@ -230,8 +228,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
             mw->pushForceKey("start_record_output waveOutput.wav");
         }
         else {
-            MidiEngine::openDefaultFile();
-            MidiEngine::startDefaultFile();
+            //STARTMIDI
         }
         tabParrent->launchAllThreads();
         tabParrent->setPlaying(true);
@@ -240,7 +237,7 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         if (CONF_PARAM("midi.config").empty() == false)
             mw->pushForceKey("stop_record_output");
         else
-            MidiEngine::stopDefaultFile();
+            ;//MidiEngine::stopDefaultFile();
 
         tabParrent->stopAllThreads();
         tabParrent->setPlaying(false);
@@ -426,7 +423,7 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
         //Разделить все этапы с интерфейсом TODO
         pTab->connectTracks();
         auto generatedMidi = exportMidi(pTab,shiftTheCursor);
-        MidiEngine::closeDefaultFile();
+
         std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
         std::ofstream outFile2(fullOutName, std::ios::binary);
         if (!outFile2.is_open())
@@ -439,14 +436,13 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
 
         tabView->prepareAllThreads(shiftTheCursor);
         tabView->connectAllThreadsSignal(tabView->getMaster());
-        MidiEngine::openDefaultFile();
-        MidiEngine::startDefaultFile();
+       //STARTMIDI
         tabView->launchAllThreads();
         tabView->setPlaying(true);
     }
     else
     {
-        MidiEngine::stopDefaultFile();
+        //MidiEngine::stopDefaultFile();
         tabView->stopAllThreads();
         tabView->setPlaying(false);
     }
@@ -455,7 +451,6 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
 void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
     auto generatedMidi = exportMidi(pTab);
 
-    MidiEngine::closeDefaultFile();
     std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
     std::ofstream outFile2(fullOutName, std::ios::binary);
 

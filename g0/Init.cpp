@@ -8,7 +8,6 @@
 #include "ui/ImagePreloader.hpp"
 #include "g0/Regression.hpp"
 #include "tab/TabLoader.hpp"
-#include "midi/MidiEngine.hpp"
 
 #include <QString>
 #include <QByteArray>
@@ -200,10 +199,6 @@ void gtmy::setPosixSignals() {
     signal(SIGFPE, posix_death_signal);
 }
 
-void gtmy::initMidi() {
-    if (AConfig::getInst().platform == "windows")
-        MidiEngine midInit;
-}
 
 void gtmy::initMainWindow(MainWindow& w, QApplication& a) {
     a.setApplicationVersion("Guitarmy v 0.5 final");

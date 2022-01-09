@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
     w.getCenterView()->ownChild ->changeChild(mainViewLayer2.get());
     w.getCenterView()->ownChild->setStatusSetter(w.getCenterView());
 
-
-    initMidi(); //Раньше было посередие initMainWindow
     setWindowIcon(w);
     configureScreen(w);
     setPosixSignals();

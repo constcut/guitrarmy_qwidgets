@@ -29,8 +29,6 @@
 #include "MainViews.hpp"
 #include "MainWindow.hpp"
 
-#include "midi/MidiEngine.hpp"
-
 
 
 using namespace gtmy;
@@ -156,7 +154,6 @@ void PatternInput::playBar() {
 
 
 
-    MidiEngine::closeDefaultFile();
     std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
@@ -165,8 +162,7 @@ void PatternInput::playBar() {
     outFile.close();
     outMidi->printToStream(std::cout);
 
-    MidiEngine::openDefaultFile();
-    MidiEngine::startDefaultFile();
+    //STARTMIDI
 
     bar->setParent(0);
 
@@ -314,7 +310,7 @@ void PatternInput::onclick(int x1, int y1)
         butRepeat->onclick(x1,y1);
         if (butRepeat->isChecked()==false)
         {
-            MidiEngine::stopDefaultFile();
+            //STARTMIDI (stop)
         }
     }
 
@@ -748,23 +744,18 @@ void TapRyView::copyAndPlayBar()
     patternTab.connectTracks();
 
 
-    MidiEngine::closeDefaultFile();
     std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
     std::ofstream outFile(fullOutName);
     auto outMidi = exportMidi(&patternTab);
-
     outMidi->writeStream(outFile);
 
-    //outMidi.printToStream(std::cout);
 
-    MidiEngine::openDefaultFile();
-    MidiEngine::startDefaultFile();
+    //STARTMIDI
 
     ryBar->setParent(0);
-
     patternTrack->remove(0);
-    //getMaster()->pleaseRepaint();
+
 }
 
 void TapRyView::keyevent(std::string press)
@@ -783,8 +774,7 @@ void TapRyView::keyevent(std::string press)
 
     if (press == "stop metr")
     {
-        MidiEngine::stopDefaultFile();
-        MidiEngine::closeDefaultFile();
+        //STARTMIDI++--
     }
 
     if (press == "newBpm")
@@ -858,20 +848,14 @@ void TapRyView::keyevent(std::string press)
         patternTab.setBPM(thatBPM);
         patternTab.connectTracks();
 
-
-        MidiEngine::closeDefaultFile();
         std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
-
 
         std::ofstream outFile(fullOutName);
         auto outMidi = exportMidi(&patternTab);
         outMidi->writeStream(outFile);
         outFile.close();
 
-        //outMidi.printToStream(std::cout);
-
-        MidiEngine::openDefaultFile();
-        MidiEngine::startDefaultFile();
+        //STARTMIDI
 
         patternTrack->remove(0);
 
@@ -954,8 +938,8 @@ void TapRyView::onclick(int x1, int y1)
             midiNote = drumInstr;
         }
 
-
-        MidiEngine::sendSignalShort(0x90|9,midiNote,120);//refact velocy
+        //STARTMIDI
+        //MidiEngine::sendSignalShort(0x90|9,midiNote,120);//refact velocy
 
         //getMaster()->pleaseRepaint();
     }
@@ -1014,8 +998,6 @@ void MorzeInput::playBar()
         morzeTab.setBPM(120);
         morzeTab.connectTracks();
 
-
-        MidiEngine::closeDefaultFile();
         std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
         std::ofstream outFile(fullOutName);
@@ -1025,8 +1007,7 @@ void MorzeInput::playBar()
         outFile.close();
         outMidi->printToStream(std::cout);
 
-        MidiEngine::openDefaultFile();
-        MidiEngine::startDefaultFile();
+        //STARTMIDI
 
         morzeTrack->remove(0);
     }

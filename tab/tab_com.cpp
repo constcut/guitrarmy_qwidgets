@@ -4,7 +4,6 @@
 #include "GmyFile.hpp"
 #include "TabLoader.hpp"
 #include "GtpFiles.hpp"
-#include "midi/MidiEngine.hpp"
 
 #include <fstream>
 #include <QDebug>
@@ -170,13 +169,11 @@ void Tab::deleteTrack() {
 
 void Tab::midiPause() {
     if (isPlaying == false) {
-        MidiEngine::closeDefaultFile();
-        MidiEngine::openDefaultFile();
-        MidiEngine::startDefaultFile();
+        //STARTMIDI
         isPlaying = true;
     }
     else {
-        MidiEngine::stopDefaultFile();
+        //MidiEngine::stopDefaultFile();
         isPlaying = false;
     }
 }

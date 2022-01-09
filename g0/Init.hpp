@@ -19,7 +19,6 @@ namespace gtmy {
 
     void setLibPath();
 
-    void initMidi();
     void initMainWindow(MainWindow& w, QApplication& a);
 
     void setWindowIcon(MainWindow& w);
