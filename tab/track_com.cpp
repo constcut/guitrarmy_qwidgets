@@ -1,11 +1,11 @@
 #include "tab.h"
 
 #include "g0/Config.hpp"
-#include "midi/midifile.h"
+#include "midi/MidiFile.hpp"
 #include "tab/gmyfile.h"
 #include "tab/tabloader.h"
 #include "tab/gtpfiles.h"
-#include "midi/midiengine.h"
+#include "midi/MidiEngine.hpp"
 #include "tab/tabclipboard.h"
 
 #include <fstream>

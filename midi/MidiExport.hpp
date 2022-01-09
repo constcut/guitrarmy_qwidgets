@@ -1,6 +1,6 @@
 #ifndef MIDIEXPORT
 #define MIDIEXPORT
-#include "midifile.h"
+#include "MidiFile.hpp"
 #include "tab/tab.h"
 
 std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor=0);

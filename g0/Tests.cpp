@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "midi/midifile.h"
+#include "midi/MidiFile.hpp"
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
 #include "g0/Config.hpp"
@@ -15,7 +15,7 @@
 #include <fstream>
 #include <QDebug>
 
-#include "midi/midiexport.h"
+#include "midi/MidiExport.hpp"
 
 #define log qDebug()
 

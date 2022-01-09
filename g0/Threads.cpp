@@ -15,7 +15,7 @@ void WaveMoveThr::threadRun()
    int fullNote = 240000/bpm;
    int waitValue = (fullNote/denum)*num;
    */
-   int indexWait = 0;
+   //int indexWait = 0;
 
    status = 0;
    pleaseStop =false;

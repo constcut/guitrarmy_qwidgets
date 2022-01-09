@@ -8,7 +8,7 @@
 #include "ui/imagepreloader.h"
 #include "g0/Regression.hpp"
 #include "tab/tabloader.h"
-#include "midi/midiengine.h"
+#include "midi/MidiEngine.hpp"
 
 #include <QString>
 #include <QByteArray>

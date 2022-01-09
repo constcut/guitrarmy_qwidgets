@@ -1,4 +1,4 @@
-#include "midirender.hpp"
+#include "MidiRender.hpp"
 
 #include <QDebug>
 

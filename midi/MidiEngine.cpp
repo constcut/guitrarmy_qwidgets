@@ -1,4 +1,4 @@
-#include "midiengine.h"
+#include "MidiEngine.hpp"
 #include "g0/Config.hpp"
 
 #include <QMediaPlayer>

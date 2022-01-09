@@ -1,4 +1,4 @@
-#include "midiexport.h"
+#include "MidiExport.hpp"
 #include "g0/Config.hpp"
 
 bool midiExportLog = false;

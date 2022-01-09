@@ -1,4 +1,4 @@
-#include "midisignal.h"
+#include "MidiSignal.hpp"
 
 #include <QDebug>
 bool enableMidiLog = false;

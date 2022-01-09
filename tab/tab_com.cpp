@@ -1,10 +1,10 @@
 #include "tab.h"
 
-#include "midi/midifile.h"
+#include "midi/MidiFile.hpp"
 #include "gmyfile.h"
 #include "tabloader.h"
 #include "gtpfiles.h"
-#include "midi/midiengine.h"
+#include "midi/MidiEngine.hpp"
 
 #include <fstream>
 #include <QDebug>

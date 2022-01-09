@@ -270,7 +270,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
     {
         int noteEnd = (*notes)[i].noteEnd;
         int notePeak = (*notes)[i].notePeak;
-        int noteBegin = (*notes)[i].noteBegin;
+        //int noteBegin = (*notes)[i].noteBegin;
 
         if (noteEnd-notePeak >= 9)//constant must be recalculated
         {
@@ -323,7 +323,7 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             //qDebug() << "#" <<sX.c_str(); // peak log
 
 
-            double *ampSrc = fft.getAmplitude();
+            //double *ampSrc = fft.getAmplitude();
 
             //stringE xtended sX2;
             //for (size_t i = 0; i < 128; ++i)
@@ -353,7 +353,7 @@ void BaseRhy::findNotesPositions(std::vector<int> *energyLevels, std::vector<int
     int eLev2Value = 850;
     int eLev3Value = 500;
 
-    int wavePosition = 0; //shift from the begin
+    //int wavePosition = 0; //shift from the begin
 
     if (params)
     {

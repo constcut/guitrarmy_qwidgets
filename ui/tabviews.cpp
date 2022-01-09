@@ -1,11 +1,11 @@
 #include "tabviews.h"
 
 #include "tab/tab.h"
-#include "midi/midifile.h"
+#include "midi/MidiFile.hpp"
 #include "g0/Config.hpp"
 #include "tab/gmyfile.h"
 #include "tab/tabloader.h" //loader
-#include "midi/midiengine.h"
+#include "midi/MidiEngine.hpp"
 
 #include "athread.h"
 #include "mainviews.h"

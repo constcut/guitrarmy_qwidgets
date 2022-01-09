@@ -1,4 +1,4 @@
-#include "midifile.h"
+#include "MidiFile.hpp"
 
 
 #include <iostream>

@@ -39,7 +39,12 @@ SOURCES += main.cpp\
     g0/Tests.cpp \
     g0/Threads.cpp \
     libs/sf/tsf.cpp \
-    midi/miditrack.cpp \
+    midi/MidiEngine.cpp \
+    midi/MidiExport.cpp \
+    midi/MidiFile.cpp \
+    midi/MidiRender.cpp \
+    midi/MidiSignal.cpp \
+    midi/MidiTrack.cpp \
     tab/commands.cpp \
     tab/effects.cpp \
     tab/tabclipboard.cpp \
@@ -47,8 +52,6 @@ SOURCES += main.cpp\
     ui/barview.cpp \
     tab/bar.cpp \
     tab/beat.cpp \
-    midi/midiexport.cpp \
-    midi/midisignal.cpp \
     tab/note.cpp \
     tab/tab_com.cpp \
     tab/track.cpp \
@@ -59,17 +62,14 @@ SOURCES += main.cpp\
     ui/gview.cpp \
     tab/gmyfile.cpp \
     tab/gtpfiles.cpp \
-    midi/midifile.cpp \
     tab/tab.cpp \
     ui/athread.cpp \
     ui/gpannel.cpp \
     ui/mainviews.cpp \
-    midi/midirender.cpp \
     ui/tabviews.cpp \
     ui/tabcommands.cpp \
     ui/centerview.cpp \
     ui/inputviews.cpp \
-    midi/midiengine.cpp \
     ui/trackview.cpp
 
 
@@ -84,9 +84,12 @@ HEADERS  += ui/mainwindow.h \
     g0/Regression.hpp \
     g0/Tests.hpp \
     g0/Threads.hpp \
-    midi/midiexport.h \
-    midi/midirender.hpp \
-    midi/miditrack.h \
+    midi/MidiEngine.hpp \
+    midi/MidiExport.hpp \
+    midi/MidiFile.hpp \
+    midi/MidiRender.hpp \
+    midi/MidiSignal.hpp \
+    midi/MidiTrack.hpp \
     tab/commands.h \
     tab/effects.h \
     tab/tabclipboard.h \
@@ -94,7 +97,6 @@ HEADERS  += ui/mainwindow.h \
     ui/barview.h \
     tab/bar.h \
     tab/beat.h \
-    midi/midisignal.h \
     tab/note.h \
     tab/track.h \
     tab/types.h \
@@ -103,7 +105,6 @@ HEADERS  += ui/mainwindow.h \
     ui/gview.h \
     tab/gmyfile.h \
     tab/gtpfiles.h \
-    midi/midifile.h \
     tab/tab.h \
     ui/athread.h \
     libs/sf/tml.h \
@@ -113,7 +114,6 @@ HEADERS  += ui/mainwindow.h \
     ui/tabviews.h \
     ui/centerview.h \
     ui/inputviews.h \
-    midi/midiengine.h \
     ui/trackview.h
 
 

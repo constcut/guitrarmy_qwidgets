@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-#include "midi/midisignal.h"
+#include "midi/MidiSignal.hpp"
 
 
 

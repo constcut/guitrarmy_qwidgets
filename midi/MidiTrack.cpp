@@ -1,4 +1,4 @@
-#include "miditrack.h"
+#include "MidiTrack.hpp"
 
 #include <QDebug>
 

@@ -2,7 +2,7 @@
 
 #include "tabviews.h"
 #include "tab/tabclipboard.h"
-#include "midi/midifile.h"
+#include "midi/MidiFile.hpp"
 
 #include <QInputDialog>
 
@@ -10,7 +10,7 @@
 
 #include "audio/WaveAnalys.hpp"
 
-#include "midi/midiexport.h"
+#include "midi/MidiExport.hpp"
 
 #include <QAudioRecorder>
 #include <QAudioDeviceInfo>
@@ -35,7 +35,7 @@
 #include "mainviews.h"
 #include "mainwindow.h"
 
-#include "midi/midiengine.h"
+#include "midi/MidiEngine.hpp"
 
 
 //TUNER=====================

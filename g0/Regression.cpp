@@ -8,7 +8,7 @@
 
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
-#include "midi/midiexport.h"
+#include "midi/MidiExport.hpp"
 #include "tab/gmyfile.h"
 #include "g0/Config.hpp"
 
