@@ -22,4 +22,6 @@ void initNewTab(MainWindow& w);
 
 void setLogFilename();
 
+void copyResourcesIntoTempDir();
+
 #endif // INIT_H

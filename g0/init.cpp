@@ -14,11 +14,10 @@
 #include <QByteArray>
 #include <QFile>
 #include <QDateTime>
-
+#include <QTemporaryDir>
 #include <QStandardPaths>
 #include <QDir>
 #include <QApplication>
-
 #include <QDebug>
 
 #ifdef WIN32
@@ -259,3 +258,44 @@ void initNewTab(MainWindow& w) {
 }
 
 
+void copyResourcesIntoTempDir() {
+    static QTemporaryDir tempDir;
+    setTestLocation(tempDir.path().toStdString() + "/");
+    QDir dir;
+    QString regressionDir = tempDir.path() + "/regression/";
+    dir.mkdir(regressionDir);
+    QString regressionCheckDir = tempDir.path() + "/regression_check/";
+    dir.mkdir(regressionCheckDir);
+    QString allOutDir = tempDir.path() + "/all_out/";
+    dir.mkdir(allOutDir);
+
+    QString resourseSf = ":/sf/instrument.sf2";
+    QString copySf = tempDir.path() + "/instrument.sf2";
+    QFile::copy(resourseSf, copySf);
+
+    std::unordered_map<size_t, size_t> groupLength = {
+        {1, 12},
+        {2, 39},
+        {3, 71},
+        {4, 109}
+    };
+    for (size_t groupIdx = 1; groupIdx <= 4; ++groupIdx) {
+        size_t from = 1;
+        size_t to = groupLength[groupIdx] - 1;
+        for (size_t fileIndx = from; fileIndx <= to; ++fileIndx) {
+            std::string testName = std::to_string(groupIdx) + "." + std::to_string(fileIndx);
+            QString resourse = QString(":/own_tests/") + testName.c_str() + ".gp4";
+            QString copy = tempDir.path() + "/" + testName.c_str() + ".gp4";
+            QFile::copy(resourse, copy);
+
+            if (groupIdx <= 2) {
+                QString resourse1 = QString(":/regression/") + testName.c_str() + ".mid";
+                QString resourse2 = QString(":/regression/") + testName.c_str() + ".gmy";
+                QString copy1 = regressionDir + testName.c_str() + ".mid";
+                QString copy2 = regressionDir + testName.c_str() + ".gmy";
+                QFile::copy(resourse1, copy1);
+                QFile::copy(resourse2, copy2);
+            }
+        }
+    }
+}
