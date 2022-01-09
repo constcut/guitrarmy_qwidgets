@@ -1,7 +1,4 @@
 #include "AudioSpeaker.hpp"
-#include "audio/FFT.hpp"
-#include "audio/Recording.hpp"
-#include "audio/WaveAnalys.hpp"
 
 #include "g0/Config.hpp"
 
@@ -89,64 +86,27 @@ qint64 AudioInfo::readData(char *data, qint64 maxlen)
 qint64 AudioInfo::writeData(const char *data, qint64 len)
 {
 
-        collector += QByteArray(data,len);
-
-        static int lastSize = 0;
-
-        if (collector.size() - lastSize > 4100)
+    collector += QByteArray(data,len);
+    int border = 16000*30; //each 60 seconds in smallest
+    if (collector.size() > border*10) //format*bitrate*minute
+    {
+        ///QByteArray compress = qCompress(collector,7);
+        QString defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString("record.temp");
+        QFile f; f.setFileName(defaultRecFile);
+        ///int compressedSize = compress.size();
+        if (f.open(QIODevice::Append))
         {
-
-            lastSize = collector.size();
-            short *sourceData = (short*)collector.data();
-
-            int fullSize = collector.size()/2;
-            int minusLastFrame = fullSize-2049;
-
-            FFT fft(2048);
-            fft.transform(&sourceData[minusLastFrame]);
-            fft.countAmplitude();
-            fft.findPeaks(7.8125/2.0);
-            std::vector<Peak> *peaks = &fft.getPeaks();
-
-            LocalFreqTable localFreq;
-            localFreq.addPeaks(peaks);
-            localFreq.sortPeaks();
-            localFreq.voteNewWay();
-
-            std::vector<LocalFreqTable::LFTvote> *votes = localFreq.getRezultVotes();
-
-            double freq = (*votes)[0].rFreq;
-            TunerInstance::getInst()->setFreq(freq);
+            f.write(collector);
+            f.flush();
+            f.close();
         }
-
-
-        int border = 16000*30; //each 60 seconds in smallest
-
-        if (collector.size() > border*10) //format*bitrate*minute
-        {
-
-            ///QByteArray compress = qCompress(collector,7);
-            QString defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString("record.temp");
-            QFile f; f.setFileName(defaultRecFile);
-            ///int compressedSize = compress.size();
-
-            if (f.open(QIODevice::Append))
-            {
-                f.write(collector);
-                f.flush();
-                f.close();
-            }
-            else
-                qDebug() << "Open file for raw record error;";
-
-
-            collector.clear();
-        }
+        else
+            qDebug() << "Open file for raw record error;";
+        collector.clear();
+    }
 
     int fullLen = collector.size();
     int cutLen = len;
-
-
     qDebug() << "Wroten audio data "<<cutLen<<"; in bufer "<<fullLen;
     return len;
 }

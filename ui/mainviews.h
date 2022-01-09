@@ -17,7 +17,6 @@ class GStickPannel;
 
 class InfoView;
 class MorzeInput;
-class RecordView;
 
 class WelcomeView;
 
@@ -38,7 +37,6 @@ protected:
 
     std::unique_ptr<InfoView> infView;
     std::unique_ptr<MorzeInput> morzeInp;
-    std::unique_ptr<RecordView> recordView;
 
     std::unique_ptr<BendInput> bendInp;
     std::unique_ptr<ChangesInput> chanInp;

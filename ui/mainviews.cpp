@@ -104,9 +104,6 @@ void MainView::keyevent(std::string press)
         if (press == "esc")
             changeViewToLast();
 
-        if (press == "rec")
-            changeCurrentView(recordView.get());
-
         if ((press == CONF_PARAM("TrackView.quickOpen"))||(press=="quickopen")) {
 
             if (tabsView->gotChanges()==false) {
@@ -339,7 +336,6 @@ MainView::MainView():GView(0,0,800,480), currentView(0)
 
     infView = std::make_unique<InfoView>();
     morzeInp = std::make_unique<MorzeInput>();
-    recordView = std::make_unique<RecordView>();
 
     welcome = std::make_unique<WelcomeView>();
 

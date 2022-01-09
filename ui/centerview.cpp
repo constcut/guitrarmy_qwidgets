@@ -1185,9 +1185,6 @@ int CenterView::getCurrentViewType()
         if (dynamic_cast<TapRyView*>(gview) != 0)
             return 4;
 
-        if (dynamic_cast<RecordView*>(gview) != 0)
-            return 5;
-
         if (dynamic_cast<ConfigView*>(gview) != 0)
             return 6;
 

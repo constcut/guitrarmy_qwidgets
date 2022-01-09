@@ -4,7 +4,6 @@
 #include "tab/Tab.hpp"
 #include "ui/barview.h"
 
-#include "audio/Recording.hpp"
 
 #include <QStringList>
 #include <QAudioRecorder>
@@ -166,83 +165,6 @@ public:
 
 
 
-
-class RecordView : public GView
-{
-protected:
-
-    std::unique_ptr<Bar> bar;
-    std::unique_ptr<BarView> barView;
-
-
-    std::unique_ptr<GLabel> zoom;
-    std::unique_ptr<GLabel> bpm;
-
-    std::unique_ptr<GLabel> eLevel1;
-    std::unique_ptr<GLabel> eLevel2;
-    std::unique_ptr<GLabel> eLevel3;
-
-    int wavePosition;
-
-    int waveLimit;
-    std::unique_ptr<QAudioRecorder> recorderPtr;
-
-    bool recording;
-    bool playing;
-    //int windowWave[500000]; //for test first
-    //int energyLevels[4000];
-    //byte energyLevelTypes[4000];
-    //byte wtypes[500000];
-
-    TunerInstance tunerItself;
-    std::unique_ptr<GLabel> tunerLabel;
-
-    QStringList recFiles;
-    std::string currentFile;
-
-    GWave waveItself; //move inside
-
-public:
-    RecordView():wavePosition(0),waveLimit(0) {
-        recording = 0;
-        playing = 0;
-        zoom = std::make_unique<GLabel>(20,100-55-20,"10");
-        bpm = std::make_unique<GLabel>(60,100-55-20,"120");
-
-        eLevel1 = std::make_unique<GLabel>(100,100-55-20,"500");
-        eLevel2 = std::make_unique<GLabel>(150,100-55-20,"850");
-        eLevel3 = std::make_unique<GLabel>(200,100-55-20,"500");
-
-        currentFile = "record.graw";
-        loadCurrentFile();
-
-        tunerLabel = std::make_unique<GLabel>(20,25+30,"tuner-is-off");
-    }
-
-    virtual void setUI();
-
-    void loadCurrentFile();
-
-
-    virtual void draw(QPainter *painter);
-    virtual void onclick(int x1, int y1);
-
-    virtual void keyevent(std::string press);
-
-    virtual void ongesture(int offset, bool horizontal) {
-        if (horizontal) {
-            int zoomCoef = atoi(zoom->getText().c_str());
-            int PREwavePosition = wavePosition + offset*zoomCoef;
-            if (PREwavePosition < 0) //SCROLL GOOD BACK!
-                wavePosition = 0;
-            else
-                if (PREwavePosition > waveLimit)
-                    wavePosition = waveLimit - 1;
-                else
-                    wavePosition = PREwavePosition;
-        }
-    }
-};
 
 
 #endif // INPUTVIEWS_H

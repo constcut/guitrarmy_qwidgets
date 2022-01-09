@@ -29,9 +29,6 @@ win32:LIBS += -lWinMM
 
 SOURCES += main.cpp\
     audio/AudioSpeaker.cpp \
-    audio/FFT.cpp \
-    audio/Recording.cpp \
-    audio/WaveAnalys.cpp \
     g0/Base.cpp \
     g0/Config.cpp \
     g0/Init.cpp \
@@ -75,9 +72,6 @@ SOURCES += main.cpp\
 
 HEADERS  += ui/mainwindow.h \
     audio/AudioSpeaker.hpp \
-    audio/FFT.hpp \
-    audio/Recording.hpp \
-    audio/WaveAnalys.hpp \
     g0/Base.hpp \
     g0/Config.hpp \
     g0/Init.hpp \
