@@ -10,7 +10,6 @@ QT += widgets multimedia network
 CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 
-#
 
 android:QT += androidextras
 
@@ -23,8 +22,6 @@ QMAKE_CFLAGS +=  -fpermissive
 QMAKE_CXXFLAGS +=  -fpermissive
 QMAKE_LFLAGS +=  -fpermissive
 
-
-win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
@@ -119,7 +116,6 @@ DISTFILES += \
 
 INSTALLS += target
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 RESOURCES += \
     resources/icons.qrc \

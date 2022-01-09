@@ -19,11 +19,6 @@
 
 #define log qDebug()
 
-#ifdef WIN32
-#include <windows.h>
-#else
-
-#endif
 
 #include <QTime>
 #include <QElapsedTimer>
@@ -331,21 +326,5 @@ void gtmy::connectConfigs(AConfig& config)
 
 
 bool gtmy::testScenario() {
-/* //Yet not logs here
-    std::string logName; //LOG file name
-#ifdef WIN32
-    logName="D:/TestFiles/new/scene.txt";
-#else
-    logName="scene.txt"; //android
-#endif
-    std::ofstream lofile;
-    lofile.open(logName.c_str());
-    if (lofile.is_open())
-      std::cout << "Log file opened."<<std::endl;
-    else {
-      std::cout << "Failed to open log out file :("<<std::endl;
-      return false;
-    }
-*/
     return greatCheck();
 }

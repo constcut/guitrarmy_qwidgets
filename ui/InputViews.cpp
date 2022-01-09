@@ -16,14 +16,7 @@
 
 #include <fstream>
 
-
 #include <QDebug>
-
-
-
-#ifdef WIN32
-#include <windows.h>
-#endif
 
 
 #include "MainViews.hpp"
