@@ -7,27 +7,27 @@ using namespace gtmy;
 
 void TrackView::launchThread()
 {
-    if (localThr)
-        localThr->start();
+    if (_animationThread)
+        _animationThread->start();
 }
 
 void TrackView::stopThread()
 {
-    if (localThr) {
-        localThr->requestStop();
+    if (_animationThread) {
+        _animationThread->requestStop();
         //localThr->wait();
     }
 }
 
 TrackView::~TrackView() {
-    if (localThr) {
-        localThr->requestStop();
-        localThr->wait();
+    if (_animationThread) {
+        _animationThread->requestStop();
+        _animationThread->wait();
     }
 }
 
 void TrackView::connectThreadSignal(MasterView *masterView) {
-    masterView->connectThread(localThr);
+    masterView->connectThread(_animationThread);
 }
 
 
@@ -43,8 +43,8 @@ void TrackView::ongesture(int offset, bool horizontal)
         //there could be selection for
     }
     else{
-        size_t& cursor = pTrack->cursor();
-        size_t& displayIndex = pTrack->displayIndex();
+        size_t& cursor = _pTrack->cursor();
+        size_t& displayIndex = _pTrack->displayIndex();
         //y offset
         if (offset < 0) {
             /*
@@ -57,14 +57,14 @@ void TrackView::ongesture(int offset, bool horizontal)
 
             int absOffset = -1*offset;
             int shiftTo = 0;
-            int curY = barsPull[0].getY();
+            int curY = _barsPull[0].getY();
 
             while (absOffset>0) {
-                int barY = barsPull[shiftTo].getY();
+                int barY = _barsPull[shiftTo].getY();
                 if (barY > curY) {
                     absOffset -= (barY-curY);
                     curY=barY;
-                    if (absOffset < barsPull[0].getH()) {
+                    if (absOffset < _barsPull[0].getH()) {
                         //--shiftTo;
                         break;
                     }
@@ -73,7 +73,7 @@ void TrackView::ongesture(int offset, bool horizontal)
             }
 
 
-            size_t trackLen = pTrack->size();
+            size_t trackLen = _pTrack->size();
             displayIndex = cursor  +=shiftTo;
 
             if (trackLen <= displayIndex){
@@ -87,7 +87,7 @@ void TrackView::ongesture(int offset, bool horizontal)
             qDebug()<<"Shifting to "<<shiftTo;
         }
         else {
-            size_t& cursorBeat = pTrack->cursorBeat();
+            size_t& cursorBeat = _pTrack->cursorBeat();
             size_t quant = offset/80;
             if (cursor > quant)
                 displayIndex = cursor -= quant;
@@ -96,7 +96,7 @@ void TrackView::ongesture(int offset, bool horizontal)
             cursorBeat=0;
 
         }
-        tabParrent->setCurrentBar(cursor);
+        _tabParrent->setCurrentBar(cursor);
         //verticalMove - same way but skips whole line - height is always the same
     }
 }
@@ -105,7 +105,7 @@ int TrackView::horizonMove(int offset)
 {
     //index 0 only for first iteration
 
-    GView *bar = &(barsPull.at(0)); //over display index
+    GView *bar = &(_barsPull.at(0)); //over display index
     BarView *bV = (BarView*)bar;
 
     int absOffset = offset > 0? offset: offset*-1;
@@ -113,8 +113,8 @@ int TrackView::horizonMove(int offset)
 
     if (absOffset > bV->getW()){
 
-        size_t& displayIndex = pTrack->displayIndex();
-        size_t& lastSeen = pTrack->lastSeen();
+        size_t& displayIndex = _pTrack->displayIndex();
+        size_t& lastSeen = _pTrack->lastSeen();
 
             if (offset > 0){
                 if ((displayIndex+1) < (lastSeen-1))
@@ -134,25 +134,25 @@ int TrackView::horizonMove(int offset)
 
 void TrackView::onclick(int x1, int y1)
 {
-    if (pan->hit(x1,y1))
+    if (_pan->hit(x1,y1))
     {
-        pan->onclick(x1,y1);
+        _pan->onclick(x1,y1);
         //aware of open pannel
         return;
     }
 
-    if (tabParrent->getPlaying())
+    if (_tabParrent->getPlaying())
     {
         return; //skip
     }
 
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
-    size_t& displayIndex = pTrack->displayIndex();
+    size_t& cursor = _pTrack->cursor();
+    size_t& cursorBeat = _pTrack->cursorBeat();
+    size_t& stringCursor = _pTrack->stringCursor();
+    size_t& displayIndex = _pTrack->displayIndex();
 
     //touch and mouse events on first note
-    for (size_t i = 0; i < barsPull.size(); ++i)
+    for (size_t i = 0; i < _barsPull.size(); ++i)
     {
         /*
         log << "Bar "<<i<<" "<<barsPull.getV(i).getX()<<
@@ -162,9 +162,9 @@ void TrackView::onclick(int x1, int y1)
                (int)(barsPull.getV(i).hit(x1,y1));
                */
 
-        if (barsPull.at(i).hit(x1,y1))
+        if (_barsPull.at(i).hit(x1,y1))
         {
-            GView *bar = &(barsPull.at(i));
+            GView *bar = &(_barsPull.at(i));
             BarView *bV = (BarView*)bar; //it must be that way i know it
             //may be refact to make Poly<BarView>
 
@@ -175,10 +175,10 @@ void TrackView::onclick(int x1, int y1)
             int beatClick = bV->getClickBeat(x1);
             int stringClick = bV->getClickString(y1);
 
-            int stringUpperBarrier = pTrack->tuning.getStringsAmount();
+            int stringUpperBarrier = _pTrack->tuning.getStringsAmount();
 
             //++beatClick;
-            if (beatClick >= pTrack->at(cursor)->size())
+            if (beatClick >= _pTrack->at(cursor)->size())
                 --beatClick;
 
             //log<<"beat click "<<beatClick<<"; stringClick "<<stringClick;
@@ -192,9 +192,9 @@ void TrackView::onclick(int x1, int y1)
             if ((stringClick >= 0) && (stringClick < stringUpperBarrier))
                 stringCursor = stringClick;
 
-            pTrack->digitPress() = -1;
+            _pTrack->digitPress() = -1;
 
-            tabParrent->setCurrentBar(cursor);
+            _tabParrent->setCurrentBar(cursor);
             //getMaster()->pleaseRepaint();
         }
     }
@@ -207,7 +207,7 @@ void TrackView::onclick(int x1, int y1)
 void TrackView::ondblclick(int x1, int y1)
 {
     bool wasPressed = false;
-    for (size_t i = 0; i < barsPull.size(); ++i)
+    for (size_t i = 0; i < _barsPull.size(); ++i)
     {
         /*
         log << "Bar "<<i<<" "<<barsPull.getV(i).getX()<<
@@ -217,9 +217,9 @@ void TrackView::ondblclick(int x1, int y1)
                (int)(barsPull.getV(i).hit(x1,y1));
                */
 
-        if (barsPull.at(i).hit(x1,y1))
+        if (_barsPull.at(i).hit(x1,y1))
         {
-            BarView *bar = &(barsPull.at(i));
+            BarView *bar = &(_barsPull.at(i));
             BarView *bV = bar; //(dynamic_cast<BarView*>(bar)); //it must be that way i know it
             //may be refact to make Poly<BarView>
 
@@ -235,11 +235,11 @@ void TrackView::ondblclick(int x1, int y1)
 
             qDebug() << "Bar hits "<<beatClick<<" of "<<fullBar;
 
-            size_t& displayIndex = pTrack->displayIndex();
-            int& selectionBeatFirst = pTrack->selectBeatFirst();
-            int& selectionBeatLast = pTrack->selectBeatLast();
-            int& selectionBarFirst = pTrack->selectBarFirst();
-            int& selectionBarLast = pTrack->selectBarLast();
+            size_t& displayIndex = _pTrack->displayIndex();
+            int& selectionBeatFirst = _pTrack->selectBeatFirst();
+            int& selectionBeatLast = _pTrack->selectBeatLast();
+            int& selectionBarFirst = _pTrack->selectBarFirst();
+            int& selectionBarLast = _pTrack->selectBarLast();
 
             if (selectionBeatFirst == -1) {
                 selectionBeatFirst = selectionBeatLast =  bV->getClickBeat(x1);
@@ -286,7 +286,7 @@ void TrackView::ondblclick(int x1, int y1)
                             if (i+displayIndex ==selectionBarLast-1)
                             {
                                 //pre last bar
-                                if (addBeat==pTrack->at(i+displayIndex)->size()-1)
+                                if (addBeat==_pTrack->at(i+displayIndex)->size()-1)
                                 {
                                     //its last beat
                                     if (selectionBeatLast == 0)
@@ -304,7 +304,7 @@ void TrackView::ondblclick(int x1, int y1)
                                 if (addBeat==0)
                                 {
                                     //its last beat
-                                    if (selectionBeatFirst == pTrack->at(i+displayIndex-1)->size()-1)
+                                    if (selectionBeatFirst == _pTrack->at(i+displayIndex-1)->size()-1)
                                     {
                                         //and current beat is irst in last bar
                                         selectionBeatFirst = 0;
@@ -322,10 +322,10 @@ void TrackView::ondblclick(int x1, int y1)
     }
 
     if (wasPressed == false) {
-        int& selectionBeatFirst = pTrack->selectBeatFirst();
-        int& selectionBeatLast = pTrack->selectBeatLast();
-        int& selectionBarFirst = pTrack->selectBarFirst();
-        int& selectionBarLast = pTrack->selectBarLast();
+        int& selectionBeatFirst = _pTrack->selectBeatFirst();
+        int& selectionBeatLast = _pTrack->selectBeatLast();
+        int& selectionBarFirst = _pTrack->selectBarFirst();
+        int& selectionBarLast = _pTrack->selectBarLast();
         selectionBeatFirst = selectionBeatLast =  -1;
         selectionBarFirst = selectionBarLast = -1;
 
@@ -334,43 +334,43 @@ void TrackView::ondblclick(int x1, int y1)
 
 void TrackView::setDisplayBar(int barPosition)
 {
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& displayIndex = pTrack->displayIndex();
+    size_t& cursor = _pTrack->cursor();
+    size_t& cursorBeat = _pTrack->cursorBeat();
+    size_t& displayIndex = _pTrack->displayIndex();
 
     displayIndex = barPosition;
     cursor = displayIndex;
-    tabParrent->setCurrentBar(cursor);
+    _tabParrent->setCurrentBar(cursor);
     cursorBeat = 0;
 }
 
 void TrackView::setUI()
 {
-    if (tabParrent->getMaster())
+    if (_tabParrent->getMaster())
     {
         int centerX=0;
 
         std::string trackNames="";
 
-        for (size_t i = 0; i < tabParrent->getTab()->size(); ++i)
+        for (size_t i = 0; i < _tabParrent->getTab()->size(); ++i)
         {
-          trackNames += tabParrent->getTab()->at(i)->getName();
+          trackNames += _tabParrent->getTab()->at(i)->getName();
           trackNames += std::string(";");
         }
 
         //now-debug:here
-        tabParrent->getMaster()->setComboBox(0,trackNames,centerX+20,5,210,30,tabParrent->getLastOpenedTrack());
-        tabParrent->getMaster()->setComboBox(1,"instruments",240+centerX,5,200,30,pTrack->getInstrument());
-        tabParrent->getMaster()->setComboBox(2,"volume",450+centerX,5,50,30,pTrack->getVolume());
+        _tabParrent->getMaster()->setComboBox(0,trackNames,centerX+20,5,210,30,_tabParrent->getLastOpenedTrack());
+        _tabParrent->getMaster()->setComboBox(1,"instruments",240+centerX,5,200,30,_pTrack->getInstrument());
+        _tabParrent->getMaster()->setComboBox(2,"volume",450+centerX,5,50,30,_pTrack->getVolume());
 
         int butShift = 50;
-        tabParrent->getMaster()->SetButton(3,"open tab view",640+butShift,20,90,15,"tabview");
-        tabParrent->getMaster()->SetButton(4,"play",570+butShift,20,45,15,"playMidi");
+        _tabParrent->getMaster()->SetButton(3,"open tab view",640+butShift,20,90,15,"tabview");
+        _tabParrent->getMaster()->SetButton(4,"play",570+butShift,20,45,15,"playMidi");
 
-        std::uint8_t soloMute = pTrack->getStatus();
-        tabParrent->getMaster()->setComboBox(5,"mutesolo",510+centerX,5,50,30,soloMute);
+        std::uint8_t soloMute = _pTrack->getStatus();
+        _tabParrent->getMaster()->setComboBox(5,"mutesolo",510+centerX,5,50,30,soloMute);
 
-        tabParrent->getMaster()->setComboBox(6,"pan",570+centerX,5,50,30,pTrack->getPan());
+        _tabParrent->getMaster()->setComboBox(6,"pan",570+centerX,5,50,30,_pTrack->getPan());
     }
 
 
@@ -378,7 +378,7 @@ void TrackView::setUI()
 
 void TrackView::draw(QPainter *painter)
 {
-    Track *track1 = pTrack;
+    Track *track1 = _pTrack;
     size_t trackLen = track1->size();
     int stringsN = track1->tuning.getStringsAmount();
 
@@ -394,15 +394,15 @@ void TrackView::draw(QPainter *painter)
     int hLimit = (h-50)/100;
     hLimit *= 100;
 
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
-    size_t& lastSeen = pTrack->lastSeen();
-    size_t& displayIndex = pTrack->displayIndex();
-    int& selectionBeatFirst = pTrack->selectBeatFirst();
-    int& selectionBeatLast = pTrack->selectBeatLast();
-    int& selectionBarFirst = pTrack->selectBarFirst();
-    int& selectionBarLast = pTrack->selectBarLast();
+    size_t& cursor = _pTrack->cursor();
+    size_t& cursorBeat = _pTrack->cursorBeat();
+    size_t& stringCursor = _pTrack->stringCursor();
+    size_t& lastSeen = _pTrack->lastSeen();
+    size_t& displayIndex = _pTrack->displayIndex();
+    int& selectionBeatFirst = _pTrack->selectBeatFirst();
+    int& selectionBeatLast = _pTrack->selectBeatLast();
+    int& selectionBarFirst = _pTrack->selectBarFirst();
+    int& selectionBarLast = _pTrack->selectBarLast();
 
     //to automate scroll
     if (cursor < displayIndex)
@@ -411,12 +411,12 @@ void TrackView::draw(QPainter *painter)
     if (cursor > (lastSeen-1))
         displayIndex = cursor;
 
-    barsPull.clear(); //not always - to optimize
+    _barsPull.clear(); //not always - to optimize
 
     std::uint8_t lastNum = 0;
     std::uint8_t lastDen = 0;
 
-    if (pTrack->isDrums())
+    if (_pTrack->isDrums())
     {
         painter->drawText(220,55,"!Drum track!");
     }
@@ -480,7 +480,7 @@ void TrackView::draw(QPainter *painter)
             ySh += bView.getH(); // there was 100 hardcoded
 
             if (ySh >= (hLimit+480)){
-                pan->draw(painter);
+                _pan->draw(painter);
                 return; //stop that
             }
         }
@@ -510,7 +510,7 @@ void TrackView::draw(QPainter *painter)
 
         //if (ySh <= (hLimit))
         {
-            barsPull.push_back(bView);
+            _barsPull.push_back(bView);
         }
 
         if (i == cursor)
@@ -526,7 +526,7 @@ void TrackView::draw(QPainter *painter)
         ++lastSeen;
     }
 
-    pan->draw(painter);
+    _pan->draw(painter);
 
 }
 
@@ -534,17 +534,17 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 {
     //prepare for the animation
 
-    if (localThr) {
-        localThr->requestStop();
+    if (_animationThread) {
+        _animationThread->requestStop();
         //localThr->wait();
-        finishPool.push_back(std::move(localThr)); //Clear a pool
+        _finishPool.push_back(std::move(_animationThread)); //Clear a pool
     }
 
-    localThr = std::make_unique<ThreadLocal>();
+    _animationThread = std::make_unique<ThreadLocal>();
 
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
+    size_t& cursor = _pTrack->cursor();
+    size_t& cursorBeat = _pTrack->cursorBeat();
 
-    localThr->setInc(&cursor,&cursorBeat);
-    localThr->setupValues(tabParrent->getTab().get(),pTrack,shiftTheCursor);
+    _animationThread->setInc(&cursor,&cursorBeat);
+    _animationThread->setupValues(_tabParrent->getTab().get(),_pTrack,shiftTheCursor);
 }

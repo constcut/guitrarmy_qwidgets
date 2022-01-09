@@ -20,37 +20,36 @@ namespace gtmy {
     class TrackView : public GView
     {
     protected:
-        Track *pTrack;
+        Track* _pTrack;
 
-        TabView *tabParrent;
-        std::unique_ptr<ThreadLocal> localThr; //Подумать над хранением, возможно удастся спрятать?
-        std::vector<std::unique_ptr<ThreadLocal>> finishPool;
+        TabView* _tabParrent;
+        std::unique_ptr<ThreadLocal> _animationThread; //Подумать над хранением, возможно удастся спрятать?
+        std::vector<std::unique_ptr<ThreadLocal>> _finishPool;
 
-        ViewPull barsPull;
+        ViewPull _barsPull;
 
-        GPannel* pan;
-        std::unique_ptr<GTrackPannel> trackPan;
-        std::unique_ptr<GEffectsPannel> effPan;
-        std::unique_ptr<GClipboardPannel> clipPan;
-
+        GPannel* _pan; //TODO просто выпилить и ниже
+        std::unique_ptr<GTrackPannel> _trackPan;
+        std::unique_ptr<GEffectsPannel> _effPan;
+        std::unique_ptr<GClipboardPannel> _clipPan;
 
     public:
 
-        Track* getTrack() { return pTrack; }
+        Track* getTrack() const { return _pTrack; }
 
         virtual void setUI();
-        virtual bool isMovableY() { return true; }
+        virtual bool isMovableY() { return true; } //Emm
 
-        TrackView(Track *from):pTrack(from), pan(0) {
-            trackPan = std::make_unique<GTrackPannel>(300,480,800);
-            effPan = std::make_unique<GEffectsPannel>(300,480,800);
-            clipPan = std::make_unique<GClipboardPannel>(300,480,800);
-            trackPan->setPressView(this);
-            effPan->setPressView(this);
-            clipPan->setPressView(this);
-            effPan->preOpen();
-            clipPan->preOpen();
-            pan = trackPan.get();
+        TrackView(Track *from):_pTrack(from), _pan(0) {
+            _trackPan = std::make_unique<GTrackPannel>(300,480,800);
+            _effPan = std::make_unique<GEffectsPannel>(300,480,800);
+            _clipPan = std::make_unique<GClipboardPannel>(300,480,800);
+            _trackPan->setPressView(this);
+            _effPan->setPressView(this);
+            _clipPan->setPressView(this);
+            _effPan->preOpen();
+            _clipPan->preOpen();
+            _pan = _trackPan.get();
         }
 
         virtual ~TrackView();
@@ -60,7 +59,7 @@ namespace gtmy {
         virtual void onTrackCommand(TrackCommand command);
 
         void onclick(int x1, int y1);
-        void ondblclick(int x1, int y1); //{ onclick(x1,y1);}
+        void ondblclick(int x1, int y1);
 
         virtual void ongesture(int offset, bool horizontal);
 
@@ -68,9 +67,8 @@ namespace gtmy {
 
         void setDisplayBar(int barPosition);
 
-
-        TabView *getPa() { return tabParrent; }
-        void setPa(TabView* tv) { tabParrent = tv; }
+        TabView *getPa() const { return _tabParrent; }
+        void setPa(TabView* tv) { _tabParrent = tv; }
 
         void draw(QPainter *painter);
 
@@ -78,7 +76,7 @@ namespace gtmy {
         void launchThread();
         void stopThread();
         void connectThreadSignal(MasterView *masterView);
-        int threadSeconds() { return localThr->calculateSeconds(); }
+        int threadSeconds() { return _animationThread->calculateSeconds(); }
 
 
         bool gotChanges();

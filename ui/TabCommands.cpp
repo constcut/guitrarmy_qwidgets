@@ -343,34 +343,34 @@ void TabView::onTrackCommand([[maybe_unused]] TrackCommand command) {
 
 void TrackView::onTrackCommand(TrackCommand command) {
 
-    size_t& cursor = pTrack->cursor(); //TODO get rid slowly
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
-    int& selectionBarFirst = pTrack->selectBarFirst();
-    int& selectionBarLast = pTrack->selectBarLast();
+    size_t& cursor = _pTrack->cursor(); //TODO get rid slowly
+    size_t& cursorBeat = _pTrack->cursorBeat();
+    size_t& stringCursor = _pTrack->stringCursor();
+    int& selectionBarFirst = _pTrack->selectBarFirst();
+    int& selectionBarLast = _pTrack->selectBarLast();
 
     if (command == TrackCommand::PlayFromStart) {
-        pTrack->gotoTrackStart();
+        _pTrack->gotoTrackStart();
         onTabCommand(TabCommand::PlayMidi);
     }
     else if (command == TrackCommand::SetSignForSelected)
-      changeBarSignsQt(pTrack, selectionBarFirst, selectionBarLast);
+      changeBarSignsQt(_pTrack, selectionBarFirst, selectionBarLast);
     else if (command == TrackCommand::PlayTrackMidi) //TODO единый вызов запуска (играется не 1 трек) //|| (press=="playMerge")
-        playTrack(tabParrent, localThr, cursorBeat, cursor, pTrack, getMaster());
+        playTrack(_tabParrent, _animationThread, cursorBeat, cursor, _pTrack, getMaster());
     else if (command == TrackCommand::SaveAsFromTrack)
-        saveAsFromTrack(tabParrent);
+        saveAsFromTrack(_tabParrent);
     else if (command == TrackCommand::Bend)
-        setBendOnNote(pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1), getMaster());
+        setBendOnNote(_pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1), getMaster());
     else if (command == TrackCommand::Chord) {
         if (getMaster()) getMaster()->pushForceKey("chord_view"); }
     else if (command == TrackCommand::Text)
-        setTextOnBeat(pTrack);
+        setTextOnBeat(_pTrack);
     else if (command == TrackCommand::Changes)
-        setChangesOnBeat(pTrack->at(cursor)->at(cursorBeat).get(), getMaster());
+        setChangesOnBeat(_pTrack->at(cursor)->at(cursorBeat).get(), getMaster());
     else if (command == TrackCommand::SetBarSign)
-        setBarSign(pTrack);
+        setBarSign(_pTrack);
     else
-        pTrack->onTrackCommand(command);
+        _pTrack->onTrackCommand(command);
 
 }
 
@@ -378,17 +378,17 @@ void TrackView::onTrackCommand(TrackCommand command) {
 
 void TrackView::keyevent(std::string press) //TODO масштабные макротесты, чтобы покрывать все сценарии
 {
-    size_t& cursor = pTrack->cursor();
-    size_t& cursorBeat = pTrack->cursorBeat();
-    size_t& stringCursor = pTrack->stringCursor();
+    size_t& cursor = _pTrack->cursor();
+    size_t& cursorBeat = _pTrack->cursorBeat();
+    size_t& stringCursor = _pTrack->stringCursor();
 
     if (press.substr(0,4)=="com:")
-        reactOnComboTrackViewQt(press, pTrack, tabParrent->getMaster());
+        reactOnComboTrackViewQt(press, _pTrack, _tabParrent->getMaster());
     else if (isdigit(press[0]))
-        handleKeyInput(press[0]-48, pTrack->digitPress(), pTrack, cursor, cursorBeat, stringCursor, pTrack->commandSequence);
+        handleKeyInput(press[0]-48, _pTrack->digitPress(), _pTrack, cursor, cursorBeat, stringCursor, _pTrack->commandSequence);
     else {
         qDebug() << "Key event falls into TabView from TrackView " << press.c_str();
-        tabParrent->keyevent(press); //TODO проверить
+        _tabParrent->keyevent(press); //TODO проверить
     }//TODO перепроверить что все команды работают без повторного запуска через TabView
 }
 
@@ -397,7 +397,7 @@ void TrackView::keyevent(std::string press) //TODO масштабные макр
 
 
 void TrackView::onTabCommand(TabCommand command) {
-    tabParrent->onTabCommand(command);
+    _tabParrent->onTabCommand(command);
 }
 
 

@@ -461,7 +461,7 @@ bool TabView::gotChanges()
 
 bool TrackView::gotChanges()
 {
-    if (pTrack->commandSequence.size())
+    if (_pTrack->commandSequence.size())
         return true;
     return false;
 }
