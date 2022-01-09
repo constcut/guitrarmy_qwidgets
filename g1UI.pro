@@ -130,8 +130,8 @@ INSTALLS += target
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 RESOURCES += \
-    icons.qrc \
+    resources/icons.qrc \
     tests.qrc \
-    info.qrc \
-    icons2.qrc
+    resources/info.qrc \
+    resources/icons2.qrc
 
