@@ -35,6 +35,7 @@ SOURCES += main.cpp\
     g0/tests.cpp \
     g0/threads.cpp \
     g0/init.cpp \
+    libs/sf/tsf.cpp \
     midi/miditrack.cpp \
     tab/commands.cpp \
     tab/effects.cpp \
