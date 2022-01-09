@@ -28,42 +28,41 @@ namespace gtmy {
 
         std::string _path;
 
-        std::unordered_map<int16_t, size_t> bpmStats;
-        std::unordered_map<std::string, size_t> noteStats;
-        std::unordered_map<int16_t, size_t> midiNoteStats;
-        std::unordered_map<int16_t, size_t> drumNoteStats;
-        std::unordered_map<std::string, size_t> barSizeStats;
-        std::unordered_map<std::string, size_t> durStats;
-        std::unordered_map<std::string, size_t> pauseDurStats;
-        std::unordered_map<int16_t, size_t> stringStats;
-        std::unordered_map<int16_t, size_t> fretStats;
-        std::unordered_map<std::string, size_t> tuneStats;
-        std::unordered_map<int, size_t> melStats;
-        std::unordered_map<int16_t, size_t> absMelStats;
-        std::unordered_map<int, size_t> harmStats;
-        std::unordered_map<int16_t, size_t> absHarmStats;
-        std::unordered_map<int16_t, size_t> instrumentStats;
-        std::unordered_map<int16_t, size_t> notesVolumeStats;
-        std::unordered_map<int16_t, size_t> totalTracksStats;
-        std::unordered_map<int16_t, size_t> totalBarsStats;
-        std::unordered_map<int16_t, size_t> totalBeatsStats;
-        std::unordered_map<int16_t, size_t> totalNotesStats;
-        std::unordered_map<std::string, size_t> noteEffectsStats;
-        std::unordered_map<std::string, size_t> scalesStats;
-        std::unordered_map<std::string, size_t> trackMostFreqNoteStats;
+        std::unordered_map<int16_t, size_t> _bpmStats;
+        std::unordered_map<std::string, size_t> _noteStats;
+        std::unordered_map<int16_t, size_t> _midiNoteStats;
+        std::unordered_map<int16_t, size_t> _drumNoteStats;
+        std::unordered_map<std::string, size_t> _barSizeStats;
+        std::unordered_map<std::string, size_t> _durStats;
+        std::unordered_map<std::string, size_t> _pauseDurStats;
+        std::unordered_map<int16_t, size_t> _stringStats;
+        std::unordered_map<int16_t, size_t> _fretStats;
+        std::unordered_map<std::string, size_t> _tuneStats;
+        std::unordered_map<int, size_t> _melStats;
+        std::unordered_map<int16_t, size_t> _absMelStats;
+        std::unordered_map<int, size_t> _harmStats;
+        std::unordered_map<int16_t, size_t> _absHarmStats;
+        std::unordered_map<int16_t, size_t> _instrumentStats;
+        std::unordered_map<int16_t, size_t> _notesVolumeStats;
+        std::unordered_map<int16_t, size_t> _totalTracksStats;
+        std::unordered_map<int16_t, size_t> _totalBarsStats;
+        std::unordered_map<int16_t, size_t> _totalBeatsStats;
+        std::unordered_map<int16_t, size_t> _totalNotesStats;
+        std::unordered_map<std::string, size_t> _noteEffectsStats;
+        std::unordered_map<std::string, size_t> _scalesStats;
+        std::unordered_map<std::string, size_t> _trackMostFreqNoteStats;
+        std::map<int16_t, size_t> _trackScale;
 
 
-        const std::vector<std::string> noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-        const std::vector<std::string> durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};
-        const std::vector<std::string> effectNames = {"None", "Vibrato", "PalmMute", "Unknown", "LegatoSlide", "Slide", "SlideDown1",
+        const std::vector<std::string> _noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+        const std::vector<std::string> _durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};
+        const std::vector<std::string> _effectNames = {"None", "Vibrato", "PalmMute", "Unknown", "LegatoSlide", "Slide", "SlideDown1",
                                                      "SlideUp1", "SlideDown2", "SlideUp2", "Legato", "Harmonics", "HarmoincsV2",
                                                      "HarmonicsV3", "HarmonicsV4", "HarmonicsV5", "HarmonicsV6", "Bend", "LetRing",
                                                      "Tremolo", "FadeIn", "GhostNote", "GraceNote", "Stokatto", "TremoloPick",
                                                      "UpStroke", "DownStroke", "Accented", "Changed", "Tap", "Slap", "Pop"};
 
-        std::map<int16_t, size_t> trackScale;
-
-        GTabLoader loader;
+        GTabLoader _loader;
 
         void reset();
 
