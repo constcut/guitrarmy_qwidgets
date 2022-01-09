@@ -133,10 +133,10 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
         }
 
         //maximum frets
-        std::uint8_t fretsLimit = track->getGPCOMPInts(3); //frets
+        std::uint8_t fretsLimit = track->getMidiInfo(3); //frets
          file.write((char*)&fretsLimit,1);
         //prepare for capo
-        std::uint8_t capoSet = track->getGPCOMPInts(4);
+        std::uint8_t capoSet = track->getMidiInfo(4);
          file.write((char*)&capoSet,1);
 
         if (logFlag) qDebug() << "Write limits fret "<<fretsLimit<<"; capo "<<capoSet;
@@ -490,19 +490,16 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         //maximum frets
         std::uint8_t fretsLimit = 0; //frets
          file.read((char*)&fretsLimit,1);
-        track->setGPCOMPInts(3,fretsLimit);
+        track->setMidiInfo(3,fretsLimit);
         //prepare for capo
         std::uint8_t capoSet = 0;
          file.read((char*)&capoSet,1);
-        track->setGPCOMPInts(4,capoSet);
+        track->setMidiInfo(4,capoSet);
 
 
         if (logFlag) qDebug() << "read fret limits "<<fretsLimit<<"; capo "<<capoSet;
 
-        //extract from midi table -
-            /// instrument
 
-            //isDrums
         bool isDrums = false; //track->isDrums();
 
          file.read((char*)&isDrums,1);

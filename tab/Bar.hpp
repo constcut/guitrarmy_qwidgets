@@ -77,8 +77,7 @@ namespace gtmy {
         std::uint8_t getSignNum() const { return _signatureNum; }
         std::uint8_t getSignDenum() const { return _signatureDenum; }
 
-
-        void countUsedSigns(std::uint8_t& numGet, std::uint8_t& denumGet);
+        void countUsedSigns(std::uint8_t& numGet, std::uint8_t& denumGet); //TODO pair
 
         std::uint8_t getCompleteStatus();
         double getCompleteAbs() const;
@@ -100,7 +99,7 @@ namespace gtmy {
         std::uint8_t getTonality() const { return _tonality; }
 
         void setMarker(std::string &text, size_t color) { _markerText = text; _markerColor = color; }
-        void getMarker(std::string &text, size_t &color) { text = _markerText; color = _markerColor; }
+        void getMarker(std::string &text, size_t& color) const { text = _markerText; color = _markerColor; } //TODO pair
 
         //pack function
          void clone(Bar *from);

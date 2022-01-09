@@ -66,8 +66,8 @@ namespace gtmy {
     {
     public:
 
-        Tab() :isPlaying(false), displayTrack(0), currentTrack(0),
-            currentBar(0), displayBar(0), lastOpenedTrack(0) {}
+        Tab() :_isPlaying(false), _displayTrack(0), _currentTrack(0),
+            _currentBar(0), _displayBar(0), _lastOpenedTrack(0) {}
 
         std::vector<TimeLineKnot> timeLine;
 
@@ -87,13 +87,13 @@ namespace gtmy {
 
         void postGTP() {
             for (size_t i = 0; i < size(); ++i) {
-                size_t port = at(i)->getGPCOMPInts(0);
-                size_t chan = at(i)->getGPCOMPInts(1);
+                size_t port = at(i)->getMidiInfo(0);
+                size_t chan = at(i)->getMidiInfo(1);
                 size_t ind = (chan-1) + (port-1)*16;
                 if (ind < 70) {
-                    int instr = GpCompMidiChannels[ind].instrument;
-                    std::uint8_t pan = GpCompMidiChannels[ind].balance;
-                    std::uint8_t vol = GpCompMidiChannels[ind].volume;
+                    int instr = midiChannels[ind].instrument;
+                    std::uint8_t pan = midiChannels[ind].balance;
+                    std::uint8_t vol = midiChannels[ind].volume;
                     Track *t = at(i).get();
                     t->setInstrument(instr);
                     t->setPan(pan);
@@ -108,51 +108,53 @@ namespace gtmy {
         }
 
 
-    protected:
-        int bpmTemp;
+     private:
+        int _bpmTemp;
         //version control flag
-        std::string origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style
-        std::uint8_t GpCompSignKey;
-        std::uint8_t GpCompSignOctave; //TODO get rid
-        std::uint8_t GpCompTripletFeel;
+        std::string _origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style
+        std::uint8_t _signKey;
+        std::uint8_t _signOctave; //TODO get rid
+        std::uint8_t _tripletFeel;
 
     public:
         VariableStrings variableInforation;
-        MidiChannelInfo GpCompMidiChannels[64]; //TODO refactor
-        int getBPM() { return bpmTemp; }
-        void setBPM(int newBPM) { bpmTemp = newBPM; }
+        MidiChannelInfo midiChannels[64]; //TODO refactor
 
-    protected: //Move from TabView
-        bool isPlaying;
-        size_t displayTrack;
-        size_t currentTrack;
-        size_t currentBar;
-        size_t displayBar;
-        int lastOpenedTrack;
+        int getBPM() const { return _bpmTemp; }
+        void setBPM(int newBPM) { _bpmTemp = newBPM; }
+
+    private: //Move from TabView
+        bool _isPlaying;
+        size_t _displayTrack;
+        size_t _currentTrack;
+        size_t _currentBar;
+        size_t _displayBar;
+        int _lastOpenedTrack;
 
     public:
-        bool playing() {
-            return isPlaying;
+        bool playing() const {
+            return _isPlaying;
         }
         void setPlaying(bool v) {
-            isPlaying = v;
+            _isPlaying = v;
         }
-        size_t& getDisplayTrack() {
-            return displayTrack;
+
+        size_t& getDisplayTrack() { //TODO спрятать бы (мб френд как и для трека??)
+            return _displayTrack;
         }
         size_t& getCurrentTrack() {
-            return currentTrack;
+            return _currentTrack;
         }
         size_t& getCurrentBar() {
-            return currentBar;
+            return _currentBar;
         }
         size_t& getDisplayBar() {
-            return displayBar;
+            return _displayBar;
         }
         void onTabCommand(TabCommand command);
 
         int& getLastOpenedTrack() {
-            return lastOpenedTrack;
+            return _lastOpenedTrack;
         }
 
     public: //later cover under midlayer TabCommandsHandler
@@ -199,7 +201,7 @@ namespace gtmy {
                 onTabCommand(std::get<TabCommand>(command)); //TODO флаг записи
             }
             else if (std::holds_alternative<TrackCommand>(command)) {
-                at(currentTrack)->onTrackCommand(std::get<TrackCommand>(command));
+                at(_currentTrack)->onTrackCommand(std::get<TrackCommand>(command));
             }
             else if (std::holds_alternative<IntCommand<TabCommand>>(command)) {
                 auto paramCommand = std::get<IntCommand<TabCommand>>(command);
@@ -216,7 +218,7 @@ namespace gtmy {
                     (this->*stringHandlers.at(paramCommand.type))(paramCommand.parameter);
             }
             else {
-                at(currentTrack)->playCommand(command);
+                at(_currentTrack)->playCommand(command);
             }
 
         }
@@ -258,10 +260,8 @@ namespace gtmy {
     };
 
 
-    //some usefull
 
     int translateDenum(std::uint8_t den);
-
     int translaeDuration(std::uint8_t dur);
 
 }

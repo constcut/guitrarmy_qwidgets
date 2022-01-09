@@ -496,9 +496,9 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
     file.read((char*)&chan,4);
     file.read((char*)&chanE,4);
 
-    currentTrack->setGPCOMPInts(0,port);
-    currentTrack->setGPCOMPInts(1,chan);
-    currentTrack->setGPCOMPInts(2,chanE);
+    currentTrack->setMidiInfo(0,port);
+    currentTrack->setMidiInfo(1,chan);
+    currentTrack->setMidiInfo(2,chanE);
 
     if (gtpLog)  qDebug() << "Port " << port << "; chan " <<chan <<"; chanE "<<chanE;
 
@@ -515,8 +515,8 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
     if (gtpLog)  qDebug() << "Color - "<<trackColor;
 
     currentTrack->setColor(trackColor);
-    currentTrack->setGPCOMPInts(3,frets);
-    currentTrack->setGPCOMPInts(4,capo);
+    currentTrack->setMidiInfo(3,frets);
+    currentTrack->setMidiInfo(4,capo);
 
     if (gpVersion==5)
     {
@@ -1426,7 +1426,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64)
                <<" and ul "<<(int)(sizeof(unsigned int));
 
-    memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
+    memcpy(tab->midiChannels,midiChannelsData,768);
 
 
     size_t beatsAmount = 0;
@@ -2499,7 +2499,7 @@ bool Gp5Import::import(std::ifstream& file, Tab *tab, std::uint8_t knownVersion)
     if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64);
 
-    memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
+    memcpy(tab->midiChannels,midiChannelsData,768);
 
 
     //Unknonwn skip
@@ -3411,7 +3411,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64 );
 
-    memcpy(tab->GpCompMidiChannels,midiChannelsData,768);
+    memcpy(tab->midiChannels,midiChannelsData,768);
 
 
     size_t beatsAmount = 0;

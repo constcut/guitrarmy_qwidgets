@@ -17,58 +17,58 @@ using namespace gtmy;
 
 void Tab::setSignsTillEnd(size_t num, size_t denom) {
     macroCommands.push_back(TwoIntCommand<TabCommand>{TabCommand::SetSignTillEnd, num, denom});
-    for (size_t i = currentBar; i < this->at(0)->size(); ++i){
+    for (size_t i = _currentBar; i < this->at(0)->size(); ++i){
         this->at(0)->at(i)->setSignDenum(denom); //TODO проработать размеры, ументь их делать общими для табы, и делать полиритмию
         this->at(0)->at(i)->setSignNum(num);
     }
 }
 
 void Tab::muteTrack() { //Move into Tab
-    std::uint8_t curStat = this->at(displayTrack)->getStatus();
+    std::uint8_t curStat = this->at(_displayTrack)->getStatus();
     if (curStat==1)
-        this->at(displayTrack)->setStatus(0);
+        this->at(_displayTrack)->setStatus(0);
     else
-        this->at(displayTrack)->setStatus(1);
+        this->at(_displayTrack)->setStatus(1);
 }
 
 
 void Tab::soloTrack() { //Move into Tab
-    std::uint8_t curStat = this->at(displayTrack)->getStatus();
+    std::uint8_t curStat = this->at(_displayTrack)->getStatus();
     if (curStat==2)
-        this->at(displayTrack)->setStatus(0);
+        this->at(_displayTrack)->setStatus(0);
     else
-        this->at(displayTrack)->setStatus(2); //Make enum TODO
+        this->at(_displayTrack)->setStatus(2); //Make enum TODO
 }
 
 void Tab::moveCursorInTrackRight() {
-    if (displayBar < at(0)->size() - 1)
-        ++displayBar;
+    if (_displayBar < at(0)->size() - 1)
+        ++_displayBar;
 }
 
 void Tab::moveCursorInTrackLeft() {
-    if (displayBar > 0)
-        --displayBar;
+    if (_displayBar > 0)
+        --_displayBar;
 }
 
 
 void Tab::moveCursorOfTrackUp() {
-    if (displayTrack > 0) {
-        --displayTrack;
-        currentTrack = displayTrack;
+    if (_displayTrack > 0) {
+        --_displayTrack;
+        _currentTrack = _displayTrack;
     }
 }
 
 void Tab::moveCursorOfTrackDown() {
-    if (displayTrack < size()){
-        ++displayTrack;
-        if (currentTrack < displayTrack)
-            currentTrack = displayTrack;
+    if (_displayTrack < size()){
+        ++_displayTrack;
+        if (_currentTrack < _displayTrack)
+            _currentTrack = _displayTrack;
     }
 }
 
 
 void Tab::changeDrumsFlag() {
-    auto& pTrack = this->at(displayTrack);
+    auto& pTrack = this->at(_displayTrack);
     bool drums = pTrack->isDrums();
     drums = !drums;
     pTrack->setDrums(drums);
@@ -78,24 +78,24 @@ void Tab::changeDrumsFlag() {
 
 void Tab::changeTrackVolume(size_t newVol) {
     macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Volume, newVol});
-     at(currentTrack)->setVolume(newVol);
+     at(_currentTrack)->setVolume(newVol);
 }
 
 
 void Tab::changeTrackName(std::string newName) {
     macroCommands.push_back(StringCommand<TabCommand>{TabCommand::Name, newName});
-    at(currentTrack)->setName(newName);
+    at(_currentTrack)->setName(newName);
 }
 
 
 void Tab::changeTrackInstrument(size_t val) {
     macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Instument, val});
-    at(currentTrack)->setInstrument(val);
+    at(_currentTrack)->setInstrument(val);
 }
 
 void Tab::changeTrackPanoram(size_t val) {
     macroCommands.push_back(IntCommand<TabCommand>{TabCommand::Panoram, val});
-    at(currentTrack)->setPan(val);
+    at(_currentTrack)->setPan(val);
 }
 
 void Tab::createNewTrack() {
@@ -161,32 +161,32 @@ void Tab::createNewTrack() {
 
 
 void Tab::deleteTrack() {
-    this->remove(displayTrack);
-    if (displayTrack)
-        --displayTrack;
+    this->remove(_displayTrack);
+    if (_displayTrack)
+        --_displayTrack;
 }
 
 
 void Tab::midiPause() {
-    if (isPlaying == false) {
+    if (_isPlaying == false) {
         //STARTMIDI
-        isPlaying = true;
+        _isPlaying = true;
     }
     else {
         //MidiEngine::stopDefaultFile();
-        isPlaying = false;
+        _isPlaying = false;
     }
 }
 
 
 void Tab::setMarker(std::string text) {
-    auto& fromFirstTrack = at(0)->at(currentBar);
+    auto& fromFirstTrack = at(0)->at(_currentBar);
     fromFirstTrack->setMarker(text,0);
 }
 
 
 void Tab::openReprise() {
-    auto& firstTrackBar = this->at(0)->at(currentBar);
+    auto& firstTrackBar = this->at(0)->at(_currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;
@@ -201,7 +201,7 @@ void Tab::openReprise() {
 
 void Tab::closeReprise(size_t count) { //TODO argument repeat times
     macroCommands.push_back(IntCommand<TabCommand>{TabCommand::CloseReprise, count});
-    auto& firstTrackBar = this->at(0)->at(currentBar);
+    auto& firstTrackBar = this->at(0)->at(_currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;
@@ -218,8 +218,8 @@ void Tab::closeReprise(size_t count) { //TODO argument repeat times
 
 void Tab::gotoBar(size_t pos) {
     macroCommands.push_back(IntCommand<TabCommand>{TabCommand::GotoBar, pos});
-    currentBar = pos;
-    displayBar = pos;
+    _currentBar = pos;
+    _displayBar = pos;
 }
 
 

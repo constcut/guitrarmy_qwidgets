@@ -20,7 +20,7 @@ void Track::printToStream(std::ostream& stream)
 void Track::connectAll()
 {
     if (trackLog)
-        qDebug() <<"Connection initiated for track "<<name.c_str();
+        qDebug() <<"Connection initiated for track "<<_name.c_str();
 
     connectBars();
     connectBeats(); //uncomment for
@@ -28,7 +28,7 @@ void Track::connectAll()
     connectTimeLoop();
 
     if (trackLog)
-        qDebug() <<"Connection finished for track "<<name.c_str();
+        qDebug() <<"Connection finished for track "<<_name.c_str();
 
     return;
 }
@@ -65,7 +65,7 @@ size_t Track::connectNotes() //for let ring
    size_t count = 0;
    size_t beatIndex = 0;
 
-   while (index < beatsAmount)
+   while (index < _beatsAmount)
    {
        //connect simmiliar note values - good for let ring and leeg
       //ring ray - here to move
@@ -298,7 +298,7 @@ size_t Track::connectBeats()
 
    if (trackLog)
    qDebug() << "Full count of the beats is "<<fullCount;
-   beatsAmount = fullCount;
+   _beatsAmount = fullCount;
 
    return fullCount;
 }
@@ -530,7 +530,7 @@ size_t Track::connectTimeLoop()
 
 
 //REFACT - cover under Track operations
-typedef std::map<std::uint8_t, PolyBar> AltRay;
+typedef std::map<std::uint8_t, ChainedBars> AltRay;
 typedef std::map<std::uint8_t, std::vector<int> > AltRayInd;
 
 void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t indA, size_t indB)
@@ -623,7 +623,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
 
                if (altRay.find(i) != altRay.end())
                { //add alt ray from a tail
-                   PolyBar *thatEnd = &altRay[i];
+                   ChainedBars *thatEnd = &altRay[i];
                    std::vector<int> thatRayInd = altRayInd[i];
 
                    if ((thatEnd->at(0)->getRepeat() & 1)==0)
@@ -669,7 +669,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
 
                if (altRay.find(i) != altRay.end())
                { //add alt ray from a tail
-                   PolyBar *thatEnd = &altRay[i];
+                   ChainedBars *thatEnd = &altRay[i];
                    std::vector<int> thatRayInd = altRayInd[i];
 
                    for (size_t j = 0; j < thatEnd->size(); ++j)

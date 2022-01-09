@@ -9,33 +9,26 @@
 
 namespace gtmy {
 
-
     class Tab;
-
 
     class GuitarTuning {
         std::uint8_t stringsAmount;
-        std::uint8_t tunes[10]; //as a maximum, mind later is it usefull to try set more or less by container?
+        std::uint8_t tunes[10]; //TODO vector + at, to expeption and avoid check
         //set it to byte - in fact int would be 128 values of std midi - next could be used as quatones
-
     public:
 
         void setStringsAmount(std::uint8_t amount) { stringsAmount = amount; }
-        std::uint8_t getStringsAmount() { return stringsAmount; }
+        std::uint8_t getStringsAmount() const { return stringsAmount; }
+
         void setTune(std::uint8_t index, std::uint8_t value) { if (index <= 10) tunes[index] = value; } //(index >= 0) &&
-        std::uint8_t getTune(std::uint8_t index) { if (index <= 10) return tunes[index]; return 0; }
+        std::uint8_t getTune(std::uint8_t index) const { if (index <= 10) return tunes[index]; return 0; }
     };
 
 
-    class PolyBar : public std::vector<Bar*>
-    {
+    class ChainedBars : public std::vector<Bar*> {
       public:
-        PolyBar()
-        {
-        }
-        virtual ~PolyBar()
-        {
-        }
+        ChainedBars() = default;
+        virtual ~ChainedBars() = default;
     };
 
     enum class NoteStates {
@@ -48,9 +41,9 @@ namespace gtmy {
     {
     public:
 
-        Track():timeLoop(),pan(0),drums(false),status(0), _cursor(0),_cursorBeat(0),_stringCursor(0),
+        Track():timeLoop(),_pan(0),_drums(false),_status(0), _cursor(0),_cursorBeat(0),_stringCursor(0),
         _displayIndex(0),_lastSeen(0),_selectCursor(-1), _digitPress(-1) {
-            GpCompInts[3]=24; //REFACT GCOMP
+            _midiInfo[3]=24; //REFACT GCOMP
             _selectionBarFirst=-1;
             _selectionBarLast=-1;
             _selectionBeatFirst=-1;
@@ -85,17 +78,18 @@ namespace gtmy {
             }
         }
 
-    protected:
-        std::string name;
-        size_t instrument;
-        size_t color;
-        std::uint8_t pan; //or int??
-        std::uint8_t volume;
-        bool drums;
-        //?own temp bpm
-        size_t GpCompInts[4]; //GpComp - Port,Channel,ChannelE,Capo
-        size_t beatsAmount;
-        std::uint8_t status; //0 - none 1 - mute 2 - soloe
+    private:
+
+        std::string _name;
+        size_t _instrument; //TODO enum
+        size_t _color; //TODO другой тип
+        std::uint8_t _pan;
+        std::uint8_t _volume;
+        bool _drums;
+
+        size_t _midiInfo[4]; //Port,Channel,ChannelE,Capo TODO structure
+        size_t _beatsAmount;
+        std::uint8_t _status; //0 - none 1 - mute 2 - soloe
 
     public:
         GuitarTuning tuning;
@@ -110,34 +104,34 @@ namespace gtmy {
                          Bar *preTail, Bar *tailBegin, Bar *tailEnd, size_t beginIndex, size_t endIndex,
                          size_t preTailIndex=0, size_t tailBeginIndex=0, size_t tailEndIndex=0);
 
-        void setName( std::string &nValue) { name = nValue; }
-        std::string getName() { return name; } //or return?
+        void setName( std::string &nValue) { _name = nValue; }
+        std::string getName() const { return _name; }
 
-        void setInstrument(size_t iValue) { instrument = iValue;}
-        size_t getInstrument() { return instrument; }
+        void setInstrument(size_t iValue) { _instrument = iValue;}
+        size_t getInstrument() const { return _instrument; }
 
-        void setColor(size_t cValue) { color = cValue; }
-        size_t getColor() { return color; }
+        void setColor(size_t cValue) { _color = cValue; }
+        size_t getColor() const { return _color; }
 
-        void setPan(std::uint8_t pValue) { pan = pValue; }
-        std::uint8_t getPan() { return pan; }
+        void setPan(std::uint8_t pValue) { _pan = pValue; }
+        std::uint8_t getPan() const { return _pan; }
 
-        void setVolume(std::uint8_t vValue) { volume = vValue; }
-        std::uint8_t getVolume() { return volume; }
+        void setVolume(std::uint8_t vValue) { _volume = vValue; }
+        std::uint8_t getVolume() const { return _volume; }
 
 
-        void setGPCOMPInts(size_t index, size_t value) { GpCompInts[index] = value; }
-        size_t getGPCOMPInts(size_t index) { return GpCompInts[index]; } //TODO get rid
+        void setMidiInfo(size_t index, size_t value) { _midiInfo[index] = value; }
+        size_t getMidiInfo(size_t index) { return _midiInfo[index]; } //TODO get rid
 
         void setDrums(bool newDrums) {
-            drums = newDrums;
-            if (drums) GpCompInts[3]=99; //refact
+            _drums = newDrums;
+            if (_drums) _midiInfo[3]=99;
         }
 
-        bool isDrums() { return drums; }
+        bool isDrums() { return _drums; }
 
-        std::uint8_t getStatus() { return status; } //refact name
-        void setStatus(std::uint8_t newStat) { status = newStat; }
+        std::uint8_t getStatus() { return _status; }
+        void setStatus(std::uint8_t newStat) { _status = newStat; }
 
     protected:
         size_t _cursor;
@@ -154,7 +148,7 @@ namespace gtmy {
 
 
     public:
-        size_t& cursor() { return _cursor; } //TODO после всего рефакторинга обязаны быть const
+        size_t& cursor() { return _cursor; } //TODO после всего рефакторинга обязаны быть const (нужны для комманд)
         size_t& cursorBeat() { return _cursorBeat; }
         size_t& stringCursor() { return _stringCursor; }
         size_t& displayIndex() { return _displayIndex; }

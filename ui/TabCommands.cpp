@@ -79,7 +79,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
             int pre = digitPress;
             digitPress*=10;
             digitPress+=digit;
-            if (digitPress > pTrack->getGPCOMPInts(3)) { //Destoy all GPCOMP TODO
+            if (digitPress > pTrack->getMidiInfo(3)) { //Destoy all GPCOMP TODO
                 digitPress = digit;
                 if (digit == pre)
                     return; //no changes

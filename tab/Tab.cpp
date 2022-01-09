@@ -51,7 +51,7 @@ std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
 
 int Tab::getBpmOnBar(size_t barN)
 {
-    int bpmTrace = bpmTemp;
+    int bpmTrace = _bpmTemp;
     for (size_t i = 0; i < timeLine.size(); ++i){
         //TODO
     }
