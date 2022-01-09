@@ -2,7 +2,7 @@
 
 #include "tab/tab.h"
 #include "midi/midifile.h"
-#include "g0/config.h"
+#include "g0/Config.hpp"
 #include "tab/gmyfile.h"
 #include "tab/tabloader.h" //loader
 #include "midi/midiengine.h"

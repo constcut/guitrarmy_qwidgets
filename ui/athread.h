@@ -2,7 +2,7 @@
 #define ATHREAD_H
 
 #include <QThread>
-#include "g0/threads.h"
+#include "g0/Threads.hpp"
 
 
 class ThreadLocal : public QThread, public PlayAnimationThr 

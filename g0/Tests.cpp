@@ -1,11 +1,11 @@
-#include "tests.h"
+#include "Tests.hpp"
 
 #include <iostream>
 
 #include "midi/midifile.h"
 #include "tab/tab.h"
 #include "tab/gtpfiles.h"
-#include "g0/config.h"
+#include "g0/Config.hpp"
 #include "tab/gmyfile.h"
 
 #include "tab/tabloader.h"

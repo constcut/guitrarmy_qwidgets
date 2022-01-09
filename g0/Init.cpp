@@ -1,12 +1,12 @@
-#include "Init.h"
+#include "Init.hpp"
 
 #include <iostream>
 #include <signal.h>
 #include <fstream>
 
-#include "g0/Config.h"
+#include "g0/Config.hpp"
 #include "ui/imagepreloader.h"
-#include "g0/regression.h"
+#include "g0/Regression.hpp"
 #include "tab/tabloader.h"
 #include "midi/midiengine.h"
 

@@ -3,7 +3,7 @@
 #include "audio/Recording.hpp"
 #include "audio/WaveAnalys.hpp"
 
-#include "g0/config.h"
+#include "g0/Config.hpp"
 
 #include <QDebug>
 #include <QFile>

@@ -1,5 +1,5 @@
 #include "midiengine.h"
-#include "g0/config.h"
+#include "g0/Config.hpp"
 
 #include <QMediaPlayer>
 

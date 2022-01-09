@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <iostream>
 
-#include "g0/config.h"
+#include "g0/Config.hpp"
 
 void ImagePreloader::loadImage(std::string imageName)
 {

@@ -3,7 +3,7 @@
 
 
 #include "tab/tab.h"
-#include "g0/config.h"
+#include "g0/Config.hpp"
 #include "ui/imagepreloader.h"
 
 #include "tab/commands.h"

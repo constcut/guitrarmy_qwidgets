@@ -6,7 +6,7 @@
 #include "tab/gtpfiles.h"
 #include "midi/midifile.h"
 
-#include "g0/config.h"
+#include "g0/Config.hpp"
 
 
 #include "tab/gmyfile.h"

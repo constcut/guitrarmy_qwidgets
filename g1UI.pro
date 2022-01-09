@@ -32,12 +32,12 @@ SOURCES += main.cpp\
     audio/FFT.cpp \
     audio/Recording.cpp \
     audio/WaveAnalys.cpp \
-    g0/base.cpp \
-    g0/config.cpp \
-    g0/regression.cpp \
-    g0/tests.cpp \
-    g0/threads.cpp \
-    g0/init.cpp \
+    g0/Base.cpp \
+    g0/Config.cpp \
+    g0/Init.cpp \
+    g0/Regression.cpp \
+    g0/Tests.cpp \
+    g0/Threads.cpp \
     libs/sf/tsf.cpp \
     midi/miditrack.cpp \
     tab/commands.cpp \
@@ -78,12 +78,12 @@ HEADERS  += ui/mainwindow.h \
     audio/FFT.hpp \
     audio/Recording.hpp \
     audio/WaveAnalys.hpp \
-    g0/base.h \
-    g0/config.h \
-    g0/regression.h \
-    g0/tests.h \
-    g0/threads.h \
-    g0/init.h \
+    g0/Base.hpp \
+    g0/Config.hpp \
+    g0/Init.hpp \
+    g0/Regression.hpp \
+    g0/Tests.hpp \
+    g0/Threads.hpp \
     midi/midiexport.h \
     midi/midirender.hpp \
     midi/miditrack.h \

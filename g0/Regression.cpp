@@ -1,4 +1,4 @@
-#include "regression.h"
+#include "Regression.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -10,7 +10,7 @@
 #include "tab/gtpfiles.h"
 #include "midi/midiexport.h"
 #include "tab/gmyfile.h"
-#include "g0/config.h"
+#include "g0/Config.hpp"
 
 bool checkHasRegression() {
 
