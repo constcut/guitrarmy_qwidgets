@@ -58,7 +58,7 @@ namespace gtmy {
         double getScaleCoef() const { return scaleCoef; }
         void setScaleCoef(double scale) { scaleCoef = scale; }
 
-        void printValues();
+        void printValues() const;
         void checkConfig();
 
         void cleanValues() { values.clear(); }

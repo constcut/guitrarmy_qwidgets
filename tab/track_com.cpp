@@ -896,14 +896,14 @@ void Track::clipboardPaste() {
 
             */
 
-            if (AClipboard::current()->getSecondBarI()==AClipboard::current()->getBarIndex()) {
+            if (AClipboard::current()->getSecondBarIdx()==AClipboard::current()->getBarIndex()) {
                 Bar *origin = track->at(AClipboard::current()->getBarIndex()).get();
                 auto addition = std::make_unique<Bar>();
                 addition->setSignDenum(origin->getSignDenum());
                 addition->setSignNum(origin->getSignNum());
 
                 for (int beats = AClipboard::current()->getBeatIndex();
-                     beats  <= AClipboard::current()->getSecondBeatI(); ++beats) {
+                     beats  <= AClipboard::current()->getSecondBeatIdx(); ++beats) {
                     auto additionBeat = std::make_unique<Beat>();
                     Beat *beatOrigin = origin->at(beats).get();
                     additionBeat->clone(beatOrigin);
@@ -918,7 +918,7 @@ void Track::clipboardPaste() {
 
             }
             else
-                for (int bars = AClipboard::current()->getSecondBarI();
+                for (int bars = AClipboard::current()->getSecondBarIdx();
                      bars >= AClipboard::current()->getBarIndex(); --bars)
                 {
                     Bar *origin = track->at(bars).get();
@@ -926,10 +926,10 @@ void Track::clipboardPaste() {
                     addition->setSignDenum(origin->getSignDenum());
                     addition->setSignNum(origin->getSignNum());
 
-                    if (bars==AClipboard::current()->getSecondBarI())
+                    if (bars==AClipboard::current()->getSecondBarIdx())
                     {
                         //last
-                        for (int beats = 0; beats <= AClipboard::current()->getSecondBeatI(); ++beats)
+                        for (int beats = 0; beats <= AClipboard::current()->getSecondBeatIdx(); ++beats)
                         {
                             auto additionBeat = std::make_unique<Beat>();
                             Beat *beatOrigin = origin->at(beats).get();
@@ -959,7 +959,7 @@ void Track::clipboardPaste() {
                     track->insertBefore(std::move(addition), _cursor);
                 }
 
-            int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
+            int barsRange = AClipboard::current()->getSecondBarIdx() - AClipboard::current()->getBarIndex();
             ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,barsRange);
             commandSequence.push_back(std::move(command));
@@ -970,7 +970,7 @@ void Track::clipboardPaste() {
         }
         if (AClipboard::current()->getClipboardType() == ClipboardType::BarsCopy)
         {
-            for (int bars=AClipboard::current()->getSecondBarI(); bars >= AClipboard::current()->getBarIndex(); --bars)
+            for (int bars=AClipboard::current()->getSecondBarIdx(); bars >= AClipboard::current()->getBarIndex(); --bars)
             {
                 Bar *origin = track->at(bars).get();
                 auto addition = std::make_unique<Bar>();
@@ -979,7 +979,7 @@ void Track::clipboardPaste() {
                 track->insertBefore(std::move(addition), _cursor);
             }
 
-            int barsRange = AClipboard::current()->getSecondBarI() - AClipboard::current()->getBarIndex();
+            int barsRange = AClipboard::current()->getSecondBarIdx() - AClipboard::current()->getBarIndex();
             ReversableCommand command(ReversableType::InsertNewBar);
             command.setPosition(0, _cursor,barsRange+1);
             commandSequence.push_back(std::move(command));

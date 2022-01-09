@@ -20,21 +20,27 @@ namespace gtmy {
 
     class AClipboard
     {
-    protected:
+    private:
 
-        ClipboardType type;
+        ClipboardType _type;
 
-        int track1 = -1, bar1 = -1, beat1 = -1;
-        int track2 = -1, bar2 = -1, beat2 = -1;
+        int _trackIdx1 = -1;
+        int _trackIdx2 = -1;
 
-        Bar* ptr;
+        int _barIdx1 = -1;
+        int _barIdx2 = -1;
+
+        int _beatIdx1 = -1;
+        int _beatIdx2 = -1;
+
+        Bar* _ptr;
 
         static AClipboard *currentClip; //TODO multiple (stack)
 
     public:
 
         AClipboard():
-            type(ClipboardType::NotSet), ptr(nullptr)
+            _type(ClipboardType::NotSet), _ptr(nullptr)
         {}
 
         static AClipboard* current() { return currentClip; }
@@ -42,45 +48,45 @@ namespace gtmy {
 
 
         void setClipboardType(ClipboardType newType) {
-            type = newType;
-            if (type == ClipboardType::NotSet)
+            _type = newType;
+            if (_type == ClipboardType::NotSet)
                 flush();
         }
 
         void flush() {
-            track1 = bar1 = beat1 = -1;
-            track2 = bar2 = beat2 = -1;
+            _trackIdx1 = _barIdx1 = _beatIdx1 = -1;
+            _trackIdx2 = _barIdx2 = _beatIdx2 = -1;
         }
 
-        ClipboardType getClipboardType() { return type; }
+        ClipboardType getClipboardType() const { return _type; }
 
-        void setPtr(Bar *newPtr) { ptr=newPtr; }
-        Bar* getPtr() { return ptr; }
+        void setPtr(Bar *newPtr) { _ptr=newPtr; }
+        Bar* getPtr() const { return _ptr; }
 
         void setBeginIndexes(int track, int bar, int beat=-1)
         {
-            track1 = track;
-            bar1 = bar;
+            _trackIdx1 = track;
+            _barIdx1 = bar;
             if (beat != -1)
-                beat1 = beat;
+                _beatIdx1 = beat;
         }
 
         void setEndIndexes(int track, int bar, int beat=-1)
         {
-            track2 = track;
-            bar2 = bar;
+            _trackIdx2 = track;
+            _barIdx2 = bar;
             if (beat != -1)
-                beat2 = beat;
+                _beatIdx2 = beat;
         }
 
-        int getTrackIndex() { return track1; }
-        int getBarIndex() { return bar1; }
-        int getBeatIndex() { return beat1; }
+        int getTrackIndex() const { return _trackIdx1; }
+        int getBarIndex() const { return _barIdx1; }
+        int getBeatIndex() const { return _beatIdx1; }
 
 
-        int getSecondBarI() { return track2; }
-        int getSecondBeatI() { return bar2; }
-        int getSecondTrackI() { return beat2; }
+        int getSecondBarIdx() const { return _trackIdx2; }
+        int getSecondBeatIdx() const { return _barIdx2; }
+        int getSecondTrackIdx() const { return _beatIdx2; }
     };
 
 
