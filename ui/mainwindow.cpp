@@ -34,8 +34,6 @@
 
 #include <QTextBlock>
 
-#include "g0/android_helper.h"
-
 #include <QMenuBar>
 
 #include "ui/gpannel.h"
@@ -900,7 +898,6 @@ void MainWindow::pushForceKey(std::string keyevent)
     if (keyevent=="stop_record_output")
     {
         stopAudioOutput();
-        android_helper::notifyAndroid();
     }
 
     if (keyevent.substr(0,19)=="start_record_output") //cut it with substr
@@ -1041,7 +1038,6 @@ void MainWindow::actionNow(QAction *action)
   if (textOut=="stop_record_output")
   {
       stopAudioOutput();
-      android_helper::notifyAndroid();
       return;
   }
 

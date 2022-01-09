@@ -65,7 +65,6 @@ SOURCES += main.cpp\
     ui/tabcommands.cpp \
     audio/fft.cpp \
     audio/waveanalys.cpp \
-    g0/android_helper.cpp \
     ui/centerview.cpp \
     ui/inputviews.cpp \
     midi/midiengine.cpp \
@@ -110,7 +109,6 @@ HEADERS  += ui/mainwindow.h \
     ui/tabviews.h \
     audio/fft.h \
     audio/waveanalys.h \
-    g0/android_helper.h \
     ui/centerview.h \
     ui/inputviews.h \
     midi/midiengine.h \
