@@ -1,6 +1,6 @@
 #include "Threads.hpp"
 
-#include "tab/tab.h"
+#include "tab/Tab.hpp"
 
 AThread::AThread()
 {

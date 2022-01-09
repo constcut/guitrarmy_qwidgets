@@ -3,13 +3,13 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "tab/tab.h"
-#include "tab/gtpfiles.h"
+#include "tab/Tab.hpp"
+#include "tab/GtpFiles.hpp"
 #include "midi/MidiFile.hpp"
 
 #include "g0/Config.hpp"
-#include "tab/gmyfile.h"
-#include "tab/tabloader.h" //loader
+#include "tab/GmyFile.hpp"
+#include "tab/TabLoader.hpp" //loader
 
 #include "tabviews.h"
 

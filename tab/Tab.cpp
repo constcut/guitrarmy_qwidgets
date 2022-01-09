@@ -1,5 +1,5 @@
-#include "tab.h"
-#include "tabloader.h"
+#include "Tab.hpp"
+#include "TabLoader.hpp"
 
 bool tabLog = false;
 

@@ -1,4 +1,4 @@
-#include "note.h"
+#include "Note.hpp"
 
 #include <iostream>
 

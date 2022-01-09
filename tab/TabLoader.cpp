@@ -1,10 +1,10 @@
-#include "tabloader.h"
+#include "TabLoader.hpp"
 
 #include <fstream>
 #include <QDebug>
 
-#include "tab/gmyfile.h"
-#include "tab/gtpfiles.h"
+#include "tab/GmyFile.hpp"
+#include "tab/GtpFiles.hpp"
 
 
 //TODO move to gtp files

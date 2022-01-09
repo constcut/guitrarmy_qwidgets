@@ -7,7 +7,7 @@
 #include "g0/Config.hpp"
 #include "ui/imagepreloader.h"
 #include "g0/Regression.hpp"
-#include "tab/tabloader.h"
+#include "tab/TabLoader.hpp"
 #include "midi/MidiEngine.hpp"
 
 #include <QString>

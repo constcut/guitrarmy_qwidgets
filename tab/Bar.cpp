@@ -1,4 +1,4 @@
-#include "bar.h"
+#include "Bar.hpp"
 
 #include <iostream>
 #include <QDebug>

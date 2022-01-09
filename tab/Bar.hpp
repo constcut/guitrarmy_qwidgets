@@ -1,8 +1,8 @@
 #ifndef BAR_H
 #define BAR_H
 
-#include "types.h"
-#include "beat.h"
+#include "Types.hpp"
+#include "Beat.hpp"
 
 
 int translateDenum(std::uint8_t den);

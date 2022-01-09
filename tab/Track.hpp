@@ -1,10 +1,10 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include "types.h"
+#include "Types.hpp"
 #include <unordered_map>
-#include "commands.h" //move into g0
-#include "bar.h"
+#include "Commands.hpp" //move into g0
+#include "Bar.hpp"
 
 class Tab;
 

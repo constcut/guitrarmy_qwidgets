@@ -1,12 +1,12 @@
-#include "tab.h"
+#include "Tab.hpp"
 
 #include "g0/Config.hpp"
 #include "midi/MidiFile.hpp"
-#include "tab/gmyfile.h"
-#include "tab/tabloader.h"
-#include "tab/gtpfiles.h"
+#include "tab/GmyFile.hpp"
+#include "tab/TabLoader.hpp"
+#include "tab/GtpFiles.hpp"
 #include "midi/MidiEngine.hpp"
-#include "tab/tabclipboard.h"
+#include "tab/TabClipboard.hpp"
 
 #include <fstream>
 #include <QDebug>

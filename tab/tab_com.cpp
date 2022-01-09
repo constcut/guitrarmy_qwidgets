@@ -1,9 +1,9 @@
-#include "tab.h"
+#include "Tab.hpp"
 
 #include "midi/MidiFile.hpp"
-#include "gmyfile.h"
-#include "tabloader.h"
-#include "gtpfiles.h"
+#include "GmyFile.hpp"
+#include "TabLoader.hpp"
+#include "GtpFiles.hpp"
 #include "midi/MidiEngine.hpp"
 
 #include <fstream>

@@ -1,4 +1,4 @@
-#include "effects.h"
+#include "Effects.hpp"
 //.....................Effects.........................................
 
 ABitArray::ABitArray():bits(0)

@@ -2,11 +2,11 @@
 #define GVIEW_H
 
 
-#include "tab/tab.h"
+#include "tab/Tab.hpp"
 #include "g0/Config.hpp"
 #include "ui/imagepreloader.h"
 
-#include "tab/commands.h"
+#include "tab/Commands.hpp"
 
 #include <QPainter>
 #include "athread.h"

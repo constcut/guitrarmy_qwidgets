@@ -10,8 +10,8 @@
 #include <fstream>
 #include <map>
 
-#include "tab/tabloader.h"
-#include "tab/tab.h"
+#include "tab/TabLoader.hpp"
+#include "tab/Tab.hpp"
 
 
 class BaseStatistics {

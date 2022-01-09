@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QColor>
 #include <QFileDialog>
-#include "tab/tabloader.h"
+#include "tab/TabLoader.hpp"
 
 #include <string>
 #include <sstream>

@@ -6,7 +6,7 @@
 #include "gview.h"
 #include "tabviews.h"
 #include "components.h"
-#include "tab/commands.h"
+#include "tab/Commands.hpp"
 #include "audio/AudioSpeaker.hpp"
 
 

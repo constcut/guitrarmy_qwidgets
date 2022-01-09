@@ -6,7 +6,7 @@
 
 #include "gview.h"
 #include "ui/gpannel.h"
-#include "tab/commands.h"
+#include "tab/Commands.hpp"
 #include "barview.h"
 
 

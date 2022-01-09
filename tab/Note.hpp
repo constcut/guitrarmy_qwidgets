@@ -1,8 +1,8 @@
 #ifndef NOTE_H
 #define NOTE_H
 
-#include "types.h"
-#include "effects.h"
+#include "Types.hpp"
+#include "Effects.hpp"
 
 #include <vector>
 

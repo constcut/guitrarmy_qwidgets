@@ -1,4 +1,4 @@
-#include "gtpfiles.h"
+#include "GtpFiles.hpp"
 
 #include <QDebug>
 #include <fstream>

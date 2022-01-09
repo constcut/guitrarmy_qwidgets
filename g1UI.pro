@@ -45,24 +45,24 @@ SOURCES += main.cpp\
     midi/MidiRender.cpp \
     midi/MidiSignal.cpp \
     midi/MidiTrack.cpp \
-    tab/commands.cpp \
-    tab/effects.cpp \
-    tab/tabclipboard.cpp \
-    tab/tabloader.cpp \
+    tab/Bar.cpp \
+    tab/Beat.cpp \
+    tab/Commands.cpp \
+    tab/Effects.cpp \
+    tab/GmyFile.cpp \
+    tab/GtpFiles.cpp \
+    tab/Note.cpp \
+    tab/Tab.cpp \
+    tab/TabClipboard.cpp \
+    tab/TabLoader.cpp \
+    tab/Track.cpp \
     ui/barview.cpp \
-    tab/bar.cpp \
-    tab/beat.cpp \
-    tab/note.cpp \
     tab/tab_com.cpp \
-    tab/track.cpp \
     tab/track_com.cpp \
     ui/components.cpp \
     ui/imagepreloader.cpp \
     ui/mainwindow.cpp \
     ui/gview.cpp \
-    tab/gmyfile.cpp \
-    tab/gtpfiles.cpp \
-    tab/tab.cpp \
     ui/athread.cpp \
     ui/gpannel.cpp \
     ui/mainviews.cpp \
@@ -90,22 +90,22 @@ HEADERS  += ui/mainwindow.h \
     midi/MidiRender.hpp \
     midi/MidiSignal.hpp \
     midi/MidiTrack.hpp \
-    tab/commands.h \
-    tab/effects.h \
-    tab/tabclipboard.h \
-    tab/tabloader.h \
+    tab/Bar.hpp \
+    tab/Beat.hpp \
+    tab/Commands.hpp \
+    tab/Effects.hpp \
+    tab/GmyFile.hpp \
+    tab/GtpFiles.hpp \
+    tab/Note.hpp \
+    tab/Tab.hpp \
+    tab/TabClipboard.hpp \
+    tab/TabLoader.hpp \
+    tab/Track.hpp \
+    tab/Types.hpp \
     ui/barview.h \
-    tab/bar.h \
-    tab/beat.h \
-    tab/note.h \
-    tab/track.h \
-    tab/types.h \
     ui/components.h \
     ui/gpannel.h \
     ui/gview.h \
-    tab/gmyfile.h \
-    tab/gtpfiles.h \
-    tab/tab.h \
     ui/athread.h \
     libs/sf/tml.h \
     libs/sf/tsf.h \

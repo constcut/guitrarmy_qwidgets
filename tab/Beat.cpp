@@ -1,4 +1,4 @@
-#include "beat.h"
+#include "Beat.hpp"
 #include <iostream>
 
 void BendPoints::insertNewPoint(BendPoint bendPoint)

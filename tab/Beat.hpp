@@ -5,8 +5,8 @@
 #include <vector>
 #include <string>
 
-#include "types.h"
-#include "note.h"
+#include "Types.hpp"
+#include "Note.hpp"
 
 
 

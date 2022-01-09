@@ -1,12 +1,12 @@
-#include "tab/commands.h"
+#include "tab/Commands.hpp"
 
 #include "tabviews.h"
 #include "mainviews.h"
 
 //other dep
 #include "midi/MidiFile.hpp"
-#include "tab/tabloader.h"
-#include "tab/gmyfile.h"
+#include "tab/TabLoader.hpp"
+#include "tab/GmyFile.hpp"
 
 #include "midi/MidiEngine.hpp"
 #include "midi/MidiExport.hpp"

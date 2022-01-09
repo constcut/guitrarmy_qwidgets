@@ -6,10 +6,10 @@
 #include <filesystem>
 #include <iostream>
 
-#include "tab/tab.h"
-#include "tab/gtpfiles.h"
+#include "tab/Tab.hpp"
+#include "tab/GtpFiles.hpp"
 #include "midi/MidiExport.hpp"
-#include "tab/gmyfile.h"
+#include "tab/GmyFile.hpp"
 #include "g0/Config.hpp"
 
 bool checkHasRegression() {

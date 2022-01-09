@@ -1,7 +1,7 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
 
-#include "types.h"
+#include "Types.hpp"
 
 #include <map>
 

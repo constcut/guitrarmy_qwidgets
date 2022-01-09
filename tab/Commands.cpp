@@ -1,6 +1,6 @@
-#include "tab/commands.h"
+#include "tab/Commands.hpp"
 
-#include "tab/tab.h" //Из-за reversable отделить их от обычных комманд
+#include "tab/Tab.hpp" //Из-за reversable отделить их от обычных комманд
 
 #include <QDebug>
 

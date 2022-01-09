@@ -3,12 +3,12 @@
 #include <iostream>
 
 #include "midi/MidiFile.hpp"
-#include "tab/tab.h"
-#include "tab/gtpfiles.h"
+#include "tab/Tab.hpp"
+#include "tab/GtpFiles.hpp"
 #include "g0/Config.hpp"
-#include "tab/gmyfile.h"
+#include "tab/GmyFile.hpp"
 
-#include "tab/tabloader.h"
+#include "tab/TabLoader.hpp"
 
 #include <QMediaPlayer>
 

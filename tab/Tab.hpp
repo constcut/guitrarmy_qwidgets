@@ -1,13 +1,13 @@
 #ifndef TAB_H
 #define TAB_H
 
-#include "types.h"
+#include "Types.hpp"
 
 #include <unordered_map>
 #include <list>
 
-#include "tab/commands.h"
-#include "track.h"
+#include "tab/Commands.hpp"
+#include "Track.hpp"
 
 int updateDurationWithDetail(std::uint8_t detail, int base);
 

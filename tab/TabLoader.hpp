@@ -1,7 +1,7 @@
 #ifndef TABLOADER_H
 #define TABLOADER_H
 
-#include "tab/tab.h"
+#include "tab/Tab.hpp"
 
 
 #include <memory>

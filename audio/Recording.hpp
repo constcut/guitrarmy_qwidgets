@@ -3,7 +3,7 @@
 
 #include <QByteArray>
 
-#include "tab/tab.h"
+#include "tab/Tab.hpp"
 
 
 //Tuner

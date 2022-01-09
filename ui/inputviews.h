@@ -1,7 +1,7 @@
 #ifndef INPUTVIEWS_H
 #define INPUTVIEWS_H
 
-#include "tab/tab.h"
+#include "tab/Tab.hpp"
 #include "ui/barview.h"
 
 #include "audio/Recording.hpp"
