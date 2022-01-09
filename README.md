@@ -8,5 +8,9 @@ Additional inputs availible.
 
 Projects was abadoned for years, there where done a lot of mistakes, but still I have a hope to recover it, and make a free tablature solution for mobile and desktop.
 
+# other info
 
+For mistakes that I made with this project read MISTAKED.md
+
+For personal history of this project read HISTORY.md
 
