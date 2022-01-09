@@ -18,13 +18,13 @@ Lets you view, edit and play tablature.
 
 Tap rhythm:
 
-![guitarmy screenshot](resources/screenshots/tap_ry.png)
+![guitarmy screenshot](resources/screenshots/tap_ry.jpg)
 
 One of most annoying thing with guitar tabs - write correct rhythm. This option helped to tap it on screen by fingers.
 
 Pattern input:
 
-![guitarmy screenshot](resources/screenshots/pattern.png)
+![guitarmy screenshot](resources/screenshots/pattern.jpg)
 
 And another option to write drums - to use pattern input.
 
