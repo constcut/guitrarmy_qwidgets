@@ -204,7 +204,7 @@ bool testMidi(std::string fileName, std::string outFileName)
     return true;
 }
 
-bool testGP3(std::string fileName, std::string outFileName, bool outputLog)
+bool testGP3(std::string fileName, std::string outFileName)
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -280,7 +280,7 @@ bool testGP4(std::string fileName, std::string outFileName, std::string gmyFile=
 }
 
 //refact later
-bool testGP5(std::string fileName, std::string outFileName, bool outputLog)
+bool testGP5(std::string fileName, std::string outFileName)
 {
     std::ifstream itfile;
     itfile.open(fileName.c_str(),std::ifstream::binary);  //small file - runs ok!
@@ -324,7 +324,6 @@ bool greatCheck()
 
 
     std::cerr << "Starting big check" << std::endl;
-    bool doTheLogs = false;
 
     for (size_t i = from; i <= to; ++i)
     {
@@ -369,7 +368,6 @@ bool greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uint32_t 
     if (scen == 4)
         return false; //yet not in resourses
 
-    bool doTheLogs = false;
     for (uint32_t i = from; i <= to; ++i)
     {
         try

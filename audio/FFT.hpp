@@ -54,10 +54,6 @@ private:
         return position;
     }
 
-    bool isFrequencyInside(unsigned short freq)
-    {
-        return false;
-    }
 
     double getAmplitude()
     {

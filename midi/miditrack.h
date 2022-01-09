@@ -76,10 +76,6 @@ public: //TODO review when midi generation is done
     void pushNoteOn(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //acummulated already inside
     void pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
 
-    void startLeeg(std::uint8_t stringN, std::uint8_t channel);
-    void stopLeeg(std::uint8_t stringN, std::uint8_t channel);
-
-    bool checkForLeegFails();
 
 public:
 

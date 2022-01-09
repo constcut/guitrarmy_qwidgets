@@ -175,7 +175,7 @@ void AudioSpeaker::stop()
     close();
 }
 
-void AudioSpeaker::generateData(const QAudioFormat &format, qint64 durationUs, int sampleRate)
+void AudioSpeaker::generateData(const QAudioFormat &format, qint64 durationUs, [[maybe_unused]] int sampleRate)
 {
     const int channelBytes = format.sampleSize() / 8;
     const int sampleBytes = format.channelCount() * channelBytes;

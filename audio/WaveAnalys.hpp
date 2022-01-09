@@ -37,8 +37,8 @@ struct scaledWaveElement
 
 struct soundFragment
 {
-    long start;
     int amount;
+    long start;
 
     soundFragment(long startFrom):amount(1),start(startFrom)
     {}

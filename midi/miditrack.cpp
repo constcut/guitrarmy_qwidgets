@@ -391,14 +391,4 @@ void MidiTrack::pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::u
     push_back(std::move(noteOn));
 }
 
-bool MidiTrack::checkForLeegFails()
-{
-}
 
-void MidiTrack::startLeeg(std::uint8_t stringN, std::uint8_t channel)
-{
-}
-
-void MidiTrack::stopLeeg(std::uint8_t stringN, std::uint8_t channel)
-{
-}

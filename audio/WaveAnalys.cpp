@@ -103,30 +103,30 @@ void AmplitudeAnalys::startAnalys(short *samples, long monoLength)
                     goto xBreakMax;
 
 
-                if((scaledWave[i].energy > scaledWave[i-1].energy)&&
-                    (scaledWave[i].energy > scaledWave[i+1].energy))
-                {
-                   long peaking = ((scaledWave[i].energy - scaledWave[i+1].energy)
-                                   +(scaledWave[i].energy - scaledWave[i-1].energy))/2;
+            if((scaledWave[i].energy > scaledWave[i-1].energy)&&
+                (scaledWave[i].energy > scaledWave[i+1].energy))
+            {
+               long peaking = ((scaledWave[i].energy - scaledWave[i+1].energy)
+                               +(scaledWave[i].energy - scaledWave[i-1].energy))/2;
 
 
-                   if (rythmicMaxSequence.size() <= 0)
+               if (rythmicMaxSequence.size() <= 0)
+               {
+                   if (scaledWave[i].energy > maxValue)
                    {
+                       maxValue =scaledWave[i].energy;
+                       maxPosition = i;
+                   }
+               }else
+                   if (peaking > scaledWave[i].energy/14)
+                   {//rythmicSequence[0].attack.peakSize
                        if (scaledWave[i].energy > maxValue)
                        {
                            maxValue =scaledWave[i].energy;
                            maxPosition = i;
                        }
-                   }else
-                       if (peaking > scaledWave[i].energy/14)
-                       {//rythmicSequence[0].attack.peakSize
-                           if (scaledWave[i].energy > maxValue)
-                           {
-                               maxValue =scaledWave[i].energy;
-                               maxPosition = i;
-                           }
-                       }
-                }
+                   }
+            }
             }
 
         xBreakMax:
@@ -154,18 +154,18 @@ void AmplitudeAnalys::startAnalys(short *samples, long monoLength)
 /////////////////////////////////////////////////////////
 /////////////////SEARCH FOR MINIS
 
-cursepathMin:
-long minValue = 32000;
-long minPosition = -1;
+    cursepathMin:
+    long minValue = 32000;
+    long minPosition = -1;
 
 
 
-for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
-{    if(scaledWave[i].energy < minValue)
-    {
-        for (size_t j = 0; j < rythmicMinSequence.size(); ++j)
-            if (abs(int(rythmicMinSequence[j].localOffset - i))<=2)//32&&&&&&
-                goto xBreakMin;
+    for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
+    {    if(scaledWave[i].energy < minValue)
+        {
+            for (size_t j = 0; j < rythmicMinSequence.size(); ++j)
+                if (abs(int(rythmicMinSequence[j].localOffset - i))<=2)//32&&&&&&
+                    goto xBreakMin;
 
 
             if((scaledWave[i].energy < scaledWave[i-1].energy)&&
@@ -188,96 +188,96 @@ for (unsigned long i = 1; i < scaledWave.size()-1 ; ++i)
                            minPosition = i;
                    }
             }
-        }
+            }
 
-    xBreakMin:
-    ;
-}
-
-if (minPosition != -1)
-{
-    AmplitudeValue av;
-    av.peakSize = minValue;
-    av.localOffset = minPosition;
-    av.stepsFromLocalMin = 0; //is min
-    av.stepsToNextMax = -1;
-
-    rythmicMinSequence.push_back(av);
-
-
-    if (rythmicMinSequence.size() < 100)
-           goto cursepathMin;
-}
-/////////////////////////////////////////////
-////MINIMALS FOUND ALSO!
-
-
-//cleaning pseudo max-s
-int upperBridge = rythmicMaxSequence.size();
-for (int maxI = 0; maxI < upperBridge; ++maxI)
-{
-    if (rythmicMaxSequence[maxI].peakSize < middleLine)
-    {
-        rythmicMaxSequence.erase(rythmicMaxSequence.begin()+maxI);
-        --upperBridge;
-        --maxI;
+        xBreakMin:
+        ;
     }
-}
 
-
-//cleaning pseudo mins-s
-
-//very lowlowlowlow
-
-
-///////
-
-
-
-for (size_t i = 0; i < rythmicMaxSequence.size(); ++i)
-    rythmicSplit.push_back(rythmicMaxSequence[i]);
-
-for (size_t i = 0; i < rythmicMinSequence.size(); ++i)
-    rythmicSplit.push_back(rythmicMinSequence[i]);
-
-std::sort(rythmicSplit.begin(),rythmicSplit.end(),AmplitudePositionPredicate);
-
-isAnalysDone = true;
-
-
-int upperSplitBridge = rythmicSplit.size();
-for (size_t i =0; i < upperSplitBridge-1; ++i)
-{
-    if (rythmicSplit[i].stepsFromLocalMin == rythmicSplit[i+1].stepsFromLocalMin)
+    if (minPosition != -1)
     {
-        if (rythmicSplit[i].stepsFromLocalMin == 0)//minis
+        AmplitudeValue av;
+        av.peakSize = minValue;
+        av.localOffset = minPosition;
+        av.stepsFromLocalMin = 0; //is min
+        av.stepsToNextMax = -1;
+
+        rythmicMinSequence.push_back(av);
+
+
+        if (rythmicMinSequence.size() < 100)
+               goto cursepathMin;
+    }
+    /////////////////////////////////////////////
+    ////MINIMALS FOUND ALSO!
+
+
+    //cleaning pseudo max-s
+    int upperBridge = rythmicMaxSequence.size();
+    for (int maxI = 0; maxI < upperBridge; ++maxI)
+    {
+        if (rythmicMaxSequence[maxI].peakSize < middleLine)
         {
-            rythmicSplit.erase(rythmicSplit.begin()+i);
-           //--i
-            --upperSplitBridge;
-        }
-        if (rythmicSplit[i].stepsFromLocalMin == -1)//maxus
-        {
-             rythmicSplit.erase(rythmicSplit.begin()+i+1);
-            // --i;
-             --upperSplitBridge;
+            rythmicMaxSequence.erase(rythmicMaxSequence.begin()+maxI);
+            --upperBridge;
+            --maxI;
         }
     }
-}
-
-while (rythmicSplit[0].stepsFromLocalMin == 0)
-    rythmicSplit.erase(rythmicSplit.begin());
 
 
-while (rythmicSplit[rythmicSplit.size()-1].stepsFromLocalMin == rythmicSplit[rythmicSplit.size()-2].stepsFromLocalMin)
-    rythmicSplit.erase(rythmicSplit.begin()+(rythmicSplit.size()-1));
+    //cleaning pseudo mins-s
+
+    //very lowlowlowlow
+
+
+    ///////
+
+
+
+    for (size_t i = 0; i < rythmicMaxSequence.size(); ++i)
+        rythmicSplit.push_back(rythmicMaxSequence[i]);
+
+    for (size_t i = 0; i < rythmicMinSequence.size(); ++i)
+        rythmicSplit.push_back(rythmicMinSequence[i]);
+
+    std::sort(rythmicSplit.begin(),rythmicSplit.end(),AmplitudePositionPredicate);
+
+    isAnalysDone = true;
+
+
+    int upperSplitBridge = rythmicSplit.size();
+    for (int i =0; i < upperSplitBridge-1; ++i)
+    {
+        if (rythmicSplit[i].stepsFromLocalMin == rythmicSplit[i+1].stepsFromLocalMin)
+        {
+            if (rythmicSplit[i].stepsFromLocalMin == 0)//minis
+            {
+                rythmicSplit.erase(rythmicSplit.begin()+i);
+               //--i
+                --upperSplitBridge;
+            }
+            if (rythmicSplit[i].stepsFromLocalMin == -1)//maxus
+            {
+                 rythmicSplit.erase(rythmicSplit.begin()+i+1);
+                // --i;
+                 --upperSplitBridge;
+            }
+        }
+    }
+
+    while (rythmicSplit[0].stepsFromLocalMin == 0)
+        rythmicSplit.erase(rythmicSplit.begin());
+
+
+    while (rythmicSplit[rythmicSplit.size()-1].stepsFromLocalMin == rythmicSplit[rythmicSplit.size()-2].stepsFromLocalMin)
+        rythmicSplit.erase(rythmicSplit.begin()+(rythmicSplit.size()-1));
 
     isAnalysDone = true;
 }
 
 AmplitudeValue AmplitudeAnalys::searchAttackStart(AmplitudeValue a)
 {
-  AmplitudeValue rezult = {0};
+  AmplitudeValue rezult = {};
 
   //searching in 5-50 ms
   //1 ms is 44.1 samples
@@ -594,7 +594,7 @@ int signMF(long mass)
                      double fullSumm = leftSumm + rightSumm + tableElements[maxIndex].getAmplitude();
 
                      double leftPart = leftSumm/fullSumm;
-                     double middlePart = tableElements[maxIndex].getAmplitude()/fullSumm;
+                     //double middlePart = tableElements[maxIndex].getAmplitude()/fullSumm;
                      double rightPart = rightSumm/fullSumm;
 
                      //deb
@@ -602,10 +602,10 @@ int signMF(long mass)
                      double preFullSummRight = rightSumm + tableElements[maxIndex].getAmplitude();
 
                      double coL1 = leftSumm/preFullSummLeft;
-                     double coL2 = tableElements[maxIndex].getAmplitude()/preFullSummLeft;
+                     //double coL2 = tableElements[maxIndex].getAmplitude()/preFullSummLeft;
 
                      double coR1 = rightSumm/preFullSummRight;
-                     double coR2 = tableElements[maxIndex].getAmplitude()/preFullSummRight;
+                     //double coR2 = tableElements[maxIndex].getAmplitude()/preFullSummRight;
                      //deb
 
                      tableElements[maxIndex].amplitude = fullSumm;

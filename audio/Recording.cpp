@@ -29,7 +29,7 @@ std::unique_ptr<Bar> GWave::generateBar()//short *source, int &cursor)
     bar->setSignNum(32);
     bar->setSignDenum(4);
 
-    for (int noteI = 0; noteI < notes.size(); ++noteI)
+    for (size_t noteI = 0; noteI < notes.size(); ++noteI)
     {
         if (notes[noteI].freq < 1.0)
             continue; //skip emty ones (must be presetted for rhy analys)
@@ -146,11 +146,11 @@ std::unique_ptr<Bar> GWave::generateBar()//short *source, int &cursor)
 
 std::uint8_t GWave::runRythmicAnalyse()
 {
-    int fullLen = origin.size()/2; //16 bit only? yep
-    short *rawData = (short*)(origin.data());
-
+    //int fullLen = origin.size()/2; //16 bit only? yep
+    //short *rawData = (short*)(origin.data());
     //transform rawdata to notes
     //rAn.findNotesPositions(energyLevels,energyTypes,&notes,0);
+    return 0;
 }
 
 std::uint8_t GWave::runMelodicAnalyse()
@@ -160,6 +160,7 @@ std::uint8_t GWave::runMelodicAnalyse()
     mAn.setupFreq(rawData,125,&notes); //125 is bad bad
     //hide 125 under classs value
     //set up notes freqs
+    return 0;
 }
 
 bool GWave::loadFile(std::string fileName, std::vector<int> *params)
@@ -175,7 +176,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
 
     //parse params given in order
     int zoomValue = 10;
-    int zoomCoef = zoomValue; //oups
+    //int zoomCoef = zoomValue; //oups
     int bpmValue = 120;
     int eLev1Value = 500;
     int eLev2Value = 850;
@@ -214,7 +215,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
     int bpmDependentWindow = 8000.0/(floatBPM/60.0)/32.0;
 
     //energy levels + types allocation
-    int amountOfEnergyLevels = waveLimit/bpmDependentWindow;
+    //int amountOfEnergyLevels = waveLimit/bpmDependentWindow;
 
     for (int i= wavePosition+1; i < waveLimit; )
     {
@@ -258,7 +259,7 @@ bool GWave::loadFile(std::string fileName, std::vector<int> *params)
     mAn.setupFreq(rawData,bpmDependentWindow,&notes);
 
     qDebug()  << "Found "<<(int)notes.size()<<" notes ";
-
+    return false;
 }
 
 
@@ -312,13 +313,13 @@ void BaseMel::setupFreq(short *source, int bpmWindow, std::vector<RecognizedNote
             //qDebug() <<"!!"<<sX3.c_str(); //peaklog
 
             //sX.clear();
-            peaks = localFreq.getPeaks();
+            peaks = localFreq.getPeaks();/*
             for (size_t i = 0; i < peaks->size(); ++i)
             {
                 Peak peak= peaks->operator [](i);
                 //sX<<"PA "<<peak.getFreq()<<":"<<peak.getAmplitude()*10<<"; ";
                 //getFreq
-            }
+            }*/
             //qDebug() << "#" <<sX.c_str(); // peak log
 
 

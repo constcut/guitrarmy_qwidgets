@@ -207,7 +207,7 @@ void MidiEngine::sendSignal(MidiSignal *signal)
     }
 }
 
-void MidiEngine::sendSignalShort(std::uint8_t status, int byte1, int byte2)
+void MidiEngine::sendSignalShort([[maybe_unused]] std::uint8_t status, [[maybe_unused]] int byte1, [[maybe_unused]] int byte2)
 {
     if (opened==false)
         init();
@@ -226,7 +226,7 @@ void MidiEngine::sendSignalShort(std::uint8_t status, int byte1, int byte2)
 #endif
 }
 
-void MidiEngine::sendSignalLong(MidiSignal *signal)
+void MidiEngine::sendSignalLong([[maybe_unused]] MidiSignal *signal)
 {
     if (opened==false)
         init();
@@ -261,7 +261,8 @@ void MidiEngine::sendSignalShortWin(DWORD signal)
 
 #endif
 
-void MidiEngine::sendSignalShortDelay( int msdelay, std::uint8_t status, int byte1, int byte2)
+void MidiEngine::sendSignalShortDelay( [[maybe_unused]] int msdelay,[[maybe_unused]]  std::uint8_t status,
+    [[maybe_unused]]  int byte1, [[maybe_unused]] int byte2)
 {
     if (opened==false)
         init();
@@ -290,7 +291,7 @@ void MidiEngine::sendSignalShortDelay( int msdelay, std::uint8_t status, int byt
 #endif
 }
 
-void MidiEngine::setVolume(int vol)
+void MidiEngine::setVolume([[maybe_unused]] int vol)
 {
     if (opened==false)
         init();

@@ -467,8 +467,6 @@ void TapRyView::setUI()
 
 void TapRyView::draw(QPainter *painter)
 {
-    static std::uint8_t firstDraw = 1;
-
     int fullW = getMaster()->getWidth();
     int fullH = getMaster()->getHeight();
 
@@ -1034,7 +1032,7 @@ void RecordView::setUI()
 
     std::string recordsNames="";
 
-    for (size_t i = 0; i < files.size(); ++i)
+    for (int i = 0; i < files.size(); ++i)
     {
       recordsNames += files[i].toStdString();
       recordsNames += std::string(";");
@@ -1102,7 +1100,7 @@ void RecordView::draw(QPainter *painter)
     int zoomCoef = atoi(zoom->getText().c_str());
     int localPosition = 0;
     int scaleShiftUp = 0;
-    int liftDown = 0;
+    //int liftDown = 0;
     changeColor("white", painter);
     //draw main wave scaled, shifted
     for (int i= wavePosition; i < waveLimit; )
@@ -1130,7 +1128,7 @@ void RecordView::draw(QPainter *painter)
             if (i >= waveLimit) break;
         }
         //colored no more
-        int chosenShift = maxShift/(512); // max peak 65535 - 256*256
+        //int chosenShift = maxShift/(512); // max peak 65535 - 256*256
         //painter->drawLine(localPosition,200+chosenShift-60,localPosition,200+chosenShift-55);
         ++localPosition;
         if (localPosition > 2000) break; //escape outside screen
@@ -1178,7 +1176,7 @@ void RecordView::draw(QPainter *painter)
     {
         int notePeak = waveItself.notes[i].notePeak - toShift;
         int noteEnd = waveItself.notes[i].noteEnd - toShift;
-        int noteBegin = waveItself.notes[i].noteBegin - toShift;
+        //int noteBegin = waveItself.notes[i].noteBegin - toShift;
         double freq = waveItself.notes[i].freq;
 
         std::string freqStr = std::to_string(freq);

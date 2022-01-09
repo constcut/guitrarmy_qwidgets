@@ -62,7 +62,7 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
             auto metronomeClickTrack = std::make_unique<MidiTrack>();
             bool firstRun = true;
 
-            for (int barI=shiftTheCursor; barI< tab->at(0)->timeLoop.size(); ++barI)
+            for (size_t barI=shiftTheCursor; barI< tab->at(0)->timeLoop.size(); ++barI)
             {
                     //for bars
                     Bar *bar = tab->at(0)->timeLoop.at(barI);
@@ -296,7 +296,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
             for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
             {
               if (changes->at(indexChange).changeType==8) {
-                  size_t newBPM = changes->at(indexChange).changeValue; //skipped according to time line
+                  //size_t newBPM = changes->at(indexChange).changeValue; //skipped according to time line  //REVIEW, INSURE
                   //pushChangeBPM(newBPM,accum);
                   //takeAccum();
               }
