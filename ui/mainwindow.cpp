@@ -782,8 +782,6 @@ int MainWindow::getCurrentViewType()
         if (dynamic_cast<InfoView*>(gview) != 0)
             return 7;
 
-        if (dynamic_cast<InfoView*>(gview) != 0)
-            return 7;
 
         if (dynamic_cast<TestsView*>(gview) != 0)
             return 8;

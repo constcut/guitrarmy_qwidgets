@@ -1,6 +1,8 @@
 #include <vector>
 #include <stdint.h>
 
+#include <QThread>
+
 
 class AThread
 {
@@ -70,35 +72,30 @@ protected:
 };
 
 
-
-class WaveMoveThr: public AThread
+class ThreadLocal : public QThread, public PlayAnimationThr
 {
-protected:
-    int *incrementA;
-    size_t *incrementB;
-
-    int limit;
-    //MasterView *mv;
-
-    int status;
-    bool pleaseStop;
+    Q_OBJECT
+signals:
+    void updateUI();
+    void nowFinished();
 
 public:
+    void run() Q_DECL_OVERRIDE {
+        threadRun();
+    }
 
-   void requestStop() { pleaseStop = true; }
+    void noticeFinished() override
+    {
+        emit nowFinished();
+    }
 
-   WaveMoveThr():incrementA(0),incrementB(0),limit(0),status(0),pleaseStop(false) {}
+    void callUpdate() override {
+        emit updateUI();
+    }
 
-   int getStatus() { return status; }
-
-   void setLimit(int max) { limit = max; }
-   void setInc(int *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
-   //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
-
-
-
-   void threadRun();
-
-protected:
-   virtual void sleepThread(int ms)=0;
+    void sleepThread(int ms) override {
+        msleep(ms);
+    }
 };
+
+

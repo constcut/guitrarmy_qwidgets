@@ -60,7 +60,6 @@ SOURCES += main.cpp\
     ui/imagepreloader.cpp \
     ui/mainwindow.cpp \
     ui/gview.cpp \
-    ui/athread.cpp \
     ui/gpannel.cpp \
     ui/mainviews.cpp \
     ui/tabviews.cpp \
@@ -100,7 +99,6 @@ HEADERS  += ui/mainwindow.h \
     ui/components.h \
     ui/gpannel.h \
     ui/gview.h \
-    ui/athread.h \
     libs/sf/tml.h \
     libs/sf/tsf.h \
     ui/imagepreloader.h \

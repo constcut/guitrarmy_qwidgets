@@ -7,44 +7,6 @@ AThread::AThread()
 
 }
 
-void WaveMoveThr::threadRun()
-{
-   /*
-   int quarter = 60000/bpm;
-   int firstTakt = (quarter/2)*21;
-   int fullNote = 240000/bpm;
-   int waitValue = (fullNote/denum)*num;
-   */
-   //int indexWait = 0;
-
-   status = 0;
-   pleaseStop =false;
-
-   while (pleaseStop == false)
-   {
-        if (incrementA)
-        {
-            static int counter=0;
-            ++counter;
-
-            int toAdd = 110;
-            if(counter%40==0)
-                ++toAdd; //*10
-
-
-            *incrementA=*incrementA+toAdd;
-            if (*incrementA >= limit)
-                break;
-
-            callUpdate();
-            sleepThread(10);
-        }
-   }
-
-
-
-   status = 1;
-}
 
 void PlayAnimationThr::threadRun()
 {
