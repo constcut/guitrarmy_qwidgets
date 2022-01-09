@@ -17,57 +17,57 @@ void PlayAnimationThr::threadRun()
    */
    int indexWait = 0;
 
-   status = 0;
+   _status = 0;
 
    //while ((*increment +1) < limit)
-    for (size_t i = 0 ; i < waitTimes.size(); ++i)
+    for (size_t i = 0 ; i < _waitTimes.size(); ++i)
     {
-        if (pleaseStop) {
-           status = 1;
+        if (_pleaseStop) {
+           _status = 1;
            break;
         }
 
-        (*incrementA) = waitIndexes[indexWait];
-        int nowWait = waitTimes[indexWait];
+        (*_incrementA) = _waitIndexes[indexWait];
+        int nowWait = _waitTimes[indexWait];
 
-        if (incrementB)
-        (*incrementB) = 0;
+        if (_incrementB)
+        (*_incrementB) = 0;
 
-        if (pleaseStop) {
-            status = 1;
+        if (_pleaseStop) {
+            _status = 1;
             break;
         }
 
-        if (pleaseStop) {
-           status = 1;
+        if (_pleaseStop) {
+           _status = 1;
            break;
         }
 
         callUpdate();
 
-        if (beatTimes.size() > i)
-            for(size_t j = 0; j < beatTimes[i].size(); ++j)
+        if (_beatTimes.size() > i)
+            for(size_t j = 0; j < _beatTimes[i].size(); ++j)
             {
-                int beatWait = beatTimes[i][j];
+                int beatWait = _beatTimes[i][j];
 
                 nowWait-=beatWait;
                 if (nowWait < 0)
                  beatWait += nowWait;
 
-                if (pleaseStop) {
-                   status = 1;
+                if (_pleaseStop) {
+                   _status = 1;
                    break;
                 }
 
                 if (beatWait > 0)
                     sleepThread(beatWait); //Conditional variables
 
-                if (pleaseStop) {
-                   status = 1;
+                if (_pleaseStop) {
+                   _status = 1;
                    break;
                 }
 
-                (*incrementB) = (*incrementB) +1;
+                (*_incrementB) = (*_incrementB) +1;
                 callUpdate();
             }
      //check for beats times - for cycle
@@ -79,13 +79,13 @@ void PlayAnimationThr::threadRun()
 
      if (nowWait>0) {
 
-         if (pleaseStop) {
-            status = 1;
+         if (_pleaseStop) {
+            _status = 1;
             break;
          }
 
-         if (incrementB != 0) {
-            (*incrementB) = (*incrementB) - 1;
+         if (_incrementB != 0) {
+            (*_incrementB) = (*_incrementB) - 1;
             callUpdate();
          }
          sleepThread(nowWait);
@@ -97,8 +97,8 @@ void PlayAnimationThr::threadRun()
      ++indexWait;
    }
 
-   status = 1;
-   if (incrementB == 0)
+   _status = 1;
+   if (_incrementB == 0)
        noticeFinished();
 }
 
@@ -132,9 +132,9 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
     int changeIndex = 0;
 
     setBPM(bpmChangeList[changeIndex].newBpm);
-    beatTimes.clear();
-    waitTimes.clear();
-    waitIndexes.clear();
+    _beatTimes.clear();
+    _waitTimes.clear();
+    _waitIndexes.clear();
 
     ++changeIndex;
 
@@ -180,7 +180,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
                     //qDebug() << "Next wait arhived "<<toTheNextWait<<"; switch to "<<bpmChangeList[changeIndex].newBpm;
 
                     //all bpm switch position
-                    bpm =  bpmChangeList[changeIndex].newBpm;
+                    _bpm =  bpmChangeList[changeIndex].newBpm;
                     //qDebug() << "Changed bpm to "<<bpm;
 
                     {
@@ -192,7 +192,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
                 }
             }
 
-               int noteTime = 2400000/bpm; //full note
+               int noteTime = 2400000/_bpm; //full note
 
                if (dot == 1)
                {
@@ -218,7 +218,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
                barMoments.push_back(noteTime);
 
         }
-        beatTimes.push_back(barMoments);
+        _beatTimes.push_back(barMoments);
 
         addNumDenum(bar->getSignNum(), bar->getSignDenum(), track->timeLoopIndexStore[barI]);
     }
@@ -230,10 +230,10 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
 
 void PlayAnimationThr::addNumDenum(std::uint8_t nu, std::uint8_t de, size_t nextIndex)
 {
-    int fullNote = 240000/bpm;
+    int fullNote = 240000/_bpm;
     int waitValue = (fullNote/de)*nu;
-    waitTimes.push_back(waitValue);
-    waitIndexes.push_back(nextIndex);
+    _waitTimes.push_back(waitValue);
+    _waitIndexes.push_back(nextIndex);
 
     //log << "Adding n="<<nu<<"; d="<<de<<"; ind="<<nextIndex;
 }
@@ -242,9 +242,9 @@ int PlayAnimationThr::calculateSeconds()
 {
     size_t totalSumm = 0;
 
-    for (size_t i = 0; i < waitTimes.size(); ++i)
+    for (size_t i = 0; i < _waitTimes.size(); ++i)
     {
-        totalSumm += waitTimes[i];
+        totalSumm += _waitTimes[i];
     }
 
     int seconds = totalSumm/1000;
@@ -278,14 +278,14 @@ void PlayAnimationThr::addBeatTimes(Bar* bar)
 
                     //CHANGING BPM from mix table!
 
-                    bpm = newBPM;
+                    _bpm = newBPM;
                     break;
                 }
             }
         }
         //animation
 
-        int noteTime = 2400000/bpm; //full note
+        int noteTime = 2400000/_bpm; //full note
 
         std::uint8_t dur = beat->getDuration();
         std::uint8_t dot = beat->getDotted();
@@ -314,5 +314,5 @@ void PlayAnimationThr::addBeatTimes(Bar* bar)
         barMoments.push_back(noteTime);
     }
 
-    beatTimes.push_back(barMoments);
+    _beatTimes.push_back(barMoments);
 }

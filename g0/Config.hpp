@@ -29,8 +29,6 @@ namespace gtmy {
         double scaleCoef;
         double timeCoef; //TODO setters getters
 
-    //Previus global variables:
-
         std::string testsLocation;
         std::string invertedLocation;
         std::string theUserId;
@@ -50,14 +48,14 @@ namespace gtmy {
         void connectLog(bool *ptrValue, int index=-1,std::string logName="unknown");
 
         void load(std::ifstream& file);
-        void save(std::ofstream& file);
+        void save(std::ofstream& file) const;
 
         void addValue(std::string name, std::string val);
 
-        double getTimeCoef() { return timeCoef; }
+        double getTimeCoef() const { return timeCoef; }
         void setTimeCoef(double newTC) { timeCoef = newTC; }
 
-        double getScaleCoef() { return scaleCoef; }
+        double getScaleCoef() const { return scaleCoef; }
         void setScaleCoef(double scale) { scaleCoef = scale; }
 
         void printValues();

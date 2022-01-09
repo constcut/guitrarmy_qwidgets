@@ -151,7 +151,7 @@ void AConfig::addLine(std::string anotherLine)
 
 //should connect some values to be used
 //first
-void AConfig::save(std::ofstream &file)
+void AConfig::save(std::ofstream &file) const
 {
      //file.opened();
      for (auto it = values.begin();
@@ -163,7 +163,7 @@ void AConfig::save(std::ofstream &file)
      file.close();
 }
 
-void AConfig::printValues()
+void AConfig::printValues() const
 {
     qDebug()<<"Configuration parameters";
     for (auto it = values.begin();

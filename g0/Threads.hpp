@@ -30,44 +30,38 @@ namespace gtmy {
     class PlayAnimationThr: public AThread
     {
     protected:
-        size_t *incrementA;
-        size_t *incrementB;
+        size_t* _incrementA; //TODO rename - значение ведь всегда одно
+        size_t* _incrementB;
 
-        size_t limit;
-        //MasterView *mv;
+        size_t _limit;
 
-        int bpm;
 
-        std::vector<int> waitTimes;
-        std::vector<int> waitIndexes;
+        int _bpm;
+        std::vector<int> _waitTimes;
+        std::vector<int> _waitIndexes;
+        std::vector< std::vector<int> > _beatTimes;
 
-        std::vector< std::vector<int> > beatTimes;
-
-        int status;
-
-        bool pleaseStop;
+        int _status;
+        bool _pleaseStop;
 
     public:
 
-       void requestStop() { pleaseStop = true; }
+       void requestStop() { _pleaseStop = true; }
 
-       PlayAnimationThr():incrementA(0),incrementB(0),limit(0),bpm(1),status(0),pleaseStop(false) {}
+       PlayAnimationThr():_incrementA(0),_incrementB(0),_limit(0),_bpm(1),_status(0),_pleaseStop(false) {}
 
-       int getStatus() { return status; }
+       int getStatus() const { return _status; }
 
-       void setBPM(int newBPM) { bpm = newBPM; waitTimes.clear(); }
-       void setLimit(size_t max) { limit = max; }
-       void setInc(size_t *ptrA, size_t *ptrB) { incrementA = ptrA; incrementB = ptrB; }
+       void setBPM(int newBPM) { _bpm = newBPM; _waitTimes.clear(); }
+       void setLimit(size_t max) { _limit = max; }
+       void setInc(size_t *ptrA, size_t *ptrB) { _incrementA = ptrA; _incrementB = ptrB; }
        //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
 
        void setupValues(Tab* tab_ptr, Track* track_ptr, size_t shiftTheCursor);
-
        void addNumDenum(uint8_t nu, uint8_t de, size_t nextIndex);
-
        void addBeatTimes(Bar* bar);
 
        void threadRun();
-
        int calculateSeconds();
 
     protected:
