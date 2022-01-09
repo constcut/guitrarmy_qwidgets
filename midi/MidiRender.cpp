@@ -12,7 +12,7 @@ using namespace gtmy;
 MidiRender::MidiRender()
 {
     _renderFrameSize = 1024;
-    _sampleRate = 44100;
+    _sampleRate = 8000; //Was default for fast rendering
     _totalMsSpent = 0;
 }
 

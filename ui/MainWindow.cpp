@@ -1683,12 +1683,13 @@ void MainWindow::stopAudioOutput()
 void MainWindow::startAudioInput()
 {
 
-    audioInfo->collector.clear();
+    audioInfo->collector().clear();
 
     audioInfo->start();
     audioInput->start(audioInfo);
 
 }
+
 
 void MainWindow::stopAudioInput()
 {
@@ -1734,9 +1735,9 @@ void MainWindow::stopAudioInput()
     if (f.open(QIODevice::Append))
     {
 
-        qDebug() << "Collector size was "<<audioInfo->collector.size();
+        qDebug() << "Collector size was "<<audioInfo->collector().size();
 
-        f.write(audioInfo->collector);
+        f.write(audioInfo->collector());
         f.flush();
         f.close();
     }
@@ -1744,7 +1745,7 @@ void MainWindow::stopAudioInput()
         qDebug() << "Open file for raw record error;";
 
 
-    audioInfo->collector.clear();
+    audioInfo->collector().clear();
 
     //check up
 

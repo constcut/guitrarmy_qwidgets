@@ -256,7 +256,7 @@ void gtmy::initNewTab(MainWindow& w) {
 }
 
 
-void gtmy::copyResourcesIntoTempDir() {
+void gtmy::copyResourcesIntoTempDir() { //TODO может быть во временную копировать только тесты?
     static QTemporaryDir tempDir;
     setTestLocation(tempDir.path().toStdString() + "/");
     QDir dir;
@@ -267,8 +267,8 @@ void gtmy::copyResourcesIntoTempDir() {
     QString allOutDir = tempDir.path() + "/all_out/";
     dir.mkdir(allOutDir);
 
-    QString resourseSf = ":/sf/instrument.sf2";
-    QString copySf = tempDir.path() + "/instrument.sf2";
+    QString resourseSf = ":/sf/fullset.sf2";
+    QString copySf = tempDir.path() + "/fullset.sf2";
     QFile::copy(resourseSf, copySf);
 
     std::unordered_map<size_t, size_t> groupLength = {

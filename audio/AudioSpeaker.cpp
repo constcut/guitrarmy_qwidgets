@@ -11,31 +11,31 @@ using namespace gtmy;
 
 AudioInfo::AudioInfo(const QAudioFormat &format, QObject *parent)
     :   QIODevice(parent)
-    ,   m_format(format)
-    ,   m_maxAmplitude(0)
-    ,   m_level(0.0)
+    ,   _format(format)
+    ,   _maxAmplitude(0)
+    ,   _level(0.0)
 
 {
-    switch (m_format.sampleSize()) {
+    switch (_format.sampleSize()) {
     case 8:
-        switch (m_format.sampleType()) {
+        switch (_format.sampleType()) {
         case QAudioFormat::UnSignedInt:
-            m_maxAmplitude = 255;
+            _maxAmplitude = 255;
             break;
         case QAudioFormat::SignedInt:
-            m_maxAmplitude = 127;
+            _maxAmplitude = 127;
             break;
         default:
             break;
         }
         break;
     case 16:
-        switch (m_format.sampleType()) {
+        switch (_format.sampleType()) {
         case QAudioFormat::UnSignedInt:
-            m_maxAmplitude = 65535;
+            _maxAmplitude = 65535;
             break;
         case QAudioFormat::SignedInt:
-            m_maxAmplitude = 32767;
+            _maxAmplitude = 32767;
             break;
         default:
             break;
@@ -43,15 +43,15 @@ AudioInfo::AudioInfo(const QAudioFormat &format, QObject *parent)
         break;
 
     case 32:
-        switch (m_format.sampleType()) {
+        switch (_format.sampleType()) {
         case QAudioFormat::UnSignedInt:
-            m_maxAmplitude = 0xffffffff;
+            _maxAmplitude = 0xffffffff;
             break;
         case QAudioFormat::SignedInt:
-            m_maxAmplitude = 0x7fffffff;
+            _maxAmplitude = 0x7fffffff;
             break;
         case QAudioFormat::Float:
-            m_maxAmplitude = 0x7fffffff; // Kind of
+            _maxAmplitude = 0x7fffffff; // Kind of
         default:
             break;
         }
@@ -86,9 +86,9 @@ qint64 AudioInfo::readData(char *data, qint64 maxlen)
 qint64 AudioInfo::writeData(const char *data, qint64 len)
 {
 
-    collector += QByteArray(data,len);
+    _collector += QByteArray(data,len);
     int border = 16000*30; //each 60 seconds in smallest
-    if (collector.size() > border*10) //format*bitrate*minute
+    if (_collector.size() > border*10) //format*bitrate*minute
     {
         ///QByteArray compress = qCompress(collector,7);
         QString defaultRecFile = QString(AConfig::getInst().testsLocation.c_str()) + QString("record.temp");
@@ -96,19 +96,24 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
         ///int compressedSize = compress.size();
         if (f.open(QIODevice::Append))
         {
-            f.write(collector);
+            f.write(_collector);
             f.flush();
             f.close();
         }
         else
             qDebug() << "Open file for raw record error;";
-        collector.clear();
+        _collector.clear();
     }
 
-    int fullLen = collector.size();
+    int fullLen = _collector.size();
     int cutLen = len;
     qDebug() << "Wroten audio data "<<cutLen<<"; in bufer "<<fullLen;
     return len;
+}
+
+void AudioInfo::setLevel(qreal newLevel)
+{
+    _level = newLevel;
 }
 /// AUDIO INPUT FINISHED
 // NOW OUTPUT
@@ -116,7 +121,7 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
 AudioSpeaker::AudioSpeaker([[maybe_unused]]const QAudioFormat &format,
                      QObject *parent)
     :   QIODevice(parent)
-    ,   m_pos(0)
+    ,   _pos(0)
 {
 }
 
@@ -131,7 +136,7 @@ void AudioSpeaker::start()
 
 void AudioSpeaker::stop()
 {
-    m_pos = 0;
+    _pos = 0;
     close();
 }
 
@@ -146,8 +151,8 @@ void AudioSpeaker::generateData(const QAudioFormat &format, qint64 durationUs, [
     Q_ASSERT(length % sampleBytes == 0);
     Q_UNUSED(sampleBytes); // suppress warning in release builds
 
-    m_buffer.resize(length);
-    unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
+    _buffer.resize(length);
+    unsigned char *ptr = reinterpret_cast<unsigned char *>(_buffer.data());
     int sampleIndex = 0;
 
     while (length) {
@@ -183,11 +188,11 @@ void AudioSpeaker::generateData(const QAudioFormat &format, qint64 durationUs, [
 qint64 AudioSpeaker::readData(char *data, qint64 len)
 {
     qint64 total = 0;
-    if (!m_buffer.isEmpty()) {
+    if (!_buffer.isEmpty()) {
         while (len - total > 0) {
-            const qint64 chunk = qMin((m_buffer.size() - m_pos), len - total);
-            memcpy(data + total, m_buffer.constData() + m_pos, chunk);
-            m_pos = (m_pos + chunk) % m_buffer.size();
+            const qint64 chunk = qMin((_buffer.size() - _pos), len - total);
+            memcpy(data + total, _buffer.constData() + _pos, chunk);
+            _pos = (_pos + chunk) % _buffer.size();
             total += chunk;
         }
     }
@@ -204,12 +209,12 @@ qint64 AudioSpeaker::writeData(const char *data, qint64 len)
 
 qint64 AudioSpeaker::bytesAvailable() const
 {
-    return m_buffer.size() + QIODevice::bytesAvailable();
+    return _buffer.size() + QIODevice::bytesAvailable();
 }
 
 
 void AudioSpeaker::setAudioBufer(QByteArray &aStream)
 {
-    m_buffer.clear();
-    m_buffer += aStream;
+    _buffer.clear();
+    _buffer += aStream;
 }

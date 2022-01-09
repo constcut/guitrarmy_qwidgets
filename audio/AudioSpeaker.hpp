@@ -9,11 +9,6 @@ class AudioInfo : public QIODevice
 {
     Q_OBJECT
 
-protected:
-
-public: //temp operations
-    QByteArray collector;
-
 public:
     AudioInfo(const QAudioFormat &format, QObject *parent);
     ~AudioInfo();
@@ -21,15 +16,20 @@ public:
     void start();
     void stop();
 
-    qreal level() const { return m_level; }
+    qreal level() const { return _level; }
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 
+    QByteArray& collector() { return _collector; }
+
+    void setLevel(qreal newLevel);
+
 private:
-    const QAudioFormat m_format;
-    quint32 m_maxAmplitude;
-    qreal m_level; // 0.0 <= m_level <= 1.0
+    const QAudioFormat _format;
+    quint32 _maxAmplitude;
+    qreal _level; // 0.0 <= m_level <= 1.0
+    QByteArray _collector;
 
 signals:
     void update();
@@ -57,8 +57,8 @@ private:
     void generateData(const QAudioFormat &format, qint64 durationUs, int sampleRate);
 
 private:
-    qint64 m_pos;
-    QByteArray m_buffer;
+    qint64 _pos;
+    QByteArray _buffer;
 };
 
 

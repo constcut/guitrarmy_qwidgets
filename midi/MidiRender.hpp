@@ -69,7 +69,7 @@ namespace gtmy {
         int _renderFrameSize;
         double _sampleRate;
         float _volume = -6.0;
-        QString _soundfontFile = "epiano.sf2";
+        QString _soundfontFile = "fullset.sf2";
 
         int _g_MidiChannelPreset[16];
         double _msRendered;

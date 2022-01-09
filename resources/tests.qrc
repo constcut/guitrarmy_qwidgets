@@ -224,5 +224,6 @@
         <file>regression/1.1.mid</file>
         <file>regression/1.1.gmy</file>
         <file>sf/instrument.sf2</file>
+        <file>sf/fullset.sf2</file>
     </qresource>
 </RCC>
