@@ -1,7 +1,7 @@
-#include "audiospeaker.h"
-#include "audio/fft.h"
-#include "audio/rec.h"
-#include "audio/waveanalys.h"
+#include "AudioSpeaker.hpp"
+#include "audio/FFT.hpp"
+#include "audio/Recording.hpp"
+#include "audio/WaveAnalys.hpp"
 
 #include "g0/config.h"
 

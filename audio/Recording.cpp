@@ -1,8 +1,8 @@
-#include "rec.h"
+#include "Recording.hpp"
 
 //later please incapsulate here:
-#include "audio/fft.h"
-#include "audio/waveanalys.h"
+#include "audio/FFT.hpp"
+#include "audio/WaveAnalys.hpp"
 
 #include <QFile>
 #include <QDebug>

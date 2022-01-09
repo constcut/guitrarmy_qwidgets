@@ -22,7 +22,7 @@
 #include <fstream>
 
 
-#include "midi/midirender.h"
+#include "midi/midirender.hpp"
 
 //Trackview events:
 

@@ -7,7 +7,7 @@
 #include "tabviews.h"
 #include "components.h"
 #include "tab/commands.h"
-#include "audio/audiospeaker.h"
+#include "audio/AudioSpeaker.hpp"
 
 
 #include <QWidget>

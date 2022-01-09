@@ -28,7 +28,10 @@ win32:LIBS += -lWinMM
 
 
 SOURCES += main.cpp\
-    audio/audiospeaker.cpp \
+    audio/AudioSpeaker.cpp \
+    audio/FFT.cpp \
+    audio/Recording.cpp \
+    audio/WaveAnalys.cpp \
     g0/base.cpp \
     g0/config.cpp \
     g0/regression.cpp \
@@ -64,17 +67,17 @@ SOURCES += main.cpp\
     midi/midirender.cpp \
     ui/tabviews.cpp \
     ui/tabcommands.cpp \
-    audio/fft.cpp \
-    audio/waveanalys.cpp \
     ui/centerview.cpp \
     ui/inputviews.cpp \
     midi/midiengine.cpp \
-    audio/rec.cpp \
     ui/trackview.cpp
 
 
 HEADERS  += ui/mainwindow.h \
-    audio/audiospeaker.h \
+    audio/AudioSpeaker.hpp \
+    audio/FFT.hpp \
+    audio/Recording.hpp \
+    audio/WaveAnalys.hpp \
     g0/base.h \
     g0/config.h \
     g0/regression.h \
@@ -108,12 +111,9 @@ HEADERS  += ui/mainwindow.h \
     ui/imagepreloader.h \
     ui/mainviews.h \
     ui/tabviews.h \
-    audio/fft.h \
-    audio/waveanalys.h \
     ui/centerview.h \
     ui/inputviews.h \
     midi/midiengine.h \
-    audio/rec.h \
     ui/trackview.h
 
 

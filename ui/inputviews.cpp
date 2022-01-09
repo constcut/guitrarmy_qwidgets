@@ -6,9 +6,9 @@
 
 #include <QInputDialog>
 
-#include "audio/fft.h"
+#include "audio/FFT.hpp"
 
-#include "audio/waveanalys.h"
+#include "audio/WaveAnalys.hpp"
 
 #include "midi/midiexport.h"
 
@@ -18,7 +18,7 @@
 #include <QMessageBox>
 #include <QDir>
 
-#include "audio/rec.h"
+#include "audio/Recording.hpp"
 
 #include <fstream>
 

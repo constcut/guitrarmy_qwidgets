@@ -1,4 +1,4 @@
-#include "waveanalys.h"
+#include "WaveAnalys.hpp"
 
 #include <vector>
 #include <algorithm>

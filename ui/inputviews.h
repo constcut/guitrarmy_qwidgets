@@ -4,7 +4,7 @@
 #include "tab/tab.h"
 #include "ui/barview.h"
 
-#include "audio/rec.h"
+#include "audio/Recording.hpp"
 
 #include <QStringList>
 #include <QAudioRecorder>
