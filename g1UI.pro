@@ -82,6 +82,7 @@ HEADERS  += ui/mainwindow.h \
     g0/threads.h \
     g0/init.h \
     midi/midiexport.h \
+    midi/midirender.hpp \
     midi/miditrack.h \
     tab/commands.h \
     tab/effects.h \
@@ -106,7 +107,6 @@ HEADERS  += ui/mainwindow.h \
     libs/sf/tsf.h \
     ui/imagepreloader.h \
     ui/mainviews.h \
-    midi/midirender.h \
     ui/tabviews.h \
     audio/fft.h \
     audio/waveanalys.h \
