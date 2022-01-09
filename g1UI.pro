@@ -131,7 +131,7 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 RESOURCES += \
     resources/icons.qrc \
-    tests.qrc \
+    resources/tests.qrc \
     resources/info.qrc \
     resources/icons2.qrc
 
