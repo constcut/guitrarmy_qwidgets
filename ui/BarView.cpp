@@ -293,14 +293,14 @@ void BarView::drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dot
 }
 
 BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
-    pBar(b),xShift(0),yShift(0),nStrings(nstr),cursor(-1),stringCursor(-1)
-  ,barNumber(barNum),sameSign(false)
+    _pBar(b),_xShift(0),_yShift(0),_nStrings(nstr),_cursor(-1),_stringCursor(-1)
+  ,_barNumber(barNum),_sameSign(false)
 {
-    selectorBegin=-1;
-    selectorEnd=-1;
+    _selectorBegin=-1;
+    _selectorEnd=-1;
 
-    repBegin=false;
-    repEnd=false;
+    _repBegin=false;
+    _repEnd=false;
 
 
 
@@ -329,29 +329,29 @@ BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
            h+=10;
     }
 
-    nBeats=barLen;
+    _nBeats=barLen;
 
     if (b->getRepeat()&1)
-    { repBegin = true; w += 15; }
+    { _repBegin = true; w += 15; }
     if (b->getRepeat()&2)
-    { repEnd = true; w += 15; }
+    { _repEnd = true; w += 15; }
 }
 
 void BarView::draw(QPainter *painter)
 {
-    Bar *bar1 = pBar;
-    int cX = 20+xShift;
-    int cY = 20+yShift;
+    Bar *bar1 = _pBar;
+    int cX = 20+_xShift;
+    int cY = 20+_yShift;
 
     Track *track = bar1->getParent();
     bool isSelected = false;
 
-    if (selectorBegin!=-1)
+    if (_selectorBegin!=-1)
     {
-        int skipFromStart = (selectorBegin)*inbarWidth;
-        int skipFromEnd = (bar1->size() - selectorEnd)*inbarWidth;
+        int skipFromStart = (_selectorBegin)*inbarWidth;
+        int skipFromEnd = (bar1->size() - _selectorEnd)*inbarWidth;
 
-        if (selectorEnd == -1)
+        if (_selectorEnd == -1)
         {
             painter->fillRect(getX()+skipFromStart,getY(),
                               getW()-skipFromStart,getH(),QColor(CONF_PARAM("colors.selection").c_str()));
@@ -369,7 +369,7 @@ void BarView::draw(QPainter *painter)
     //check widht and height
     //painter->drawRect(cX,cY,w,h);
 
-    if (sameSign == false)
+    if (_sameSign == false)
     {
         //SKIP in another mode
         std::string numVal,denVal;
@@ -396,31 +396,31 @@ void BarView::draw(QPainter *painter)
         painter->setFont(f);
     }
 
-    if (repBegin)
+    if (_repBegin)
         cX += 15;
     //else
     {  //always
         cX -=10; //decreace bar size
     }
 
-    if (barNumber!=-1)
+    if (_barNumber!=-1)
     {
-        std::string numberLabel = std::to_string(barNumber + 1);
+        std::string numberLabel = std::to_string(_barNumber + 1);
         int xMiniSHift = 0;
-        if ((barNumber+1) >= 10)
+        if ((_barNumber+1) >= 10)
             xMiniSHift -= 5;
-        if ((barNumber+1) >= 100)
+        if ((_barNumber+1) >= 100)
             xMiniSHift -= 5;
 
-        if (repBegin) xMiniSHift-=15;
+        if (_repBegin) xMiniSHift-=15;
 
         painter->drawText(cX+xMiniSHift,cY+15+3,numberLabel.c_str());
     }
 
     size_t barLen = bar1->size();
-    int amountStr = nStrings;
+    int amountStr = _nStrings;
 
-    if (repBegin)
+    if (_repBegin)
     {
         int toBegin = -3;
 
@@ -431,11 +431,11 @@ void BarView::draw(QPainter *painter)
         painter->drawEllipse(toBegin+cX+5,cY+stringWidth*5,3,3);
     }
 
-    if (repEnd)
+    if (_repEnd)
     {
         int toBegin = w-10;
 
-        if (repBegin)
+        if (_repBegin)
             toBegin -= 15;
 
         for (int l=0; l<2; ++l)
@@ -454,7 +454,7 @@ void BarView::draw(QPainter *painter)
 
     for (int i = 1 ; i < (amountStr+1); ++i)
     {
-        if (i == stringCursor)
+        if (i == _stringCursor)
         {
             //painter->changeColor(APainter::colorRed);
             changeColor(CONF_PARAM("colors.curString"), painter);
@@ -463,7 +463,7 @@ void BarView::draw(QPainter *painter)
         painter->drawLine(cX+10,cY+i*stringWidth-stringWidth/2,cX+10+barLen*inbarWidth,cY+i*stringWidth-stringWidth/2);
 
 
-        if (i == stringCursor)
+        if (i == _stringCursor)
         {
             //painter->changeColor(APainter::colorGreen);
             changeColor(CONF_PARAM("colors.curBar"), painter);
@@ -484,7 +484,7 @@ void BarView::draw(QPainter *painter)
 
     for (size_t i = 0; i < barLen; ++i) {
 
-        if (i == cursor) {
+        if (i == _cursor) {
             //painter->changeColor(APainter::colorBlue);
              changeColor(CONF_PARAM("colors.curBeat"), painter);
         }
@@ -562,22 +562,22 @@ void BarView::draw(QPainter *painter)
 
                 if (isSelected)
                 {
-                    if (selectorEnd == -1)//till end
+                    if (_selectorEnd == -1)//till end
                     {
-                        if (i>=selectorBegin)
+                        if (i>=_selectorBegin)
                             thatBack = CONF_PARAM("colors.selection");
                     }
                     else
                     {
-                        if (selectorBegin == 0)
+                        if (_selectorBegin == 0)
                         {
-                            if (i<=selectorEnd)
+                            if (i<=_selectorEnd)
                                 thatBack = CONF_PARAM("colors.selection");
                         }
                         else
                         {
                             //not zero start not -1 end
-                            if ((i<=selectorEnd) && (i >= selectorBegin))
+                            if ((i<=_selectorEnd) && (i >= _selectorBegin))
                                     thatBack = CONF_PARAM("colors.selection");
                         }
 
@@ -733,7 +733,7 @@ void BarView::draw(QPainter *painter)
                      cY+stringWidth*(amountStr+1));
 
         //OR DRAW MANY NOTES
-        if (i==cursor)
+        if (i==_cursor)
         {
              //painter->changeColor(APainter::colorGreen);
              changeColor(CONF_PARAM("colors.curBar"), painter);
@@ -893,7 +893,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, con
     }
 }
 
-int BarView::getClickString(int y1)
+int BarView::getClickString(int y1) const
 {
     int yOffset = y1-y;
     int stringIndex = yOffset/12; //12 stringWidth
@@ -902,9 +902,9 @@ int BarView::getClickString(int y1)
     return stringIndex;
 }
 
-int BarView::getClickBeat(int x1)
+int BarView::getClickBeat(int x1) const
 {
-    if (repBegin) x1 -= 15;
+    if (_repBegin) x1 -= 15;
 
     int xOffset = x1-x;
     int beatIndex = xOffset/inbarWidth;

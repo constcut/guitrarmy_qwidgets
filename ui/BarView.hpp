@@ -14,48 +14,44 @@ namespace gtmy {
         static const int stringWidth=12;
         static const int inbarWidth=20;
 
-        Bar *pBar;
-        int xShift,yShift;
-        int nStrings;
-        int cursor;
-        int stringCursor;
+        Bar* _pBar;
+        int _xShift, _yShift; //TODO review + to unsinged
+        int _nStrings;
+        int _cursor;
+        int _stringCursor;
 
-        int nBeats;
+        int _nBeats;
 
-        int barNumber;
+        int _barNumber;
 
-        bool sameSign;
+        bool _sameSign;
 
-        int selectorBegin;
-        int selectorEnd;
+        int _selectorBegin;
+        int _selectorEnd;
 
-        bool repBegin;
-        bool repEnd;
+        bool _repBegin;
+        bool _repEnd;
 
     public:
 
-        int getBarsize() { return nBeats; }
+        int getBarsize() const { return _nBeats; }
 
-        void setSameSign(bool value) {sameSign = value;}
+        void setSameSign(bool value) {_sameSign = value;}
 
-        void setSelectors(int beg, int end){selectorBegin=beg; selectorEnd=end;}
-        void flushSelectors(){selectorBegin=selectorEnd=-1;}
+        void setSelectors(int beg, int end){_selectorBegin=beg; _selectorEnd=end;}
+        void flushSelectors(){_selectorBegin=_selectorEnd=-1;}
 
         BarView(Bar *b,int nstr, int barNum=-1);
 
 
-        void setBar(Bar *newBar){pBar = newBar;}
-        Bar *getBar() { return pBar; }
+        void setBar(Bar *newBar) {_pBar = newBar;}
+        Bar *getBar() const { return _pBar; }
 
-        void setCursor(int cur, int strCur=-1) { cursor = cur; stringCursor =strCur; }
-        int getCursor() { return cursor; }
+        void setCursor(int cur, int strCur=-1) { _cursor = cur; _stringCursor =strCur; }
+        int getCursor() const { return _cursor; }
 
-        //virtual void keyevent(std::string press){}
-        //void onclick(int x1, int y1){x1=y1=0;} //not used
-        //void ondblclick(int x1, int y1){ onclick(x1,y1);}
-
-        int getClickString(int y1);
-        int getClickBeat(int x1);
+        int getClickString(int y1) const;
+        int getClickBeat(int x1) const;
 
         void drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet,
                       int x1, int y1);
@@ -65,19 +61,18 @@ namespace gtmy {
 
         void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, const ABitArray &eff);
 
-
         void draw(QPainter *painter); //from beat to beat
 
         void setShifts(int x1, int y1)
         {
-            xShift =x1;
-            yShift =y1;
+            _xShift =x1;
+            _yShift =y1;
             x = x1+20;
             y = y1+20;
         }
 
 
-        void setNStrings(int ns){nStrings = ns;}
+        void setNStrings(int ns){_nStrings = ns;}
     };
 
 }
