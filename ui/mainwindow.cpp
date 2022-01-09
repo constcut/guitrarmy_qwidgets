@@ -34,7 +34,7 @@
 
 #include <QTextBlock>
 
-#include <android_helper.h>
+#include "g0/android_helper.h"
 
 #include <QMenuBar>
 

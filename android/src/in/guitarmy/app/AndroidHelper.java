@@ -8,8 +8,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-//import android.media.midi.MidiManager;
-
 import android.content.DialogInterface;
 
 public class AndroidHelper extends org.qtproject.qt5.android.bindings.QtActivity
@@ -21,7 +19,7 @@ public class AndroidHelper extends org.qtproject.qt5.android.bindings.QtActivity
 
      public AndroidHelper()
      {
-         m_instance = this; //useless but well..
+         m_instance = this; 
 
      }
 
@@ -47,25 +45,6 @@ public class AndroidHelper extends org.qtproject.qt5.android.bindings.QtActivity
 
      public static void msg()
      {
-         /*
-        AlertDialog.Builder builder = new AlertDialog.Builder(m_instance);
-            builder.setTitle("Someth")
-                    .setMessage("Is done")
-                    .setCancelable(false)
-                    .setNegativeButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-        AlertDialog alert = builder.create();
-        alert.show();
-
-        */
-        //MidiManager midiMan =  (MidiManager) getSystemService(Context.MIDI_SERVICE);;
-        ///MidiDeviceInfo[] infos = midiMan.getDevices();
-
-        //MidiInputPort inputPort = device.openInputPort(index);
      }
 
      public void setLandOrt()
