@@ -667,17 +667,14 @@ void BarView::draw(QPainter *painter)
 
         bool changes = curBeat->getEffects().getEffectAt(Effect::Changes);
 
-        std::string textBeat; curBeat->getGPCOMPText(textBeat);
+        std::string textBeat; curBeat->getText(textBeat);
         bool textPrec = textBeat.empty()==false;
-
-
 
         //chord SKIPPED
 
         bool fadeIn = curBeat->getEffects().getEffectAt(Effect::FadeIn);
 
-        if (downStroke)
-        {
+        if (downStroke) {
             painter->drawLine(cX+10+i*inbarWidth + inbarWidth/2,cY+stringWidth*(0),
                               cX+10+i*inbarWidth + inbarWidth/2,cY+stringWidth*(amountStr));
 

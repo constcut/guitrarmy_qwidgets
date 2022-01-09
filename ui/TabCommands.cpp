@@ -295,7 +295,7 @@ void setBendOnNote(Note* currentNote, MasterView* mw) {
 void setTextOnBeat(Track *track) {
     auto& beat = track->at(track->cursor())->at(track->cursorBeat());
     std::string beatText;
-    beat->getGPCOMPText(beatText);
+    beat->getText(beatText);
 
     bool ok=false;
     QString newText = QInputDialog::getText(0,"Input",

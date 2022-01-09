@@ -1157,7 +1157,7 @@ void readBeat(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
-        cursorBeat->setGPCOMPText(foundText);
+        cursorBeat->setText(foundText);
     }
 
     if (precEffects)
@@ -2178,7 +2178,7 @@ void readBeatGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd=255)
         if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
-        cursorBeat->setGPCOMPText(foundText);
+        cursorBeat->setText(foundText);
     }
 
     if (precEffects)
@@ -3080,7 +3080,7 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  qDebug() <<"TextLen "<<textLen<<" value "<<textBufer<<"; bL "<<byteLen;
 
         std::string foundText(textBufer);
-        cursorBeat->setGPCOMPText(foundText);
+        cursorBeat->setText(foundText);
     }
 
     if (precEffects)

@@ -33,7 +33,7 @@ void Track::switchEffect(Effect effect) {
     if (theNote) {
         bool effectFlag = theNote->getEffects().getEffectAt(effect);
         effectFlag = !effectFlag;
-        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->getEffRef().setEffectAt(effect, effectFlag);
+        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->getEffectsRef().setEffectAt(effect, effectFlag);
 
         ReversableCommand command(ReversableType::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
@@ -110,7 +110,7 @@ void Track::reverseCommand(ReversableCommand command) //TODO get rid of this->cu
         auto ind = static_cast<Effect>(value);
         bool effect = this->at(barN)->at(beatN)->getNote(stringN)->getEffects().getEffectAt(ind);
         effect = !effect;
-        this->at(barN)->at(beatN)->getNote(stringN)->getEffRef().setEffectAt(ind,effect);
+        this->at(barN)->at(beatN)->getNote(stringN)->getEffectsRef().setEffectAt(ind,effect);
     }
 
     if (type == ReversableType::SwitchEffectBeat) //beat eff
@@ -769,7 +769,7 @@ void Track::setTriolOnBeat() {
 void Track::setTextOnBeat(std::string newText) {
     parent->addMacro(StringCommand<TrackCommand>{TrackCommand::Text, newText});
     auto& beat = at(_cursor)->at(_cursorBeat);
-    beat->setGPCOMPText(newText);
+    beat->setText(newText);
 }
 
 

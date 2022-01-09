@@ -262,7 +262,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
                 // file.write((char*)&det,1);
 
                 std::string beatText;
-                beat->getGPCOMPText(beatText);
+                beat->getText(beatText);
 
                 std::uint8_t beatHead = 0;
 
@@ -777,7 +777,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                     {
                         size_t noteEffValue = 0;
                          file.read((char*)&noteEffValue,4);
-                        note->getEffRef().putBits(noteEffValue);
+                        note->getEffectsRef().putBits(noteEffValue);
 
                         //note.effPack.set(17,false); //turn off bend
                         if (note->getEffects() == Effect::Bend)
@@ -787,7 +787,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                             beat->getEffects().setEffectAt(Effect::Bend, true);
                         }
 
-                        note->getEffRef().setEffectAt(Effect::Tremolo,false); //turn off tremolo
+                        note->getEffectsRef().setEffectAt(Effect::Tremolo,false); //turn off tremolo
                     }
 
                     beat->push_back(std::move(note));

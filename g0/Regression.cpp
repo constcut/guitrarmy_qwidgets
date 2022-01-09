@@ -218,7 +218,7 @@ void macroTrackTest2() {
     for (auto& c: commands)
         t2.playCommand(c);
     std::string str;
-    t2.at(0)->at(0)->at(0)->getGPCOMPText(str);
+    t2.at(0)->at(0)->at(0)->getText(str);
     if (str != "some") {
         std::cerr << "ERROR: Track commands failed!" << std::endl;
         std::cerr << str.c_str() << " vs some" << std::endl;

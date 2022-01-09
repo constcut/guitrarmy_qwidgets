@@ -812,7 +812,7 @@ void BendInput::onclick(int x1, int y1)
          {
              if (ptrToBend)
              {
-                ptrToNote->getEffRef().setEffectAt(Effect::Bend,true);
+                ptrToNote->getEffectsRef().setEffectAt(Effect::Bend,true);
                 //ptrToNote->getEffects().addPack(17,2,ptrToBend); //insure but it must be already inside
              }
              getMaster()->pushForceKey("esc"); //go prev
@@ -825,7 +825,7 @@ void BendInput::onclick(int x1, int y1)
         {
             bool whatIsThere = ptrToNote->getEffects().getEffectAt(Effect::Bend);
             qDebug() << "Deleting bend that is "<<(int)whatIsThere;
-            ptrToNote->getEffRef().setEffectAt(Effect::Bend, false);
+            ptrToNote->getEffectsRef().setEffectAt(Effect::Bend, false);
         }
     }
     //shoud react on press and calculate

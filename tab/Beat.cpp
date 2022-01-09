@@ -29,13 +29,13 @@ void Beat::clone(Beat *from)
 {
    auto eff = from->getEffects();
    effPack.mergeWith(eff);
-   duration = from->duration;
-   durationDetail = from->durationDetail;
-   dotted = from->dotted;
-   isPaused = from->isPaused;
-   noticeText = from->noticeText;
+   _duration = from->_duration;
+   _durationDetail = from->_durationDetail;
+   _dotted = from->_dotted;
+   _isPaused = from->_isPaused;
+   _noticeText = from->_noticeText;
 
-   bookmarkName = from->bookmarkName;
+   _bookmarkName = from->_bookmarkName;
 
    for (size_t i = 0; i < from->size(); ++i)
    {

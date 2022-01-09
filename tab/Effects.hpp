@@ -75,6 +75,8 @@ namespace gtmy {
 
         void mergeWith(ABitArray& addition);
 
+        //TODO добавить свитчер (ReversedCommands)
+
     };
 
 }

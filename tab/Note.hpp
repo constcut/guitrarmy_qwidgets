@@ -64,16 +64,14 @@ namespace gtmy {
 
         void printToStream(std::ostream &stream) const;
 
-        enum FretValues
-        {
+        enum FretValues {
             emptyFret = 63,
             pauseFret = 62,
             ghostFret = 61,
             leegFret = 60
         };
 
-        enum NoteState
-        {
+        enum NoteState {
             normalNote = 0,
             leegNote = 2,
             deadNote = 3,
@@ -81,10 +79,7 @@ namespace gtmy {
             leegedLeeg = 6
         };
 
-
-        Note():
-        _fret(emptyFret),_volume(0),_fingering(0),_effectsA(0),_effectsB(0),
-              graceIsHere(false) {}
+        Note(): _fret(emptyFret), _volume(0), _fingering(0), graceIsHere(false) {}
 
         virtual ~Note() = default;
 
@@ -94,42 +89,39 @@ namespace gtmy {
         }
 
     private:
-        //[BASE]
+
         std::uint8_t _fret; //[0-63]; some last values used for special coding {pause, empty, leege note... ghost note(x)}
         std::uint8_t _volume;//[0-64]]-1);  values less than 14 used for ppp pp p m f ff fff - before -is precents for 2 per step
         std::uint8_t _fingering; //store information about finger to play - //fingers {none, L1,L2,L3,L4,L5, R1,R2,R3,R4,R5 +(12)(13)(14)(15)(16) ) - pressure hand for another there
 
-        std::uint8_t _noteState;//NoteState
-
-        std::uint8_t _effectsA; // inEffects:[slide in up\down; grace; none] outEffects:[side out up\down; legato; bend; ghost; ] [let ring] [palm mute] [vibro]
-        std::uint8_t _effectsB; // picking [tap slap pop up down stoks and non] [trill 0 2 4 8]
+        std::uint8_t _noteState;
 
         std::uint8_t _fingering1;
         std::uint8_t _fingering2;
 
-        std::uint8_t stringNumber;
+        std::uint8_t _stringNumber;
 
-        Note* prevNote;
-        Note* nextNote;
+        Note* _prevNote;
+        Note* _nextNote; //TODO разве этого нет в Chain?
 
-        ABitArray effPack;
+        ABitArray _effPack;
 
     public:
 
-        void setNext(Note *nextOne) { nextNote = nextOne; }
-        void setPrev(Note *prevOne) { prevNote = prevOne; }
+        void setNext(Note *nextOne) { _nextNote = nextOne; }
+        void setPrev(Note *prevOne) { _prevNote = prevOne; }
 
-        Note *getNext() const { return nextNote; }
-        Note *getPrev() const { return prevNote; }
+        Note *getNext() const { return _nextNote; }
+        Note *getPrev() const { return _prevNote; }
 
 
         bool graceIsHere;
-        std::uint8_t graceNote[4];
+        std::uint8_t graceNote[4]; //TODO заменить структурой, добавить set\get
         BendPoints bend;
 
 
-        void setStringNumber(std::uint8_t num) {stringNumber = num;}
-        std::uint8_t getStringNumber() const { return stringNumber; }
+        void setStringNumber(std::uint8_t num) {_stringNumber = num;}
+        std::uint8_t getStringNumber() const { return _stringNumber; }
 
         void setFret(std::uint8_t fValue) { _fret = fValue; }
         std::uint8_t getFret() const { return _fret; }
@@ -150,8 +142,8 @@ namespace gtmy {
 
         void setEffect(Effect eff);
         const ABitArray &getEffects() const;
-        ABitArray& getEffRef();
-        void addEffects(ABitArray &append) { effPack.mergeWith(append); }
+        ABitArray& getEffectsRef();
+        void addEffects(ABitArray &append) { _effPack.mergeWith(append); }
 
 
         void setFingering1(std::uint8_t fValue) { _fingering1 = fValue; } //Older versions

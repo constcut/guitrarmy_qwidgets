@@ -28,16 +28,13 @@ namespace gtmy {
             std::uint8_t changeCount;
         };
 
-        //need inner functions for analtics of packing
-        class ChangesList : public std::vector<SingleChange>
-        {
-        public:
+
+        class ChangesList : public std::vector<SingleChange> {
             //search functions
         };
 
-        //used for compatibility with guitar pro
-        struct GPChordDiagram
-        {
+
+        struct ChordDiagram { //used for compatibility
             std::uint8_t header;
             std::uint8_t sharp;
             std::uint8_t blank1;
@@ -73,7 +70,7 @@ namespace gtmy {
 
             std::uint8_t fingering[7];
             std::uint8_t showFing;
-        } gpCompChordDiagram;
+        } _chordDiagram;
 
 
         struct ChangeTable
@@ -108,51 +105,33 @@ namespace gtmy {
             return *this;
         }
 
-    protected:
+    private:
 
-        std::uint8_t duration = 0; // 2 1 . 2 4 8 16 32 64 [8 values] - 3 bits
-        std::uint8_t durationDetail = 0; // none, dot, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 [4 bits] //one of 2-15 means empty(together with pause only!)
+        std::uint8_t _duration = 0; // 2 1 . 2 4 8 16 32 64 [8 values] - 3 bits
+        std::uint8_t _durationDetail = 0; // none, dot, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 [4 bits] //one of 2-15 means empty(together with pause only!)
         //1 bit determines pause
-        bool isPaused;
+        bool _isPaused;
 
-        std::uint8_t dotted = 0; //0 1 2
+        std::uint8_t _dotted = 0; //0 1 2
 
+        std::string _bookmarkName;
+        std::string _noticeText;
 
-        std::uint8_t effects = 0; //tremolo precene - 1bit, (upstrings, downstrings+x) - 2 bits, bookmark - 1 bit, notice (text or elst) - 1 bit,
-        //then 3 left for change - first bit of those 3 shows that there is change
-        //+1 chord diagram
-        //+1 reserved
+    public:
 
-        //moved to set get
-        //short int *tremoloPoints;
-
-        std::string bookmarkName;
-        std::string noticeText;
-
-
-        public:
-
-        //pub are part of set and get
-        ChangesList changes;
+        ChangesList changes; //TODO
         BendPoints tremolo;
 
-
-
         //SET GET operations
-        void setPause(bool pause) {isPaused = pause;}
-        bool getPause() { return isPaused; }
+        void setPause(bool pause) {_isPaused = pause;}
+        bool getPause() const { return _isPaused; }
 
-        void deleteNote(int string)
-        {
-            for (size_t i = 0; i < size(); ++i)
-            {
-                if (string == at(i)->getStringNumber())
-                {
+        void deleteNote(int string) {
+            for (size_t i = 0; i < size(); ++i) {
+                if (string == at(i)->getStringNumber()) {
                     remove(i);
-
                     if (size() == 0)
                         setPause(true);
-
                     return;
                 }
             }
@@ -166,9 +145,7 @@ namespace gtmy {
         }
 
 
-        void setFret(std::uint8_t fret, int string)
-        {
-
+        void setFret(std::uint8_t fret, int string) {
             if (size() == 0) {
                 auto newNote = std::make_unique<Note>();
                 newNote->setFret(fret);
@@ -179,86 +156,65 @@ namespace gtmy {
                 return;
             }
 
-            for (size_t i = 0; i < size(); ++i)
-            {
-                if (at(i)->getStringNumber()==string)
-                {
+            for (size_t i = 0; i < size(); ++i) {
+                if (at(i)->getStringNumber()==string) {
                     at(i)->setFret(fret);
                     return; //function done
                 }
-
-                if (at(i)->getStringNumber() > string)
-                {
+                if (at(i)->getStringNumber() > string) {
                     auto newNote = std::make_unique<Note>();
                     newNote->setFret(fret);
                     newNote->setStringNumber(string);
                     newNote->setState(0);
-
-
                     insertBefore(std::move(newNote),i);
                     return;
                 }
-
             }
 
-
             int lastStringN = at(size()-1)->getStringNumber();
-            if (lastStringN < string)
-            {
+            if (lastStringN < string) {
                 auto newNote = std::make_unique<Note>();
                 newNote->setFret(fret);
                 newNote->setStringNumber(string);
                 newNote->setState(0);
-
-                //DEFAULT NOTE VALUES??
                 push_back(std::move(newNote));
                 return;
             }
-            //we got here - that means we need insert fret
         }
 
-
-        std::uint8_t getFret(int string)
-        {
+        std::uint8_t getFret(int string) const {
             if (size() == 0)
                 return 255;
-
             for (size_t i = 0; i < size(); ++i)
-                if (at(i)->getStringNumber()==string)
-                {
+                if (at(i)->getStringNumber()==string) {
                     std::uint8_t fretValue = at(i)->getFret();
-                    return fretValue; //function done
+                    return fretValue;
                 }
-
             return 255;
         }
 
-        void setDuration(std::uint8_t dValue) { duration = dValue; }
-        void setDurationDetail(std::uint8_t dValue) {	durationDetail = dValue; }
-        void setDotted(std::uint8_t dottedValue) { dotted = dottedValue; }
+        void setDuration(std::uint8_t dValue) { _duration = dValue; }
+        void setDurationDetail(std::uint8_t dValue) {	_durationDetail = dValue; }
+        void setDotted(std::uint8_t dottedValue) { _dotted = dottedValue; }
 
-        std::uint8_t getDuration() { return duration;}
-        std::uint8_t getDurationDetail () { return durationDetail; }
-        std::uint8_t getDotted() { return dotted; }
+        std::uint8_t getDuration() const { return _duration;}
+        std::uint8_t getDurationDetail () const { return _durationDetail; }
+        std::uint8_t getDotted() const { return _dotted; }
 
-        void setEffects(Effect eValue);// { effects = eValue; }
-        ABitArray getEffects();// { return effects; }
+        void setEffects(Effect eValue);
+        ABitArray getEffects();
 
         //TREMOLO missing
 
-        //BOOKMARK - goes  for future
+        //боюс-боюс TODO
+        void setChordDiagram(char* area) { memcpy(&_chordDiagram, area, sizeof(_chordDiagram)); }
+        bool getChordDiagram(char* to) const { memcpy(to, &_chordDiagram, sizeof(_chordDiagram)); return true; }
 
-        void setGPCOMPChordDiagram(char *area) { memcpy(&gpCompChordDiagram,area,sizeof(gpCompChordDiagram)); }
-        bool getGPCOMPChordDiagram(char *to) { memcpy(to,&gpCompChordDiagram,sizeof(gpCompChordDiagram)); return true; }
-
-        void setGPCOMPText(std::string &value) { noticeText = value; }
-        void getGPCOMPText(std::string &value) { value = noticeText; }
-
-        //pack function
+        void setText(std::string& value) { _noticeText = value; }
+        void getText(std::string& value) const { value = _noticeText; }
 
         void clone(Beat *from);
     };
-
 
 
 }

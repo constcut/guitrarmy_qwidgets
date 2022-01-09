@@ -10,9 +10,9 @@ void Note::clone(Note *from)
     _fret = from->_fret;
     _volume = from->_volume;
     _noteState = from->_noteState;
-    stringNumber = from->stringNumber;
+    _stringNumber = from->_stringNumber;
     auto eff = from->getEffects();
-    effPack.mergeWith(eff);
+    _effPack.mergeWith(eff);
 }
 
 void Note::printToStream(std::ostream &stream) const
@@ -21,17 +21,17 @@ void Note::printToStream(std::ostream &stream) const
 }
 
 const ABitArray& Note::getEffects() const {
-    return effPack;
+    return _effPack;
 }
 
-ABitArray& Note::getEffRef() {
-   return effPack;
+ABitArray& Note::getEffectsRef() {
+   return _effPack;
 }
 
 void Note::setEffect(Effect eff)
 {
     if (eff == Effect::None)
-        effPack.flush();
+        _effPack.flush();
     else
-        effPack.setEffectAt(eff,true);
+        _effPack.setEffectAt(eff,true);
 }
