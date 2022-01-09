@@ -98,6 +98,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
         command.setPosition(0,cursor,cursorBeat,stringCursor+1);
         commandSequence.push_back(std::move(command));
         pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);
+
         Note *inputedNote =  pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1);
         std::uint8_t tune = pTrack->tuning.getTune(stringCursor);
         int chan = 0;
@@ -106,7 +107,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
             tune = 0;
         }
         //STARTMIDI
-        //std::uint8_t midiNote = inputedNote->getMidiNote(tune);
+        [[maybe_unused]] std::uint8_t midiNote = inputedNote->getMidiNote(tune);
         //MidiEngine::sendSignalShort(0x90|chan,midiNote,120);
         ///MidiEngine::sendSignalShortDelay(250,0x80|chan,midiNote,120);
         //MidiEngine::sendSignalShortDelay(750,0x90|chan,midiNote+2,120);
@@ -335,7 +336,7 @@ void setBarSign(Track* pTrack) {
 
 
 
-void TabView::onTrackCommand(TrackCommand command) {
+void TabView::onTrackCommand([[maybe_unused]] TrackCommand command) {
     qDebug() << "ERROR: Track Command falling into TabView";
 }
 

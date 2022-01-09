@@ -624,12 +624,12 @@ int CenterView::getComboBoxValue(int index)
      return -1;
 
 }
-void CenterView::SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
+void CenterView::SetButton(int index, std::string text, int x1, int y1, int w1, int h1, std::string pressSyn)
 {
     int VType = getCurrentViewType();
     double scaleCoef = AConfig::getInst().getScaleCoef();
 
-    if (uiWidgets.at(VType).size()>index)
+    if (uiWidgets.at(VType).size() > index)
     {
         //change values
         QPushButton *newBut = dynamic_cast<QPushButton*>(uiWidgets.at(VType)[index]);
@@ -716,7 +716,7 @@ QPushButton:hover{ background-color: darkblue; }"; */
 }
 
 
-CenterView::CenterView(QWidget *parent):MasterView(),ownChild(0),QWidget(parent)
+CenterView::CenterView(QWidget *parent):QWidget(parent), MasterView(), ownChild(0)
 {
     welcomeText = 0;
     confEdit = 0;
@@ -1250,7 +1250,7 @@ void CenterView::initAudioInput() //refact - hide audio f()
 
 }
 
-void CenterView::paintEvent(QPaintEvent *event)
+void CenterView::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
     QPainter painter(this);
 
@@ -1554,7 +1554,7 @@ checkView();
     update();
 }
 
-bool CenterView::gestureEvent(QGestureEvent *event)
+bool CenterView::gestureEvent([[maybe_unused]]QGestureEvent *event)
 {
     //if (QGesture *swipe = event->gesture(Qt::SwipeGesture))
     //if (QGesture *tap = event->gesture(Qt::TapGesture))

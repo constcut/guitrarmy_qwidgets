@@ -226,7 +226,7 @@ void TrackView::ondblclick(int x1, int y1)
             if (bV == 0) continue;
 
             int beatClick = bV->getClickBeat(x1);
-            Bar *hitBar = bV->getBar();
+            //Bar *hitBar = bV->getBar();
             int fullBar = bV->getBarsize();
 
 

@@ -1277,7 +1277,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::paintEvent(QPaintEvent *event)
+void MainWindow::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
     QPainter painter(this);
 

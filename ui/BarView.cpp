@@ -376,10 +376,8 @@ void BarView::draw(QPainter *painter)
         numVal = std::to_string( bar1->getSignNum() );
         denVal = std::to_string( bar1->getSignDenum() );
 
-        //Paint properly - not in signs!!!
-        int repeat = pBar->getRepeat();
-
         /* to new
+        int repeat = pBar->getRepeat();
         if (repeat == 1)
             numVal<<".B";
         if (repeat == 2)
@@ -387,7 +385,6 @@ void BarView::draw(QPainter *painter)
         if (repeat == 3)
             numVal<<".C";
             */
-
 
         auto f = painter->font();
         auto fontSize = f.pixelSize();
@@ -485,11 +482,9 @@ void BarView::draw(QPainter *painter)
 
     bool wasNoBeatEffects = true;
 
-    for (size_t i = 0; i < barLen; ++i)
-    {
+    for (size_t i = 0; i < barLen; ++i) {
 
-        if (i==cursor)
-        {
+        if (i == cursor) {
             //painter->changeColor(APainter::colorBlue);
              changeColor(CONF_PARAM("colors.curBeat"), painter);
         }
@@ -497,7 +492,7 @@ void BarView::draw(QPainter *painter)
 
         auto& curBeat = bar1->at(i);
 
-        for (size_t j =0; j < curBeat->size(); ++j) {
+        for (size_t j = 0; j < curBeat->size(); ++j) {
             auto& curNote = curBeat->at(j);
             if (curNote) {
                 int noteTune = 0;
@@ -541,9 +536,7 @@ void BarView::draw(QPainter *painter)
 
                 if (noteState != 3) //not x note
                 {
-                    if ((noteState==2))
-
-                    {
+                    if (noteState == 2) {
                         noteVal = "_" + std::to_string( curNote->getFret() );
                     }
                     else
