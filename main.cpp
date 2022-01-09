@@ -1,12 +1,12 @@
-#include "g0/init.h"
+#include "g0/Init.h"
 
 #include <QApplication>
 #include <QTextCodec>
 
 
-#include "g0/config.h"
+#include "g0/Config.h"
 #include "g0/regression.h"
-#include "g0/base.h"
+#include "g0/Base.h"
 #include "ui/mainwindow.h"
 
 
