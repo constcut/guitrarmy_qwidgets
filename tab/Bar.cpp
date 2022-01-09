@@ -82,8 +82,8 @@ int gtmy::updateDurationWithDetail(std::uint8_t detail, int base)
 void Bar::clone(Bar *from) {
    flush();
 
-   signatureDenum = from->signatureDenum;
-   signatureNum = from->signatureNum;
+   _signatureDenum = from->_signatureDenum;
+   _signatureNum = from->_signatureNum;
 
    for (size_t i = 0; i < from->size(); ++i)
    {
@@ -94,15 +94,15 @@ void Bar::clone(Bar *from) {
    }
 }
 
-size_t Bar::getCompleteIndex()
+size_t Bar::getCompleteIndex() const
 {
-   return completeIndex;
+   return _completeIndex;
 }
 
 
-double Bar::getCompleteAbs()
+double Bar::getCompleteAbs() const
 {
-    return completeAbs;
+    return _completeAbs;
 }
 
 
@@ -121,7 +121,7 @@ std::uint8_t Bar::getCompleteStatus()
     int usedAbs = 0;
     int lastAbs = 0;
 
-    completeIndex = 0;
+    _completeIndex = 0;
 
     size_t barSize = size();
 
@@ -151,20 +151,20 @@ std::uint8_t Bar::getCompleteStatus()
        if (usedAbs == barAbs)
        {
            completeStatus=2; //exceed
-           completeIndex=i;
-           completeAbs=localAbs;
+           _completeIndex=i;
+           _completeAbs=localAbs;
            return completeStatus;
        }
 
        if (usedAbs > barAbs)
        {
            completeStatus=2; //exceed
-           completeIndex=i;
+           _completeIndex=i;
 
            int exceedAbs = usedAbs - barAbs;
 
            if (barLog)
-           qDebug() << "EXCEED abs "<<exceedAbs <<" localAbs "<<localAbs<<" Ind "<<completeIndex;
+           qDebug() << "EXCEED abs "<<exceedAbs <<" localAbs "<<localAbs<<" Ind "<<_completeIndex;
 
            short newNoteAbs = localAbs - exceedAbs;
 
@@ -175,11 +175,11 @@ std::uint8_t Bar::getCompleteStatus()
                lastAbs = newNoteAbs;
            else
            {
-              --completeIndex; //to small for n ew note
+              --_completeIndex; //to small for n ew note
                //qDebug() <<"SHIFTBACK"; //ATT
            }
 
-           completeAbs = lastAbs;
+           _completeAbs = lastAbs;
 
            break;
        }
@@ -191,11 +191,11 @@ std::uint8_t Bar::getCompleteStatus()
 
    if (usedAbs < barAbs)
    {
-       completeIndex=0; //just for logs
+       _completeIndex=0; //just for logs
        completeStatus=1; //incomplete
        lastAbs=barAbs-usedAbs;
 
-       completeAbs = lastAbs;
+       _completeAbs = lastAbs;
 
        if (lastAbs < 50)
            completeStatus = 0;
@@ -283,7 +283,7 @@ void Bar::countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet)
 }
 
 
-void Bar::printToStream(std::ostream &stream)
+void Bar::printToStream(std::ostream &stream) const
 {
     stream << "Outputing #"<<size()<<" Beats."<<std::endl;
     for (size_t ind = 0; ind < size(); ++ind)

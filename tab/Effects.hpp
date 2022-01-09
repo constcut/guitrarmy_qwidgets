@@ -48,30 +48,28 @@ namespace gtmy {
         Picking4 = 35
     };
 
-     //     Effect::
 
-    class ABitArray
-    {
+    class ABitArray {
+
     protected:
-        uint64_t bits; //TODO vector<bool> resize 32
+
+        uint64_t bits;
 
     public:
 
         ABitArray();
-        bool getEffectAt(Effect id);
+        bool getEffectAt(Effect id) const;
         void setEffectAt(Effect id, bool value);
 
-        size_t takeBits(){ return bits;}
+        size_t takeBits() const { return bits;}
         void putBits(size_t newBits) { bits = newBits; }
 
-        bool inRange(Effect lowId, Effect highId);
+        bool inRange(Effect lowId, Effect highId) const;
 
-        void logIt();
+        bool empty() const;
 
-        bool empty();
-
-        bool operator==(Effect id);// { return get(index); }
-        bool operator!=(Effect id);//
+        bool operator==(Effect id) const;
+        bool operator!=(Effect id) const;
 
         void flush();
 

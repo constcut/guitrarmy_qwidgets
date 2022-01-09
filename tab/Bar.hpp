@@ -22,14 +22,13 @@ namespace gtmy {
         }
         virtual ~Bar() = default;
 
-        void printToStream(std::ostream &stream);
+        void printToStream(std::ostream& stream) const;
 
-        void flush()
-        {
-            signatureNum = signatureDenum = 0;
-            repeat = repeatTimes = altRepeat = 0;
-            markerColor = 0;
-            completeStatus = 0;
+        void flush() {
+            _signatureNum = _signatureDenum = 0;
+            _repeat = _repeatTimes = _altRepeat = 0;
+            _markerColor = 0;
+            _completeStatus = 0;
         }
 
         Bar &operator=(Bar *another)
@@ -55,55 +54,53 @@ namespace gtmy {
 
     protected:
 
-        std::uint8_t signatureNum;
-        std::uint8_t signatureDenum;
+        std::uint8_t _signatureNum;
+        std::uint8_t _signatureDenum;
 
-        std::uint8_t repeat;//reprease options
-        std::uint8_t repeatTimes;
-        std::uint8_t altRepeat;
+        std::uint8_t _repeat;
+        std::uint8_t _repeatTimes;
+        std::uint8_t _altRepeat;
 
-        //GP comp - marker, tonality
-        std::uint8_t gpCompTonality;
-        std::string markerText;
-        size_t markerColor; //white byte == 1 if empty
+        std::uint8_t _tonality;
+        std::string _markerText;
+        size_t _markerColor; //white byte == 1 if empty
 
-        std::uint8_t completeStatus;
-        short completeAbs;
-        size_t completeIndex;
+        std::uint8_t _completeStatus;
+        short _completeAbs;
+        size_t _completeIndex;
 
-        public:
-        //SET GET operations
+    public:
 
-        void setSignNum(std::uint8_t num) { signatureNum = num; }
-        void setSignDenum(std::uint8_t denum) { signatureDenum = denum; }
+        void setSignNum(std::uint8_t num) { _signatureNum = num; }
+        void setSignDenum(std::uint8_t denum) { _signatureDenum = denum; }
 
-        std::uint8_t getSignNum() { return signatureNum; }
-        std::uint8_t getSignDenum() { return signatureDenum; }
+        std::uint8_t getSignNum() const { return _signatureNum; }
+        std::uint8_t getSignDenum() const { return _signatureDenum; }
 
-        //!completeStatus !!! that should go private and opt
-        void countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet);
+
+        void countUsedSigns(std::uint8_t& numGet, std::uint8_t& denumGet);
 
         std::uint8_t getCompleteStatus();
-        double getCompleteAbs();
-        size_t   getCompleteIndex();
+        double getCompleteAbs() const;
+        size_t getCompleteIndex() const;
 
-        void setRepeat(std::uint8_t rValue, std::uint8_t times=0)
-        {
-            if (rValue == 0) repeat = 0;
-            else repeat |= rValue;
-            if(times) repeatTimes=times;
+        void setRepeat(std::uint8_t rValue, std::uint8_t times=0) {
+            if (rValue == 0) _repeat = 0;
+            else _repeat |= rValue;
+            if(times) _repeatTimes=times;
         }
-        std::uint8_t getRepeat() { return repeat; }
-        std::uint8_t getRepeatTimes() { return repeatTimes; }
 
-        void setAltRepeat(std::uint8_t number) { altRepeat = number; }
-        std::uint8_t getAltRepeat() { return altRepeat; }
+        std::uint8_t getRepeat() const { return _repeat; }
+        std::uint8_t getRepeatTimes() const { return _repeatTimes; }
 
-        void setGPCOMPTonality(std::uint8_t tValue) { gpCompTonality = tValue; }
-        std::uint8_t getGPCOMPTonality() { return gpCompTonality; }
+        void setAltRepeat(std::uint8_t number) { _altRepeat = number; }
+        std::uint8_t getAltRepeat() const { return _altRepeat; }
 
-        void setGPCOMPMarker(std::string &text, size_t color) { markerText = text; markerColor = color; }
-        void getGPCOMPMarker(std::string &text, size_t &color) { text = markerText; color = markerColor; }
+        void setTonality(std::uint8_t tValue) { _tonality = tValue; }
+        std::uint8_t getTonality() const { return _tonality; }
+
+        void setMarker(std::string &text, size_t color) { _markerText = text; _markerColor = color; }
+        void getMarker(std::string &text, size_t &color) { text = _markerText; color = _markerColor; }
 
         //pack function
          void clone(Bar *from);

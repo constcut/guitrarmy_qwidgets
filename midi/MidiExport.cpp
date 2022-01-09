@@ -288,7 +288,7 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
     }
 
     //BEAT EFFECTS:
-    if (beat->effPack.getEffectAt(Effect::Changes))
+    if (beat->getEffects().getEffectAt(Effect::Changes))
     {
         //changes
 
@@ -337,10 +337,10 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
         //reverse indexation
         size_t trueIndex = i;
 
-        if (beat->effPack.getEffectAt(Effect::DownStroke)) //down
+        if (beat->getEffects().getEffectAt(Effect::DownStroke)) //down
             trueIndex = (beatLen - i - 1);
 
-        if (beat->effPack.inRange(Effect::UpStroke,Effect::DownStroke)) //up down strokes
+        if (beat->getEffects().inRange(Effect::UpStroke,Effect::DownStroke)) //up down strokes
         {
             midiTrack->accumulate(strokeStep);
             rOffset -= strokeStep;
@@ -353,13 +353,13 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
     //ACCUMULATE BEFORE EFFECTS AND OFFS
     midiTrack->accumulate(rOffset);
 
-    if (beat->effPack.getEffectAt(Effect::FadeIn)) //fade in
+    if (beat->getEffects().getEffectAt(Effect::FadeIn)) //fade in
     {
         midiTrack->pushFadeIn(midiTrack->accum, channel);
         midiTrack->takeAccum();
     }
 
-    if (beat->effPack.getEffectAt(Effect::Tremolo)) //tremolo
+    if (beat->getEffects().getEffectAt(Effect::Tremolo)) //tremolo
     {
         midiTrack->pushTremolo(midiTrack->accum);
         midiTrack->takeAccum();
@@ -400,34 +400,34 @@ bool gtmy::exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_
         midiVelocy = lastVelocy;
 
     //PRE-effects
-    if (note->effPack.getEffectAt(Effect::LetRing)) //let ring
+    if (note->getEffects().getEffectAt(Effect::LetRing)) //let ring
     {
         midiTrack->openLetRing(stringN,midiNote,midiVelocy,channel);
         return true;
     }
 
-    if (note->effPack.getEffectAt(Effect::PalmMute)) //palm mute
+    if (note->getEffects().getEffectAt(Effect::PalmMute)) //palm mute
         midiVelocy = midiTrack->calcPalmMuteVelocy(midiVelocy);
 
-    if (note->effPack.getEffectAt(Effect::GhostNote)) //ghost note
+    if (note->getEffects().getEffectAt(Effect::GhostNote)) //ghost note
         midiVelocy = midiVelocy > 10 ? midiVelocy - 10 : 1 ;
 
-    if (note->effPack.getEffectAt(Effect::HeavyAccented)) //heavy accented
+    if (note->getEffects().getEffectAt(Effect::HeavyAccented)) //heavy accented
         midiVelocy = midiVelocy < 110 ? midiVelocy+midiVelocy/10 : 127;
 
-    if (note->effPack.getEffectAt(Effect::GraceNote)) //grace note
+    if (note->getEffects().getEffectAt(Effect::GraceNote)) //grace note
     {   //attention - deadcode - realize
         midiNote += 2;
     }
 
-    if (note->effPack.inRange(Effect::Harmonics,Effect::HarmonicsV6))
+    if (note->getEffects().inRange(Effect::Harmonics,Effect::HarmonicsV6))
     { //11-16 - harmonics
-      if (note->effPack.getEffectAt(Effect::Harmonics))
+      if (note->getEffects().getEffectAt(Effect::Harmonics))
       {
           if (fret==7) midiNote += 12;
           if (fret==5) midiNote += 19;
       }
-      if (note->effPack.getEffectAt(Effect::HarmonicsV4))
+      if (note->getEffects().getEffectAt(Effect::HarmonicsV4))
       {
           midiNote += 12;
       }
@@ -445,7 +445,7 @@ bool gtmy::exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_
 
 
 bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
-    if (note->effPack.getEffectAt(Effect::LetRing)) //let ring
+    if (note->getEffects().getEffectAt(Effect::LetRing)) //let ring
         //skip let ring
         return false;
 
@@ -456,7 +456,7 @@ bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8
         //skip - next is leeg
         return false;
 
-    if (note->effPack.getEffectAt(Effect::Stokatto))
+    if (note->getEffects().getEffectAt(Effect::Stokatto))
         return false; //skip stokkato
 
     std::uint8_t fret = note->getFret();
@@ -467,15 +467,15 @@ bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8
     std::uint8_t midiVelocy = 80; //calcMidiVolumeGP(volume);
 
 
-    if (note->effPack.inRange(Effect::Harmonics,Effect::HarmonicsV6))
+    if (note->getEffects().inRange(Effect::Harmonics,Effect::HarmonicsV6))
     { //11-16 - harmonics
         //update calculations for harmonics
-      if (note->effPack.getEffectAt(Effect::Harmonics))
+      if (note->getEffects().getEffectAt(Effect::Harmonics))
       {
           if (fret==7) midiNote += 12;
           if (fret==5) midiNote += 19;
       }
-      if (note->effPack.getEffectAt(Effect::HarmonicsV4))
+      if (note->getEffects().getEffectAt(Effect::HarmonicsV4))
       {
           midiNote += 12;
       }
@@ -519,7 +519,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             //DEAD NOTE
         }
 
-        if (note->effPack.getEffectAt(Effect::GraceNote))
+        if (note->getEffects().getEffectAt(Effect::GraceNote))
         {
             short int graceLen = (midiTrack->accum/8);
             if (graceLen == 0)
@@ -532,40 +532,40 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             midiTrack->accum -= graceLen;
         }
 
-        if (note->effPack.inRange(Effect::Hammer, Effect::Legato))
+        if (note->getEffects().inRange(Effect::Hammer, Effect::Legato))
         {
-            if ( (note->effPack == Effect::Slide) || (note->effPack == Effect::LegatoSlide))
+            if ( (note->getEffects() == Effect::Slide) || (note->getEffects() == Effect::LegatoSlide))
             {
                    //if (effects==5) velocyShift=19; //set decreace legatto slide
                     short int slideStep = midiTrack->accum/8;
                     midiTrack->pushSlideUp(channel,2,slideStep);//channel + shift
                     midiTrack->takeAccum();
             }
-            else if ((note->effPack == Effect::SlideDownV2) || (note->effPack == Effect::SlideDownV1))
+            else if ((note->getEffects() == Effect::SlideDownV2) || (note->getEffects() == Effect::SlideDownV1))
             {
                 short int slideStep = midiTrack->accum/8;
                 midiTrack->pushSlideDown(channel,7,slideStep);//channel + shift
                 midiTrack->takeAccum();
             }
-            else if ((note->effPack == Effect::SlideUpV2)|| (note->effPack == Effect::SlideUpV1))
+            else if ((note->getEffects() == Effect::SlideUpV2)|| (note->getEffects() == Effect::SlideUpV1))
             {
                 short int slideStep = midiTrack->accum/8;
                 midiTrack->pushSlideUp(channel,7,slideStep);//channel + shift
                 midiTrack->takeAccum();
 
             }
-            else if (note->effPack == Effect::Legato)
+            else if (note->getEffects() == Effect::Legato)
             {   //legato - as normal one should decreace sound of next note
                 //velocyShift=19; //set decreace
             }
         }
 
-        if (note->effPack.getEffectAt(Effect::Bend)) { //bend
+        if (note->getEffects().getEffectAt(Effect::Bend)) { //bend
             BendPoints *bend = &note->bend;
             pushBendToTrack(bend, midiTrack,channel);
         }
 
-        if (note->effPack.getEffectAt(Effect::TremoloPick)) { //tremolo pick {
+        if (note->getEffects().getEffectAt(Effect::TremoloPick)) { //tremolo pick {
             //pushTremoloPick - tremolo pick - trills
             short int tremoloStep = midiTrack->accum/4;
             for (size_t i = 0; i < 3; ++i) {
@@ -578,7 +578,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             //takeAccum();
         }
 
-        if (note->effPack.getEffectAt(Effect::Stokatto)) {
+        if (note->getEffects().getEffectAt(Effect::Stokatto)) {
             //stokato - stop earlier
             short halfAccum = midiTrack->accum/2;
             auto mSignalOff = std::make_unique<MidiSignal>(0x80 | channel,midiNote,midiVelocy,halfAccum);
@@ -586,7 +586,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             midiTrack->accum = halfAccum;
         }
 
-        if (note->effPack.getEffectAt(Effect::Vibrato)) {
+        if (note->getEffects().getEffectAt(Effect::Vibrato)) {
             short int vibroStep = midiTrack->accum/6;
             midiTrack->pushVibration(channel,3,vibroStep);
             midiTrack->takeAccum();

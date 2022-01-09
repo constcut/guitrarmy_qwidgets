@@ -93,7 +93,7 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
         addToMap(notesVolumeStats, note->getVolume());
 
         for (int16_t i = 1; i < 31; ++i)
-            if (note->effPack == static_cast<Effect>(i))
+            if (note->getEffects() == static_cast<Effect>(i))
                 addToMap(noteEffectsStats, effectNames[i]);
     }
     else {

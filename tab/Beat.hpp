@@ -20,7 +20,7 @@ namespace gtmy {
         Beat() = default;
         virtual ~Beat() = default;
 
-        void printToStream(std::ostream &stream);
+        void printToStream(std::ostream &stream) const;
 
         struct SingleChange {
             std::uint8_t changeType;

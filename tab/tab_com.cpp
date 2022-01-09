@@ -181,7 +181,7 @@ void Tab::midiPause() {
 
 void Tab::setMarker(std::string text) {
     auto& fromFirstTrack = at(0)->at(currentBar);
-    fromFirstTrack->setGPCOMPMarker(text,0);
+    fromFirstTrack->setMarker(text,0);
 }
 
 

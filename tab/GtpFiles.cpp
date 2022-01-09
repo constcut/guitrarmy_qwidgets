@@ -1329,7 +1329,7 @@ void readBar(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index)
         for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             auto& currentBar = tab->at(iTrack)->at(i);
-            currentBar->setGPCOMPMarker(markerBuferStr,markerColor);
+            currentBar->setMarker(markerBuferStr,markerColor);
         }
     }
     if (precTonality)  //4?
@@ -1341,7 +1341,7 @@ void readBar(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index)
         for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             auto& currentBar = tab->at(iTrack)->at(i);
-            currentBar->setGPCOMPTonality(tonality);
+            currentBar->setTonality(tonality);
         }
     }
 }
@@ -2313,7 +2313,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index
         for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             auto& currentBar = tab->at(iTrack)->at(i);
-            currentBar->setGPCOMPMarker(markerBuferStr,markerColor);
+            currentBar->setMarker(markerBuferStr,markerColor);
         }
     }
 
@@ -2338,7 +2338,7 @@ void readBarGP5(std::ifstream &file, Tab *tab, size_t tracksAmount, size_t index
         for (size_t iTrack = 0;iTrack < tracksAmount; ++iTrack)
         {
             auto& currentBar = tab->at(iTrack)->at(i);
-            currentBar->setGPCOMPTonality(tonality);
+            currentBar->setTonality(tonality);
         }
     }
 

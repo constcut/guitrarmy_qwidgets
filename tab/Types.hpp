@@ -76,7 +76,11 @@ namespace gtmy {
            return sequence.at(ind);
         }
 
-        size_t size() {
+        const std::unique_ptr<Child>& at(int ind) const {
+           return sequence.at(ind);
+        }
+
+        size_t size() const {
             return sequence.size();
         }
 

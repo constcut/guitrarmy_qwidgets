@@ -812,8 +812,8 @@ void BendInput::onclick(int x1, int y1)
          {
              if (ptrToBend)
              {
-                ptrToNote->effPack.setEffectAt(Effect::Bend,true);
-                //ptrToNote->effPack.addPack(17,2,ptrToBend); //insure but it must be already inside
+                ptrToNote->getEffRef().setEffectAt(Effect::Bend,true);
+                //ptrToNote->getEffects().addPack(17,2,ptrToBend); //insure but it must be already inside
              }
              getMaster()->pushForceKey("esc"); //go prev
              //better have another function atention
@@ -823,9 +823,9 @@ void BendInput::onclick(int x1, int y1)
     {
         if (ptrToNote)
         {
-            bool whatIsThere = ptrToNote->effPack.getEffectAt(Effect::Bend);
+            bool whatIsThere = ptrToNote->getEffects().getEffectAt(Effect::Bend);
             qDebug() << "Deleting bend that is "<<(int)whatIsThere;
-            ptrToNote->effPack.setEffectAt(Effect::Bend, false);
+            ptrToNote->getEffRef().setEffectAt(Effect::Bend, false);
         }
     }
     //shoud react on press and calculate
@@ -943,7 +943,7 @@ void ChangesInput::draw(QPainter *painter)
 
 
         top->setText("beat ptr was set");
-        if (ptrToBeat->effPack.getEffectAt(Effect::Changes)==true)
+        if (ptrToBeat->getEffects().getEffectAt(Effect::Changes)==true)
         {
 
             {
@@ -1029,7 +1029,7 @@ void ChangesInput::turnOffChange(std::string combo)
                 changes->erase(changes->begin() + i);
                 if (changes->size() == 0)
                 {
-                    ptrToBeat->effPack.setEffectAt(Effect::Changes,false);
+                    ptrToBeat->getEffects().setEffectAt(Effect::Changes,false);
                 }
                 return;
             }
@@ -1044,8 +1044,8 @@ void ChangesInput::turnOnChange(std::string combo)
     size_t changeValue = 0;
     std::uint8_t changeAfter = 0;
 
-    if (ptrToBeat->effPack.getEffectAt(Effect::Changes)==false)
-        ptrToBeat->effPack.setEffectAt(Effect::Changes,true);
+    if (ptrToBeat->getEffects().getEffectAt(Effect::Changes)==false)
+        ptrToBeat->getEffects().setEffectAt(Effect::Changes,true);
 
     if (combo=="2")
     {
@@ -1075,7 +1075,7 @@ void ChangesInput::turnOnChange(std::string combo)
     bool notFound = true;
     if (changes==0)
     {
-        ptrToBeat->effPack.setEffectAt(Effect::Changes,true);
+        ptrToBeat->getEffects().setEffectAt(Effect::Changes,true);
         changes = &ptrToBeat->changes;
     }
     else

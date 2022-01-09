@@ -5,7 +5,6 @@
 #include "tab/GmyFile.hpp"
 #include "tab/TabLoader.hpp"
 #include "tab/GtpFiles.hpp"
-#include "midi/MidiEngine.hpp"
 #include "tab/TabClipboard.hpp"
 
 #include <fstream>
@@ -32,9 +31,9 @@ void Track::switchEffect(Effect effect) {
 
     Note *theNote = this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1);
     if (theNote) {
-        bool effectFlag = theNote->effPack.getEffectAt(effect);
+        bool effectFlag = theNote->getEffects().getEffectAt(effect);
         effectFlag = !effectFlag;
-        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->effPack.setEffectAt(effect, effectFlag);
+        this->at(_cursor)->at(_cursorBeat)->getNote(_stringCursor+1)->getEffRef().setEffectAt(effect, effectFlag);
 
         ReversableCommand command(ReversableType::SwitchEffectNote, ind); //note effect
         command.setPosition(0, _cursor, _cursorBeat, _stringCursor+1);
@@ -51,9 +50,9 @@ void Track::switchBeatEffect(Effect beatEffect) { //TODO insure it fits
     if (pa->playing())
         return;
     //check for pause
-    bool effect = this->at(_cursor)->at(_cursorBeat)->effPack.getEffectAt(beatEffect);
+    bool effect = this->at(_cursor)->at(_cursorBeat)->getEffects().getEffectAt(beatEffect);
     effect = !effect;
-    this->at(_cursor)->at(_cursorBeat)->effPack.setEffectAt(beatEffect,effect);
+    this->at(_cursor)->at(_cursorBeat)->getEffects().setEffectAt(beatEffect,effect);
 
     ReversableCommand command(ReversableType::SwitchEffectBeat,effIndex); //beat effect
     command.setPosition(0, _cursor, _cursorBeat);
@@ -109,17 +108,17 @@ void Track::reverseCommand(ReversableCommand command) //TODO get rid of this->cu
     if (type == ReversableType::SwitchEffectNote) //eff
     {
         auto ind = static_cast<Effect>(value);
-        bool effect = this->at(barN)->at(beatN)->getNote(stringN)->effPack.getEffectAt(ind);
+        bool effect = this->at(barN)->at(beatN)->getNote(stringN)->getEffects().getEffectAt(ind);
         effect = !effect;
-        this->at(barN)->at(beatN)->getNote(stringN)->effPack.setEffectAt(ind,effect);
+        this->at(barN)->at(beatN)->getNote(stringN)->getEffRef().setEffectAt(ind,effect);
     }
 
     if (type == ReversableType::SwitchEffectBeat) //beat eff
     {
         auto ind = static_cast<Effect>(value);
-        bool effect = this->at(barN)->at(beatN)->effPack.getEffectAt(ind);
+        bool effect = this->at(barN)->at(beatN)->getEffects().getEffectAt(ind);
         effect = !effect;
-        this->at(barN)->at(beatN)->effPack.setEffectAt(ind,effect);
+        this->at(barN)->at(beatN)->getEffects().setEffectAt(ind,effect);
     }
 
     if (type == ReversableType::SetFret) //fret

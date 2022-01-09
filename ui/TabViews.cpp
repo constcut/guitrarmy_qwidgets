@@ -291,7 +291,7 @@ void TabView::draw(QPainter *painter)
                int reprize = cB->getRepeat();
                std::string markerText;
                size_t markerColor;
-               cB->getGPCOMPMarker(markerText,markerColor);
+               cB->getMarker(markerText, markerColor);
                bool isMarkerHere = markerText.empty() == false;
 
                 //hi light color bar

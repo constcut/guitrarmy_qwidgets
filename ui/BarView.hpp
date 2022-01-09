@@ -63,7 +63,7 @@ namespace gtmy {
         void drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
                           int x1, int y1);
 
-        void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABitArray *eff);
+        void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, const ABitArray &eff);
 
 
         void draw(QPainter *painter); //from beat to beat

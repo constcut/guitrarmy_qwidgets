@@ -7,21 +7,25 @@ using namespace gtmy;
 
 void Note::clone(Note *from)
 {
-    fret = from->fret;
-    volume = from->volume;
-    noteState = from->noteState;
+    _fret = from->_fret;
+    _volume = from->_volume;
+    _noteState = from->_noteState;
     stringNumber = from->stringNumber;
-    effPack.mergeWith(from->effPack);
+    auto eff = from->getEffects();
+    effPack.mergeWith(eff);
 }
 
-void Note::printToStream(std::ostream &stream)
+void Note::printToStream(std::ostream &stream) const
 {
-   stream << "Fret = " <<(int)this->fret << std::endl;
+   stream << "Fret = " <<(int)this->_fret << std::endl;
 }
 
-ABitArray Note::getEffects()
-{
+const ABitArray& Note::getEffects() const {
     return effPack;
+}
+
+ABitArray& Note::getEffRef() {
+   return effPack;
 }
 
 void Note::setEffect(Effect eff)

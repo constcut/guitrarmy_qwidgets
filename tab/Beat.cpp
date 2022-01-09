@@ -27,7 +27,8 @@ void BendPoints::insertNewPoint(BendPoint bendPoint)
 
 void Beat::clone(Beat *from)
 {
-   effPack.mergeWith(from->effPack);
+   auto eff = from->getEffects();
+   effPack.mergeWith(eff);
    duration = from->duration;
    durationDetail = from->durationDetail;
    dotted = from->dotted;
@@ -46,7 +47,7 @@ void Beat::clone(Beat *from)
 }
 
 
-void Beat::printToStream(std::ostream &stream)
+void Beat::printToStream(std::ostream &stream) const
 {
     stream << "Outputing #"<<size()<<" Notes."<<std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
