@@ -12,7 +12,11 @@
 #include "tab/GmyFile.hpp"
 #include "g0/Config.hpp"
 
-bool checkHasRegression() {
+
+using namespace gtmy;
+
+
+bool gtmy::checkHasRegression() {
 
     std::unordered_map<size_t, size_t> groupLength = {
         {1, 12},
@@ -241,7 +245,7 @@ void macroTrackTest3() {
 }
 
 
-void runRegressionTests() {
+void gtmy::runRegressionTests() {
     //greatCheckScenarioCase(1, 1, 12, 4);
     //greatCheckScenarioCase(2, 1, 38, 4);
     if (checkHasRegression()) {
@@ -264,7 +268,7 @@ void runRegressionTests() {
 
 
 
-bool checkMidiIORegression() {
+bool gtmy::checkMidiIORegression() {
 
     bool fine = true;
 

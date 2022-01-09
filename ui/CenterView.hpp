@@ -19,133 +19,134 @@
 
 #include <QTextBrowser>
 #include <QTextEdit>
-
-
-
 #include <QScrollArea>
 
 
-
-class CenterView : public QWidget, public MasterView
-{
-       Q_OBJECT
-
-protected:
-    QMutex keyMute;
-
-    std::list<std::vector<std::string> > playlist;
-
-    std::unique_ptr<AudioInfo> audioInfo;  //Выделить фрагменты аудиодвижка в один класс, использовать его здесь
-    std::unique_ptr<QAudioInput> audioInput;
-
-    int lastPressX,lastPressY;
-
-    std::unique_ptr<QTextBrowser> welcomeText;
-    std::unique_ptr<QTextEdit> confEdit;
-
-    MasterView *statusSetter;
-    QScrollArea *fatherScroll;
+namespace gtmy {
 
 
-    std::map < int , std::vector<QWidget*> > uiWidgets;
+    class CenterView : public QWidget, public MasterView
+    {
+           Q_OBJECT
 
-    //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
-    std::unordered_map<std::string, TabCommand> tabCommands;
-    std::unordered_map<std::string, TrackCommand> trackCommands;
+    protected:
+        QMutex keyMute;
+
+        std::list<std::vector<std::string> > playlist;
+
+        std::unique_ptr<AudioInfo> audioInfo;  //Выделить фрагменты аудиодвижка в один класс, использовать его здесь
+        std::unique_ptr<QAudioInput> audioInput;
+
+        int lastPressX,lastPressY;
+
+        std::unique_ptr<QTextBrowser> welcomeText;
+        std::unique_ptr<QTextEdit> confEdit;
+
+        MasterView *statusSetter;
+        QScrollArea *fatherScroll;
 
 
-    int lastCheckedView;
+        std::map < int , std::vector<QWidget*> > uiWidgets;
 
-    int xOffsetGesture;
-    int yOffsetGesture;
-    bool isPressed;
-
-public:
-    void flushPressed()
-    {  isPressed = false;  }
-    void setFatherScroll(QScrollArea *fScroll)
-    {   fatherScroll = fScroll;}
+        //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
+        std::unordered_map<std::string, TabCommand> tabCommands;
+        std::unordered_map<std::string, TrackCommand> trackCommands;
 
 
-    void checkView(){
-        int newView = getCurrentViewType();
-        if (newView != lastCheckedView)
-            ViewWasChanged();
-        lastCheckedView = newView;
-    }
+        int lastCheckedView;
 
-    void ViewWasChanged();
+        int xOffsetGesture;
+        int yOffsetGesture;
+        bool isPressed;
 
-    void SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
-    void addButton(std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
-    void addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue);
-    void setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue);
+    public:
+        void flushPressed()
+        {  isPressed = false;  }
+        void setFatherScroll(QScrollArea *fScroll)
+        {   fatherScroll = fScroll;}
 
-    void renewComboParams(int index, std::string params);
-    void renewComboParams(GQCombo *newBox, std::string params);
 
-    int getComboBoxValue(int index);
+        void checkView(){
+            int newView = getCurrentViewType();
+            if (newView != lastCheckedView)
+                ViewWasChanged();
+            lastCheckedView = newView;
+        }
 
-    virtual void requestHeight(int newH)
-    { this->setMinimumHeight(newH);}
+        void ViewWasChanged();
 
-    virtual void requestWidth(int newW)
-    { this->setMinimumWidth(newW);}
+        void SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
+        void addButton(std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
+        void addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue);
+        void setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue);
 
-    CenterView *ownChild;
-    CenterView(QWidget *parent=0);
+        void renewComboParams(int index, std::string params);
+        void renewComboParams(GQCombo *newBox, std::string params);
 
-    void setStatusSetter(MasterView *statSett) {statusSetter = statSett;}
+        int getComboBoxValue(int index);
 
-    void draw(QPainter *painter);
-    void onclick(int x1, int y1);
-    void ondblclick(int x1, int y1);
-    void ongesture(int offset, bool horizontal) ;
+        virtual void requestHeight(int newH)
+        { this->setMinimumHeight(newH);}
 
-    void showHelp();
-    void showConf();
-    void fitTextBrowser();
+        virtual void requestWidth(int newW)
+        { this->setMinimumWidth(newW);}
 
-    void connectThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
-    void connectMainThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
+        CenterView *ownChild;
+        CenterView(QWidget *parent=0);
 
-    virtual int getToolBarHeight();
-    virtual int getStatusBarHeight();
+        void setStatusSetter(MasterView *statSett) {statusSetter = statSett;}
 
-    virtual int getWidth();
-    virtual int getHeight();
+        void draw(QPainter *painter);
+        void onclick(int x1, int y1);
+        void ondblclick(int x1, int y1);
+        void ongesture(int offset, bool horizontal) ;
 
-    virtual void setStatusBarMessage(int index, std::string text, int timeOut=0);
+        void showHelp();
+        void showConf();
+        void fitTextBrowser();
 
-    virtual void pushForceKey(std::string keyevent);
-    virtual bool isPlaying();
+        void connectThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
+        void connectMainThread(std::unique_ptr<ThreadLocal>& localThrlocalThr);
 
-    virtual void addToPlaylist(std::vector<std::string> playElement);
-    virtual bool isPlaylistHere();
-    virtual void goOnPlaylist();    //REFACT MOVE TO ORIGIN
-    virtual void cleanPlayList();
+        virtual int getToolBarHeight();
+        virtual int getStatusBarHeight();
 
-    void pleaseRepaint();
-    int getCurrentViewType();
+        virtual int getWidth();
+        virtual int getHeight();
 
-    void startAudioInput();
-    void stopAudioInput();
+        virtual void setStatusBarMessage(int index, std::string text, int timeOut=0);
 
-    void initAudioInput();
+        virtual void pushForceKey(std::string keyevent);
+        virtual bool isPlaying();
 
-    void paintEvent(QPaintEvent *event);
-    void mousePressEvent( QMouseEvent * event );
-    void mouseDoubleClickEvent( QMouseEvent * event );
+        virtual void addToPlaylist(std::vector<std::string> playElement);
+        virtual bool isPlaylistHere();
+        virtual void goOnPlaylist();    //REFACT MOVE TO ORIGIN
+        virtual void cleanPlayList();
 
-    void mouseMoveEvent( QMouseEvent *event );
-    void keyPressEvent ( QKeyEvent * event );
-    void mouseReleaseEvent(QMouseEvent *mEvent);
-    bool gestureEvent(QGestureEvent *event);
-    void resizeEvent(QResizeEvent* event);
+        void pleaseRepaint();
+        int getCurrentViewType();
 
-public slots:
+        void startAudioInput();
+        void stopAudioInput();
 
-    void threadFinished();
-};
+        void initAudioInput();
+
+        void paintEvent(QPaintEvent *event);
+        void mousePressEvent( QMouseEvent * event );
+        void mouseDoubleClickEvent( QMouseEvent * event );
+
+        void mouseMoveEvent( QMouseEvent *event );
+        void keyPressEvent ( QKeyEvent * event );
+        void mouseReleaseEvent(QMouseEvent *mEvent);
+        bool gestureEvent(QGestureEvent *event);
+        void resizeEvent(QResizeEvent* event);
+
+    public slots:
+
+        void threadFinished();
+    };
+
+}
 
 #endif // CENTERVIEW_H

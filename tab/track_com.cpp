@@ -11,6 +11,11 @@
 #include <fstream>
 #include <QDebug>
 
+
+using namespace gtmy;
+
+
+
 void Track::switchEffect(Effect effect) {
 
     if (this->at(_cursor)->at(_cursorBeat)->getPause())

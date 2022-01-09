@@ -16,9 +16,11 @@
 #define QWIDGET_ALLOC new
 //https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger
 
+using namespace gtmy;
 
-void changeColor(const std::string& color, QPainter* src);
-void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
+
+void gtmy::changeColor(const std::string& color, QPainter* src);
+void gtmy::drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
 
 void drawImage(QPainter* src, int x, int y, std::string imageName)
 {

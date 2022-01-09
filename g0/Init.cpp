@@ -25,6 +25,9 @@
 #endif
 
 
+using namespace gtmy;
+
+
 void posix_death_signal(int signum) //TODO move whole init actions into another file
 {
     std::cerr << "Crash happend signal:"<<signum;
@@ -136,7 +139,7 @@ int sayType(QByteArray &file)
 }
 
 
-void setLibPath() {
+void gtmy::setLibPath() {
 #ifdef WIN32
     QStringList libPath = QCoreApplication::libraryPaths();
 
@@ -158,7 +161,7 @@ void initResourses() {
 }
 
 
-void setTestsPath(QApplication& a) {
+void gtmy::setTestsPath(QApplication& a) {
     std::string currentPath;
     QString qPath = a.applicationDirPath();
     std::string appPath = qPath.toStdString();
@@ -173,7 +176,7 @@ void setTestsPath(QApplication& a) {
     setTestLocation(currentPath);
 }
 
-void loadConfig() {
+void gtmy::loadConfig() {
     std::string currentPath = AConfig::getInst().testsLocation;
     AConfig& configuration = AConfig::getInst();
     configuration.checkConfig();
@@ -186,23 +189,23 @@ void loadConfig() {
     configuration.printValues();
 }
 
-void preloadImages() {
+void gtmy::preloadImages() {
     ImagePreloader& imageLoader = ImagePreloader::getInstance();
     imageLoader.loadImages();
 }
 
-void setPosixSignals() {
+void gtmy::setPosixSignals() {
     signal(SIGSEGV, posix_death_signal);
     signal(SIGILL, posix_death_signal);
     signal(SIGFPE, posix_death_signal);
 }
 
-void initMidi() {
+void gtmy::initMidi() {
     if (AConfig::getInst().platform == "windows")
         MidiEngine midInit;
 }
 
-void initMainWindow(MainWindow& w, QApplication& a) {
+void gtmy::initMainWindow(MainWindow& w, QApplication& a) {
     a.setApplicationVersion("Guitarmy v 0.5 final");
     a.setOrganizationName("KK");
     if (AConfig::getInst().isMobile == false) //for Desktops
@@ -218,7 +221,7 @@ void initMainWindow(MainWindow& w, QApplication& a) {
 }
 
 
-void setWindowIcon(MainWindow& w) {
+void gtmy::setWindowIcon(MainWindow& w) {
     std::string currentPath = AConfig::getInst().testsLocation;
     std::string winIconName = currentPath + "Icons/winIcon.png";
     QIcon winIcon(winIconName.c_str());
@@ -226,7 +229,7 @@ void setWindowIcon(MainWindow& w) {
 }
 
 
-void setLogFilename() {
+void gtmy::setLogFilename() {
     std::string logName = AConfig::getInst().testsLocation + std::string("log.txt"); //TODO log init
     //TODO add init logger form gtab3
 
@@ -237,7 +240,7 @@ void setLogFilename() {
 }
 
 
-void configureScreen(MainWindow& w) {
+void gtmy::configureScreen(MainWindow& w) {
     ////and_help.setLandscape();
     if (AConfig::getInst().platform == "android") {
         w.show();
@@ -249,7 +252,7 @@ void configureScreen(MainWindow& w) {
 }
 
 
-void initNewTab(MainWindow& w) {
+void gtmy::initNewTab(MainWindow& w) {
     w.setWindowTitle("Guitarmy");
     w.getCenterView()->pushForceKey("newtab");
 
@@ -258,7 +261,7 @@ void initNewTab(MainWindow& w) {
 }
 
 
-void copyResourcesIntoTempDir() {
+void gtmy::copyResourcesIntoTempDir() {
     static QTemporaryDir tempDir;
     setTestLocation(tempDir.path().toStdString() + "/");
     QDir dir;

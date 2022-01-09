@@ -15,3 +15,6 @@ they made code more ugly, and UI was very plain
 
 * I planned to make project opensource from the begining, but was shy to open it, it had to be opened many years ago, so people can join me
 
+* Running for new features, quite often leaving them in state proof on concept, then running for next one
+
+* Rarely made refactoring

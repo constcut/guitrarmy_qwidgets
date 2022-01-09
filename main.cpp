@@ -10,6 +10,8 @@
 #include "ui/MainWindow.hpp"
 
 
+using namespace gtmy;
+
 
 int main(int argc, char *argv[])
 {

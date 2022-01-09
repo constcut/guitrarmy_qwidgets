@@ -6,6 +6,9 @@
 bool trackLog = false;
 
 
+using namespace gtmy;
+
+
 void Track::printToStream(std::ostream& stream)
 {
     stream << "Outputing #" << size() << " Bars."<< std::endl;

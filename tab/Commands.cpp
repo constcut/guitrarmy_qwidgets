@@ -4,7 +4,10 @@
 
 #include <QDebug>
 
-enum CommandPack {
+using namespace gtmy;
+
+
+enum CommandPack { //TODO move
     SingleTabCommand=0,
     SingleTrackCommand,
     IntTabCommand,
@@ -163,14 +166,14 @@ std::ifstream& operator>>(std::ifstream& is, MacroCommand& macro) {
 }
 
 
-void saveMacroComannds(const std::vector<MacroCommand>& commands, std::ofstream& os) {
+void gtmy::saveMacroComannds(const std::vector<MacroCommand>& commands, std::ofstream& os) {
 
     for (const auto& command: commands)
         std::visit([&os](const auto& command){ os << command; }, command);
 }
 
 
-std::vector<MacroCommand> loadMacroCommands(std::ifstream& is) {
+std::vector<MacroCommand> gtmy::loadMacroCommands(std::ifstream& is) {
     std::vector<MacroCommand> commands;
     while (is.eof() == false) {
         MacroCommand macro;

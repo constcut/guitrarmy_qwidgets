@@ -1,6 +1,8 @@
 #include "Base.hpp"
 
 
+using namespace gtmy;
+
 auto addToMap = [](auto& container, auto value) {
     if (container.count(value))
         container[value] += 1;

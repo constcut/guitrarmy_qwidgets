@@ -7,6 +7,10 @@
 
 #include "g0/Config.hpp"
 
+
+using namespace gtmy;
+
+
 void ImagePreloader::loadImage(std::string imageName)
 {
 

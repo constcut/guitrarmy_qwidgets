@@ -11,83 +11,90 @@
 
 #include "TrackView.hpp"
 
-//TODO функции в отдельный хэдер
-void changeColor(const std::string& color, QPainter* src);
-void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
-void drawEllipse(QPainter *painter, int x, int y, int w, int h);
-int translateDefaulColor(const std::string& confParam);
+
+namespace gtmy {
+
+
+    //TODO функции в отдельный хэдер
+    void changeColor(const std::string& color, QPainter* src);
+    void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
+    void drawEllipse(QPainter *painter, int x, int y, int w, int h);
+    int translateDefaulColor(const std::string& confParam);
 
 
 
-class TabView : public GView
-{
-protected:
-    std::unique_ptr<Tab> pTab;
+    class TabView : public GView
+    {
+    protected:
+        std::unique_ptr<Tab> pTab;
 
-    std::unique_ptr<GLabel> statusLabel;
-    std::unique_ptr<GLabel> bpmLabel;
-    std::unique_ptr<GTabPannel> pan;
+        std::unique_ptr<GLabel> statusLabel;
+        std::unique_ptr<GLabel> bpmLabel;
+        std::unique_ptr<GTabPannel> pan;
 
 
-    std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
-    std::vector<std::unique_ptr<ThreadLocal>> finishPool;
+        std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
+        std::vector<std::unique_ptr<ThreadLocal>> finishPool;
 
-public:
+    public:
 
-    virtual void setUI();
+        virtual void setUI();
 
-    void setCurrentBar(int curBar) {
-        pTab->getCurrentBar() = curBar; }
+        void setCurrentBar(int curBar) {
+            pTab->getCurrentBar() = curBar; }
 
-    virtual bool isMovableX() { return true; }
-    virtual bool isMovableY() { return true; }
+        virtual bool isMovableX() { return true; }
+        virtual bool isMovableY() { return true; }
 
-    TabView();
-    virtual ~TabView();
+        TabView();
+        virtual ~TabView();
 
-    std::vector<std::unique_ptr<TrackView>> tracksView;
+        std::vector<std::unique_ptr<TrackView>> tracksView;
 
-    int getCurTrack() { return pTab->getCurrentTrack(); }
-    int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
+        int getCurTrack() { return pTab->getCurrentTrack(); }
+        int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
 
-    void setTab(std::unique_ptr<Tab> point2Tab);// {pTab = point2Tab;}
-    void refreshTabStats();
-    std::unique_ptr<Tab>& getTab() { return pTab; }
+        void setTab(std::unique_ptr<Tab> point2Tab);// {pTab = point2Tab;}
+        void refreshTabStats();
+        std::unique_ptr<Tab>& getTab() { return pTab; }
 
-     void draw(QPainter *painter);
+         void draw(QPainter *painter);
 
-     virtual void keyevent(std::string press);
-     virtual void onTabCommand(TabCommand command);
-     virtual void onTrackCommand(TrackCommand command);
+         virtual void keyevent(std::string press);
+         virtual void onTabCommand(TabCommand command);
+         virtual void onTrackCommand(TrackCommand command);
 
-     void setPlaying(bool playValue) { pTab->setPlaying(playValue); }
-     bool getPlaying()
-     {
-         if (pTab->playing())
-             if (localThr)
-                 if (localThr->getStatus())
-                     setPlaying(false);
+         void setPlaying(bool playValue) { pTab->setPlaying(playValue); }
+         bool getPlaying()
+         {
+             if (pTab->playing())
+                 if (localThr)
+                     if (localThr->getStatus())
+                         setPlaying(false);
 
-         return pTab->playing();
-     }
+             return pTab->playing();
+         }
 
-     void addSingleTrack(Track *track);
+         void addSingleTrack(Track *track);
 
-     void onclick(int x1, int y1);
-     void ondblclick(int x1, int y1);
+         void onclick(int x1, int y1);
+         void ondblclick(int x1, int y1);
 
-     virtual void ongesture(int offset, bool horizontal);
+         virtual void ongesture(int offset, bool horizontal);
 
-     void prepareAllThreads(size_t shiftTheCursor);
-     void launchAllThreads();
-     void stopAllThreads();
+         void prepareAllThreads(size_t shiftTheCursor);
+         void launchAllThreads();
+         void stopAllThreads();
 
-     void connectAllThreadsSignal(MasterView *masterView);
+         void connectAllThreadsSignal(MasterView *masterView);
 
-     bool gotChanges();
+         bool gotChanges();
 
-     //void ondblclick(int x1, int y1);
-};
+         //void ondblclick(int x1, int y1);
+    };
+
+
+}
 
 
 #endif // TABVIEWS_H

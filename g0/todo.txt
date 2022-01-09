@@ -10,3 +10,5 @@
 
 6) Удалить старые FFT\Recoding\WaveAnalys они будут заменены свежими из mtherapp
 7) Удалить MIDI engine - на смену ему использовать RtMidi или другую адекватную библиотеку под MIT
+
++namespace deprecatedui::

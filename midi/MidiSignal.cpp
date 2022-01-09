@@ -5,6 +5,10 @@ bool enableMidiLog = false;
 #define log qDebug
 
 
+using namespace gtmy;
+
+
+
 NBytesInt::NBytesInt(std::uint32_t source) {
     if (source == 0) {
         push_back(0);

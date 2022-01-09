@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+using namespace gtmy;
+
+
 void Note::clone(Note *from)
 {
     fret = from->fret;

@@ -4,79 +4,82 @@
 #include "GView.hpp"
 
 
-class BarView : public GView
-{
+namespace gtmy {
 
-protected:
+    class BarView : public GView
+    {
 
-    static const int stringWidth=12;
-    static const int inbarWidth=20;
+    protected:
 
-    Bar *pBar;
-    int xShift,yShift;
-    int nStrings;
-    int cursor;
-    int stringCursor;
+        static const int stringWidth=12;
+        static const int inbarWidth=20;
 
-    int nBeats;
+        Bar *pBar;
+        int xShift,yShift;
+        int nStrings;
+        int cursor;
+        int stringCursor;
 
-    int barNumber;
+        int nBeats;
 
-    bool sameSign;
+        int barNumber;
 
-    int selectorBegin;
-    int selectorEnd;
+        bool sameSign;
 
-    bool repBegin;
-    bool repEnd;
+        int selectorBegin;
+        int selectorEnd;
 
-public:
+        bool repBegin;
+        bool repEnd;
 
-    int getBarsize() { return nBeats; }
+    public:
 
-    void setSameSign(bool value) {sameSign = value;}
+        int getBarsize() { return nBeats; }
 
-    void setSelectors(int beg, int end){selectorBegin=beg; selectorEnd=end;}
-    void flushSelectors(){selectorBegin=selectorEnd=-1;}
+        void setSameSign(bool value) {sameSign = value;}
 
-    BarView(Bar *b,int nstr, int barNum=-1);
+        void setSelectors(int beg, int end){selectorBegin=beg; selectorEnd=end;}
+        void flushSelectors(){selectorBegin=selectorEnd=-1;}
+
+        BarView(Bar *b,int nstr, int barNum=-1);
 
 
-    void setBar(Bar *newBar){pBar = newBar;}
-    Bar *getBar() { return pBar; }
+        void setBar(Bar *newBar){pBar = newBar;}
+        Bar *getBar() { return pBar; }
 
-    void setCursor(int cur, int strCur=-1) { cursor = cur; stringCursor =strCur; }
-    int getCursor() { return cursor; }
+        void setCursor(int cur, int strCur=-1) { cursor = cur; stringCursor =strCur; }
+        int getCursor() { return cursor; }
 
-    //virtual void keyevent(std::string press){}
-    //void onclick(int x1, int y1){x1=y1=0;} //not used
-    //void ondblclick(int x1, int y1){ onclick(x1,y1);}
+        //virtual void keyevent(std::string press){}
+        //void onclick(int x1, int y1){x1=y1=0;} //not used
+        //void ondblclick(int x1, int y1){ onclick(x1,y1);}
 
-    int getClickString(int y1);
-    int getClickBeat(int x1);
+        int getClickString(int y1);
+        int getClickBeat(int x1);
 
-    void drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet,
-                  int x1, int y1);
-
-    void drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
+        void drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet,
                       int x1, int y1);
 
-    void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABitArray *eff);
+        void drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
+                          int x1, int y1);
+
+        void drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, ABitArray *eff);
 
 
-    void draw(QPainter *painter); //from beat to beat
+        void draw(QPainter *painter); //from beat to beat
 
-    void setShifts(int x1, int y1)
-    {
-        xShift =x1;
-        yShift =y1;
-        x = x1+20;
-        y = y1+20;
-    }
+        void setShifts(int x1, int y1)
+        {
+            xShift =x1;
+            yShift =y1;
+            x = x1+20;
+            y = y1+20;
+        }
 
 
-    void setNStrings(int ns){nStrings = ns;}
-};
+        void setNStrings(int ns){nStrings = ns;}
+    };
 
+}
 
 #endif // BARVIEW_H

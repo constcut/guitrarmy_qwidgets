@@ -6,6 +6,9 @@
 #include "libs/sf/tml.h"
 
 
+using namespace gtmy;
+
+
 MidiRender::MidiRender()
 {
     _renderFrameSize = 1024;

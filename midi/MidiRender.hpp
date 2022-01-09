@@ -14,6 +14,8 @@ struct tml_message;
 struct tsf;
 
 
+namespace gtmy {
+
 
     class MidiRender
     {
@@ -75,6 +77,6 @@ struct tsf;
         bool _mono = false;
     };
 
-
+}
 
 #endif // MIDIRENDER_H

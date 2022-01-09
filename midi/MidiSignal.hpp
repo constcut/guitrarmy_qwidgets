@@ -8,58 +8,62 @@
 #include <fstream>
 
 
-
-class NBytesInt : public std::deque<std::uint8_t> {
-
-public:
-    NBytesInt(){}
-    NBytesInt(std::uint32_t source);
-
-    std::uint32_t readStream(std::ifstream& f);
-    std::uint32_t writeStream(std::ofstream& f);
-
-    std::uint32_t getValue();
-};
+namespace gtmy {
 
 
+    class NBytesInt : public std::deque<std::uint8_t> {
 
-class MidiSignal
-{
-public:
+    public:
+        NBytesInt(){}
+        NBytesInt(std::uint32_t source);
 
-    std::uint8_t getEventType() ;
-    std::uint8_t getChannel();
-    bool isMetaEvent();
+        std::uint32_t readStream(std::ifstream& f);
+        std::uint32_t writeStream(std::ofstream& f);
 
-    MidiSignal();
-    MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2=0, std::uint32_t timeShift=0);
+        std::uint32_t getValue();
+    };
 
-    std::uint32_t calculateSize(bool skipSomeMessages=false);
 
-    bool canSkipThat(); ///TODO doublecheck
 
-    std::uint32_t readStream(std::ifstream& f);
-    std::uint32_t writeStream(std::ofstream& f, bool skipSomeMessages=false); //?Todo review name skip
+    class MidiSignal
+    {
+    public:
 
-    std::string nameEvent(std::int8_t eventNumber);
-    std::string nameController(std::uint8_t controllerNumber);
+        std::uint8_t getEventType() ;
+        std::uint8_t getChannel();
+        bool isMetaEvent();
 
-    double getSecondsLength(double bpm=120.0);
+        MidiSignal();
+        MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2=0, std::uint32_t timeShift=0);
 
-    const std::vector<std::uint8_t>& getMetaInfo() { return metaBufer; }
+        std::uint32_t calculateSize(bool skipSomeMessages=false);
 
-public: //TODO :(
-    NBytesInt timeStamp;
+        bool canSkipThat(); ///TODO doublecheck
 
-    std::uint8_t byte0; //type + channel //TODO rename typeAndChannel
-    std::uint8_t param1, param2; //parameters //TODO rename paramter1, parameter2
+        std::uint32_t readStream(std::ifstream& f);
+        std::uint32_t writeStream(std::ofstream& f, bool skipSomeMessages=false); //?Todo review name skip
 
-public: //TODO cover with push functions
+        std::string nameEvent(std::int8_t eventNumber);
+        std::string nameController(std::uint8_t controllerNumber);
 
-    double absoluteTime; //bad code detected
+        double getSecondsLength(double bpm=120.0);
 
-    NBytesInt metaLen;
-    std::vector<std::uint8_t> metaBufer;
-};
+        const std::vector<std::uint8_t>& getMetaInfo() { return metaBufer; }
+
+    public: //TODO :(
+        NBytesInt timeStamp;
+
+        std::uint8_t byte0; //type + channel //TODO rename typeAndChannel
+        std::uint8_t param1, param2; //parameters //TODO rename paramter1, parameter2
+
+    public: //TODO cover with push functions
+
+        double absoluteTime; //bad code detected
+
+        NBytesInt metaLen;
+        std::vector<std::uint8_t> metaBufer;
+    };
+
+}
 
 #endif // MIDISIGNAL_H

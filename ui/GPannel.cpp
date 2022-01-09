@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+using namespace gtmy;
+
 
 void GPannel::onclick(int x1, int y1)
 {

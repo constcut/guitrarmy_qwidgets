@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QtEndian>
 
-
+using namespace gtmy;
 //const int BufferSize = 4096;
 
 AudioInfo::AudioInfo(const QAudioFormat &format, QObject *parent)

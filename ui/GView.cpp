@@ -8,11 +8,8 @@
 
 #include "g0/Config.hpp"
 
-
 #include "tab/GmyFile.hpp"
-
 #include "tab/TabLoader.hpp" //loader
-
 #include "g0/Threads.hpp"
 
 #include <QDebug>
@@ -21,6 +18,7 @@
 bool gViewLog=false;
 
 
+using namespace gtmy;
 
 
 GView *MasterView::changeChild(GView *newChild)

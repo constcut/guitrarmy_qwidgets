@@ -16,8 +16,10 @@
 #include <QDebug>
 
 
+using namespace gtmy;
 
-int translateDefaulColor(const std::string& confParam){
+
+int gtmy::translateDefaulColor(const std::string& confParam){
     int numColor = -1;
     if (confParam == "black") numColor = 0;
     if (confParam == "red") numColor = 1;
@@ -39,10 +41,10 @@ int translateDefaulColor(const std::string& confParam){
     return numColor;
 }
 
-void changeColor(const std::string& color, QPainter* src)
+void gtmy::changeColor(const std::string& color, QPainter* src)
 {
     //saveColor();
-    int colorS = translateDefaulColor(color);
+    int colorS = gtmy::translateDefaulColor(color);
     switch (colorS)
     {
         case 0: src->setPen(Qt::black); break;
@@ -67,14 +69,15 @@ void changeColor(const std::string& color, QPainter* src)
     //storeValue = colorS;
 }
 
-void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h) {
+void gtmy::drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h) {
     QBrush startBra = painter->brush();
     painter->setBrush(c);
     painter->drawEllipse(x,y,w,h);
     painter->setBrush(startBra); //return brach back
 }
 
-void drawEllipse(QPainter *painter, int x, int y, int w, int h) {
+
+void gtmy::drawEllipse(QPainter *painter, int x, int y, int w, int h) {
     painter->drawEllipse(x,y,w,h);
 }
 
@@ -251,14 +254,14 @@ void TabView::draw(QPainter *painter)
            if (yPos > (yLimit-100))
                break;
            if (trackIndex == pTab->getCurrentTrack())
-                changeColor(CONF_PARAM("colors.curTrack"), painter);
+                gtmy::changeColor(CONF_PARAM("colors.curTrack"), painter);
 
            painter->drawText(20,yPos,trackVal.c_str());
            //painter->drawEllipse(10,yPos,5,5);
            painter->drawRect(7,yPos-10,10,10);
 
            if (trackIndex == pTab->getCurrentTrack())
-               changeColor(CONF_PARAM("colors.default"), painter);
+               gtmy::changeColor(CONF_PARAM("colors.default"), painter);
 
            std::uint8_t trackStat = pTab->at(trackIndex)->getStatus();
            if (trackStat==1)

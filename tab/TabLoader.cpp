@@ -7,6 +7,9 @@
 #include "tab/GtpFiles.hpp"
 
 
+using namespace gtmy;
+
+
 //TODO move to gtp files
 bool GTabLoader::open(std::string fileName)
 {

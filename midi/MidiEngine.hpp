@@ -7,63 +7,69 @@
 #include "windows.h" //lib mm
 #endif
 
-class MidiEngine
-{
-protected:
-#ifdef WIN32
-         static HMIDIOUT winMidi;
-         static UINT wTimerRes;
-#endif
 
-         static bool opened;
-
-static MidiEngine *inst;
+namespace gtmy {
 
 
-public:
+    class MidiEngine
+    {
+    protected:
+    #ifdef WIN32
+             static HMIDIOUT winMidi;
+             static UINT wTimerRes;
+    #endif
 
-    static void init();
-    static void freeInitials();
+             static bool opened;
 
-#ifdef WIN32
-static void sendSignalShortWin(DWORD signal);
-#endif
+    static MidiEngine *inst;
 
-    MidiEngine();
-    ~MidiEngine();
 
-    static void sendSignal(MidiSignal *signal);
-    static void sendSignalShort(std::uint8_t status, int byte1=-1, int byte2=-1);
-    static void sendSignalLong(MidiSignal *signal);
+    public:
 
-    static void sendSignalShortDelay(int msdelay, std::uint8_t status, int byte1=-1, int byte2=-1);
+        static void init();
+        static void freeInitials();
 
-    static void setVolume(int vol);
-    static int getVolume();
+    #ifdef WIN32
+    static void sendSignalShortWin(DWORD signal);
+    #endif
 
-    static void startDefaultFile();
-    static void stopDefaultFile();
-    static void openDefaultFile();
-    static void closeDefaultFile();
+        MidiEngine();
+        ~MidiEngine();
 
-    static void playTrack(MidiTrack *track);
+        static void sendSignal(MidiSignal *signal);
+        static void sendSignalShort(std::uint8_t status, int byte1=-1, int byte2=-1);
+        static void sendSignalLong(MidiSignal *signal);
 
-    //For better futute
-    /*
-    void playFile(MidiFile *file);
-    void playFile(std::string fileName);
+        static void sendSignalShortDelay(int msdelay, std::uint8_t status, int byte1=-1, int byte2=-1);
 
-    ///controls
-    //set get volume for midi sequencer(overal volume in guitamy)
+        static void setVolume(int vol);
+        static int getVolume();
 
-    void play(); void stop(); void pause();
+        static void startDefaultFile();
+        static void stopDefaultFile();
+        static void openDefaultFile();
+        static void closeDefaultFile();
 
-    //int scroll(int) ??
+        static void playTrack(MidiTrack *track);
 
-    /////////////////// Transform functions
-    */
+        //For better futute
+        /*
+        void playFile(MidiFile *file);
+        void playFile(std::string fileName);
 
-    static std::unique_ptr<MidiTrack> uniteFileToTrack(MidiFile *midiFile);
-};
+        ///controls
+        //set get volume for midi sequencer(overal volume in guitamy)
+
+        void play(); void stop(); void pause();
+
+        //int scroll(int) ??
+
+        /////////////////// Transform functions
+        */
+
+        static std::unique_ptr<MidiTrack> uniteFileToTrack(MidiFile *midiFile);
+    };
+
+}
 
 #endif // MIDIENGINE_H

@@ -6,8 +6,10 @@
 #include <iostream>
 
 
+using namespace gtmy;
 
-void initGlobals()
+
+void gtmy::initGlobals()
 {
     AConfig& conf = AConfig::getInst();
 
@@ -38,7 +40,7 @@ void initGlobals()
 }
 
 
-void setTestLocation(std::string newTL)
+void gtmy::setTestLocation(std::string newTL)
 {
     std::string invertedLocation="";
 

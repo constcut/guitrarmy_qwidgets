@@ -2,6 +2,9 @@
 #include "TabViews.hpp"
 
 
+using namespace gtmy;
+
+
 ///////////Bars------------------------------
 void BarView::drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dotted, std::uint8_t durDet, int midiNote,
                   int x1, int y1)

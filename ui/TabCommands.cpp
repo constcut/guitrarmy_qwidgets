@@ -24,6 +24,8 @@
 
 #include "midi/MidiRender.hpp"
 
+using namespace gtmy;
+
 //Trackview events:
 
 void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView* mw) { //TODO keyeventsUI

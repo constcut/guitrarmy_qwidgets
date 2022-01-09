@@ -1,6 +1,10 @@
 #include "Beat.hpp"
 #include <iostream>
 
+
+using namespace gtmy;
+
+
 void BendPoints::insertNewPoint(BendPoint bendPoint)
 {
     for (size_t i = 0; i < size()-1; ++i)

@@ -10,6 +10,8 @@
 
 bool midiLog = false;
 
+using namespace gtmy;
+
 /*
 void reverseEndian(void _*_ p,int s) {
     char *bytes = (char*)p;

@@ -58,6 +58,10 @@
 
 //-------------------------------
 
+
+using namespace gtmy;
+
+
 void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string button, std::string confValue="", bool secondLines=false);
 QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
 

@@ -3,10 +3,14 @@
 #include <QDebug>
 #include <fstream>
 
+
+using namespace gtmy;
+
+
 bool gtpLog = false;
 
 ////////////////////////////////////////////////////////////////////////////
-char miniBufer[20480];
+char miniBufer[20480]; //TODO get rid
 
 
 

@@ -6,8 +6,10 @@ bool midiExportLog = false;
 #include <QDebug>
 
 
+using namespace gtmy;
 
-std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
+
+std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
     auto output = std::make_unique<MidiFile>();
     //time line track
     {
@@ -179,7 +181,7 @@ std::unique_ptr<MidiFile> exportMidi(Tab* tab, size_t shiftTheCursor) {
 
 
 
-void exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shiftCursorBar) {
+void gtmy::exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shiftCursorBar) {
 
     size_t instrument = track->getInstrument();
     std::uint8_t midiPan = midiTrack->calcMidiPanoramGP(track->getPan());
@@ -239,7 +241,7 @@ void exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shif
 }
 
 
-void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialRhy) {
+void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialRhy) {
     std::uint8_t dur,det,dot; //rhythm value
 
     dur = beat->getDuration();
@@ -375,7 +377,7 @@ void exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short specialR
 
 
 
-bool exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
+bool gtmy::exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
     std::uint8_t noteState = note->getState();
 
     if ((noteState==Note::leegNote) || (noteState==Note::leegedLeeg))
@@ -442,7 +444,7 @@ bool exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_t chan
 
 
 
-bool exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
+bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t channel) {
     if (note->effPack.getEffectAt(Effect::LetRing)) //let ring
         //skip let ring
         return false;
@@ -485,7 +487,7 @@ bool exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8_t cha
     return true;
 }
 
-void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
+void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
     //POST-effects
 
     for (size_t i =0; i < beat->size(); ++i)
@@ -594,7 +596,7 @@ void exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t channel) {
 }
 
 
-void pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t channel) {
+void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t channel) {
     short rOffset = midiTrack->accum;
     midiTrack->takeAccum();
 

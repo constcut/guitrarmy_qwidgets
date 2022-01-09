@@ -4,10 +4,11 @@
 
 #include <QDebug>
 
-//TODO log turned off
+
+using namespace gtmy;
+
 
 bool logFlag = false;
-
 
 
 

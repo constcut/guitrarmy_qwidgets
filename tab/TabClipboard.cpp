@@ -1,5 +1,7 @@
 #include "TabClipboard.hpp"
 
-AClipboard *AClipboard::currentClip;
+using namespace gtmy;
+
+AClipboard *AClipboard::currentClip; //TODO into editing core
 
 //TODO flush function

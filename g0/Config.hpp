@@ -7,169 +7,171 @@
 
 #define CONF_PARAM(z) AConfig::getInst().values[ z ]
 
-void setTestLocation(std::string newTL);
-
-void initGlobals();
 
 
+namespace gtmy {
 
-class AConfig
-{
-public:
-    bool *logs[10];
-    std::string logsNames[10];
-    int topIndex;
 
-    std::unordered_map<std::string,std::string> values;
-    void addLine(std::string anotherLine);
+    void setTestLocation(std::string newTL);
+    void initGlobals();
 
-    double scaleCoef;
-    double timeCoef; //TODO setters getters
 
-//Previus global variables:
-
-    std::string testsLocation;
-    std::string invertedLocation;
-    std::string theUserId;
-    bool isMobile;
-    struct ScreenSize
+    class AConfig
     {
-        int width;
-        int height;
-        int dpi; //not set yet
-        double scale;
+    public:
+        bool *logs[10];
+        std::string logsNames[10];
+        int topIndex;
 
-    } screenSize;
-    std::string platform;
+        std::unordered_map<std::string,std::string> values;
+        void addLine(std::string anotherLine);
 
-public:
+        double scaleCoef;
+        double timeCoef; //TODO setters getters
 
-    void connectLog(bool *ptrValue, int index=-1,std::string logName="unknown");
+    //Previus global variables:
 
-    void load(std::ifstream& file);
-    void save(std::ofstream& file);
+        std::string testsLocation;
+        std::string invertedLocation;
+        std::string theUserId;
+        bool isMobile;
+        struct ScreenSize
+        {
+            int width;
+            int height;
+            int dpi; //not set yet
+            double scale;
 
-    void addValue(std::string name, std::string val);
+        } screenSize;
+        std::string platform;
 
-    double getTimeCoef() { return timeCoef; }
-    void setTimeCoef(double newTC) { timeCoef = newTC; }
+    public:
 
-    double getScaleCoef() { return scaleCoef; }
-    void setScaleCoef(double scale) { scaleCoef = scale; }
+        void connectLog(bool *ptrValue, int index=-1,std::string logName="unknown");
 
-    void printValues();
-    void checkConfig();
+        void load(std::ifstream& file);
+        void save(std::ofstream& file);
 
-    void cleanValues() { values.clear(); }
+        void addValue(std::string name, std::string val);
+
+        double getTimeCoef() { return timeCoef; }
+        void setTimeCoef(double newTC) { timeCoef = newTC; }
+
+        double getScaleCoef() { return scaleCoef; }
+        void setScaleCoef(double scale) { scaleCoef = scale; }
+
+        void printValues();
+        void checkConfig();
+
+        void cleanValues() { values.clear(); }
 
 
-public:
-        static AConfig& getInst() {
-            static AConfig instance;
-            return instance;
+    public:
+            static AConfig& getInst() {
+                static AConfig instance;
+                return instance;
+            }
+
+    private:
+            AConfig(): topIndex(-1),scaleCoef(1.0),timeCoef(1) {}
+            AConfig(const AConfig& root) = delete;
+            AConfig& operator=(const AConfig&) = delete;
+
+    };
+
+
+
+    class Skin
+    {
+    protected:
+        //just cfg lines
+        std::vector<std::string> configLines;
+    public:
+        Skin() { }
+        //
+        virtual void init()=0;
+
+        void setIntoConfig(AConfig& conf)
+        {
+            for (size_t i=0; i < configLines.size(); ++i)
+                conf.addLine(configLines[i]);
         }
+    };
 
-private:
-        AConfig(): topIndex(-1),scaleCoef(1.0),timeCoef(1) {}
-        AConfig(const AConfig& root) = delete;
-        AConfig& operator=(const AConfig&) = delete;
-
-};
-
-
-
-class Skin
-{
-protected:
-    //just cfg lines
-    std::vector<std::string> configLines;
-public:
-    Skin() { }
-    //
-    virtual void init()=0;
-
-    void setIntoConfig(AConfig& conf)
+    class DarkSkin : public Skin
     {
-        for (size_t i=0; i < configLines.size(); ++i)
-            conf.addLine(configLines[i]);
-    }
-};
+    public:
+        DarkSkin(){init();}
+        virtual void init()
+        {
+            configLines.push_back("colors.background = black");
+            configLines.push_back("colors.curBar = white");
+            configLines.push_back("colors.curBeat = gray");
+            configLines.push_back("colors.curString = darkgray");
+            configLines.push_back("colors.curTrack = darkgray");
+            configLines.push_back("colors.default = AAAAAA");
+            configLines.push_back("colors.exceed = darkred");
+            configLines.push_back("colors.panBG = darkgray");
+            configLines.push_back("invertImages = 1");
+        }
+    };
 
-class DarkSkin : public Skin
-{
-public:
-    DarkSkin(){init();}
-    virtual void init()
+    class LightSkin : public Skin
     {
-        configLines.push_back("colors.background = black");
-        configLines.push_back("colors.curBar = white");
-        configLines.push_back("colors.curBeat = gray");
-        configLines.push_back("colors.curString = darkgray");
-        configLines.push_back("colors.curTrack = darkgray");
-        configLines.push_back("colors.default = AAAAAA");
-        configLines.push_back("colors.exceed = darkred");
-        configLines.push_back("colors.panBG = darkgray");
-        configLines.push_back("invertImages = 1");
-    }
-};
+    public:
+        LightSkin(){init();}
+        virtual void init()
+        {
+            configLines.push_back("colors.background = white");
+            configLines.push_back("colors.curBar = black");
+            configLines.push_back("colors.curBeat = darkgray");
+            configLines.push_back("colors.curString = gray");
+            configLines.push_back("colors.curTrack = gray");
+            configLines.push_back("colors.default = 888888");
+            configLines.push_back("colors.exceed = darkred");
+            configLines.push_back("colors.panBG = dark");
+            configLines.push_back("invertImages = 0");
+        }
+    };
 
-class LightSkin : public Skin
-{
-public:
-    LightSkin(){init();}
-    virtual void init()
+    class ClassicSkin : public Skin
     {
-        configLines.push_back("colors.background = white");
-        configLines.push_back("colors.curBar = black");
-        configLines.push_back("colors.curBeat = darkgray");
-        configLines.push_back("colors.curString = gray");
-        configLines.push_back("colors.curTrack = gray");
-        configLines.push_back("colors.default = 888888");
-        configLines.push_back("colors.exceed = darkred");
-        configLines.push_back("colors.panBG = dark");
-        configLines.push_back("invertImages = 0");
-    }
-};
+    public:
+        ClassicSkin(){init();}
+        virtual void init()
+        {
+            configLines.push_back("colors.background = 449966"); //TODO ? кажется сломались цвета
+            configLines.push_back("colors.curBar = darkblue");
+            configLines.push_back("colors.curBeat = yellow");
+            configLines.push_back("colors.curString = 7799FF");
+            configLines.push_back("colors.curTrack = blue");
+            configLines.push_back("colors.default = black");
+            configLines.push_back("colors.exceed = darkred");
+            configLines.push_back("colors.panBG = gray");
+            configLines.push_back("invertImages = 0");
+        }
+    };
 
-class ClassicSkin : public Skin
-{
-public:
-    ClassicSkin(){init();}
-    virtual void init()
+    class ClassicInvertedSkin : public Skin
     {
-        configLines.push_back("colors.background = 449966"); //TODO ? кажется сломались цвета
-        configLines.push_back("colors.curBar = darkblue");
-        configLines.push_back("colors.curBeat = yellow");
-        configLines.push_back("colors.curString = 7799FF");
-        configLines.push_back("colors.curTrack = blue");
-        configLines.push_back("colors.default = black");
-        configLines.push_back("colors.exceed = darkred");
-        configLines.push_back("colors.panBG = gray");
-        configLines.push_back("invertImages = 0");
-    }
-};
+    public:
+        ClassicInvertedSkin(){init();}
+        virtual void init()
+        {
+            configLines.push_back("colors.background = 449966");
+            configLines.push_back("colors.curBar = darkblue");
+            configLines.push_back("colors.curBeat = yellow");
+            configLines.push_back("colors.curString = 7799FF");
+            configLines.push_back("colors.curTrack = blue");
+            configLines.push_back("colors.default = black");
+            configLines.push_back("colors.exceed = darkred");
+            configLines.push_back("colors.panBG = gray");
+            configLines.push_back("invertImages = 1");
+        }
+    };
 
-class ClassicInvertedSkin : public Skin
-{
-public:
-    ClassicInvertedSkin(){init();}
-    virtual void init()
-    {
-        configLines.push_back("colors.background = 449966");
-        configLines.push_back("colors.curBar = darkblue");
-        configLines.push_back("colors.curBeat = yellow");
-        configLines.push_back("colors.curString = 7799FF");
-        configLines.push_back("colors.curTrack = blue");
-        configLines.push_back("colors.default = black");
-        configLines.push_back("colors.exceed = darkred");
-        configLines.push_back("colors.panBG = gray");
-        configLines.push_back("invertImages = 1");
-    }
-};
 
-// <application android:theme="@android:style/Theme.Holo"/>
-
-//"@android:style/Theme.Material.Light"
+}
 
 
 #endif // CONFIG_H

@@ -33,6 +33,9 @@
 
 
 
+using namespace gtmy;
+
+
 //
 void changeColor(const std::string& color, QPainter* src);
 //

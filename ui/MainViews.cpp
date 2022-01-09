@@ -18,13 +18,17 @@
 
 #include <QDebug>
 
-//TODO
-
 
 #include "MainWindow.hpp"
 
-void changeColor(const std::string& color, QPainter* src);
-void drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
+
+using namespace gtmy;
+
+
+void gtmy::changeColor(const std::string& color, QPainter* src);
+void gtmy::drawEllipse(QColor c, QPainter *painter, int x, int y, int w, int h);
+
+
 BendPoints* BendInput::ptrToBend = 0;
 Note *BendInput::ptrToNote = 0;
 
@@ -742,7 +746,7 @@ void BendInput::draw(QPainter *painter)
         //8 px for horizon step, 20 for vertical
         int prevX = 0; int prevY = 0;
 
-        changeColor("red", painter);
+        gtmy::changeColor("red", painter);
         for (size_t i = 0; i < ptrToBend->size(); ++i)
         {
             std::uint8_t vertical = ptrToBend->at(i).vertical;
@@ -756,7 +760,7 @@ void BendInput::draw(QPainter *painter)
                 painter->drawLine(prevX,prevY,localX,localY);
 
             prevX = localX; prevY = localY;
-            drawEllipse(QColor("red"), painter, localX-3,localY-3,6,6);
+            gtmy::drawEllipse(QColor("red"), painter, localX-3,localY-3,6,6);
         }
         //qDebug() << "Bend outpited";
     }

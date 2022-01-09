@@ -3,18 +3,22 @@
 
 #include "Tab.hpp"
 
-class GmyFile
-{
-public:
-    GmyFile();
+namespace gtmy {
 
-    bool saveToFile(std::ofstream& file, Tab *tab);
-    bool loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion=false);
+    class GmyFile
+    {
+    public:
+        GmyFile();
 
-protected:
+        bool saveToFile(std::ofstream& file, Tab *tab);
+        bool loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion=false);
 
-    bool loadString(std::ifstream& file, std::string &strValue);
-    bool saveString(std::ofstream& file, std::string &strValue);
-};
+    protected:
+
+        bool loadString(std::ifstream& file, std::string &strValue);
+        bool saveString(std::ofstream& file, std::string &strValue);
+    };
+
+}
 
 #endif // GMYFILE_H

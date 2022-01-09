@@ -2,10 +2,9 @@
 
 #include "tab/Tab.hpp"
 
-AThread::AThread()
-{
 
-}
+using namespace gtmy;
+
 
 
 void PlayAnimationThr::threadRun()

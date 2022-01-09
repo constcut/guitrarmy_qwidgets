@@ -1,6 +1,9 @@
 #include "Effects.hpp"
 //.....................Effects.........................................
 
+
+using namespace gtmy;
+
 ABitArray::ABitArray():bits(0)
 {
 }

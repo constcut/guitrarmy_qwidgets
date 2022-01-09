@@ -2,6 +2,9 @@
 #include "TabViews.hpp"
 
 
+using namespace gtmy;
+
+
 void TrackView::launchThread()
 {
     if (localThr)

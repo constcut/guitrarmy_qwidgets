@@ -1,6 +1,9 @@
 #include "Components.hpp"
 
 
+using namespace gtmy;
+
+
 GQButton::GQButton(QWidget *pa):QPushButton(pa)
 {
     buttonNumber=-1;

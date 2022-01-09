@@ -9,6 +9,9 @@
 #include <fstream>
 #include <QDebug>
 
+
+using namespace gtmy;
+
 //TODO rename file when old tab commands would be erased
 //TODO prepare undo operations
 //They have to be for all possible commands

@@ -3,10 +3,12 @@
 #include <iostream>
 #include <QDebug>
 
+using namespace gtmy;
+
 bool barLog = false;
 
 
-int translateDenum(std::uint8_t den) //TODO static?
+int gtmy::translateDenum(std::uint8_t den) //TODO static?
 {
     switch (den)
     {
@@ -21,7 +23,8 @@ int translateDenum(std::uint8_t den) //TODO static?
     return 0;
 }
 
-int translaeDuration(std::uint8_t dur)
+
+int gtmy::translaeDuration(std::uint8_t dur)
 {
     switch (dur)
     {
@@ -36,7 +39,8 @@ int translaeDuration(std::uint8_t dur)
     return 0;
 }
 
-int updateDurationWithDetail(std::uint8_t detail, int base)
+
+int gtmy::updateDurationWithDetail(std::uint8_t detail, int base)
 {
     int result = base;
 

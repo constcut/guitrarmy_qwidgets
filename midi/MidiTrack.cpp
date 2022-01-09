@@ -5,6 +5,9 @@
 extern bool midiLog; //TODO review log groups, make atomics
 
 
+using namespace gtmy;
+
+
 void MidiTrack::printToStream(std::ostream &stream)
 {
     stream << "Output MidiTrack.";
