@@ -191,11 +191,13 @@ void gtmy::exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_
     midiTrack->pushChangeVolume(midiVol, channel);
 
     std::uint8_t theTunes[11];
+
+    auto tuning = track->getTuning();
     for (size_t i = 0; i < 10; ++i)
         if (track->isDrums())
             theTunes[i] = 0;
         else
-            theTunes[i] = track->tuning.getTune(i);
+            theTunes[i] = tuning.getTune(i);
 
     midiTrack->setTunes(theTunes);
 

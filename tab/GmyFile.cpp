@@ -119,14 +119,15 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
         std::string trackName = track->getName();
         saveString(file, trackName);
 
-        std::uint8_t stringsCount = track->tuning.getStringsAmount();
-         file.write((char*)&stringsCount,1);
+        auto tuning = track->getTuning();
+        std::uint8_t stringsCount = tuning.getStringsAmount();
+        file.write((char*)&stringsCount,1);
 
         if (logFlag) qDebug() << "Write strings count "<<stringsCount;
 
         for (std::uint8_t sI=0; sI < stringsCount; ++ sI)
         {
-            std::uint8_t tune = track->tuning.getTune(sI);
+            std::uint8_t tune = tuning.getTune(sI);
              file.write((char*)&tune,1);
 
             if (logFlag) qDebug() <<"Write tune "<<tune<<" for i="<<sI;
@@ -467,16 +468,17 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
         track->setName(trackName);
         //strings N
         std::uint8_t stringsCount = 0; //track->tuning.getStringsAmount();
-         file.read((char*)&stringsCount,1);
+        file.read((char*)&stringsCount,1);
         //tuning
-        track->tuning.setStringsAmount(stringsCount);
+
+        auto& tuning = track->getTuningRef();
+        tuning.setStringsAmount(stringsCount);
 
         if (logFlag) qDebug()<<"Strings amount "<<stringsCount;
-        for (std::uint8_t sI=0; sI < stringsCount; ++sI)
-        {
+        for (std::uint8_t sI=0; sI < stringsCount; ++sI) {
             std::uint8_t tune = 0;
-             file.read((char*)&tune,1);
-            track->tuning.setTune(sI,tune);
+            file.read((char*)&tune,1);
+            tuning.setTune(sI,tune);
             if (logFlag) qDebug() << "Read tune "<<sI<<" "<<tune;
         }
 

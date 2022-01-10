@@ -108,14 +108,15 @@ void Tab::createNewTrack() {
     track->setVolume(15);
     track->setDrums(false);
     track->setPan(8); //center now
-    track->tuning.setStringsAmount(6);
 
-    track->tuning.setTune(0,64);
-    track->tuning.setTune(1,59);
-    track->tuning.setTune(2,55);
-    track->tuning.setTune(3,50);
-    track->tuning.setTune(4,45);
-    track->tuning.setTune(5,40);
+    auto& tuning = track->getTuningRef();
+    tuning.setStringsAmount(6);
+    tuning.setTune(0, 64);
+    tuning.setTune(1, 59);
+    tuning.setTune(2, 55);
+    tuning.setTune(3, 50);
+    tuning.setTune(4, 45);
+    tuning.setTune(5, 40);
 
     if (pTab->size()) {
         for (size_t barI=0; barI < pTab->at(0)->size(); ++barI) {

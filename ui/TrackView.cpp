@@ -175,14 +175,11 @@ void TrackView::onclick(int x1, int y1)
             int beatClick = bV->getClickBeat(x1);
             int stringClick = bV->getClickString(y1);
 
-            int stringUpperBarrier = _pTrack->tuning.getStringsAmount();
+            int stringUpperBarrier = _pTrack->getTuning().getStringsAmount();
 
             //++beatClick;
             if (beatClick >= _pTrack->at(cursor)->size())
                 --beatClick;
-
-            //log<<"beat click "<<beatClick<<"; stringClick "<<stringClick;
-            //log<<"log";
 
             if (beatClick>0)
                 cursorBeat = beatClick;
@@ -380,7 +377,7 @@ void TrackView::draw(QPainter *painter)
 {
     Track *track1 = _pTrack;
     size_t trackLen = track1->size();
-    int stringsN = track1->tuning.getStringsAmount();
+    int stringsN = track1->getTuning().getStringsAmount();
 
     int pannelShift = getMaster()->getToolBarHeight();
     //double scaleValue = AConfig::getInstance().getScaleCoef();

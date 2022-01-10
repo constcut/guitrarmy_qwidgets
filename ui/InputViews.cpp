@@ -134,18 +134,17 @@ void PatternInput::playBar() {
 
     patternTrack->push_back(std::move(bar));
 
-    patternTrack->tuning.setStringsAmount(6);
+    auto& tuning = patternTrack->getTuningRef();
+    tuning.setStringsAmount(6);
 
-    for (int ii=0; ii < 7; ++ii)
-        patternTrack->tuning.setTune(ii,0);
+    for (int i = 0; i < 7; ++i)
+        tuning.setTune(i, 0);
 
     patternTab.push_back(std::move(patternTrack));
 
     int patternBPM = atoi(bpmValue->getText().c_str());
     patternTab.setBPM(patternBPM);
     patternTab.connectTracks();
-
-
 
     std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
@@ -714,9 +713,6 @@ void TapRyView::copyAndPlayBar()
     int thatBPM = atoi(bpmLabel->getText().c_str());
 
     //createBar();
-
-
-
     //copy paste
     Tab patternTab;
     auto patternTrack= std::make_unique<Track>();
@@ -727,15 +723,15 @@ void TapRyView::copyAndPlayBar()
     patternTrack->setPan(8);
 
     patternTrack->push_back(std::move(ryBar));
-    patternTrack->tuning.setStringsAmount(6);
 
-    for (int ii=0; ii < 7; ++ii)
-        patternTrack->tuning.setTune(ii,0);
+    auto& tuning = patternTrack->getTuningRef();
+    tuning.setStringsAmount(6);
+    for (int i = 0; i < 7; ++i)
+        tuning.setTune(i, 0);
 
     patternTab.push_back(std::move(patternTrack));
     patternTab.setBPM(thatBPM);
     patternTab.connectTracks();
-
 
     std::string fullOutName = AConfig::getInst().testsLocation + std::string("midiOutput.mid");
 
@@ -830,10 +826,10 @@ void TapRyView::keyevent(std::string press)
 
         patternTrack->push_back(std::move(ryBar));
 
-        patternTrack->tuning.setStringsAmount(6);
-
-        for (int ii=0; ii < 7; ++ii)
-            patternTrack->tuning.setTune(ii,0);
+        auto& tuning = patternTrack->getTuningRef();
+        tuning.setStringsAmount(6);
+        for (int i = 0; i < 7; ++i)
+            tuning.setTune(i, 0);
 
         patternTab.push_back(std::move(patternTrack));
 
@@ -982,10 +978,10 @@ void MorzeInput::playBar()
 
         morzeTrack->push_back(std::move(bar));
 
-        morzeTrack->tuning.setStringsAmount(6);
-
-        for (int ii=0; ii < 7; ++ii)
-            morzeTrack->tuning.setTune(ii,0);
+        auto& tuning = morzeTrack->getTuningRef();
+        tuning.setStringsAmount(6);
+        for (int i=0; i < 7; ++i)
+            tuning.setTune(i, 0);
 
         morzeTab.push_back(std::move(morzeTrack));
         morzeTab.setBPM(120);

@@ -478,23 +478,21 @@ void readTrack(std::ifstream &file, Track *currentTrack, int gpVersion=4, int tr
 
     size_t tunes[7] = {0}; //TUNEC!!!
     for (size_t ii = 0; ii < 7; ++ii)
-    {
         file.read((char*)&tunes[ii],4);
-    }
 
-    currentTrack->tuning.setStringsAmount(stringsAmount);
-    for (size_t ii = 0; ii < stringsAmount; ++ii)
-    {
 
+    auto& tuning = currentTrack->getTuningRef();
+    tuning.setStringsAmount(stringsAmount);
+    for (size_t ii = 0; ii < stringsAmount; ++ii){
         if (gtpLog)  qDebug() << "Tunes for "<<ii<<" is "<<tunes[ii];
-        currentTrack->tuning.setTune(ii,tunes[ii]);
+        tuning.setTune(ii,tunes[ii]);
     }
 
 
-    size_t port=0, chan=0, chanE=0;
-    file.read((char*)&port,4);
-    file.read((char*)&chan,4);
-    file.read((char*)&chanE,4);
+    size_t port = 0, chan = 0, chanE = 0;
+    file.read((char*)&port, 4);
+    file.read((char*)&chan, 4);
+    file.read((char*)&chanE, 4);
 
     currentTrack->setMidiInfo(0,port);
     currentTrack->setMidiInfo(1,chan);

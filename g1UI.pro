@@ -92,6 +92,7 @@ HEADERS  += \
     tab/TabClipboard.hpp \
     tab/TabLoader.hpp \
     tab/Track.hpp \
+    tab/TrackStructs.hpp \
     ui/BarView.hpp \
     ui/CenterView.hpp \
     ui/Components.hpp \

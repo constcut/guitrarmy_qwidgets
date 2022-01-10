@@ -9,8 +9,42 @@ bool trackLog = false;
 using namespace gtmy;
 
 
-void Track::printToStream(std::ostream& stream)
+
+Track::Track() : timeLoop(), _pan(0), _drums(false), _status(0),
+    _cursor(0),_cursorBeat(0),_stringCursor(0), _displayIndex(0),
+    _lastSeen(0),_selectCursor(-1), _digitPress(-1)
 {
+    _midiInfo[3]=24;
+    _selectionBarFirst=-1;
+    _selectionBarLast=-1;
+    _selectionBeatFirst=-1;
+    _selectionBeatLast=-1;
+}
+
+
+Track& Track::operator=([[maybe_unused]]Track another) {
+    //clone(another); //TODO
+    return *this;
+}
+
+
+void Track::push_back(std::unique_ptr<Bar> val) {
+    if (val){
+        val->setParent(this);
+        ChainContainer<Bar, Tab>::push_back(std::move(val));
+    }
+}
+
+
+void Track::insertBefore(std::unique_ptr<Bar> val, int index){
+    if (val){
+        val->setParent(this);
+        ChainContainer<Bar, Tab>::insertBefore(std::move(val),index);
+    }
+}
+
+
+void Track::printToStream(std::ostream& stream) {
     stream << "Outputing #" << size() << " Bars."<< std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
@@ -126,39 +160,40 @@ size_t Track::connectNotes() //for let ring
 
            std::uint8_t noteState = curNote->getState();
 
-           if (noteState == 2)
-           if (prevNote)
-           {
-               if ((index-prevInd)>1)
-                   curNote->setState(3); //dead it
-               else
+           if (noteState == 2) {
+               if (prevNote)
                {
-                   std::uint8_t prevFret = prevNote->getFret();
-                   if (trackLog)
-                   qDebug() << "Prev found "<<prevNote->getStringNumber()<<
-                          " "<<prevFret;
-
-                   //curBeat
-
-                   prevNote->signStateLeeged();
-
-
-                   //Full copy not yet used well
-                   ABitArray prevEff = prevNote->getEffects();
-                   curNote->addEffects(prevEff);
-
-
-                   curNote->setFret(prevFret);
-
-                   if (prevFret==63)
+                   if ((index-prevInd)>1)
+                       curNote->setState(3); //dead it
+                   else
                    {
-                       //prevNote->setState(3); //dead
-                       //curNote->setState(3);
+                       std::uint8_t prevFret = prevNote->getFret();
+                       if (trackLog)
+                       qDebug() << "Prev found "<<prevNote->getStringNumber()<<
+                              " "<<prevFret;
+
+                       //curBeat
+
+                       prevNote->signStateLeeged();
+
+
+                       //Full copy not yet used well
+                       ABitArray prevEff = prevNote->getEffects();
+                       curNote->addEffects(prevEff);
+
+
+                       curNote->setFret(prevFret);
+
+                       if (prevFret==63)
+                       {
+                           //prevNote->setState(3); //dead
+                           //curNote->setState(3);
+                       }
                    }
                }
-           }
-           else
-               curNote->setState(3); //dead it
+               else
+                   curNote->setState(3); //dead it Перепроверить что этот else не к другой ветке TODO
+            }
 
            std::uint8_t newNoteState = curNote->getState();
            std::uint8_t nowFret = curNote->getFret();
@@ -691,3 +726,6 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
     }
 
 }
+
+
+

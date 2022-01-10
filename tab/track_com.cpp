@@ -397,7 +397,7 @@ void Track::moveToPrevTrack() {
 
 
 void Track::moveToStringUp() {
-    if ((_stringCursor+1) < tuning.getStringsAmount())
+    if ((_stringCursor+1) < _tuning.getStringsAmount())
         ++_stringCursor;
     _digitPress=-1; // flush input after movement
     return;

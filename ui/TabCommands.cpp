@@ -100,7 +100,7 @@ void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, si
         pTrack->at(cursor)->at(cursorBeat)->setFret(digitPress,stringCursor+1);
 
         Note *inputedNote =  pTrack->at(cursor)->at(cursorBeat)->getNote(stringCursor+1);
-        std::uint8_t tune = pTrack->tuning.getTune(stringCursor);
+        std::uint8_t tune = pTrack->getTuning().getTune(stringCursor);
         int chan = 0;
         if (pTrack->isDrums()) {
             chan = 10; //tune to 0 attention refact error
@@ -605,11 +605,10 @@ void setTune(Track* pTrack) {
         }
     }
 
-    //items.push_back("another thesr");
-    //items.push_back("once_more");
 
-    for (size_t i = 0; i < pTrack->tuning.getStringsAmount(); ++i) {
-        int preValue = pTrack->tuning.getTune(i)-12;
+    auto& tuning = pTrack->getTuningRef();
+    for (size_t i = 0; i < tuning.getStringsAmount(); ++i) {
+        int preValue = tuning.getTune(i)-12;
         QString resp = QInputDialog::getItem(0,"Input tune",
                                         ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
         int respIndex = -1;
@@ -618,10 +617,8 @@ void setTune(Track* pTrack) {
                 respIndex = j;
                 break;
             }
-
-        if (ok)
-            if (respIndex>=0)
-                pTrack->tuning.setTune(i,respIndex+12);
+        if (ok && respIndex >= 0)
+            tuning.setTune(i, respIndex + 12);
     }
 }
 

@@ -488,6 +488,8 @@ void BarView::draw(QPainter *painter)
 
         auto& curBeat = bar1->at(i);
 
+        auto tuning = track->getTuning();
+
         for (size_t j = 0; j < curBeat->size(); ++j) {
             auto& curNote = curBeat->at(j);
             if (curNote) {
@@ -495,7 +497,7 @@ void BarView::draw(QPainter *painter)
                 int midiNote = 0;
 
                 if (track)
-                   noteTune = track->tuning.getTune(curNote->getStringNumber()-1);
+                   noteTune = tuning.getTune(curNote->getStringNumber() - 1);
 
                 midiNote = curNote->getMidiNote(noteTune);
 

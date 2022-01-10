@@ -1,8 +1,10 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include "Chain.hpp"
 #include <unordered_map>
+
+#include "Chain.hpp"
+#include "TrackStructs.hpp"
 #include "Commands.hpp" //move into g0
 #include "Bar.hpp"
 
@@ -11,25 +13,6 @@ namespace gtmy {
 
     class Tab;
 
-    class GuitarTuning {
-        std::uint8_t stringsAmount;
-        std::uint8_t tunes[10]; //TODO vector + at, to expeption and avoid check
-        //set it to byte - in fact int would be 128 values of std midi - next could be used as quatones
-    public:
-
-        void setStringsAmount(std::uint8_t amount) { stringsAmount = amount; }
-        std::uint8_t getStringsAmount() const { return stringsAmount; }
-
-        void setTune(std::uint8_t index, std::uint8_t value) { if (index <= 10) tunes[index] = value; } //(index >= 0) &&
-        std::uint8_t getTune(std::uint8_t index) const { if (index <= 10) return tunes[index]; return 0; }
-    };
-
-
-    class ChainedBars : public std::vector<Bar*> {
-      public:
-        ChainedBars() = default;
-        virtual ~ChainedBars() = default;
-    };
 
     enum class NoteStates {
         Leeg = 2,
@@ -41,15 +24,7 @@ namespace gtmy {
     {
     public:
 
-        Track():timeLoop(),_pan(0),_drums(false),_status(0), _cursor(0),_cursorBeat(0),_stringCursor(0),
-        _displayIndex(0),_lastSeen(0),_selectCursor(-1), _digitPress(-1) {
-            _midiInfo[3]=24; //REFACT GCOMP
-            _selectionBarFirst=-1;
-            _selectionBarLast=-1;
-            _selectionBeatFirst=-1;
-            _selectionBeatLast=-1;
-        }
-
+        Track();
         virtual ~Track() = default;
 
         void printToStream(std::ostream &stream);
@@ -57,26 +32,10 @@ namespace gtmy {
         std::vector<Bar*> timeLoop;
         std::vector<size_t> timeLoopIndexStore;
 
-        Track &operator=([[maybe_unused]]Track another)
-        {
-            //clone(another); //TODO
-            return *this;
-        }
+        Track &operator=([[maybe_unused]]Track another);
 
-        virtual void push_back(std::unique_ptr<Bar> val)
-        {
-            if (val){
-                val->setParent(this);
-                ChainContainer<Bar, Tab>::push_back(std::move(val));
-            }
-        }
-
-        virtual void insertBefore(std::unique_ptr<Bar> val, int index=0){
-            if (val){
-                val->setParent(this);
-                ChainContainer<Bar, Tab>::insertBefore(std::move(val),index);
-            }
-        }
+        virtual void push_back(std::unique_ptr<Bar> val) override;
+        virtual void insertBefore(std::unique_ptr<Bar> val, int index=0) override;
 
     private:
 
@@ -91,8 +50,9 @@ namespace gtmy {
         size_t _beatsAmount;
         std::uint8_t _status; //0 - none 1 - mute 2 - soloe
 
+        GuitarTuning _tuning;
+
     public:
-        GuitarTuning tuning;
 
         size_t connectBars();
         size_t connectBeats();
@@ -128,10 +88,13 @@ namespace gtmy {
             if (_drums) _midiInfo[3]=99;
         }
 
-        bool isDrums() { return _drums; }
+        bool isDrums() const { return _drums; }
 
-        std::uint8_t getStatus() { return _status; }
+        std::uint8_t getStatus() const { return _status; }
         void setStatus(std::uint8_t newStat) { _status = newStat; }
+
+        const GuitarTuning& getTuning() const { return _tuning; }
+        GuitarTuning& getTuningRef() { return _tuning; }
 
     protected:
         size_t _cursor;
