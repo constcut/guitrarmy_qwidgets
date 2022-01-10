@@ -40,7 +40,7 @@ std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
 
         if (bar->size())
         {
-            if (bar->at(0)->changes.size())
+            if (bar->at(0)->getChangesPtr()->size())
             {
                 //bar->getV(0)->changes.getV(0)->changeType;
             }
@@ -87,7 +87,7 @@ void Tab::createTimeLine(size_t shiftTheCursor)
             if (currentBar->at(beatI)->getEffects().getEffectAt(Effect::Changes)) //changes
             {
                 //search for bpm changes
-                Beat::ChangesList *changes = &currentBar->at(beatI)->changes;
+                ChangesList *changes = currentBar->at(beatI)->getChangesPtr();
 
                 for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
                   if (changes->at(indexChange).changeType==8)

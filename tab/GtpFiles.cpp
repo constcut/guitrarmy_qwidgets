@@ -315,7 +315,7 @@ void readChordDiagramGP4(std::ifstream &file)
 void readChanges(std::ifstream &file, Beat *cursorBeat)
 {
 
-    Beat::ChangeTable changeStruct;// = {0};
+    ChangeTable changeStruct;// = {0};
 
     changeStruct.newTempo = 0;
 
@@ -338,11 +338,11 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     if (changeStruct.newInstr != 255)
     {
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.push_back(instrCh);
+        cursorBeat->getChangesPtr()->push_back(instrCh);
 
     }
 
@@ -350,62 +350,62 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.push_back(volCh);
+        cursorBeat->getChangesPtr()->push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.push_back(panCh);
+        cursorBeat->getChangesPtr()->push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.push_back(chorusCh);
+        cursorBeat->getChangesPtr()->push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.push_back(reverbCh);
+         cursorBeat->getChangesPtr()->push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.push_back(phaserCh);
+        cursorBeat->getChangesPtr()->push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.push_back(tremoloCh);
+         cursorBeat->getChangesPtr()->push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -414,12 +414,12 @@ void readChanges(std::ifstream &file, Beat *cursorBeat)
         {
              file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
-             Beat::SingleChange tempCh;
+             SingleChange tempCh;
              tempCh.changeCount = 0;
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;
 
-             cursorBeat->changes.push_back(tempCh);
+             cursorBeat->getChangesPtr()->push_back(tempCh);
 
         }
 
@@ -575,18 +575,17 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
 
     if (beatEffectsHead1 & 0x10) //16
     {
-        cursorBeat->setEffects(Effect::FadeIn); //would be fade in
+        cursorBeat->setEffects(Effect::FadeIn);
     }
 
     if (beatEffectsHead2 & 4)
     {   //tremolo
        if (gtpLog)  qDebug() << " read bend tremolo";
-       BendPoints *tremoloBend = &cursorBeat->tremolo;
+       BendPoints *tremoloBend = cursorBeat->getTremoloPtr();
        readBendGTP(&file,tremoloBend);
-       cursorBeat->setEffects(Effect::Tremolo); //would be tremolo
+       cursorBeat->setEffects(Effect::Tremolo);
     }
 
-    //and dear rusedhsajhdkjsa
 
     if (beatEffectsHead1 & 64)
     {   //updown stroke
@@ -596,7 +595,7 @@ void readBeatEffects(std::ifstream &file, Beat *cursorBeat)
         if (gtpLog)  qDebug() << "Up Stroke =" << upStroke <<" Down Stroke="<<downStroke;
 
         if (upStroke)
-        cursorBeat->setEffects(Effect::UpStroke); //upstroke
+        cursorBeat->setEffects(Effect::UpStroke);
 
         if (downStroke)
             cursorBeat->setEffects(Effect::DownStroke);
@@ -1866,7 +1865,7 @@ void writeNote(std::ofstream &file, Note *newNote)
 void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
 {
 
-    Beat::ChangeTable changeStruct;// = {0};
+    ChangeTable changeStruct;// = {0};
 
     changeStruct.newTempo = 0;
 
@@ -1914,11 +1913,11 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     if (changeStruct.newInstr != 255)
     {
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.push_back(instrCh);
+        cursorBeat->getChangesPtr()->push_back(instrCh);
 
     }
 
@@ -1926,62 +1925,62 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.push_back(volCh);
+        cursorBeat->getChangesPtr()->push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.push_back(panCh);
+        cursorBeat->getChangesPtr()->push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.push_back(chorusCh);
+        cursorBeat->getChangesPtr()->push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.push_back(reverbCh);
+         cursorBeat->getChangesPtr()->push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.push_back(phaserCh);
+        cursorBeat->getChangesPtr()->push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.push_back(tremoloCh);
+         cursorBeat->getChangesPtr()->push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -1990,12 +1989,12 @@ void readChangesGP5(std::ifstream &file, Beat *cursorBeat, std::uint8_t verInd)
     {
          file.read((char*)&changeStruct.tempoDur,1);
          //set changes table inside
-         Beat::SingleChange tempCh;
+         SingleChange tempCh;
          tempCh.changeCount = 0;
          tempCh.changeType = 8;
          tempCh.changeValue = changeStruct.newTempo;
 
-         cursorBeat->changes.push_back(tempCh);
+         cursorBeat->getChangesPtr()->push_back(tempCh);
 
          if (verInd==1)
          {
@@ -2731,7 +2730,7 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
 
     //gtpLog = true; //autolog!
 
-    Beat::ChangeTable changeStruct;// = {0};
+    ChangeTable changeStruct;// = {0};
 
     changeStruct.newTempo = 0;
 
@@ -2755,11 +2754,11 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         //file.read((char*)&changeStruct.instrDur,1);
 
-        Beat::SingleChange instrCh;
+        SingleChange instrCh;
         instrCh.changeCount = 0;
         instrCh.changeType = 1;
         instrCh.changeValue = changeStruct.newInstr;
-        cursorBeat->changes.push_back(instrCh);
+        cursorBeat->getChangesPtr()->push_back(instrCh);
 
     }
 
@@ -2767,62 +2766,62 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
     {
         file.read((char*)&changeStruct.volumeDur,1);
 
-        Beat::SingleChange volCh;
+        SingleChange volCh;
         volCh.changeCount = 0;
         volCh.changeType = 2;
         volCh.changeValue = changeStruct.newVolume;
-        cursorBeat->changes.push_back(volCh);
+        cursorBeat->getChangesPtr()->push_back(volCh);
     }
 
     if (changeStruct.newPan != 255)
     {
         file.read((char*)&changeStruct.panDur,1);
 
-        Beat::SingleChange panCh;
+        SingleChange panCh;
         panCh.changeCount = 0;
         panCh.changeType = 3;
         panCh.changeValue = changeStruct.newPan;
-        cursorBeat->changes.push_back(panCh);
+        cursorBeat->getChangesPtr()->push_back(panCh);
     }
 
     if (changeStruct.newChorus != 255)
     {
         file.read((char*)&changeStruct.chorusDur,1);
 
-        Beat::SingleChange chorusCh;
+        SingleChange chorusCh;
         chorusCh.changeCount = 0;
         chorusCh.changeType = 4;
-        cursorBeat->changes.push_back(chorusCh);
+        cursorBeat->getChangesPtr()->push_back(chorusCh);
     }
 
     if (changeStruct.newReverb != 255)
     {
          file.read((char*)&changeStruct.reverbDur,1);
 
-         Beat::SingleChange reverbCh;
+         SingleChange reverbCh;
          reverbCh.changeCount = 0;
          reverbCh.changeType = 5;
-         cursorBeat->changes.push_back(reverbCh);
+         cursorBeat->getChangesPtr()->push_back(reverbCh);
     }
 
     if (changeStruct.newPhaser != 255)
     {
         file.read((char*)&changeStruct.phaserDur,1);
 
-        Beat::SingleChange phaserCh;
+        SingleChange phaserCh;
         phaserCh.changeCount = 0;
         phaserCh.changeType = 6;
-        cursorBeat->changes.push_back(phaserCh);
+        cursorBeat->getChangesPtr()->push_back(phaserCh);
     }
 
     if (changeStruct.newTremolo != 255)
     {
          file.read((char*)&changeStruct.tremoloDur,1);
 
-         Beat::SingleChange tremoloCh;
+         SingleChange tremoloCh;
          tremoloCh.changeCount = 0;
          tremoloCh.changeType = 7;
-         cursorBeat->changes.push_back(tremoloCh);
+         cursorBeat->getChangesPtr()->push_back(tremoloCh);
     }
 
     //-1 for ul is hiegh but 10000 bpm insane
@@ -2831,12 +2830,12 @@ void readChangesGP3(std::ifstream &file, Beat *cursorBeat)
         {
              file.read((char*)&changeStruct.tempoDur,1);
              //set changes table inside
-             Beat::SingleChange tempCh;
+             SingleChange tempCh;
              tempCh.changeCount = 0;
              tempCh.changeType = 8;
              tempCh.changeValue = changeStruct.newTempo;
 
-             cursorBeat->changes.push_back(tempCh);
+             cursorBeat->getChangesPtr()->push_back(tempCh);
 
         }
 

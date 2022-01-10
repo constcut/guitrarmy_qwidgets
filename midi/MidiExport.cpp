@@ -293,7 +293,7 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
         //changes
 
         {
-            Beat::ChangesList *changes = &beat->changes;
+            ChangesList *changes = beat->getChangesPtr();
 
             for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
             {

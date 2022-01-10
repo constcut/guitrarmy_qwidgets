@@ -80,6 +80,7 @@ HEADERS  += \
     midi/MidiTrack.hpp \
     tab/Bar.hpp \
     tab/Beat.hpp \
+    tab/BeatStructs.h \
     tab/Commands.hpp \
     tab/Effects.hpp \
     tab/GmyFile.hpp \

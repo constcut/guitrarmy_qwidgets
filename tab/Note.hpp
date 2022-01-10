@@ -12,7 +12,7 @@ namespace gtmy {
     class Beat;
 
 
-    struct BendPointGPOld
+    struct BendPointGPOld //Все структуры и статусы в отдельный заголовок TODO
     {
         size_t absolutePosition;
         size_t heightPosition;

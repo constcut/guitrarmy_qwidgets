@@ -299,7 +299,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
                     //if (changePack)
                     {
-                        Beat::ChangesList *changes = &beat->changes;//(Beat::ChangesList*)changePack->getPointer();
+                        ChangesList* changes = beat->getChangesPtr();//(ChangesList*)changePack->getPointer();
 
                         size_t amountOfChanges = changes->size();
 
@@ -688,7 +688,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                 {
                     size_t amountOfChanges = 0;
 
-                    Beat::ChangesList *newChanges = &beat->changes;
+                    ChangesList *newChanges = beat->getChangesPtr();
 
                      file.read((char*)&amountOfChanges,1);
 
@@ -704,7 +704,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                          file.read((char*)&changeValue,2); //pack it
                          file.read((char*)&changeDur,1);
 
-                        Beat::SingleChange change;
+                        SingleChange change;
                         change.changeCount = changeDur;
                         change.changeType = changeType;
                         change.changeValue = changeValue;

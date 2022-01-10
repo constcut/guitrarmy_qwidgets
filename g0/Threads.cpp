@@ -269,7 +269,7 @@ void PlayAnimationThr::addBeatTimes(Bar* bar)
         if (beat->getEffects().getEffectAt(Effect::Changes))
         {
             {
-                Beat::ChangesList *changes = &beat->changes;
+                ChangesList *changes = beat->getChangesPtr();
 
                 for (size_t indexChange=0; indexChange < changes->size(); ++indexChange)
                 if (changes->at(indexChange).changeType==8)
