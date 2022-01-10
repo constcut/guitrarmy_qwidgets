@@ -1,16 +1,15 @@
 #ifndef COMMONVIEWS_H
 #define COMMONVIEWS_H
-
-#include "GView.hpp"
-#include "GPannel.hpp"
-#include "g0/Tests.hpp"
-#include "InputViews.hpp"
+// This deprecated file formated with clang-format
 
 #include <memory>
 
+#include "GPannel.hpp"
+#include "GView.hpp"
+#include "InputViews.hpp"
+#include "g0/Tests.hpp"
 
 namespace gtmy {
-
 
     class TabView;
     class TestsView;
@@ -28,234 +27,207 @@ namespace gtmy {
     class ChordInput;
     class ChangesInput;
 
+    class MainView : public GView {
+     private:
+      std::unique_ptr<TabView> _tabsView;
+      std::unique_ptr<TestsView> _testsView;
+      std::unique_ptr<ConfigView> _configView;
+      std::unique_ptr<TapRyView> _tapRyView;
+      std::unique_ptr<PatternInput> _patternInp;
 
-    class MainView : public GView
-    {
-    private:
+      std::unique_ptr<InfoView> _infView;
+      std::unique_ptr<MorzeInput> _morzeInp;
 
-        std::unique_ptr<TabView> _tabsView;
-        std::unique_ptr<TestsView> _testsView;
-        std::unique_ptr<ConfigView> _configView;
-        std::unique_ptr<TapRyView> _tapRyView;
-        std::unique_ptr<PatternInput> _patternInp;
+      std::unique_ptr<BendInput> _bendInp;
+      std::unique_ptr<ChangesInput> _chanInp;
+      std::unique_ptr<ChordInput> _chordInp;
 
-        std::unique_ptr<InfoView> _infView;
-        std::unique_ptr<MorzeInput> _morzeInp;
+      std::unique_ptr<WelcomeView> _welcome;
 
-        std::unique_ptr<BendInput> _bendInp;
-        std::unique_ptr<ChangesInput> _chanInp;
-        std::unique_ptr<ChordInput> _chordInp;
+      std::unique_ptr<GStickPannel> _pan;
 
-        std::unique_ptr<WelcomeView> _welcome;
+      GView *_currentView;
+      std::vector<GView *> _lastViews;
 
-        std::unique_ptr<GStickPannel> _pan;
+      void changeViewToLast();
 
-        GView* _currentView;
-        std::vector<GView*> _lastViews;
-
-        void changeViewToLast();
-
-        bool _dependent;
+      bool _dependent;
 
      public:
+      void setDependent() { _dependent = true; }
 
-        void setDependent() {_dependent=true;}
+      void changeCurrentView(GView *newView);
 
-        void changeCurrentView(GView* newView);
+      GView *getCurrenView() { return _currentView; }
 
-        GView *getCurrenView() { return _currentView; }
+      MainView();
+      void draw(QPainter *painter);
+      void onclick(int x1, int y1);
+      void ondblclick(int x1, int y1);
 
-        MainView();
-        void draw(QPainter *painter);
-        void onclick(int x1, int y1);
-        void ondblclick(int x1, int y1);
+      void ongesture(int offset, bool horizontal) {
+        if (_currentView) _currentView->ongesture(offset, horizontal);
+      }
 
-        void ongesture(int offset, bool horizontal) {
-            if (_currentView)
-                _currentView->ongesture(offset,horizontal);
-        }
+      virtual void keyevent(std::string press);
+      virtual void onTabCommand(TabCommand command);
+      virtual void onTrackCommand(TrackCommand command);
 
-        virtual void keyevent(std::string press);
-        virtual void onTabCommand(TabCommand command);
-        virtual void onTrackCommand(TrackCommand command);
+      bool isPlaying();
 
-        bool isPlaying();
-
-        virtual void setMaster(MasterView *mast);
+      virtual void setMaster(MasterView *mast);
     };
 
+    class WelcomeView : public GView {
+     private:
+      std::unique_ptr<GLabel> _top;
+      std::unique_ptr<GLabel> _mid;
+      std::unique_ptr<GLabel> _bot;
 
-    class WelcomeView : public GView
-    {
-    private:
-        std::unique_ptr<GLabel> _top;
-        std::unique_ptr<GLabel> _mid;
-        std::unique_ptr<GLabel> _bot;
-
-    public:
-        WelcomeView();
-        void draw(QPainter *painter);
-        void onclick([[maybe_unused]]int x1, [[maybe_unused]]int y1)
-        {}
+     public:
+      WelcomeView();
+      void draw(QPainter *painter);
+      void onclick([[maybe_unused]] int x1, [[maybe_unused]] int y1) {}
     };
 
+    class ConfigView : public GView {
+     private:
+      std::unique_ptr<GLabel> _labA, _labB;
+      std::unique_ptr<GLabel> _labC, _labD;
 
+      std::unique_ptr<GLabel> _labScalePlus, _labScaleMinus;
 
-
-    class ConfigView : public GView
-    {
-    private:
-
-        std::unique_ptr<GLabel> _labA, _labB;
-        std::unique_ptr<GLabel> _labC, _labD;
-
-        std::unique_ptr<GLabel> _labScalePlus, _labScaleMinus;
-    public:
-        ConfigView();
-        //~ConfigView(){}
-        void draw(QPainter *painter);
-        void onclick(int x1, int y1);
-        virtual void keyevent(std::string press);
-
+     public:
+      ConfigView();
+      //~ConfigView(){}
+      void draw(QPainter *painter);
+      void onclick(int x1, int y1);
+      virtual void keyevent(std::string press);
     };
 
+    class InfoView : public GView {
+     private:
+      std::unique_ptr<GLabel> _labelA;
+      std::unique_ptr<GLabel> _labelA2;
+      std::unique_ptr<GLabel> _icons;
+      std::unique_ptr<GLabel> _labelB;
+      std::unique_ptr<GLabel> _labelC;
+      std::unique_ptr<GLabel> _labelD;
+      std::unique_ptr<GLabel> _labelE;
+      std::unique_ptr<GLabel> _help;
+      std::unique_ptr<GLabel> _logShow;
+      std::unique_ptr<GLabel> _sendCrash;
 
+     public:
+      InfoView();
 
-    class InfoView : public GView
-    {
-    private:
-        std::unique_ptr<GLabel> _labelA;
-        std::unique_ptr<GLabel> _labelA2;
-        std::unique_ptr<GLabel> _icons;
-        std::unique_ptr<GLabel> _labelB;
-        std::unique_ptr<GLabel> _labelC;
-        std::unique_ptr<GLabel> _labelD;
-        std::unique_ptr<GLabel> _labelE;
-        std::unique_ptr<GLabel> _help;
-        std::unique_ptr<GLabel> _logShow;
-        std::unique_ptr<GLabel> _sendCrash;
-
-    public:
-        InfoView();
-
-        void onclick(int x1, int y1);
-        void draw(QPainter *painter);
+      void onclick(int x1, int y1);
+      void draw(QPainter *painter);
     };
 
+    class TestsView : public GView {
+     private:
+      GLabel _upper, _bottom, _g3, _g5;
+      std::unique_ptr<GLabel> _playlistButton;
+      std::unique_ptr<GLabel> _playlist2Button;
+      std::unique_ptr<GLabel> _stopPlaylist;
 
-    class TestsView : public GView
-    {
-    private:
-        GLabel _upper, _bottom, _g3, _g5;
-        std::unique_ptr<GLabel> _playlistButton;
-        std::unique_ptr<GLabel> _playlist2Button;
-        std::unique_ptr<GLabel> _stopPlaylist;
+      std::vector<GLabel> _buttons;
 
-        std::vector<GLabel> _buttons;
+      MainView *_mainView;
+      TabView *_tabsView;
 
-        MainView *_mainView;
-        TabView *_tabsView;
+     public:
+      TestsView(MainView *mainV, TabView *tabV);
 
-    public:
-        TestsView(MainView *mainV, TabView *tabV);
+      virtual void setUI();
 
-        virtual void setUI();
+      void setAllButtons();
 
-        void setAllButtons();
+      void draw(QPainter *painter);
+      void onclick(int x1, int y1);
+      void ondblclick(int x1, int y1);
 
-        void draw(QPainter *painter);
-        void onclick(int x1, int y1);
-        void ondblclick(int x1, int y1);
+      void fastTestAll();
+      void openTestNumber(int num);
 
-        void fastTestAll();
-        void openTestNumber(int num);
-
-        virtual void keyevent(std::string press);
+      virtual void keyevent(std::string press);
     };
 
     /// N ew inputs
     ///
 
+    class ChordInput : public GView {
+     private:
+      std::unique_ptr<GLabel> _top;
 
-    class ChordInput : public GView
-    {
-    private:
-        std::unique_ptr<GLabel> _top;
-    public:
-        void setUI();
+     public:
+      void setUI();
 
-        ChordInput() {
-            _top = std::make_unique<GLabel>(100,110,"Chord input","",false);
-        }
-        virtual ~ChordInput() {}
+      ChordInput() {
+        _top = std::make_unique<GLabel>(100, 110, "Chord input", "", false);
+      }
+      virtual ~ChordInput() {}
 
-        void draw(QPainter *painter) {
-            _top->draw(painter);
-        }
-        void keyevent([[maybe_unused]]std::string press){}
+      void draw(QPainter *painter) { _top->draw(painter); }
+      void keyevent([[maybe_unused]] std::string press) {}
     };
 
+    class ChangesInput : public GView {
+     private:
+      std::unique_ptr<GLabel> _top;
 
-    class ChangesInput : public GView
-    {
-    private:
-        std::unique_ptr<GLabel> _top;
+     public:
+      static Beat *ptrToBeat;
+      static void setPtrBeat(Beat *beatPtr);
 
-    public:
+      void setUI();
 
-        static Beat *ptrToBeat;
-        static void setPtrBeat(Beat *beatPtr);
+      ChangesInput() {
+        _top = std::make_unique<GLabel>(10, 10, "Changes input", "", false);
+      }
+      virtual ~ChangesInput() {}
 
-        void setUI();
+      void turnOffChange(std::string combo);
+      void turnOnChange(std::string combo);
 
-        ChangesInput() {
-            _top = std::make_unique<GLabel>(10,10,"Changes input","",false);
-        }
-        virtual ~ChangesInput(){}
+      void changeMainValue(int combo, int newValue);
+      void changeSubValue(int combo, int newValue);
 
-        void turnOffChange(std::string combo);
-        void turnOnChange(std::string combo);
-
-        void changeMainValue(int combo, int newValue);
-        void changeSubValue(int combo, int newValue);
-
-        void draw(QPainter *painter);
-        void keyevent(std::string press);
+      void draw(QPainter *painter);
+      void keyevent(std::string press);
     };
-
 
     class BendPoints;
     class Note;
 
-    class BendInput : public GView
-    {
-    private:
-        std::unique_ptr<GLabel> _top;
+    class BendInput : public GView {
+     private:
+      std::unique_ptr<GLabel> _top;
 
-        std::unique_ptr<GLabel> _okButton;
-        std::unique_ptr<GLabel> _delButton;
-    public:
+      std::unique_ptr<GLabel> _okButton;
+      std::unique_ptr<GLabel> _delButton;
 
-        static BendPoints *ptrToBend;
-        static Note *ptrToNote;
+     public:
+      static BendPoints *ptrToBend;
+      static Note *ptrToNote;
 
-        static void setPtrBend(BendPoints* ptr);
-        static void setPtrNote(Note* ptr);
+      static void setPtrBend(BendPoints *ptr);
+      static void setPtrNote(Note *ptr);
 
-        void fillBend(int type, int height);
+      void fillBend(int type, int height);
 
-        void setUI();
+      void setUI();
 
-        BendInput();
+      BendInput();
 
-        virtual ~BendInput() {}
-        void draw(QPainter *painter);
-        void keyevent(std::string press);
+      virtual ~BendInput() {}
+      void draw(QPainter *painter);
+      void keyevent(std::string press);
 
-        void onclick(int x1, int y1);
+      void onclick(int x1, int y1);
     };
 
+}  // namespace gtmy
 
-}
-
-#endif // COMMONVIEWS_H
+#endif  // COMMONVIEWS_H
