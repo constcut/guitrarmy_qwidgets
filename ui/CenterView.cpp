@@ -1,17 +1,16 @@
 #include "CenterView.hpp"
 
-
 #include <QTextBlock>
 #include <QTextCodec>
-
 #include <QDebug>
 #include <QColor>
 #include <QFileDialog>
-#include "tab/TabLoader.hpp"
 
 #include <string>
 #include <sstream>
 #include <iostream>
+
+#include "tab/tools/TabLoader.hpp"
 
 #define QWIDGET_ALLOC new
 //https://doc.qt.io/qt-5/objecttrees.html - we don't need to free any memory here, so unique is danger

@@ -5,7 +5,7 @@
 
 #include "Chain.hpp"
 #include "TrackStructs.hpp"
-#include "Commands.hpp" //move into g0
+#include "tools/Commands.hpp" //move into g0
 #include "Bar.hpp"
 
 

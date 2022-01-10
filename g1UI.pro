@@ -40,14 +40,14 @@ SOURCES += main.cpp\
     midi/MidiTrack.cpp \
     tab/Bar.cpp \
     tab/Beat.cpp \
-    tab/Commands.cpp \
+    tab/tools/Commands.cpp \
     tab/Effects.cpp \
-    tab/GmyFile.cpp \
-    tab/GtpFiles.cpp \
+    tab/tools/GmyFile.cpp \
+    tab/tools/GtpFiles.cpp \
     tab/Note.cpp \
     tab/Tab.cpp \
-    tab/TabClipboard.cpp \
-    tab/TabLoader.cpp \
+    tab/tools/TabClipboard.cpp \
+    tab/tools/TabLoader.cpp \
     tab/Track.cpp \
     ui/BarView.cpp \
     ui/CenterView.cpp \
@@ -61,8 +61,8 @@ SOURCES += main.cpp\
     ui/TabCommands.cpp \
     ui/TabViews.cpp \
     ui/TrackView.cpp \
-    tab/tab_com.cpp \
-    tab/track_com.cpp
+    tab/tools/tab_com.cpp \
+    tab/tools/track_com.cpp
 
 
 HEADERS  += \
@@ -82,15 +82,15 @@ HEADERS  += \
     tab/Beat.hpp \
     tab/BeatStructs.hpp \
     tab/Chain.hpp \
-    tab/Commands.hpp \
+    tab/tools/Commands.hpp \
     tab/Effects.hpp \
-    tab/GmyFile.hpp \
-    tab/GtpFiles.hpp \
+    tab/tools/GmyFile.hpp \
+    tab/tools/GtpFiles.hpp \
     tab/Note.hpp \
     tab/NoteStructs.hpp \
     tab/Tab.hpp \
-    tab/TabClipboard.hpp \
-    tab/TabLoader.hpp \
+    tab/tools/TabClipboard.hpp \
+    tab/tools/TabLoader.hpp \
     tab/TabStructs.hpp \
     tab/Track.hpp \
     tab/TrackStructs.hpp \

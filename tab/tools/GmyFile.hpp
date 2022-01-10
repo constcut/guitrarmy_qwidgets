@@ -1,7 +1,7 @@
 #ifndef GMYFILE_H
 #define GMYFILE_H
 
-#include "Tab.hpp"
+#include "../Tab.hpp"
 
 namespace gtmy {
 

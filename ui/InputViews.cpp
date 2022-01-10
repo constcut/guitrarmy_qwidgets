@@ -1,7 +1,7 @@
 #include "InputViews.hpp"
 
 #include "TabViews.hpp"
-#include "tab/TabClipboard.hpp"
+#include "tab/tools/TabClipboard.hpp"
 #include "midi/MidiFile.hpp"
 
 #include <QInputDialog>

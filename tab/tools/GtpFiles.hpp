@@ -1,7 +1,7 @@
 #ifndef GTPFILES_H
 #define GTPFILES_H
 
-#include "Tab.hpp"
+#include "../Tab.hpp"
 
 
 namespace gtmy {

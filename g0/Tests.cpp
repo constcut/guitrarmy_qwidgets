@@ -4,11 +4,11 @@
 
 #include "midi/MidiFile.hpp"
 #include "tab/Tab.hpp"
-#include "tab/GtpFiles.hpp"
+#include "tab/tools/GtpFiles.hpp"
 #include "g0/Config.hpp"
-#include "tab/GmyFile.hpp"
+#include "tab/tools/GmyFile.hpp"
 
-#include "tab/TabLoader.hpp"
+#include "tab/tools/TabLoader.hpp"
 
 #include <QMediaPlayer>
 

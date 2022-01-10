@@ -3,8 +3,8 @@
 #include "tab/Tab.hpp"
 #include "midi/MidiFile.hpp"
 #include "g0/Config.hpp"
-#include "tab/GmyFile.hpp"
-#include "tab/TabLoader.hpp"
+#include "tab/tools/GmyFile.hpp"
+#include "tab/tools/TabLoader.hpp"
 
 #include "g0/Threads.hpp"
 #include "MainViews.hpp"

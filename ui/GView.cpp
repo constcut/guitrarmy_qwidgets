@@ -3,13 +3,13 @@
 #include <QFileDialog>
 
 #include "tab/Tab.hpp"
-#include "tab/GtpFiles.hpp"
+#include "tab/tools/GtpFiles.hpp"
 #include "midi/MidiFile.hpp"
 
 #include "g0/Config.hpp"
 
-#include "tab/GmyFile.hpp"
-#include "tab/TabLoader.hpp" //loader
+#include "tab/tools/GmyFile.hpp"
+#include "tab/tools/TabLoader.hpp" //loader
 #include "g0/Threads.hpp"
 
 #include <QDebug>

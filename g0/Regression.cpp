@@ -7,9 +7,9 @@
 #include <iostream>
 
 #include "tab/Tab.hpp"
-#include "tab/GtpFiles.hpp"
+#include "tab/tools/GtpFiles.hpp"
 #include "midi/MidiExport.hpp"
-#include "tab/GmyFile.hpp"
+#include "tab/tools/GmyFile.hpp"
 #include "g0/Config.hpp"
 
 

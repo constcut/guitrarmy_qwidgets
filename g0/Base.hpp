@@ -10,7 +10,7 @@
 #include <fstream>
 #include <map>
 
-#include "tab/TabLoader.hpp"
+#include "tab/tools/TabLoader.hpp"
 #include "tab/Tab.hpp"
 
 

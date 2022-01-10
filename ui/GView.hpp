@@ -6,7 +6,7 @@
 #include "g0/Config.hpp"
 #include "ui/ImagePreloader.hpp"
 
-#include "tab/Commands.hpp"
+#include "tab/tools/Commands.hpp"
 
 #include <QPainter>
 

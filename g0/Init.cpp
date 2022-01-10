@@ -7,7 +7,7 @@
 #include "g0/Config.hpp"
 #include "ui/ImagePreloader.hpp"
 #include "g0/Regression.hpp"
-#include "tab/TabLoader.hpp"
+#include "tab/tools/TabLoader.hpp"
 
 #include <QString>
 #include <QByteArray>

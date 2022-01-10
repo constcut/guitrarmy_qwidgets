@@ -1,5 +1,5 @@
 #include "GmyFile.hpp"
-#include "tab/GtpFiles.hpp"
+#include "tab/tools/GtpFiles.hpp"
 #include <fstream>
 
 #include <QDebug>
