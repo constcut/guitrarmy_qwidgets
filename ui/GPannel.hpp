@@ -8,35 +8,35 @@ namespace gtmy {
 
     class GPannel : public GView {
      public:
-      GLabel pannelLabel;  // edit
-      bool openned;        // false
-      std::vector<GLabel> buttons;
-      GView *pressView;
+      GLabel _pannelLabel;  // edit
+      bool _openned;        // false
+      std::vector<GLabel> _buttons;
+      GView *_pressView;
 
-      bool noOnOffButton;
+      bool _noOnOffButton;
 
-      std::string openedText;
-      std::string closedText;
+      std::string _openedText;
+      std::string _closedText;
 
       void setTexts(std::string openedOne, std::string closedOne);
 
      public:
       GPannel(int y1, int y2, int width, int x1 = 0)
           : GView(x1, y1, width, y2),
-            pannelLabel(w - 40, y2 - 20, "pan"),
-            openned(false),
-            pressView(0),
-            noOnOffButton(false) {}
+            _pannelLabel(w - 40, y2 - 20, "pan"),
+            _openned(false),
+            _pressView(0),
+            _noOnOffButton(false) {}
 
-      void setPressView(GView *pressViewSet) { pressView = pressViewSet; }
-      bool isOpenned() const { return openned; }
+      void setPressView(GView *pressViewSet) { _pressView = pressViewSet; }
+      bool isOpenned() const { return _openned; }
 
-      void preOpen() { openned = true; }
-      void close() { openned = false; }
+      void preOpen() { _openned = true; }
+      void close() { _openned = false; }
 
       void setNoOpenButton() {
-        noOnOffButton = true;
-        openned = true;
+        _noOnOffButton = true;
+        _openned = true;
       }
 
       void addButton(std::string capture, std::string syn = "");
@@ -46,7 +46,7 @@ namespace gtmy {
 
       virtual void onclick(int x1, int y1);
       virtual void keyevent(std::string press) {
-        if (pressView) pressView->keyevent(press);
+        if (_pressView) _pressView->keyevent(press);
       }
 
       virtual void resetButtons() {}

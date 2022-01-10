@@ -12,16 +12,16 @@ using namespace gtmy;
 
 
 GView *MasterView::changeChild(GView *newChild) {
-  GView *oldCh = child;
+  GView *oldCh = _child;
 
-  lastView = oldCh;
+  _lastView = oldCh;
 
-  child = newChild;
-  if (child) child->setMaster(this);
+  _child = newChild;
+  if (_child) _child->setMaster(this);
   if (oldCh)
     oldCh->setMaster(0);
   else
-    firstChld = newChild;
+    _firstChld = newChild;
 
   // must repaint
 
@@ -31,22 +31,22 @@ GView *MasterView::changeChild(GView *newChild) {
 
 GLabel::GLabel(int x, int y, std::string text, std::string pressSyn,
                bool showBord)
-    : visible(true), showBorder(showBord) {
+    : _visible(true), _showBorder(showBord) {
   int size = text.length();
   // int height = 12;
   this->x = x;
   this->y = y;
   h = 20;
   w = size * 6 + 20;
-  ownText = text;
-  pressSynonim = pressSyn;
+  _ownText = text;
+  _pressSynonim = pressSyn;
 
   if (CONF_PARAM("images") == "1") {
     QImage *imgPtr = ImagePreloader::getInstance().getImage(text);
     if (imgPtr) {
-      imageLabel = std::make_unique<GImage>(x, y, text);
-      setW(imageLabel->getW());
-      setH(imageLabel->getH());
+      _imageLabel = std::make_unique<GImage>(x, y, text);
+      setW(_imageLabel->getW());
+      setH(_imageLabel->getH());
     }
   }
 }
@@ -55,7 +55,7 @@ GLabel::GLabel(int x, int y, std::string text, std::string pressSyn,
 bool GLabel::hit(int hX, int hY) {
   bool hitten = false;
 
-  if (imageLabel == 0) {
+  if (_imageLabel == 0) {
     y = y - h / 2;
     hitten = GView::hit(hX, hY);
     y = y + h / 2;
@@ -72,35 +72,35 @@ bool GLabel::hit(int hX, int hY) {
 
 
 void GCheckButton::draw(QPainter *painter) {
-  if (checked)
+  if (_checked)
     painter->fillRect(x, y, w, h, Qt::darkGray);  // painter->fillRect(x,y,w,h,CONF_PARAM("colors.curBar"));
   painter->drawRect(x, y, w, h);
 }
 
 
 void GCheckButton::onclick([[maybe_unused]] int x1, [[maybe_unused]] int y1) {
-  if (checked)
-    checked = false;
+  if (_checked)
+    _checked = false;
   else
-    checked = true;
+    _checked = true;
 }
 
 
 void GLabel::draw(QPainter *painter) {
-  if (visible == false) return;
+  if (_visible == false) return;
 
-  if (imageLabel == 0) {
-    painter->drawText(x + 5, y, ownText.c_str());
+  if (_imageLabel == 0) {
+    painter->drawText(x + 5, y, _ownText.c_str());
 
-    if (showBorder)
+    if (_showBorder)
       painter->drawRect(x, y - 15, w, h);  // 10 half of text height
   } else {
-    imageLabel->setX(x);
-    imageLabel->setY(y - 10);
-    imageLabel->draw(painter);
+    _imageLabel->setX(x);
+    _imageLabel->setY(y - 10);
+    _imageLabel->draw(painter);
 
-    if (showBorder)
-      painter->drawRect(x, y - 10, imageLabel->getW(), imageLabel->getH());
+    if (_showBorder)
+      painter->drawRect(x, y - 10, _imageLabel->getW(), _imageLabel->getH());
   }
 }
 

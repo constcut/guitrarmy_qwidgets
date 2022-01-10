@@ -7,11 +7,11 @@
 using namespace gtmy;
 
 void GPannel::onclick(int x1, int y1) {
-  if (openned) {
-    for (size_t i = 0; i < buttons.size(); ++i) {
-      if (buttons[i].hit(x1, y1)) {
-        qDebug() << "Hit pannel button " << buttons[i].getText().c_str();
-        keyevent(buttons[i].getPressSyn());
+  if (_openned) {
+    for (size_t i = 0; i < _buttons.size(); ++i) {
+      if (_buttons[i].hit(x1, y1)) {
+        qDebug() << "Hit pannel button " << _buttons[i].getText().c_str();
+        keyevent(_buttons[i].getPressSyn());
         break;
       }
     }
@@ -19,12 +19,12 @@ void GPannel::onclick(int x1, int y1) {
 }
 
 void GPannel::setTexts(std::string openedOne, std::string closedOne) {
-  openedText = openedOne;
-  closedText = closedOne;
-  if (openned)
-    pannelLabel.setText(openedText);
+  _openedText = openedOne;
+  _closedText = closedOne;
+  if (_openned)
+    _pannelLabel.setText(_openedText);
   else
-    pannelLabel.setText(closedText);
+    _pannelLabel.setText(_closedText);
 }
 
 void GPannel::addButton(std::string capture, std::string syn) {
@@ -32,7 +32,7 @@ void GPannel::addButton(std::string capture, std::string syn) {
   int thatY = y;
   if (syn.empty()) syn = capture;
   GLabel labelButton(thatX, thatY, capture, syn);
-  buttons.push_back(std::move(labelButton));
+  _buttons.push_back(std::move(labelButton));
 }
 
 void GPannel::setButtons(int from, int lastLine) {
@@ -41,12 +41,12 @@ void GPannel::setButtons(int from, int lastLine) {
 
   if (lastLine == 0) lastLine = 40;
 
-  for (size_t i = from; i < buttons.size(); ++i) {
-    if (buttons[i].isVisible() == false) continue;
+  for (size_t i = from; i < _buttons.size(); ++i) {
+    if (_buttons[i].isVisible() == false) continue;
 
-    buttons[i].setX(xCur);
-    buttons[i].setY(yCur);
-    xCur += buttons[i].getW();
+    _buttons[i].setX(xCur);
+    _buttons[i].setY(yCur);
+    xCur += _buttons[i].getW();
     xCur += 20;
 
     if (xCur >= (w - lastLine))  // panel - button width (was 40)
@@ -59,25 +59,25 @@ void GPannel::setButtons(int from, int lastLine) {
   int realH = yCur - y;
   realH += 40;  //+ status bar
 
-  if (pressView) realH += pressView->getMaster()->getStatusBarHeight();
+  if (_pressView) realH += _pressView->getMaster()->getStatusBarHeight();
 
   if (realH != h) {
-    if (pressView) {
+    if (_pressView) {
       h = realH;
-      y = pressView->getMaster()->getHeight() - h;
+      y = _pressView->getMaster()->getHeight() - h;
 
       int xCur = x + 5;
       int yCur = y + 15;
 
       if (lastLine == 0) lastLine = 40;
 
-      for (size_t i = from; i < buttons.size(); ++i) {
+      for (size_t i = from; i < _buttons.size(); ++i) {
         // simple reset them
-        if (buttons[i].isVisible() == false) continue;
+        if (_buttons[i].isVisible() == false) continue;
 
-        buttons[i].setX(xCur);
-        buttons[i].setY(yCur);
-        xCur += buttons[i].getW();
+        _buttons[i].setX(xCur);
+        _buttons[i].setY(yCur);
+        xCur += _buttons[i].getW();
         xCur += 20;
 
         if (xCur >= (w - lastLine))  // panel - button width (was 40)
@@ -89,18 +89,18 @@ void GPannel::setButtons(int from, int lastLine) {
     }
   }
 
-  pannelLabel.setX(w - 40);
-  pannelLabel.setY(h - 20);
+  _pannelLabel.setX(w - 40);
+  _pannelLabel.setY(h - 20);
 }
 
 void GPannel::draw(QPainter *painter) {
-  if (openned) {
+  if (_openned) {
     painter->fillRect(x, y, w, h, QColor(CONF_PARAM("colors.panBG").c_str()));
     painter->drawRect(x, y, w, h);
 
     // buttons
-    for (size_t i = 0; i < buttons.size(); ++i) {
-      if (buttons[i].isVisible()) buttons[i].draw(painter);
+    for (size_t i = 0; i < _buttons.size(); ++i) {
+      if (_buttons[i].isVisible()) _buttons[i].draw(painter);
     }
   }
 }
@@ -130,22 +130,22 @@ void GStickPannel::setGropedButtons() {
 }
 
 void GStickPannel::setGroupedVisible() {
-  buttons[5].setVisible(true);
-  buttons[6].setVisible(true);
-  buttons[8].setVisible(true);
-  buttons[9].setVisible(true);
+  _buttons[5].setVisible(true);
+  _buttons[6].setVisible(true);
+  _buttons[8].setVisible(true);
+  _buttons[9].setVisible(true);
 }
 
 void GStickPannel::setGroupedHidden() {
-  buttons[5].setVisible(false);
-  buttons[6].setVisible(false);
-  buttons[8].setVisible(false);
-  buttons[9].setVisible(false);
+  _buttons[5].setVisible(false);
+  _buttons[6].setVisible(false);
+  _buttons[8].setVisible(false);
+  _buttons[9].setVisible(false);
 }
 
 void GStickPannel::resetButtons() {
-  int hi = pressView->getMaster()->getHeight();
-  int wi = pressView->getMaster()->getWidth();
+  int hi = _pressView->getMaster()->getHeight();
+  int wi = _pressView->getMaster()->getWidth();
   if (wi > hi) {
     setGroupedVisible();
     setButtons();
@@ -293,38 +293,38 @@ void GTrackPannel::setCrossButtons() {
   int yCur = y + 15;
 
   // pages
-  buttons[6].setX(w - 150);
-  buttons[6].setY(yCur);
-  buttons[7].setX(w - 50);  //-50
-  buttons[7].setY(yCur);
+  _buttons[6].setX(w - 150);
+  _buttons[6].setY(yCur);
+  _buttons[7].setX(w - 50);  //-50
+  _buttons[7].setY(yCur);
 
   yCur += 40;
   // STRING MOVEW - CENTER
-  buttons[2].setX(w - 100);
-  buttons[2].setY(yCur);
-  buttons[3].setX(w - 100);
-  buttons[3].setY(yCur + 40);
+  _buttons[2].setX(w - 100);
+  _buttons[2].setY(yCur);
+  _buttons[3].setX(w - 100);
+  _buttons[3].setY(yCur + 40);
 
   // arrow
-  buttons[0].setX(w - 150);
-  buttons[0].setY(yCur);
-  buttons[1].setX(w - 50);
-  buttons[1].setY(yCur);
+  _buttons[0].setX(w - 150);
+  _buttons[0].setY(yCur);
+  _buttons[1].setX(w - 50);
+  _buttons[1].setY(yCur);
 
   yCur += 40;
-  buttons[4].setX(w - 150);
-  buttons[4].setY(yCur);
-  buttons[5].setX(w - 50);
-  buttons[5].setY(yCur);
+  _buttons[4].setX(w - 150);
+  _buttons[4].setY(yCur);
+  _buttons[5].setX(w - 50);
+  _buttons[5].setY(yCur);
 }
 
 void GTrackPannel::resetButtons() {
   int hi = 0;  // pressView->getMaster()->getHeight();
   int wi = 0;  // pressView->getMaster()->getWidth();
 
-  if (pressView) {
-    hi = pressView->getMaster()->getHeight();
-    wi = pressView->getMaster()->getWidth();
+  if (_pressView) {
+    hi = _pressView->getMaster()->getHeight();
+    wi = _pressView->getMaster()->getWidth();
   }
 
   if (hi > wi) {

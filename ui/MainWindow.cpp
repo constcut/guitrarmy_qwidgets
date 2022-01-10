@@ -338,7 +338,7 @@ QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
 
     QToolBar *men2 = 0;
 
-    size_t middleBreak = pan->buttons.size()/2;
+    size_t middleBreak = pan->_buttons.size()/2;
 
     if (middleBreak < 10)
         middleBreak = 4;
@@ -346,7 +346,7 @@ QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
     if (CONF_PARAM("pannels")=="oneline")
         middleBreak = 100; //force one line
 
-    for (size_t i =0 ;i < pan->buttons.size(); ++i)
+    for (size_t i =0 ;i < pan->_buttons.size(); ++i)
         if (i > middleBreak) //16?
         {
             if (men2 == 0)
@@ -363,12 +363,12 @@ QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
                 men2->addWidget(spacerWidget2);
             }
 
-            addToolButton(men2,pan->buttons[i].getText(),pan->buttons[i].getPressSyn());
+            addToolButton(men2,pan->_buttons[i].getText(),pan->_buttons[i].getPressSyn());
 
         }
         else
         {   //first
-            addToolButton(men,pan->buttons[i].getText(),pan->buttons[i].getPressSyn());
+            addToolButton(men,pan->_buttons[i].getText(),pan->_buttons[i].getPressSyn());
         }
 
     dockTab->resize(dockTab->minimumSizeHint());
@@ -422,14 +422,14 @@ QMenu *MainWindow::createToolMenu(GPannel *pan)
      else
          iconsSet = ":/icons2/";
 
-    for (size_t i =0 ;i < pan->buttons.size(); ++i)
+    for (size_t i =0 ;i < pan->_buttons.size(); ++i)
     {
-        std::string button = pan->buttons[i].getText();
+        std::string button = pan->_buttons[i].getText();
         std::string iconPlace = iconsSet+ button + std::string(".png");
 
         QIcon icon(iconPlace.c_str());
 
-        std::string press = pan->buttons[i].getPressSyn();
+        std::string press = pan->_buttons[i].getPressSyn();
 
         menu->addAction(icon,press.c_str());
     }

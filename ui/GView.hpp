@@ -26,26 +26,26 @@ class MasterView;
       int w;
       int h;
 
-      MasterView *master;
+      MasterView *_master;
 
      public:
-      GView() : x(0), y(0), w(0), h(0), master(0) {}
+      GView() : x(0), y(0), w(0), h(0), _master(0) {}
       GView(int xV, int yV, int wV, int hV)
-          : x(xV), y(yV), w(wV), h(hV), master(0) {}
+          : x(xV), y(yV), w(wV), h(hV), _master(0) {}
       virtual ~GView() {}
 
-      virtual void setMaster(MasterView *mast) { master = mast; }
-      MasterView *getMaster() { return master; }
+      virtual void setMaster(MasterView *mast) { _master = mast; }
+      MasterView *getMaster() { return _master; }
 
       virtual bool isMovableX() { return false; }
       virtual bool isMovableY() { return false; }
 
       virtual void setUI() {}
 
-      int getX() { return x; }
-      int getY() { return y; }
-      int getW() { return w; }
-      int getH() { return h; }
+      int getX() const { return x; }
+      int getY() const { return y; }
+      int getW() const { return w; }
+      int getH() const { return h; }
 
       void setW(int newW) { w = newW; }
       void setH(int newH) { h = newH; }
@@ -70,14 +70,14 @@ class MasterView;
 
     class GImage : public GView {
      private:
-      std::string imageName;
+      std::string _imageName;
 
      public:
       GImage(int x, int y, std::string imgName)
-          : GView(x, y, 36, 36), imageName(imgName) {}
+          : GView(x, y, 36, 36), _imageName(imgName) {}
 
       void draw(QPainter *painter) {
-        QImage *img = (QImage *)ImagePreloader::getInstance().getImage(imageName);
+        QImage *img = (QImage *)ImagePreloader::getInstance().getImage(_imageName);
         if (img)
             painter->drawImage(x, y, *img);
       }
@@ -85,47 +85,44 @@ class MasterView;
 
 
     class GRect : public GView {
-      int colorPress;
+      int _colorPress;
 
      public:
-      GRect(int x, int y, int w, int h) : GView(x, y, w, h), colorPress(0) {}
+      GRect(int x, int y, int w, int h) : GView(x, y, w, h), _colorPress(0) {}
 
       void pressIt() {
-        ++colorPress;
-        if (colorPress > 10) colorPress = 0;
+        ++_colorPress;
+        if (_colorPress > 10) _colorPress = 0;
       }
 
       void draw(QPainter *painter) {
         painter->drawRect(x, y, w, h);
-        painter->fillRect(x + 10, y + 10, w - 20, h - 20, colorPress);
+        painter->fillRect(x + 10, y + 10, w - 20, h - 20, _colorPress);
       }
     };
 
 
     class GLabel : public GView {
      private:
-      std::string ownText;
-      std::string pressSynonim;
-
-      std::unique_ptr<GImage> imageLabel;
-
-      bool visible;
-
-      bool showBorder;
+      std::string _ownText;
+      std::string _pressSynonim;
+      std::unique_ptr<GImage> _imageLabel;
+      bool _visible;
+      bool _showBorder;
 
      public:
-      bool isVisible() { return visible; }
-      void setVisible(bool value) { visible = value; }
+      bool isVisible() const { return _visible; }
+      void setVisible(bool value) { _visible = value; }
 
-      void setBorder(bool nowShowBorder) { showBorder = nowShowBorder; }
+      void setBorder(bool nowShowBorder) { _showBorder = nowShowBorder; }
 
-      void setText(std::string newText) { ownText = newText; }
-      std::string getText() { return ownText; }
+      void setText(std::string newText) { _ownText = newText; }
+      std::string getText() const { return _ownText; }
 
       GLabel(int x, int y, std::string text, std::string pressSyn = "",
              bool showBord = true);
 
-      std::string getPressSyn() { return pressSynonim; }
+      std::string getPressSyn() const { return _pressSynonim; }
 
       void draw(QPainter *painter);
 
@@ -138,25 +135,24 @@ class MasterView;
 
     class MasterView {
      private:
-      GView *child;
 
-      GView *firstChld;
-
-      GView *lastView;
+      GView* _child;
+      GView* _firstChld;
+      GView* _lastView;
 
      public:
-      MasterView() : child(0) {}
-      MasterView(GView *newChild) : child(newChild), firstChld(newChild) {
-        child->setMaster(this);
-        lastView = child;
+      MasterView() : _child(0) {}
+      MasterView(GView *newChild) : _child(newChild), _firstChld(newChild) {
+        _child->setMaster(this);
+        _lastView = _child;
       }
 
-      GView *getChild() { return child; }
+      GView *getChild() { return _child; }
       GView *changeChild(GView *newChild);
-      GView *resetToFirstChild() { return changeChild(firstChld); }
-      GView *resetToLastView() { return changeChild(lastView); }
+      GView *resetToFirstChild() { return changeChild(_firstChld); }
+      GView *resetToLastView() { return changeChild(_lastView); }
 
-      GView *getFirstChild() { return firstChld; }
+      GView *getFirstChild() { return _firstChld; }
 
       virtual void connectThread([
           [maybe_unused]] std::unique_ptr<ThreadLocal> &thr) {}
@@ -214,13 +210,13 @@ class MasterView;
 
     class GCheckButton : public GView {
      private:
-      bool checked;
+      bool _checked;
 
      public:
       GCheckButton(int x1, int y1, int w1, int h1)
-          : GView(x1, y1, w1, h1), checked(false) {}
+          : GView(x1, y1, w1, h1), _checked(false) {}
 
-      bool isChecked() { return checked; }
+      bool isChecked() const { return _checked; }
       void draw(QPainter *painter);
 
       virtual void onclick([[maybe_unused]] int x1, [[maybe_unused]] int y1);
