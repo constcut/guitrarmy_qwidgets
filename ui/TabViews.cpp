@@ -90,9 +90,6 @@ TabView::TabView():GView(0,0,0,0)
 {
     statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
     bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
-
-    pan = std::make_unique<GTabPannel>(300,480,800);
-    pan->setPressView(this);
 }
 
 void TabView::addSingleTrack(Track *track)
@@ -154,10 +151,6 @@ void TabView::onclick(int x1, int y1)
         //if (pan->isOpenned()) return;
         //keyevent("bpm");
         //return;
-    }
-    if (pan->hit(x1,y1)){
-        pan->onclick(x1,y1);
-        return;
     }
 
     int awaitBar = (x1-200)/30; //TODO size_t и дополнительные рассчёты, т.к. -1 всё равно не вариант
@@ -352,7 +345,6 @@ void TabView::draw(QPainter *painter)
            painter->drawText(170,10+yPos,sX.c_str()); //mute or solo
         }
     }
-    pan->draw(painter);
 }
 
 
@@ -435,7 +427,7 @@ void TabView::connectAllThreadsSignal(MasterView *masterView)
 // ------------OVER the changes--------------------
 
 
-bool TabView::gotChanges()
+bool TabView::gotChanges() const
 {
     for (size_t i = 0; i < tracksView.size(); ++i)
         if (tracksView[i]->gotChanges())
@@ -457,9 +449,13 @@ bool TabView::gotChanges()
     return false;
 }
 
-bool TrackView::gotChanges()
+
+bool TabView::getPlaying()
 {
-    if (_pTrack->commandSequence.size())
-        return true;
-    return false;
+    if (pTab->playing())
+        if (localThr)
+            if (localThr->getStatus())
+                setPlaying(false);
+
+    return pTab->playing();
 }

@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "GView.hpp"
-#include "ui/GPannel.hpp"
 #include "tab/tools/TabClipboard.hpp"
 #include "tab/tools/Commands.hpp"
 
@@ -30,21 +29,19 @@ namespace gtmy {
 
         std::unique_ptr<GLabel> statusLabel;
         std::unique_ptr<GLabel> bpmLabel;
-        std::unique_ptr<GTabPannel> pan;
-
 
         std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
         std::vector<std::unique_ptr<ThreadLocal>> finishPool;
 
     public:
 
-        virtual void setUI();
+        virtual void setUI() override;
 
         void setCurrentBar(int curBar) {
             pTab->getCurrentBar() = curBar; }
 
-        virtual bool isMovableX() { return true; }
-        virtual bool isMovableY() { return true; }
+        virtual bool isMovableX() override { return true; }
+        virtual bool isMovableY() override { return true; }
 
         TabView();
         virtual ~TabView();
@@ -58,29 +55,21 @@ namespace gtmy {
         void refreshTabStats();
         std::unique_ptr<Tab>& getTab() { return pTab; }
 
-         void draw(QPainter *painter);
+         void draw(QPainter *painter) override;
 
-         virtual void keyevent(std::string press);
-         virtual void onTabCommand(TabCommand command);
-         virtual void onTrackCommand(TrackCommand command);
+         virtual void keyevent(std::string press) override;
+         virtual void onTabCommand(TabCommand command) override;
+         virtual void onTrackCommand(TrackCommand command) override;
 
          void setPlaying(bool playValue) { pTab->setPlaying(playValue); }
-         bool getPlaying()
-         {
-             if (pTab->playing())
-                 if (localThr)
-                     if (localThr->getStatus())
-                         setPlaying(false);
-
-             return pTab->playing();
-         }
+         bool getPlaying();
 
          void addSingleTrack(Track *track);
 
-         void onclick(int x1, int y1);
-         void ondblclick(int x1, int y1);
+         void onclick(int x1, int y1) override;
+         void ondblclick(int x1, int y1) override;
 
-         virtual void ongesture(int offset, bool horizontal);
+         virtual void ongesture(int offset, bool horizontal) override;
 
          void prepareAllThreads(size_t shiftTheCursor);
          void launchAllThreads();
@@ -88,7 +77,7 @@ namespace gtmy {
 
          void connectAllThreadsSignal(MasterView *masterView);
 
-         bool gotChanges();
+         bool gotChanges() const;
 
          //void ondblclick(int x1, int y1);
     };

@@ -2,6 +2,7 @@
 #define COMMONVIEWS_H
 
 #include "GView.hpp"
+#include "GPannel.hpp"
 #include "g0/Tests.hpp"
 #include "InputViews.hpp"
 

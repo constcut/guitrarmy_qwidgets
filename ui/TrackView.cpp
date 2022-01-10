@@ -134,17 +134,9 @@ int TrackView::horizonMove(int offset)
 
 void TrackView::onclick(int x1, int y1)
 {
-    if (_pan->hit(x1,y1))
-    {
-        _pan->onclick(x1,y1);
-        //aware of open pannel
-        return;
-    }
 
     if (_tabParrent->getPlaying())
-    {
         return; //skip
-    }
 
     size_t& cursor = _pTrack->cursor();
     size_t& cursorBeat = _pTrack->cursorBeat();
@@ -476,8 +468,7 @@ void TrackView::draw(QPainter *painter)
             ySh += bView.getH(); // there was 100 hardcoded
 
             if (ySh >= (hLimit+480)){
-                _pan->draw(painter);
-                return; //stop that
+                return; //stop that (there was a pannel)
             }
         }
 
@@ -522,8 +513,6 @@ void TrackView::draw(QPainter *painter)
         ++lastSeen;
     }
 
-    _pan->draw(painter);
-
 }
 
 void TrackView::prepareThread(size_t shiftTheCursor)
@@ -543,4 +532,11 @@ void TrackView::prepareThread(size_t shiftTheCursor)
 
     _animationThread->setInc(&cursor,&cursorBeat);
     _animationThread->setupValues(_tabParrent->getTab().get(),_pTrack,shiftTheCursor);
+}
+
+bool TrackView::gotChanges() const
+{
+    if (_pTrack->commandSequence.size())
+        return true;
+    return false;
 }

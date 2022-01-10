@@ -5,10 +5,8 @@
 #include <memory>
 
 #include "GView.hpp"
-#include "ui/GPannel.hpp"
-#include "tab/tools/Commands.hpp"
 #include "BarView.hpp"
-
+#include "tab/tools/Commands.hpp"
 #include "g0/Threads.hpp"
 
 
@@ -28,40 +26,25 @@ namespace gtmy {
 
         ViewPull _barsPull;
 
-        GPannel* _pan; //TODO просто выпилить и ниже
-        std::unique_ptr<GTrackPannel> _trackPan;
-        std::unique_ptr<GEffectsPannel> _effPan;
-        std::unique_ptr<GClipboardPannel> _clipPan;
-
     public:
 
         Track* getTrack() const { return _pTrack; }
 
-        virtual void setUI();
-        virtual bool isMovableY() { return true; } //Emm
+        virtual void setUI() override;
+        virtual bool isMovableY() override { return true; } //Emm
 
-        TrackView(Track *from):_pTrack(from), _pan(0) {
-            _trackPan = std::make_unique<GTrackPannel>(300,480,800);
-            _effPan = std::make_unique<GEffectsPannel>(300,480,800);
-            _clipPan = std::make_unique<GClipboardPannel>(300,480,800);
-            _trackPan->setPressView(this);
-            _effPan->setPressView(this);
-            _clipPan->setPressView(this);
-            _effPan->preOpen();
-            _clipPan->preOpen();
-            _pan = _trackPan.get();
-        }
+        TrackView(Track *from): _pTrack(from) {}
 
         virtual ~TrackView();
 
-        virtual void keyevent(std::string press);
-        virtual void onTabCommand(TabCommand command);
-        virtual void onTrackCommand(TrackCommand command);
+        virtual void keyevent(std::string press) override;
+        virtual void onTabCommand(TabCommand command) override;
+        virtual void onTrackCommand(TrackCommand command) override;
 
-        void onclick(int x1, int y1);
-        void ondblclick(int x1, int y1);
+        void onclick(int x1, int y1) override;
+        void ondblclick(int x1, int y1) override;
 
-        virtual void ongesture(int offset, bool horizontal);
+        virtual void ongesture(int offset, bool horizontal) override;
 
         int horizonMove(int offset);
 
@@ -70,7 +53,7 @@ namespace gtmy {
         TabView *getPa() const { return _tabParrent; }
         void setPa(TabView* tv) { _tabParrent = tv; }
 
-        void draw(QPainter *painter);
+        void draw(QPainter *painter) override;
 
         void prepareThread(size_t shiftTheCursor);
         void launchThread();
@@ -79,7 +62,7 @@ namespace gtmy {
         int threadSeconds() { return _animationThread->calculateSeconds(); }
 
 
-        bool gotChanges();
+        bool gotChanges() const;
 
     };
 
