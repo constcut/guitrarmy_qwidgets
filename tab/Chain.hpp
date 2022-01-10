@@ -68,7 +68,7 @@ namespace gtmy {
             sequence.pop_back();
         }
 
-        void change(int ind, std::unique_ptr<Child> val) { //TODO remove?
+        void change(int ind, std::unique_ptr<Child> val) {
             sequence[ind] = std::move(val);
         }
 

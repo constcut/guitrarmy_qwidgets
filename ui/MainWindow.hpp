@@ -2,29 +2,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
 #include <QLabel>
 #include <QProgressBar>
-
 #include <QMouseEvent>
-
 #include <QDockWidget>
 #include <QToolBar>
-
 #include <QScreen>
 #include <QApplication>
-
 #include <QStyle>
-
-#include "ui/CenterView.hpp"
-
 #include <QScrollArea>
-
 #include <QAudioOutput>
-
 #include <QTimer>
 
+#include "ui/CenterView.hpp"
 #include "tab/tools/TabClipboard.hpp"
+
 
 namespace Ui {
 class MainWindow;
@@ -62,30 +54,25 @@ namespace gtmy {
         QScrollArea *_centerScroll;
         CenterView *_center;
 
+        QLabel *_statusLabel;
+        QLabel *_statusLabelSecond;
+        QLabel *_statusLabelThird;
+        QProgressBar *_statusProgress;
+
+        QTimer* _audioPushTimer;
+
+        AudioSpeaker* _audioSpeaker;
+        QAudioOutput* _audioOutput;
+
         void handlePanelAction(int action, int row);
-
-        QLabel *statusLabel;
-        QLabel *statusLabelSecond;
-        QLabel *statusLabelThird;
-        QProgressBar *statusProgress;
-
 
     public:
 
-        void pushForceKey(std::string keyevent) override;
+        explicit MainWindow(QWidget *parent = nullptr);
+        virtual ~MainWindow() = default;
 
         CenterView* getCenterView() { return _center; }
         void setCenterView(CenterView* newCenter) { _center = newCenter; }
-
-        bool eventFilter(QObject *object, QEvent *e) override;
-
-        explicit MainWindow(QWidget *parent = 0);
-        virtual ~MainWindow();
-
-       QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
-
-        void moveEvent(QMoveEvent *ev) override;
-        virtual void setStatusBarMessage(size_t index, std::string text, int timeOut=0) override;
 
         void pleaseRepaint() override {
             update();
@@ -95,19 +82,14 @@ namespace gtmy {
 
         void startAudioInput();
         void stopAudioInput();
-
         void initAudioInput();
         void initAudioOutput();
-
         void startAudioOutput(std::string localName);
         void stopAudioOutput();
 
+        void pushForceKey(std::string keyevent) override;
 
-        QTimer* audioPushTimer;
-
-        AudioSpeaker* audioSpeaker;
-        QAudioOutput* audioOutput;
-
+        bool eventFilter(QObject *object, QEvent *e) override;
         void paintEvent(QPaintEvent* event) override;
         void mousePressEvent(QMouseEvent* event ) override;
         void mouseDoubleClickEvent(QMouseEvent* event ) override;
@@ -116,6 +98,7 @@ namespace gtmy {
         bool event(QEvent* event) Q_DECL_OVERRIDE;
         bool gestureEvent(QGestureEvent* event);
         void resizeEvent(QResizeEvent* event) override;
+        void moveEvent(QMoveEvent *ev) override;
 
         void createUI();
         void recreateUI();
@@ -124,12 +107,13 @@ namespace gtmy {
         void createFloDocks();
         QDockWidget* createToolDock(std::string dockname, GPannel *pannel);
         QMenu *createToolMenu(GPannel *pannel);
+        QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
+        virtual void setStatusBarMessage(size_t index, std::string text, int timeOut=0) override;
 
         void setViewPannel(size_t val) override {
             if (_winCombo)
                 _winCombo->setCurrentIndex(val);
         }
-
 
     private slots:
 

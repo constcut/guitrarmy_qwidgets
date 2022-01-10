@@ -33,14 +33,13 @@ namespace gtmy {
         VariableString(std::string stringName, std::list<std::string> stringsValues) : lineType(1), name(stringName) { v = stringsValues; }
     };
 
-    class VariableStrings : public ChainContainer<VariableString, void>
-    {
+
+    class VariableStrings : public ChainContainer<VariableString, void> {
         //search options
     };
 
 
-    struct TimeLineKnot
-    {
+    struct TimeLineKnot {
         std::uint8_t type;
         int value;
 

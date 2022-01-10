@@ -30,6 +30,7 @@ namespace gtmy {
         std::uint8_t minMaj;
         std::uint8_t steps9x;
 
+
         size_t bass;
         size_t deminush;
 
@@ -65,9 +66,9 @@ namespace gtmy {
        std::uint8_t newPan;
        std::uint8_t newChorus;
        std::uint8_t newReverb;
-       std::uint8_t newPhaser; //6 total + 4
+       std::uint8_t newPhaser;
        std::uint8_t newTremolo;
-       size_t newTempo; //OR IT IS INT?
+       size_t newTempo;
        std::uint8_t instrDur;
        std::uint8_t volumeDur;
        std::uint8_t panDur;
@@ -76,7 +77,6 @@ namespace gtmy {
        std::uint8_t phaserDur;
        std::uint8_t tremoloDur;
        std::uint8_t tempoDur;
-
        std::uint8_t changesTo; //one track or all of them
        std::uint8_t postFix;
     };
