@@ -33,9 +33,8 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                 tlAccum = 0;
             }
 
-            if (timeLine[i].type==0) {
+            if (timeLine[i].type==0)
                 tlAccum += timeLine[i].value;
-            }
 
             if (timeLine[i].type==2) {
                 int packedMeter = timeLine[i].value;
