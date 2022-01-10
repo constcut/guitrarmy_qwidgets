@@ -9,7 +9,7 @@ namespace gtmy {
     class BarView : public GView
     {
 
-    protected:
+    private:
 
         static const int stringWidth=12;
         static const int inbarWidth=20;

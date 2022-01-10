@@ -29,7 +29,7 @@ namespace gtmy {
     {
            Q_OBJECT
 
-    protected:
+    private:
         QMutex keyMute;
 
         std::list<std::vector<std::string> > playlist;

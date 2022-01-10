@@ -13,7 +13,7 @@ namespace gtmy {
     class GQButton : public QPushButton //TODO в отдельные файлы
     {
         Q_OBJECT
-    protected:
+    private:
             int buttonNumber;
             std::string pressSyn;
             MasterView *keyPress;
@@ -39,7 +39,7 @@ namespace gtmy {
     class GQCombo : public QComboBox
     {
         Q_OBJECT
-    protected:
+    private:
         int elementNumber;
         MasterView *keyPress;
 

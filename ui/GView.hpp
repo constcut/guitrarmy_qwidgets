@@ -89,7 +89,7 @@ namespace gtmy {
 
     class GImage : public GView
     {
-    protected:
+    private:
         std::string imageName;
 
     public:
@@ -133,7 +133,7 @@ namespace gtmy {
 
     class GLabel : public GView
     {
-        protected:
+    private:
         std::string ownText;
         std::string pressSynonim;
 
@@ -190,7 +190,7 @@ namespace gtmy {
 
     class MasterView
     {
-    protected:
+    private:
         GView *child;
 
         GView *firstChld;
@@ -255,7 +255,7 @@ namespace gtmy {
 
     class GCheckButton : public GView
     {
-    protected:
+    private:
 
         bool checked;
 

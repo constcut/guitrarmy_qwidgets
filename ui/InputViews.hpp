@@ -13,7 +13,7 @@ namespace gtmy {
 
     class PatternInput : public GView
     {
-    protected:
+    private:
 
         std::vector<GCheckButton> _checkButtons; //one track
         std::vector<GLabel> _lineInstrLabels;
@@ -83,7 +83,7 @@ namespace gtmy {
 
     class TapRyView : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> _labA;
         std::unique_ptr<GLabel> _stopMetr;
         std::unique_ptr<GLabel> _labB;
@@ -139,7 +139,7 @@ namespace gtmy {
 
     class MorzeInput : public GView
     {
-    protected:
+    private:
 
         std::unique_ptr<Bar> _bar;
         std::unique_ptr<BarView> _barView;

@@ -52,7 +52,7 @@ namespace gtmy {
         void setVolumeDb(const float newVol) {
             _volume = newVol; }
 
-    protected:
+    private:
 
         QByteArray renderShortNext(const int len);
         QByteArray renderFloatNext(const int len);

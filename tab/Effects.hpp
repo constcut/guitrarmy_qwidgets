@@ -51,7 +51,7 @@ namespace gtmy {
 
     class ABitArray {
 
-    protected:
+    private:
 
         uint64_t bits;
 

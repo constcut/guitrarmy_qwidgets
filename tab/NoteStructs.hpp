@@ -18,7 +18,7 @@ namespace gtmy {
 
     class BendPointsGPOld : public std::vector<BendPointGPOld>
     {
-    protected:
+    private:
         size_t _bendHeight;
         std::uint8_t _bendType;
     public:
@@ -42,7 +42,7 @@ namespace gtmy {
 
     class BendPoints : public std::vector<BendPoint>
     {
-    protected:
+    private:
         std::uint8_t bendType;
     public:
         std::uint8_t getType() const { return bendType; }

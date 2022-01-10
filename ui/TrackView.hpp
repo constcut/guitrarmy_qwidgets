@@ -17,7 +17,7 @@ namespace gtmy {
 
     class TrackView : public GView
     {
-    protected:
+    private:
         Track* _pTrack;
 
         TabView* _tabParrent;

@@ -8,7 +8,7 @@ namespace gtmy {
 
     class GPannel: public GView
     {
-    //protected:
+
     public:
 
         GLabel pannelLabel; //edit

@@ -138,7 +138,7 @@ namespace gtmy {
         }
 
 
-    protected:
+    private:
         void handlePanelAction(int action, int row);
 
         QLabel *statusLabel;

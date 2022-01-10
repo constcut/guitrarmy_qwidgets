@@ -22,7 +22,7 @@ namespace gtmy {
             //read from stream or string
         };
 
-    protected:
+    private:
         struct midiHeader midiHeader;
 
         int bpm;

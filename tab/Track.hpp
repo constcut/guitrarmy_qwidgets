@@ -99,7 +99,7 @@ namespace gtmy {
         const GuitarTuning& getTuning() const { return _tuning; }
         GuitarTuning& getTuningRef() { return _tuning; }
 
-    protected:
+    private:
         size_t _cursor;
         size_t _cursorBeat;
         size_t _stringCursor;

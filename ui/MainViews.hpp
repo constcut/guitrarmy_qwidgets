@@ -31,7 +31,7 @@ namespace gtmy {
 
     class MainView : public GView
     {
-    protected:
+    private:
 
         std::unique_ptr<TabView> tabsView;
         std::unique_ptr<TestsView> testsView;
@@ -110,7 +110,7 @@ namespace gtmy {
 
     class WelcomeView : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> top;
         std::unique_ptr<GLabel> mid;
         std::unique_ptr<GLabel> bot;
@@ -137,7 +137,7 @@ namespace gtmy {
 
     class ConfigView : public GView
     {
-    protected:
+    private:
 
         std::unique_ptr<GLabel> labA, labB;
         std::unique_ptr<GLabel> labC, labD;
@@ -155,7 +155,7 @@ namespace gtmy {
 
     class InfoView : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> labelA;
         std::unique_ptr<GLabel> labelA2;
         std::unique_ptr<GLabel> icons;
@@ -226,7 +226,7 @@ namespace gtmy {
 
     class TestsView : public GView
     {
-    protected:
+    private:
         GLabel upper, bottom, g3, g5;
         std::unique_ptr<GLabel> playlistButton;
         std::unique_ptr<GLabel> playlist2Button;
@@ -535,7 +535,7 @@ namespace gtmy {
 
     class ChordInput : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> top;
     public:
         void setUI()
@@ -572,7 +572,7 @@ namespace gtmy {
 
     class ChangesInput : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> top;
 
     public:
@@ -627,7 +627,7 @@ namespace gtmy {
 
     class BendInput : public GView
     {
-    protected:
+    private:
         std::unique_ptr<GLabel> top;
 
         std::unique_ptr<GLabel> okButton;
