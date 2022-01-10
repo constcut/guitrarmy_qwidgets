@@ -105,7 +105,7 @@ namespace gtmy {
         size_t _stringCursor;
         size_t _displayIndex;
         size_t _lastSeen;
-        int _selectCursor; //TOSO to size_t
+        int _selectCursor; //TODO to size_t
         int _selectionBarFirst;
         int _selectionBarLast;
         int _selectionBeatFirst;

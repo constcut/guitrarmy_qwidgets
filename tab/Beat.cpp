@@ -57,13 +57,13 @@ void Beat::printToStream(std::ostream &stream) const
             at(ind)->printToStream(stream);
 }
 
+
 ABitArray Beat::getEffects() {
     return _effPack;
 }
 
 
-void Beat::setEffects(Effect eValue)
-{
+void Beat::setEffects(Effect eValue) {
     if (eValue == Effect::None)
          _effPack.flush();
     else
@@ -91,7 +91,8 @@ Note* Beat::getNote(int string) const {
 }
 
 
-void Beat::setFret(std::uint8_t fret, int string) {
+void Beat::setFret(std::uint8_t fret, int string)
+{
     if (size() == 0) {
         auto newNote = std::make_unique<Note>();
         newNote->setFret(fret);
@@ -127,6 +128,7 @@ void Beat::setFret(std::uint8_t fret, int string) {
         return;
     }
 }
+
 
 std::uint8_t Beat::getFret(int string) const {
     if (size() == 0)
