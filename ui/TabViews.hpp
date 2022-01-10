@@ -21,7 +21,6 @@ namespace gtmy {
     int translateDefaulColor(const std::string& confParam);
 
 
-
     class TabView : public GView
     {
     private:

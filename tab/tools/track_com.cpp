@@ -41,7 +41,7 @@ void Track::switchEffect(Effect effect) {
     }
 }
 
-void Track::switchBeatEffect(Effect beatEffect) { //TODO insure it fits
+void Track::switchBeatEffect(Effect beatEffect) {
 
     int effIndex = static_cast<int>(beatEffect);
     if (this->at(_cursor)->at(_cursorBeat)->getPause())
@@ -62,7 +62,7 @@ void Track::switchBeatEffect(Effect beatEffect) { //TODO insure it fits
 void Track::switchNoteState(NoteStates noteState)
 {
     int changeState = static_cast<int>(noteState);
-    size_t& cursor = this->cursor(); //TODO _
+    size_t& cursor = this->cursor();
     size_t& cursorBeat = this->cursorBeat();
     size_t& stringCursor = this->stringCursor();
 
@@ -95,7 +95,7 @@ void Track::switchNoteState(NoteStates noteState)
 }
 
 
-void Track::reverseCommand(ReversableCommand command) //TODO get rid of this->cursor() etc
+void Track::reverseCommand(ReversableCommand command)
 {
     ReversableType type = command.getType();
     std::uint8_t value = command.getValue();
@@ -708,9 +708,8 @@ void Track::saveFromTrack() {
     std::string gfilename =  std::string(AConfig::getInst().testsLocation)  + "first.gmy";
     std::cerr << "Test loc " << AConfig::getInst().testsLocation << std::endl;
     std::ofstream file(gfilename.c_str());
-    Tab* pTab =  parent; //TODO инкапсулировать в обычный класс, а не шаблон
+    Tab* pTab =  parent;
     gmyFile.saveToFile(file, pTab);
-    //TODO just get parent tab
     file.close();
     return;
 }

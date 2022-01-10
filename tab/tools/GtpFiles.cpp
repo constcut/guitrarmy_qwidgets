@@ -1452,7 +1452,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     for (size_t i = 0; i < tracksAmount; ++i)
     {
         Track *currentTrack = tab->at(i).get();
-        readTrack(file, currentTrack); //TODO переделать функции, чтобы они принимали тоже ссылки на уники
+        readTrack(file, currentTrack);
     }
 
     auto& t1 =  tab->at(0);
@@ -1564,7 +1564,6 @@ void writeString(std::ofstream &file, std::string value, size_t stringLen=0)
 
 void writeTrack(std::ofstream &file, [[maybe_unused]] Track *currentTrack)
 {
-    //Заглушка TODO
     std::uint8_t trackHeader = 0;
     file.write((const char*)&trackHeader,1);
 

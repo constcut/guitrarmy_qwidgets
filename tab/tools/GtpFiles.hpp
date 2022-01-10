@@ -26,7 +26,7 @@ namespace gtmy {
     };
 
 
-    class Gp4Import //:TODO public Gp3Import
+    class Gp4Import
     {
     public:
         bool import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion=0);
@@ -48,7 +48,7 @@ namespace gtmy {
 
     //GP5
 
-    class Gp5Import //:TODO public Gp4Import
+    class Gp5Import
     {
     public:
         bool import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion=0);
@@ -69,6 +69,5 @@ namespace gtmy {
 
 }
 
-//TODO собрать в единый файл соединить с tabloader из aexpimp
 
 #endif // GTPFILES_H

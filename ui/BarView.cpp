@@ -104,7 +104,7 @@ void BarView::drawMidiNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t
         drawEllipse(QColor("black"), painter, xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius);
     else
     {
-        drawEllipse(painter, xPoint-radiusShift,yPoint-radiusShift+yNote,mainRadius,mainRadius); //TODO тут вообще можно даже без функции
+        drawEllipse(painter, xPoint - radiusShift, yPoint - radiusShift + yNote, mainRadius, mainRadius);
         drawEllipse(painter, xPoint+1,yPoint+1+yNote,3,3);
         drawEllipse(painter, xPoint+2,yPoint+2+yNote,2,2);
     }

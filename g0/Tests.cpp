@@ -318,7 +318,6 @@ bool gtmy::greatCheckScenarioCase(uint32_t scen, uint32_t from, uint32_t to, uin
 void gtmy::connectConfigs(AConfig& config)
 {
     config.connectLog(&tabLog,0,"tab");
-    //config->connectLog(&museLog,1,"amusic");
     config.connectLog(&midiLog,2,"midi");
     config.connectLog(&gtpLog,3,"gtp");
 }

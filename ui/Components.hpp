@@ -10,7 +10,7 @@
 namespace gtmy {
 
 
-    class GQButton : public QPushButton //TODO в отдельные файлы
+    class GQButton : public QPushButton
     {
         Q_OBJECT
     private:

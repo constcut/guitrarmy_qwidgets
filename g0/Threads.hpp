@@ -30,8 +30,8 @@ namespace gtmy {
     class PlayAnimationThr: public AThread
     {
     protected:
-        size_t* _incrementA; //TODO rename - значение ведь всегда одно
-        size_t* _incrementB;
+        size_t* _cursorToInc1;
+        size_t* _cursorToInc2;
 
         size_t _limit;
 
@@ -47,14 +47,13 @@ namespace gtmy {
 
        void requestStop() { _pleaseStop = true; }
 
-       PlayAnimationThr():_incrementA(0),_incrementB(0),_limit(0),_bpm(1),_status(0),_pleaseStop(false) {}
+       PlayAnimationThr():_cursorToInc1(0),_cursorToInc2(0),_limit(0),_bpm(1),_status(0),_pleaseStop(false) {}
 
        int getStatus() const { return _status; }
 
        void setBPM(int newBPM) { _bpm = newBPM; _waitTimes.clear(); }
        void setLimit(size_t max) { _limit = max; }
-       void setInc(size_t *ptrA, size_t *ptrB) { _incrementA = ptrA; _incrementB = ptrB; }
-       //void setMasterView(MasterView *mvPtr);// {mv=mvPtr;}
+       void setInc(size_t *ptrA, size_t *ptrB) { _cursorToInc1 = ptrA; _cursorToInc2 = ptrB; }
 
        void setupValues(Tab* tab_ptr, Track* track_ptr, size_t shiftTheCursor);
        void addNumDenum(uint8_t nu, uint8_t de, size_t nextIndex);

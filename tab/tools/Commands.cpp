@@ -8,17 +8,6 @@
 using namespace gtmy;
 
 
-enum CommandPack { //TODO move
-    SingleTabCommand=0,
-    SingleTrackCommand,
-    IntTabCommand,
-    IntTrackCommand,
-    StringTabCommand,
-    StringTrackCommand,
-    TwoIntTabCommand,
-    TwoIntTrackCommand
-};
-
 
 std::ostream& operator<<(std::ostream& os, const TabCommand& command) {
     uint32_t commandType = static_cast<int>(CommandPack::SingleTabCommand);

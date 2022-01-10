@@ -11,3 +11,5 @@
  возможно он будет работать и под iOs)
 
 6) namespace deprecatedui::
+
+7) EXPORT? 4 format

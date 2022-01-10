@@ -621,7 +621,7 @@ CenterView::CenterView(QWidget *parent):QWidget(parent), MasterView(), ownChild(
     for (size_t i = 0; i < 16; ++i)
     _uiWidgets[i] = std::vector<QWidget*>();
 
-    _keyToTabCommandsMap = { //TODO move into config
+    _keyToTabCommandsMap = { //TODO move into config (и схожее тоже!)
         {"set till the end", TabCommand::SetSignTillEnd},
         {"save as",TabCommand::SaveAs},
         {"mute", TabCommand::Mute},
@@ -650,7 +650,7 @@ CenterView::CenterView(QWidget *parent):QWidget(parent), MasterView(), ownChild(
         {"tune",  TabCommand::Tune}
     };
 
-    _keyToTrackCommandsMap = { //TODO move into config
+    _keyToTrackCommandsMap = {
         {"playFromStart", TrackCommand::PlayFromStart},
         {"gotoStart", TrackCommand::GotoStart},
         {"set for selected", TrackCommand::SetSignForSelected},
@@ -707,7 +707,6 @@ CenterView::CenterView(QWidget *parent):QWidget(parent), MasterView(), ownChild(
         {"copyBars", TrackCommand::CopyBars},
         {"paste", TrackCommand::Paste},
         {"undo", TrackCommand::Undo}
-        //TODO map not working too
     };
 }
 

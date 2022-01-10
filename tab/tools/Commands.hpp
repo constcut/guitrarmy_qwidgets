@@ -145,8 +145,6 @@ namespace gtmy {
         IntCommand<TabCommand>, TwoIntCommand<TabCommand>, StringCommand<TrackCommand>, TwoIntCommand<TrackCommand>>;
 
 
-    //TODO
-
     void saveMacroComannds(const std::vector<MacroCommand>& commands, std::ofstream& os);
     std::vector<MacroCommand> loadMacroCommands(std::ifstream& is);
 
@@ -200,8 +198,7 @@ namespace gtmy {
 
     public:
 
-        //TODO хранить не в каждой каммоманде, а только в особых, хранить комманды как variant
-        //Или вместо варианта общий класс от которого наследоваться
+        //Или вместо варианта общий класс от которого наследоваться ^^^
         using NotesBuffer = std::vector<std::unique_ptr<Note>>;
         NotesBuffer storedNotes;
 

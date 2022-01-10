@@ -35,7 +35,7 @@ namespace gtmy {
 
         Bar* _ptr;
 
-        static AClipboard *currentClip; //TODO multiple (stack)
+        static AClipboard *currentClip;
 
     public:
 

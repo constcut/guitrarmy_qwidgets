@@ -11,7 +11,7 @@
 
 using namespace gtmy;
 
-//TODO rename file when old tab commands would be erased
+
 //TODO prepare undo operations
 //They have to be for all possible commands
 
@@ -124,7 +124,7 @@ void Tab::createNewTrack() {
             auto bar = std::make_unique<Bar>();
 
             bar->flush();
-            bar->setSignDenum(4); bar->setSignNum(4); //TODO реальные размеры
+            bar->setSignDenum(4); bar->setSignNum(4); //Подумать над механизмами, разные размеры только при полиритмии нужны
             bar->setRepeat(0);
 
             auto beat = std::make_unique<Beat>();
@@ -200,14 +200,14 @@ void Tab::openReprise() {
 }
 
 
-void Tab::closeReprise(size_t count) { //TODO argument repeat times
+void Tab::closeReprise(size_t count) {
     _macroCommands.push_back(IntCommand<TabCommand>{TabCommand::CloseReprise, count});
     auto& firstTrackBar = this->at(0)->at(_currentBar);
     std::uint8_t repeat = firstTrackBar->getRepeat();
     std::uint8_t repeatOpens = repeat & 1;
     std::uint8_t repeatCloses = repeat & 2;
     if (repeatCloses) {
-        firstTrackBar->setRepeat(0); //flush
+        firstTrackBar->setRepeat(0);
         firstTrackBar->setRepeat(repeatOpens);
     }
     else {
