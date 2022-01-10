@@ -30,52 +30,52 @@ namespace gtmy {
            Q_OBJECT
 
     private:
-        QMutex keyMute;
 
-        std::list<std::vector<std::string> > playlist;
+        QMutex _keyMutex;
+        std::list<std::vector<std::string>> _playlist;
 
-        std::unique_ptr<AudioInfo> audioInfo;  //Выделить фрагменты аудиодвижка в один класс, использовать его здесь
-        std::unique_ptr<QAudioInput> audioInput;
+        std::unique_ptr<AudioInfo> _audioInfo;
+        std::unique_ptr<QAudioInput> _audioInput;
 
-        int lastPressX,lastPressY;
+        int _lastPressX;
+        int _lastPressY;
 
-        std::unique_ptr<QTextBrowser> welcomeText;
-        std::unique_ptr<QTextEdit> confEdit;
+        std::unique_ptr<QTextBrowser> _welcomeText;
+        std::unique_ptr<QTextEdit> _confEdit;
 
-        MasterView *statusSetter;
-        QScrollArea *fatherScroll;
+        MasterView* _statusSetter;
+        QScrollArea* _fatherScroll;
 
+        std::map<int, std::vector<QWidget*>> _uiWidgets;
 
-        std::map < int , std::vector<QWidget*> > uiWidgets;
+        std::unordered_map<std::string, TabCommand> _keyToTabCommandsMap;
+        std::unordered_map<std::string, TrackCommand> _keyToTrackCommandsMap;
 
-        //TODO возможно перенести на этап загрузки конфигурации, а лучше вообще избавиться от строк
-        std::unordered_map<std::string, TabCommand> tabCommands;
-        std::unordered_map<std::string, TrackCommand> trackCommands;
+        int _lastCheckedView;
 
-
-        int lastCheckedView;
-
-        int xOffsetGesture;
-        int yOffsetGesture;
-        bool isPressed;
+        int _xOffsetGesture;
+        int _yOffsetGesture;
+        bool _isPressed;
 
     public:
-        void flushPressed()
-        {  isPressed = false;  }
-        void setFatherScroll(QScrollArea *fScroll)
-        {   fatherScroll = fScroll;}
 
+        void flushPressed() {
+            _isPressed = false;
+        }
+        void setFatherScroll(QScrollArea *fScroll) {
+            _fatherScroll = fScroll;
+        }
 
-        void checkView(){
+        void checkView() {
             int newView = getCurrentViewType();
-            if (newView != lastCheckedView)
+            if (newView != _lastCheckedView)
                 ViewWasChanged();
-            lastCheckedView = newView;
+            _lastCheckedView = newView;
         }
 
         void ViewWasChanged();
 
-        void SetButton(int index,std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
+        void SetButton(size_t index, std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
         void addButton(std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
         void addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue);
         void setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue);
@@ -83,18 +83,20 @@ namespace gtmy {
         void renewComboParams(int index, std::string params);
         void renewComboParams(GQCombo *newBox, std::string params);
 
-        int getComboBoxValue(int index);
+        int getComboBoxValue(size_t index);
 
-        virtual void requestHeight(int newH)
-        { this->setMinimumHeight(newH);}
+        virtual void requestHeight(int newH) {
+            this->setMinimumHeight(newH);
+        }
 
-        virtual void requestWidth(int newW)
-        { this->setMinimumWidth(newW);}
+        virtual void requestWidth(int newW) {
+            this->setMinimumWidth(newW);
+        }
 
         CenterView *ownChild;
         CenterView(QWidget *parent=0);
 
-        void setStatusSetter(MasterView *statSett) {statusSetter = statSett;}
+        void setStatusSetter(MasterView *statSett) {_statusSetter = statSett;}
 
         void draw(QPainter *painter);
         void onclick(int x1, int y1);
