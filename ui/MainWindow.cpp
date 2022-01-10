@@ -69,136 +69,136 @@ QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confVa
 
 void MainWindow::createMenuTool()
 {
-    menuToolBar = addToolBar("mainMenu");
+    _menuToolBar = addToolBar("mainMenu");
 
     QWidget *sep1 = QWIDGET_ALLOC QWidget(this);
     sep1->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep1);
+    _menuToolBar->addWidget(sep1);
 
-    addToolButton(menuToolBar,"backview","esc");
-    QAction *hideP1 = addToolButton(menuToolBar,"new","newtab");
-    QAction *hideP2 = addToolButton(menuToolBar,"open",CONF_PARAM("Main.open"));
+    addToolButton(_menuToolBar,"backview","esc");
+    QAction *hideP1 = addToolButton(_menuToolBar,"new","newtab");
+    QAction *hideP2 = addToolButton(_menuToolBar,"open",CONF_PARAM("Main.open"));
 
     QWidget *sep2 = QWIDGET_ALLOC QWidget(this);
     sep2->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep2);
+    _menuToolBar->addWidget(sep2);
 
 
-    addToolButton(menuToolBar,"tab","tabview");
+    addToolButton(_menuToolBar,"tab","tabview");
 
     QWidget *sep3 = QWIDGET_ALLOC QWidget(this);
     sep3->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep3);
+    _menuToolBar->addWidget(sep3);
 
-    hideA1=addToolButton(menuToolBar,"tests","tests"); //HIDE
+    _hideA1=addToolButton(_menuToolBar,"tests","tests"); //HIDE
 
     QWidget *sep32 = QWIDGET_ALLOC QWidget(this);
     sep32->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep32);
+    _menuToolBar->addWidget(sep32);
 
 
-    hideA2=addToolButton(menuToolBar,"tap","tap");  //HIDE
+    _hideA2=addToolButton(_menuToolBar,"tap","tap");  //HIDE
 
     QWidget *sep31 = QWIDGET_ALLOC QWidget(this);
     sep31->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep31);
+    _menuToolBar->addWidget(sep31);
 
 
-    addToolButton(menuToolBar,"pattern","pattern");
+    addToolButton(_menuToolBar,"pattern","pattern");
 
     QWidget *sep4 = QWIDGET_ALLOC QWidget(this);
     sep4->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep4);
+    _menuToolBar->addWidget(sep4);
 
-    addToolButton(menuToolBar,"config","config");
+    addToolButton(_menuToolBar,"config","config");
 
     QWidget *sep5 = QWIDGET_ALLOC QWidget(this);
     sep5->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep5);
+    _menuToolBar->addWidget(sep5);
 
-    hideA3=addToolButton(menuToolBar,"record","rec"); //hide
-    hideA4=addToolButton(menuToolBar,"morze","morze"); //hide
+    _hideA3=addToolButton(_menuToolBar,"record","rec"); //hide
+    _hideA4=addToolButton(_menuToolBar,"morze","morze"); //hide
 
     QWidget *sep52 = QWIDGET_ALLOC QWidget(this);
     sep52->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep52);
+    _menuToolBar->addWidget(sep52);
 
 
-    hideA5=addToolButton(menuToolBar,"info","info"); //hide
+    _hideA5=addToolButton(_menuToolBar,"info","info"); //hide
 
     QWidget *sep51 = QWIDGET_ALLOC QWidget(this);
     sep51->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep51);
+    _menuToolBar->addWidget(sep51);
 
-    QAction *hideP3 = addToolButton(menuToolBar,"undo","undo");
-    addToolButton(menuToolBar,"play",CONF_PARAM("TrackView.playMidi"));
+    QAction *hideP3 = addToolButton(_menuToolBar,"undo","undo");
+    addToolButton(_menuToolBar,"play",CONF_PARAM("TrackView.playMidi"));
 
 
     QWidget *sep6 = QWIDGET_ALLOC QWidget(this);
     sep6->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep6);
+    _menuToolBar->addWidget(sep6);
 
-    addToolButton(menuToolBar,"openPannel","openPannel");
+    addToolButton(_menuToolBar,"openPannel","openPannel");
 
     QWidget *sep7 = QWIDGET_ALLOC QWidget(this);
     sep7->setSizePolicy(QSizePolicy::Expanding,
     QSizePolicy::Expanding);
-    menuToolBar->addWidget(sep7);
+    _menuToolBar->addWidget(sep7);
 
     hideP1->setVisible(false);
     hideP2->setVisible(false);
     hideP3->setVisible(false);
     //hideP4->setVisible(false);
-    hideA4->setVisible(false);
+    _hideA4->setVisible(false);
 
-    hideA1->setVisible(false);
-
-
+    _hideA1->setVisible(false);
 
 
-    this->connect(menuToolBar,SIGNAL(actionTriggered(QAction*)),
+
+
+    this->connect(_menuToolBar,SIGNAL(actionTriggered(QAction*)),
                   SLOT(actionNow(QAction*)));
 
 
     if (CONF_PARAM("toolBar")=="right")
     {
-        menuToolBar->setOrientation(Qt::Vertical);
-        addToolBar(Qt::RightToolBarArea,menuToolBar);
+        _menuToolBar->setOrientation(Qt::Vertical);
+        addToolBar(Qt::RightToolBarArea,_menuToolBar);
     }
 
     if (CONF_PARAM("toolBar")=="left")
     {
-        menuToolBar->setOrientation(Qt::Vertical);
-        addToolBar(Qt::LeftToolBarArea,menuToolBar);
+        _menuToolBar->setOrientation(Qt::Vertical);
+        addToolBar(Qt::LeftToolBarArea,_menuToolBar);
     }
 
     if (CONF_PARAM("toolBar")=="top")
     {
-        menuToolBar->setOrientation(Qt::Horizontal);
-        addToolBar(Qt::TopToolBarArea,menuToolBar);
+        _menuToolBar->setOrientation(Qt::Horizontal);
+        addToolBar(Qt::TopToolBarArea,_menuToolBar);
     }
 
     if (CONF_PARAM("toolBar")=="bottom")
     {
-        menuToolBar->setOrientation(Qt::Horizontal);
-        addToolBar(Qt::BottomToolBarArea,menuToolBar);
+        _menuToolBar->setOrientation(Qt::Horizontal);
+        addToolBar(Qt::BottomToolBarArea,_menuToolBar);
     }
 
 
-    menuToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    _menuToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    menuToolBar->setMovable(false);
-    menuToolBar->setFloatable(true);
+    _menuToolBar->setMovable(false);
+    _menuToolBar->setFloatable(true);
 
     QScreen *screen = QApplication::screens().at(0);
     double autoCoef = screen->geometry().width() > screen->geometry().height() ?
@@ -215,7 +215,7 @@ void MainWindow::createMenuTool()
         menuPlatformCoef = 4;
 
     menuStyleStr <<"QMenu { font-size:"<<(int)(autoCoef*30/menuPlatformCoef)<<"px;}QToolBar {border: 1px solid black;}";
-    menuToolBar->setStyleSheet(menuStyleStr.str().c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
+    _menuToolBar->setStyleSheet(menuStyleStr.str().c_str());//"QMenu { font-size:40px;}"); //QToolBar{spacing:15px;}
 
     int iconSize=36*autoCoef;//36
 
@@ -227,14 +227,14 @@ void MainWindow::createMenuTool()
     }
 
 
-    menuToolBar->setIconSize(QSize(iconSize,iconSize));
+    _menuToolBar->setIconSize(QSize(iconSize,iconSize));
 
     AConfig::getInst().setScaleCoef(autoCoef);
 
 
     if (CONF_PARAM("toolBar") == "0")
     {
-        menuToolBar->hide();
+        _menuToolBar->hide();
     }
 
     if (CONF_PARAM("statusBar")=="0")
@@ -376,7 +376,7 @@ QDockWidget *MainWindow::createToolDock(std::string dockname, GPannel* pan)
 
     removeDockWidget(dockTab);
 
-    int iconSize = menuToolBar->iconSize().width();
+    int iconSize = _menuToolBar->iconSize().width();
     men->setIconSize(QSize(iconSize,iconSize));
 
 
@@ -444,10 +444,10 @@ void MainWindow::createUI()
     GPannel *pan3 = QWIDGET_ALLOC GEffectsPannel(1,2,3);
     GPannel *pan4 = QWIDGET_ALLOC GClipboardPannel(1,2,3);
 
-    menu1 = createToolMenu(pan1);
-    menu2 = createToolMenu(pan2);
-    menu3 = createToolMenu(pan3);
-    menu4 = createToolMenu(pan4);
+    _menu1 = createToolMenu(pan1);
+    _menu2 = createToolMenu(pan2);
+    _menu3 = createToolMenu(pan3);
+    _menu4 = createToolMenu(pan4);
 
     createMainToolbar();
     createFloDocks();
@@ -455,21 +455,21 @@ void MainWindow::createUI()
     statusLabel = QWIDGET_ALLOC QLabel(this);
     statusLabelSecond = QWIDGET_ALLOC QLabel(this);
 
-    win = QWIDGET_ALLOC GQCombo(this);
-    win->addItem("welcome");
+    _winCombo = QWIDGET_ALLOC GQCombo(this);
+    _winCombo->addItem("welcome");
 
     if (CONF_PARAM("")=="1")
-        win->addItem("tabview"); //tab
+        _winCombo->addItem("tabview"); //tab
 
-    win->addItem("trackview");
-    win->addItem("tap");
-    win->addItem("rec");
-    win->addItem("pattern");
-    win->addItem("tests");
-    win->addItem("config");
-    win->addItem("info");
+    _winCombo->addItem("trackview");
+    _winCombo->addItem("tap");
+    _winCombo->addItem("rec");
+    _winCombo->addItem("pattern");
+    _winCombo->addItem("tests");
+    _winCombo->addItem("config");
+    _winCombo->addItem("info");
 
-    win->setElementNum(0);
+    _winCombo->setElementNum(0);
 
 
     GQCombo *win2 = QWIDGET_ALLOC GQCombo(this);
@@ -485,7 +485,7 @@ void MainWindow::createUI()
 
     statusBar()->addWidget(statusLabel,4);
     statusBar()->addWidget(statusLabelSecond,4);
-    statusBar()->addWidget(win,3);
+    statusBar()->addWidget(_winCombo,3);
     statusBar()->addWidget(win2,3);
 
 
@@ -495,19 +495,19 @@ void MainWindow::createUI()
 
     //showHelp();
 
-    if (center == 0)
-        center = QWIDGET_ALLOC CenterView();
+    if (_center == 0)
+        _center = QWIDGET_ALLOC CenterView();
 
-    if (centerScroll==0)
-        centerScroll = QWIDGET_ALLOC QScrollArea(this);
+    if (_centerScroll==0)
+        _centerScroll = QWIDGET_ALLOC QScrollArea(this);
 
-    centerScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _centerScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    center->setFatherScroll(centerScroll);
+    _center->setFatherScroll(_centerScroll);
 
-    win->setKeyPress(center);
-    win->setPushItem(true);//REFACT - rename
-    win2->setKeyPress(center);
+    _winCombo->setKeyPress(_center);
+    _winCombo->setPushItem(true);//REFACT - rename
+    win2->setKeyPress(_center);
     win2->setPushItem(true);
 
     double coef = AConfig::getInst().getScaleCoef();
@@ -515,14 +515,14 @@ void MainWindow::createUI()
     int initWidth = 770 * coef;
     int initHeightMin = 300 * coef;
 
-    center->setMinimumHeight(initHeightMin);
-    center->setMinimumWidth(initWidth);;
+    _center->setMinimumHeight(initHeightMin);
+    _center->setMinimumWidth(initWidth);;
 
-    center->setGeometry(0,0,initWidth, initHeightMin);
-    center->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _center->setGeometry(0,0,initWidth, initHeightMin);
+    _center->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    centerScroll->setWidget(center);
-    centerScroll->setWidgetResizable(true);
+    _centerScroll->setWidget(_center);
+    _centerScroll->setWidgetResizable(true);
 /*
 #ifndef __ANDROID_API__
     QScroller::grabGesture(centerScroll, QScroller::LeftMouseButtonGesture);
@@ -531,12 +531,12 @@ void MainWindow::createUI()
 #endif
 */
 
-    center->setStyleSheet("background-color:rgba(0,0,0,0);");
+    _center->setStyleSheet("background-color:rgba(0,0,0,0);");
 
-    setCentralWidget(centerScroll);
+    setCentralWidget(_centerScroll);
 
-    centerScroll->show();
-    center->show();
+    _centerScroll->show();
+    _center->show();
 
 
     setDockOptions( QMainWindow::AllowTabbedDocks |  QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
@@ -557,11 +557,11 @@ void MainWindow::createUI()
         QDockWidget *userDock = createToolDock("user",new GUserPannel(1,2,3));
         //Menu from pannel QMenu *tabMenu = createToolMenu("tab",pan1);
 
-        dock5 = tabDock;
-        dock6 = trackDock;
-        dock7 = effectsDock;
-        dock8 = clipDock;
-        dock9 = userDock;
+        _dock5 = tabDock;
+        _dock6 = trackDock;
+        _dock7 = effectsDock;
+        _dock8 = clipDock;
+        _dock9 = userDock;
 
         tabifyDockWidget(trackDock,tabDock);
         tabifyDockWidget(trackDock,effectsDock);
@@ -570,11 +570,11 @@ void MainWindow::createUI()
         tabifyDockWidget(userDock,trackDock);
 
 
-        dock5->hide();
-        dock6->hide();
-        dock7->hide();
-        dock8->hide();
-        dock9->hide();
+        _dock5->hide();
+        _dock6->hide();
+        _dock7->hide();
+        _dock8->hide();
+        _dock9->hide();
     }
     else  if (CONF_PARAM("pannels")=="oneline")  //classic is banned
     {       
@@ -584,61 +584,61 @@ void MainWindow::createUI()
         GPannel *pan7=new GTrackNewPannel();
         GPannel *pan9=new GUserPannel(1,2,3);
 
-        dock5 = createToolDock("num / move",pan1);
-        dock6 = createToolDock("edit / clipboard",pan3);
-        dock7 = createToolDock("effects",pan6);
-        dock8 = createToolDock("track / bar",pan7);
-        dock9 = createToolDock("menu",pan9);
+        _dock5 = createToolDock("num / move",pan1);
+        _dock6 = createToolDock("edit / clipboard",pan3);
+        _dock7 = createToolDock("effects",pan6);
+        _dock8 = createToolDock("track / bar",pan7);
+        _dock9 = createToolDock("menu",pan9);
 
-        tabifyDockWidget(dock9,dock5);
-        tabifyDockWidget(dock9,dock6);
-        tabifyDockWidget(dock9,dock7);
-        tabifyDockWidget(dock9,dock8);
+        tabifyDockWidget(_dock9,_dock5);
+        tabifyDockWidget(_dock9,_dock6);
+        tabifyDockWidget(_dock9,_dock7);
+        tabifyDockWidget(_dock9,_dock8);
     }
 
 
     if (CONF_PARAM("pannels")=="docked")
     {
-        dock->show();
-        dock2->show();
-        dock3->show();
-        dock4->show();
+        _dock->show();
+        _dock2->show();
+        _dock3->show();
+        _dock4->show();
     }
 }
 
 void MainWindow::recreateUI()
 {
 
-    dock5->setVisible(false);
-    dock6->setVisible(false);
-    dock7->setVisible(false);
-    dock8->setVisible(false);
-    dock9->setVisible(false);
+    _dock5->setVisible(false);
+    _dock6->setVisible(false);
+    _dock7->setVisible(false);
+    _dock8->setVisible(false);
+    _dock9->setVisible(false);
 
 
-    removeDockWidget(dock5);
-    removeDockWidget(dock6);
-    removeDockWidget(dock7);
-    removeDockWidget(dock8);
-    removeDockWidget(dock9);
+    removeDockWidget(_dock5);
+    removeDockWidget(_dock6);
+    removeDockWidget(_dock7);
+    removeDockWidget(_dock8);
+    removeDockWidget(_dock9);
 
-    dock5->deleteLater();
-    dock6->deleteLater();
-    dock7->deleteLater();
-    dock8->deleteLater();
-    dock9->deleteLater();
+    _dock5->deleteLater();
+    _dock6->deleteLater();
+    _dock7->deleteLater();
+    _dock8->deleteLater();
+    _dock9->deleteLater();
 
 
-    dock5 = nullptr;
-    dock6 = nullptr;
-    dock7 = nullptr;
-    dock8 = nullptr;
-    dock9 = nullptr;
+    _dock5 = nullptr;
+    _dock6 = nullptr;
+    _dock7 = nullptr;
+    _dock8 = nullptr;
+    _dock9 = nullptr;
 
 
 
     //delete menuToolBar;
-    removeToolBar(menuToolBar);
+    removeToolBar(_menuToolBar);
     //delete menuToolBar;
     createMenuTool();
 
@@ -660,11 +660,11 @@ void MainWindow::recreateUI()
         QDockWidget *userDock = createToolDock("user",new GUserPannel(1,2,3));
         //Menu from pannel QMenu *tabMenu = createToolMenu("tab",pan1);
 
-        dock5 = tabDock;
-        dock6 = trackDock;
-        dock7 = effectsDock;
-        dock8 = clipDock;
-        dock9 = userDock;
+        _dock5 = tabDock;
+        _dock6 = trackDock;
+        _dock7 = effectsDock;
+        _dock8 = clipDock;
+        _dock9 = userDock;
 
         tabifyDockWidget(trackDock,tabDock);
         tabifyDockWidget(trackDock,effectsDock);
@@ -681,16 +681,16 @@ void MainWindow::recreateUI()
         GPannel *pan7=new GTrackNewPannel();
         GPannel *pan9=new GUserPannel(1,2,3);
 
-        dock5 = createToolDock("num / move",pan1);
-        dock6 = createToolDock("edit / clipboard",pan3);
-        dock7 = createToolDock("effects",pan6);
-        dock8 = createToolDock("track / bar",pan7);
-        dock9 = createToolDock("menu",pan9);
+        _dock5 = createToolDock("num / move",pan1);
+        _dock6 = createToolDock("edit / clipboard",pan3);
+        _dock7 = createToolDock("effects",pan6);
+        _dock8 = createToolDock("track / bar",pan7);
+        _dock9 = createToolDock("menu",pan9);
 
-        tabifyDockWidget(dock9,dock5);
-        tabifyDockWidget(dock9,dock6);
-        tabifyDockWidget(dock9,dock7);
-        tabifyDockWidget(dock9,dock8);
+        tabifyDockWidget(_dock9,_dock5);
+        tabifyDockWidget(_dock9,_dock6);
+        tabifyDockWidget(_dock9,_dock7);
+        tabifyDockWidget(_dock9,_dock8);
     }
 
 
@@ -721,17 +721,17 @@ bool MainWindow::eventFilter([[maybe_unused]]QObject *object, QEvent *e)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     MasterView(),
-    centerScroll(0), center(0)
+    _centerScroll(0), _center(0)
 {
-    dock5=0;
-    dock6=0;
-    dock7=0;
-    dock8=0;
-    dock9=0;
-    win=0;
+    _dock5=0;
+    _dock6=0;
+    _dock7=0;
+    _dock8=0;
+    _dock9=0;
+    _winCombo=0;
 
     AClipboard::
-    setCurrentClip(&clip1);
+    setCurrentClip(&_clip1);
 
     qApp->installEventFilter(this);
 
@@ -746,15 +746,15 @@ void MainWindow::resizeEvent([[maybe_unused]]QResizeEvent* event)
 
     if (geometry().width() < geometry().height())
     {
-        hideA2->setVisible(false);
-        hideA3->setVisible(false);
-        hideA5->setVisible(false);
+        _hideA2->setVisible(false);
+        _hideA3->setVisible(false);
+        _hideA5->setVisible(false);
     }
     else
     {
-        hideA2->setVisible(true);
-        hideA3->setVisible(true);
-        hideA5->setVisible(true);
+        _hideA2->setVisible(true);
+        _hideA3->setVisible(true);
+        _hideA5->setVisible(true);
     }
 }
 
@@ -809,78 +809,78 @@ void MainWindow::pushForceKey(std::string keyevent)
 {
     if (keyevent=="openPannel")
     {
-        if (dock5)
+        if (_dock5)
         {
-            if (dock5->isVisible())
+            if (_dock5->isVisible())
             {
-                dock5->setVisible(false);
-                dock6->setVisible(false);
-                dock7->setVisible(false);
-                dock8->setVisible(false);
-                dock9->setVisible(false);
+                _dock5->setVisible(false);
+                _dock6->setVisible(false);
+                _dock7->setVisible(false);
+                _dock8->setVisible(false);
+                _dock9->setVisible(false);
             }
             else
             {
-                dock5->setVisible(true);
-                dock6->setVisible(true);
-                dock7->setVisible(true);
-                dock8->setVisible(true);
-                dock9->setVisible(true);
+                _dock5->setVisible(true);
+                _dock6->setVisible(true);
+                _dock7->setVisible(true);
+                _dock8->setVisible(true);
+                _dock9->setVisible(true);
             }
         }
     }
     if (keyevent=="playMidi")
     {
-        if (center)
-            center->pushForceKey(CONF_PARAM("TrackView.playMidi"));
+        if (_center)
+            _center->pushForceKey(CONF_PARAM("TrackView.playMidi"));
     }
     if (keyevent=="menu") //REFACT - make checkable
     {
-        dock5->setVisible(false);
-        dock6->setVisible(false);
-        dock7->setVisible(false);
-        dock8->setVisible(false);
-        dock9->setVisible(true);
+        _dock5->setVisible(false);
+        _dock6->setVisible(false);
+        _dock7->setVisible(false);
+        _dock8->setVisible(false);
+        _dock9->setVisible(true);
     }
     if (keyevent=="track / bar")
     {
-        dock5->setVisible(false);
-        dock6->setVisible(false);
-        dock7->setVisible(false);
-        dock8->setVisible(true);
-        dock9->setVisible(false);
+        _dock5->setVisible(false);
+        _dock6->setVisible(false);
+        _dock7->setVisible(false);
+        _dock8->setVisible(true);
+        _dock9->setVisible(false);
     }
     if (keyevent=="effects")
     {
-        dock5->setVisible(false);
-        dock6->setVisible(false);
-        dock7->setVisible(true);
-        dock8->setVisible(false);
-        dock9->setVisible(false);
+        _dock5->setVisible(false);
+        _dock6->setVisible(false);
+        _dock7->setVisible(true);
+        _dock8->setVisible(false);
+        _dock9->setVisible(false);
     }
     if (keyevent=="edit / clipboard")
     {
-        dock5->setVisible(false);
-        dock6->setVisible(true);
-        dock7->setVisible(false);
-        dock8->setVisible(false);
-        dock9->setVisible(false);
+        _dock5->setVisible(false);
+        _dock6->setVisible(true);
+        _dock7->setVisible(false);
+        _dock8->setVisible(false);
+        _dock9->setVisible(false);
     }
     if (keyevent=="num / move")
     {
-        dock5->setVisible(true);
-        dock6->setVisible(false);
-        dock7->setVisible(false);
-        dock8->setVisible(false);
-        dock9->setVisible(false);
+        _dock5->setVisible(true);
+        _dock6->setVisible(false);
+        _dock7->setVisible(false);
+        _dock8->setVisible(false);
+        _dock9->setVisible(false);
     }
     if (keyevent=="all")
     {
-        dock5->setVisible(true);
-        dock6->setVisible(true);
-        dock7->setVisible(true);
-        dock8->setVisible(true);
-        dock9->setVisible(true);
+        _dock5->setVisible(true);
+        _dock6->setVisible(true);
+        _dock7->setVisible(true);
+        _dock8->setVisible(true);
+        _dock9->setVisible(true);
     }
 
     if (keyevent=="start_audioi") //"openPannel"
@@ -916,57 +916,57 @@ void MainWindow::actionNow(QAction *action)
 
   if (textOut=="tab")
   {
-      if (dock)
+      if (_dock)
       {
-          if (dock->isHidden())
+          if (_dock->isHidden())
           {
-              dock->setGeometry(this->pos().x()+50,this->pos().y()+390,750,110);
-              dock->show();
+              _dock->setGeometry(this->pos().x()+50,this->pos().y()+390,750,110);
+              _dock->show();
           }
           else
-            dock->hide();
+            _dock->hide();
       }
   }
 
   if (textOut=="track_dock")
   {
-      if (dock3)
+      if (_dock3)
       {
-          if (dock3->isHidden())
+          if (_dock3->isHidden())
           {
-              dock3->setGeometry(this->pos().x()+50,this->pos().y()+390,650,110);
-              dock3->show();
+              _dock3->setGeometry(this->pos().x()+50,this->pos().y()+390,650,110);
+              _dock3->show();
           }
           else
-            dock3->hide();
+            _dock3->hide();
       }
   }
 
   if (textOut=="effects")
   {
-      if (dock4)
+      if (_dock4)
       {
-          if (dock4->isHidden())
+          if (_dock4->isHidden())
           {
-              dock4->setGeometry(this->pos().x()+50,this->pos().y()+390,750,110);
-              dock4->show();
+              _dock4->setGeometry(this->pos().x()+50,this->pos().y()+390,750,110);
+              _dock4->show();
           }
           else
-            dock4->hide();
+            _dock4->hide();
       }
   }
 
   if (textOut=="clipboard")
   {
-      if (dock2)
+      if (_dock2)
       {
-          if (dock2->isHidden())
+          if (_dock2->isHidden())
           {
-              dock2->setGeometry(this->pos().x()+50,this->pos().y()+390,500,60);
-              dock2->show();
+              _dock2->setGeometry(this->pos().x()+50,this->pos().y()+390,500,60);
+              _dock2->show();
           }
           else
-            dock2->hide();
+            _dock2->hide();
       }
   }
 
@@ -983,11 +983,11 @@ void MainWindow::actionNow(QAction *action)
           int initHeightMin = 300 * currentScale;
           //int initHeightMax = 500 * currentScale;
 
-          center->setMinimumHeight(initHeightMin);
+          _center->setMinimumHeight(initHeightMin);
           //center->setMaximumHeight(initHeightMax);
-          center->setMinimumWidth(initWidth);
+          _center->setMinimumWidth(initWidth);
 
-          center->setGeometry(0,0,initWidth, initHeightMin);
+          _center->setGeometry(0,0,initWidth, initHeightMin);
       }
   }
   if (textOut=="zoomOut")
@@ -1003,22 +1003,22 @@ void MainWindow::actionNow(QAction *action)
           int initHeightMin = 300 * currentScale;
           //int initHeightMax = 500 * currentScale;
 
-          center->setMinimumHeight(initHeightMin);
+          _center->setMinimumHeight(initHeightMin);
          // center->setMaximumHeight(initHeightMax);
-          center->setMinimumWidth(initWidth);
+          _center->setMinimumWidth(initWidth);
 
-          center->setGeometry(0,0,initWidth, initHeightMin);
+          _center->setGeometry(0,0,initWidth, initHeightMin);
       }
   }
 
   if (textOut == "clip1")
-    AClipboard::setCurrentClip(&clip1);
+    AClipboard::setCurrentClip(&_clip1);
 
   if (textOut == "clip2")
-    AClipboard::setCurrentClip(&clip2);
+    AClipboard::setCurrentClip(&_clip2);
 
   if (textOut == "clip3")
-    AClipboard::setCurrentClip(&clip3);
+    AClipboard::setCurrentClip(&_clip3);
 
 
   if (textOut=="start_audioi") //"openPannel"
@@ -1106,23 +1106,23 @@ void MainWindow::actionNow(QAction *action)
   }
 
   if (textOut=="openPannel") {
-    if (dock5)
+    if (_dock5)
     {
-        if (dock5->isVisible())
+        if (_dock5->isVisible())
         {
-            dock5->setVisible(false);
-            dock6->setVisible(false);
-            dock7->setVisible(false);
-            dock8->setVisible(false);
-            dock9->setVisible(false);
+            _dock5->setVisible(false);
+            _dock6->setVisible(false);
+            _dock7->setVisible(false);
+            _dock8->setVisible(false);
+            _dock9->setVisible(false);
         }
         else
         {
-            dock5->setVisible(true);
-            dock6->setVisible(true);
-            dock7->setVisible(true);
-            dock8->setVisible(true);
-            dock9->setVisible(true);
+            _dock5->setVisible(true);
+            _dock6->setVisible(true);
+            _dock7->setVisible(true);
+            _dock8->setVisible(true);
+            _dock9->setVisible(true);
         }
     }
     else
@@ -1143,11 +1143,11 @@ void MainWindow::actionNow(QAction *action)
             QDockWidget *userDock = createToolDock("user",new GUserPannel(1,2,3));
             //Menu from pannel QMenu *tabMenu = createToolMenu("tab",pan1);
 
-            dock5 = tabDock;
-            dock6 = trackDock;
-            dock7 = effectsDock;
-            dock8 = clipDock;
-            dock9 = userDock;
+            _dock5 = tabDock;
+            _dock6 = trackDock;
+            _dock7 = effectsDock;
+            _dock8 = clipDock;
+            _dock9 = userDock;
 
             tabifyDockWidget(trackDock,tabDock);
             tabifyDockWidget(trackDock,effectsDock);
@@ -1163,67 +1163,67 @@ void MainWindow::actionNow(QAction *action)
 
   if (textOut=="only user")
   {
-          dock5->setVisible(false);
-          dock6->setVisible(false);
-          dock7->setVisible(false);
-          dock8->setVisible(false);
-          dock9->setVisible(true);
+          _dock5->setVisible(false);
+          _dock6->setVisible(false);
+          _dock7->setVisible(false);
+          _dock8->setVisible(false);
+          _dock9->setVisible(true);
           return;
   }
 
   if (textOut=="only clipboard")
   {
-          dock5->setVisible(false);
-          dock6->setVisible(false);
-          dock7->setVisible(false);
-          dock8->setVisible(true);
-          dock9->setVisible(false);
+          _dock5->setVisible(false);
+          _dock6->setVisible(false);
+          _dock7->setVisible(false);
+          _dock8->setVisible(true);
+          _dock9->setVisible(false);
           return;
   }
 
   if (textOut=="only effects")
   {
-          dock5->setVisible(false);
-          dock6->setVisible(false);
-          dock7->setVisible(true);
-          dock8->setVisible(false);
-          dock9->setVisible(false);
+          _dock5->setVisible(false);
+          _dock6->setVisible(false);
+          _dock7->setVisible(true);
+          _dock8->setVisible(false);
+          _dock9->setVisible(false);
           return;
   }
 
   if (textOut=="only track")
   {
-          dock5->setVisible(false);
-          dock6->setVisible(true);
-          dock7->setVisible(false);
-          dock8->setVisible(false);
-          dock9->setVisible(false);
+          _dock5->setVisible(false);
+          _dock6->setVisible(true);
+          _dock7->setVisible(false);
+          _dock8->setVisible(false);
+          _dock9->setVisible(false);
           return;
   }
 
   if (textOut=="only tab")
   {
-          dock5->setVisible(true);
-          dock6->setVisible(false);
-          dock7->setVisible(false);
-          dock8->setVisible(false);
-          dock9->setVisible(false);
+          _dock5->setVisible(true);
+          _dock6->setVisible(false);
+          _dock7->setVisible(false);
+          _dock8->setVisible(false);
+          _dock9->setVisible(false);
           return;
   }
 
   if (textOut == "all pannels")
   {
-      dock5->setVisible(true);
-      dock6->setVisible(true);
-      dock7->setVisible(true);
-      dock8->setVisible(true);
-      dock9->setVisible(true);
+      _dock5->setVisible(true);
+      _dock6->setVisible(true);
+      _dock7->setVisible(true);
+      _dock8->setVisible(true);
+      _dock9->setVisible(true);
       return;
   }
 
   {
       if (textOut.size() > 0)
-        center->pushForceKey(textOut.toStdString());
+        _center->pushForceKey(textOut.toStdString());
   }
 
 
@@ -1238,15 +1238,15 @@ void MainWindow::moveEvent(QMoveEvent *ev)
     int x2 = ev->oldPos().x();
     int y2 = ev->oldPos().y();
 
-    if (dock)
+    if (_dock)
     {
-        int dockX = dock->pos().x();
-        int dockY = dock->pos().y();
+        int dockX = _dock->pos().x();
+        int dockY = _dock->pos().y();
 
         int newDX = x1-x2 + dockX;
         int newDY = y1-y2 + dockY;
 
-        dock->setGeometry(newDX,newDY,750,110);
+        _dock->setGeometry(newDX,newDY,750,110);
     }
 }
 
@@ -1312,8 +1312,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *mEvent)
    int xPress = mEvent->pos().x()  / scaleCoef;
    int yPress = mEvent->pos().y() / scaleCoef;
 
-   int xDiff = lastPressX - xPress;
-   int yDiff = lastPressY - yPress;
+   int xDiff = _lastPressX - xPress;
+   int yDiff = _lastPressY - yPress;
 
    bool isMoved = ((abs(xDiff)+abs(yDiff))>20);
 
@@ -1398,8 +1398,8 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
         singleKey = std::string("shift+") + singleKey;
 
 
-    if (center)
-        center->pushForceKey(singleKey);
+    if (_center)
+        _center->pushForceKey(singleKey);
 
     event->accept();
 
@@ -1426,8 +1426,8 @@ void MainWindow::mousePressEvent( QMouseEvent * event )
     {
         double scaleCoef = AConfig::getInst().getScaleCoef();
 
-        lastPressX = xPress/scaleCoef;
-        lastPressY = yPress/scaleCoef;
+        _lastPressX = xPress/scaleCoef;
+        _lastPressY = yPress/scaleCoef;
     }
 
 }
@@ -1536,13 +1536,13 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
         if (swipeGesture->horizontalDirection())
         {
             //sX <<"Vert";
-            if (dock5->isVisible()==false)
+            if (_dock5->isVisible()==false)
             {
-                dock5->setVisible(true);
-                dock6->setVisible(true);
-                dock7->setVisible(true);
-                dock8->setVisible(true);
-                dock9->setVisible(true);
+                _dock5->setVisible(true);
+                _dock6->setVisible(true);
+                _dock7->setVisible(true);
+                _dock8->setVisible(true);
+                _dock9->setVisible(true);
             }
         }
     }
@@ -1559,8 +1559,8 @@ bool MainWindow::gestureEvent(QGestureEvent *event)
             qDebug()<<"Tap and hold x="<<tapGest->position().x()<<"; y="
                  <<tapGest->position().y();
 
-            if (center)
-                center->ondblclick(tapGest->position().x(),tapGest->position().y());
+            if (_center)
+                _center->ondblclick(tapGest->position().x(),tapGest->position().y());
 
             event->accept();
             }
@@ -1598,9 +1598,9 @@ void MainWindow::initAudioInput()
         format = info.nearestFormat(format);
     }
 
-    audioInfo  = QWIDGET_ALLOC AudioInfo(format, this);
+    _pAudioInfo  = QWIDGET_ALLOC AudioInfo(format, this);
     //connect(audioInfo, SIGNAL(update()), SLOT(refreshDisplay()));
-    audioInput = QWIDGET_ALLOC QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
+    _pAudioInput = QWIDGET_ALLOC QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this);
 
 }
 
@@ -1683,10 +1683,10 @@ void MainWindow::stopAudioOutput()
 void MainWindow::startAudioInput()
 {
 
-    audioInfo->collector().clear();
+    _pAudioInfo->collector().clear();
 
-    audioInfo->start();
-    audioInput->start(audioInfo);
+    _pAudioInfo->start();
+    _pAudioInput->start(_pAudioInfo);
 
 }
 
@@ -1694,8 +1694,8 @@ void MainWindow::startAudioInput()
 void MainWindow::stopAudioInput()
 {
 
-    audioInfo->stop();
-    audioInput->stop();
+    _pAudioInfo->stop();
+    _pAudioInput->stop();
 
 
     QDateTime timeDate(QDateTime::currentDateTime());
@@ -1735,9 +1735,9 @@ void MainWindow::stopAudioInput()
     if (f.open(QIODevice::Append))
     {
 
-        qDebug() << "Collector size was "<<audioInfo->collector().size();
+        qDebug() << "Collector size was "<<_pAudioInfo->collector().size();
 
-        f.write(audioInfo->collector());
+        f.write(_pAudioInfo->collector());
         f.flush();
         f.close();
     }
@@ -1745,7 +1745,7 @@ void MainWindow::stopAudioInput()
         qDebug() << "Open file for raw record error;";
 
 
-    audioInfo->collector().clear();
+    _pAudioInfo->collector().clear();
 
     //check up
 
@@ -1873,13 +1873,13 @@ QAction* MainWindow::addToolButton(QToolBar *toolBar, std::string button, std::s
         menu->addMenu(pans)->setIconText("pannels");
 
         QMenu *m6 = QWIDGET_ALLOC QMenu(menu); //menuBar()->addMenu("pannels");
-        m6->addMenu(menu1)->setIconText("tab");
-        m6->addMenu(menu2)->setIconText("track_dock");
-        m6->addMenu(menu3)->setIconText("effects");
-        m6->addMenu(menu4)->setIconText("clipboard");
+        m6->addMenu(_menu1)->setIconText("tab");
+        m6->addMenu(_menu2)->setIconText("track_dock");
+        m6->addMenu(_menu3)->setIconText("effects");
+        m6->addMenu(_menu4)->setIconText("clipboard");
 
-        pannelsMenu = m6;
-        menu->addMenu(pannelsMenu)->setIconText("menu");
+        _pannelsMenu = m6;
+        menu->addMenu(_pannelsMenu)->setIconText("menu");
         act->setMenu(menu);
     }
 
@@ -2030,25 +2030,25 @@ void addToolButtonGrid(MainWindow *mainWindow,QDockWidget *dock, std::string but
 
 void MainWindow::createFloDocks()
 {
-    dock = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
+    _dock = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
                            Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint); //("pannel",this);
 
 
     addToolButtonGrid(0,0,"",""); //new dock
 
-    QLabel *labelTitle = QWIDGET_ALLOC QLabel("pannel",dock);
-    dock->setTitleBarWidget(labelTitle);
+    QLabel *labelTitle = QWIDGET_ALLOC QLabel("pannel",_dock);
+    _dock->setTitleBarWidget(labelTitle);
 
 
-    dock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
+    _dock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable
                       |QDockWidget::DockWidgetVerticalTitleBar);
 
     //dock->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     //dock->setWindowFlags( Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
 
-    dock->setAllowedAreas(Qt::NoDockWidgetArea);
+    _dock->setAllowedAreas(Qt::NoDockWidgetArea);
 
-    this->addDockWidget(Qt::NoDockWidgetArea ,  dock );
+    this->addDockWidget(Qt::NoDockWidgetArea ,  _dock );
     //this->tabifyDockWidget(dock,dockWidget2);
 
 
@@ -2056,38 +2056,38 @@ void MainWindow::createFloDocks()
      //QToolBar *navigation=0;
 
 
-    addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playAMusic"));
+    addToolButtonGrid(this,_dock,"play",CONF_PARAM("TrackView.playAMusic"));
 
     for (size_t i = 0; i < 10; ++i)
-     addToolButtonGrid(this,dock,std::to_string(i),std::to_string(i));
+     addToolButtonGrid(this,_dock,std::to_string(i),std::to_string(i));
 
-    addToolButtonGrid(this,dock,"prevBar",CONF_PARAM("TrackView.prevBar"));
-    addToolButtonGrid(this,dock,"upString",CONF_PARAM("TrackView.stringUp"));
-    addToolButtonGrid(this,dock,"nextBar",CONF_PARAM("TrackView.nextBar"));
+    addToolButtonGrid(this,_dock,"prevBar",CONF_PARAM("TrackView.prevBar"));
+    addToolButtonGrid(this,_dock,"upString",CONF_PARAM("TrackView.stringUp"));
+    addToolButtonGrid(this,_dock,"nextBar",CONF_PARAM("TrackView.nextBar"));
 
-    addToolButtonGrid(this,dock,"play",CONF_PARAM("TrackView.playMidi"),true);
+    addToolButtonGrid(this,_dock,"play",CONF_PARAM("TrackView.playMidi"),true);
 
-     addToolButtonGrid(this,dock,"qp","q",true);
-     addToolButtonGrid(this,dock,"qm","w",true); //refact conf prarm it
-     addToolButtonGrid(this,dock,"p","p",true);
-     addToolButtonGrid(this,dock,"del",CONF_PARAM("TrackView.deleteNote"),true);
-     addToolButtonGrid(this,dock,"-3-","-3-",true);
-     addToolButtonGrid(this,dock,"leeg","leeg",true);
-     addToolButtonGrid(this,dock,"x","dead",true);
-     addToolButtonGrid(this,dock,"newBar","newBar",true);
-     addToolButtonGrid(this,dock,"save","quicksave",true);//CONF_PARAM("TrackView.save")
-     addToolButtonGrid(this,dock,"open","quickopen",true); //CONF_PARAM("TrackView.quickOpen")
-
-
-
-    addToolButtonGrid(this,dock,"prevBeat",CONF_PARAM("TrackView.prevBeat"),true);
-    addToolButtonGrid(this,dock,"downString",CONF_PARAM("TrackView.stringDown"),true);
-    addToolButtonGrid(this,dock,"nextBeat",CONF_PARAM("TrackView.nextBeat"),true);
+     addToolButtonGrid(this,_dock,"qp","q",true);
+     addToolButtonGrid(this,_dock,"qm","w",true); //refact conf prarm it
+     addToolButtonGrid(this,_dock,"p","p",true);
+     addToolButtonGrid(this,_dock,"del",CONF_PARAM("TrackView.deleteNote"),true);
+     addToolButtonGrid(this,_dock,"-3-","-3-",true);
+     addToolButtonGrid(this,_dock,"leeg","leeg",true);
+     addToolButtonGrid(this,_dock,"x","dead",true);
+     addToolButtonGrid(this,_dock,"newBar","newBar",true);
+     addToolButtonGrid(this,_dock,"save","quicksave",true);//CONF_PARAM("TrackView.save")
+     addToolButtonGrid(this,_dock,"open","quickopen",true); //CONF_PARAM("TrackView.quickOpen")
 
 
 
-    dock->setGeometry(90,390,750,110);
-    dock->show();
+    addToolButtonGrid(this,_dock,"prevBeat",CONF_PARAM("TrackView.prevBeat"),true);
+    addToolButtonGrid(this,_dock,"downString",CONF_PARAM("TrackView.stringDown"),true);
+    addToolButtonGrid(this,_dock,"nextBeat",CONF_PARAM("TrackView.nextBeat"),true);
+
+
+
+    _dock->setGeometry(90,390,750,110);
+    _dock->show();
 
 
     QDockWidget *dock2 = QWIDGET_ALLOC QDockWidget(this,Qt::Window | Qt::WindowStaysOnTopHint |
@@ -2210,14 +2210,14 @@ void MainWindow::createFloDocks()
     this->addDockWidget(Qt::RightDockWidgetArea ,  dock4);
 
 
-    dock->hide();
+    _dock->hide();
     dock2->hide();
     dock3->hide();
     dock4->hide();
 
-    this->dock2 = dock2;
-    this->dock3 = dock3;
-    this->dock4 = dock4;
+    this->_dock2 = dock2;
+    this->_dock3 = dock3;
+    this->_dock4 = dock4;
 
     //DOCKs are hiden now
     //dock = dock2 = 0;

@@ -41,34 +41,41 @@ namespace gtmy {
     {
         Q_OBJECT
 
-    int lastPressX,lastPressY;
-    QDockWidget *dock,*dock2,*dock3,*dock4;
-    QDockWidget *dock5,*dock6,*dock7,*dock8,*dock9;
-    QMenu *menu1,*menu2,*menu3,*menu4,*pannelsMenu;
-    QToolBar *menuToolBar;
+        int _lastPressX;
+        int _lastPressY;
 
-    QAction *hideA1,*hideA2,*hideA3,*hideA4,*hideA5;
-    QMutex keyMute;
+        QDockWidget *_dock, *_dock2, *_dock3, *_dock4;
+        QDockWidget *_dock5, *_dock6, *_dock7, *_dock8, *_dock9;
 
-    GQCombo *win;
+        QMenu *_menu1, *_menu2, *_menu3, *_menu4, *_pannelsMenu;
+        QToolBar *_menuToolBar;
 
-    //some audio
+        QAction *_hideA1, *_hideA2, *_hideA3, *_hideA4, *_hideA5;
+        QMutex _keyMutex;
 
-    AudioInfo *audioInfo;
-    QAudioInput *audioInput;
+        GQCombo *_winCombo;
 
-    AClipboard clip1,clip2,clip3;
+        AudioInfo *_pAudioInfo;
+        QAudioInput *_pAudioInput;
 
-    QScrollArea *centerScroll; //refact scroll
+        AClipboard _clip1, _clip2, _clip3;
+        QScrollArea *_centerScroll;
+        CenterView *_center;
 
-    CenterView *center;
+        void handlePanelAction(int action, int row);
+
+        QLabel *statusLabel;
+        QLabel *statusLabelSecond;
+        QLabel *statusLabelThird;
+        QProgressBar *statusProgress;
+
 
     public:
 
         void pushForceKey(std::string keyevent) override;
 
-        CenterView* getCenterView() { return center; }
-        void setCenterView(CenterView* newCenter) { center = newCenter; }
+        CenterView* getCenterView() { return _center; }
+        void setCenterView(CenterView* newCenter) { _center = newCenter; }
 
         bool eventFilter(QObject *object, QEvent *e) override;
 
@@ -90,61 +97,39 @@ namespace gtmy {
         void stopAudioInput();
 
         void initAudioInput();
-
         void initAudioOutput();
 
         void startAudioOutput(std::string localName);
         void stopAudioOutput();
 
 
-        QTimer *audioPushTimer;
+        QTimer* audioPushTimer;
 
-        AudioSpeaker *audioSpeaker;
-        QAudioOutput *audioOutput;
+        AudioSpeaker* audioSpeaker;
+        QAudioOutput* audioOutput;
 
-        //==============
-        //==============
-
-        //handling events
-        void paintEvent(QPaintEvent *event) override;
-        void mousePressEvent( QMouseEvent * event ) override;
-        void mouseDoubleClickEvent( QMouseEvent * event ) override;
-        void keyPressEvent ( QKeyEvent * event ) override;
-
-        void mouseReleaseEvent(QMouseEvent *mEvent) override;
-
-        bool event(QEvent *event) Q_DECL_OVERRIDE;
-        bool gestureEvent(QGestureEvent *event);
-
+        void paintEvent(QPaintEvent* event) override;
+        void mousePressEvent(QMouseEvent* event ) override;
+        void mouseDoubleClickEvent(QMouseEvent* event ) override;
+        void keyPressEvent (QKeyEvent* event ) override;
+        void mouseReleaseEvent(QMouseEvent* mEvent) override;
+        bool event(QEvent* event) Q_DECL_OVERRIDE;
+        bool gestureEvent(QGestureEvent* event);
         void resizeEvent(QResizeEvent* event) override;
-
 
         void createUI();
         void recreateUI();
-
         void createMenuTool();
-
         void createMainToolbar();
         void createFloDocks();
-
         QDockWidget* createToolDock(std::string dockname, GPannel *pannel);
         QMenu *createToolMenu(GPannel *pannel);
 
         void setViewPannel(size_t val) override {
-            if (win)
-                win->setCurrentIndex(val);
+            if (_winCombo)
+                _winCombo->setCurrentIndex(val);
         }
 
-
-    private:
-        void handlePanelAction(int action, int row);
-
-        QLabel *statusLabel;
-        QLabel *statusLabelSecond;
-        QLabel *statusLabelThird;
-        QProgressBar *statusProgress;
-
-        //MainView view;
 
     private slots:
 
@@ -156,11 +141,8 @@ namespace gtmy {
     public slots:
 
         void actionNow(QAction *action);
-
         void threadFinished();
-
         void audioTimerSlot();
-
 
     private:
         Ui::MainWindow *ui;
