@@ -66,28 +66,24 @@ struct BpmChangeKnot {
 
 std::uint8_t Tab::getBPMStatusOnBar(size_t barN) const
 {
-    for (size_t i = 0 ; i < size(); ++i)
-    {
+    for (size_t i = 0 ; i < size(); ++i) {
         auto& bar = at(i)->at(barN);
-
         if (bar->size())
-        {
             if (bar->at(0)->getChangesPtr()->size())
-            {
-                //bar->getV(0)->changes.getV(0)->changeType;
-            }
-        }
-        bar->size();
+                ;//bar->getV(0)->changes.getV(0)->changeType;
     }
+    return 0; //TODO
 }
 
-int Tab::getBpmOnBar(size_t barN) const
-{
-    int bpmTrace = _bpmTemp;
+
+int Tab::getBpmOnBar([[maybe_unused]] size_t barN) const {
+    [[maybe_unused]] int bpmTrace = _bpmTemp;
     for (size_t i = 0; i < _timeLine.size(); ++i){
         //TODO
     }
+    return 0;
 }
+
 
 void Tab::createTimeLine(size_t shiftTheCursor)
 {

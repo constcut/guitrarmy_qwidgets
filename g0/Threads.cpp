@@ -130,7 +130,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
        }
     }
 
-    int changeIndex = 0;
+    size_t changeIndex = 0;
 
     setBPM(bpmChangeList[changeIndex].newBpm);
     _beatTimes.clear();

@@ -170,30 +170,30 @@ class MasterView;
       virtual int getToolBarHeight() { return 0; }
       virtual int getStatusBarHeight() { return 0; }
 
-      virtual void SetButton([[maybe_unused]] int index,
+      virtual void SetButton([[maybe_unused]] size_t index,
                              [[maybe_unused]] std::string text,
                              [[maybe_unused]] int x1, [[maybe_unused]] int y1,
                              [[maybe_unused]] int w1, [[maybe_unused]] int h1,
                              [[maybe_unused]] std::string pressSyn) {}
 
-      virtual void SetButton(int index, GLabel *w, std::string pressSyn) {
-        SetButton(index, w->getText(), w->getX(), w->getY(), w->getW(), w->getH(),
-                  pressSyn);
+      virtual void SetButton(size_t index, GLabel *w, std::string pressSyn) {
+        SetButton(index, w->getText(), w->getX(), w->getY(),
+                  w->getW(), w->getH(), pressSyn);
       }
 
-      virtual void setComboBox([[maybe_unused]] int index,
+      virtual void setComboBox([[maybe_unused]] size_t index,
                                [[maybe_unused]] std::string,
                                [[maybe_unused]] int x1, [[maybe_unused]] int y1,
                                [[maybe_unused]] int w1, [[maybe_unused]] int h1,
                                [[maybe_unused]] int forceValue) {}
 
-      virtual void renewComboParams([[maybe_unused]] int index,
+      virtual void renewComboParams([[maybe_unused]] size_t index,
                                     [[maybe_unused]] std::string params) {}
 
-      virtual void setViewPannel([[maybe_unused]] int val) {}
-      virtual int getComboBoxValue([[maybe_unused]] int index) { return -1; }
+      virtual void setViewPannel([[maybe_unused]] size_t val) {}
+      virtual int getComboBoxValue([[maybe_unused]] size_t index) { return -1; }
       virtual void showHelp() {}
-      virtual void setStatusBarMessage([[maybe_unused]] int index,
+      virtual void setStatusBarMessage([[maybe_unused]] size_t index,
                                        [[maybe_unused]] std::string text,
                                        [[maybe_unused]] int timeOut = 0) {}
       virtual void pushForceKey([[maybe_unused]] std::string keyevent) {}

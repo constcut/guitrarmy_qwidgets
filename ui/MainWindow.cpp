@@ -1251,7 +1251,7 @@ void MainWindow::moveEvent(QMoveEvent *ev)
 }
 
 
-void MainWindow::setStatusBarMessage(int index, std::string text, int timeOut)
+void MainWindow::setStatusBarMessage(size_t index, std::string text, int timeOut)
 {
     QString uniText = QTextCodec::codecForLocale()->toUnicode(text.c_str());
    if (index==0)

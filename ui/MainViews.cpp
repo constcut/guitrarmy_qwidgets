@@ -471,7 +471,7 @@ void TestsView::onclick(int x1, int y1) {
 
 QByteArray alphaCut(QByteArray &src) {
   QByteArray newBytes;
-  for (size_t i = 0; i < src.size(); ++i) {
+  for (int i = 0; i < src.size(); ++i) {
     int letter = src.at(i) + 128;
     int hi = letter / 16;
     int lo = letter % 16;

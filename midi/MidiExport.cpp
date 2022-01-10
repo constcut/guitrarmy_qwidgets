@@ -468,20 +468,17 @@ bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8
     std::uint8_t stringN = note->getStringNumber();
     std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1];
 
-    std::uint8_t volume = note->getVolume();
+    //std::uint8_t volume = note->getVolume();
     std::uint8_t midiVelocy = 80; //calcMidiVolumeGP(volume);
-
 
     if (note->getEffects().inRange(Effect::Harmonics,Effect::HarmonicsV6))
     { //11-16 - harmonics
         //update calculations for harmonics
-      if (note->getEffects().getEffectAt(Effect::Harmonics))
-      {
+      if (note->getEffects().getEffectAt(Effect::Harmonics)) {
           if (fret==7) midiNote += 12;
           if (fret==5) midiNote += 19;
       }
-      if (note->getEffects().getEffectAt(Effect::HarmonicsV4))
-      {
+      if (note->getEffects().getEffectAt(Effect::HarmonicsV4)){
           midiNote += 12;
       }
       //2 artif+5; 3 artif+7; 6 artif+12;

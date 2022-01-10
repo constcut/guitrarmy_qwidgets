@@ -78,9 +78,9 @@ namespace gtmy {
         void SetButton(size_t index, std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
         void addButton(std::string text, int x1, int y1, int w1, int h1, std::string pressSyn);
         void addComboBox(std::string params, int x1, int y1, int w1, int h1, int forceValue);
-        void setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue);
+        void setComboBox(size_t index, std::string params, int x1, int y1, int w1, int h1, int forceValue);
 
-        void renewComboParams(int index, std::string params);
+        void renewComboParams(size_t index, std::string params);
         void renewComboParams(GQCombo *newBox, std::string params);
 
         int getComboBoxValue(size_t index);
@@ -116,7 +116,7 @@ namespace gtmy {
         virtual int getWidth();
         virtual int getHeight();
 
-        virtual void setStatusBarMessage(int index, std::string text, int timeOut=0);
+        virtual void setStatusBarMessage(size_t index, std::string text, int timeOut=0);
 
         virtual void pushForceKey(std::string keyevent);
         virtual bool isPlaying();

@@ -19,7 +19,7 @@ namespace gtmy {
             int16_t formatType; //2
             int16_t nTracks; //2
             int16_t timeDevision; //2
-            //read from stream or string
+            //TODO check uint?
         };
 
     private:

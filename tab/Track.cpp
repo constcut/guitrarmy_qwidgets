@@ -93,70 +93,23 @@ size_t Track::connectNotes() //for let ring
 
    Note *ringRay[16] = {0}; //let this remember to set max strings up to 16
    size_t indRay[10] = {0};
-   //byte  fretRay[16] = {0};
    size_t notesCount[16] = {0};
 
    size_t count = 0;
-   size_t beatIndex = 0;
 
-   while (index < _beatsAmount)
-   {
-       //connect simmiliar note values - good for let ring and leeg
-      //ring ray - here to move
+   while (index < _beatsAmount) {
 
-
-       for (size_t noteI=0; noteI < curBeat->size(); ++noteI)
-       {
+       for (size_t noteI=0; noteI < curBeat->size(); ++noteI) {
            Note *curNote = curBeat->at(noteI).get();
 
            std::uint8_t stringN = curNote->getStringNumber();
            Note *prevNote = ringRay[stringN];
            size_t prevInd = indRay[stringN];
 
-           if (prevNote)
-           {
+           if (prevNote) {
                prevNote->setNext(curNote);
                curNote->setPrev(prevNote);
            }
-
-           /*
-           byte noteState = curNote->getState();
-
-           if (curNote->getFret() == 63||
-                   (noteState==2|| //enum NoteState
-                    noteState==4||
-                    noteState==6))
-           {
-               byte prevFret = 64;
-
-               if (prevNote)
-               {
-                   prevFret = prevNote->getFret();
-                   curNote->setFret(prevFret);
-                   curNote->signStateLeeged();
-
-                   //EFFECTS COPY!
-                   //AND MAYBE MORE WIDE CONDITION
-                   ABitArray prevEff = prevNote->getEffects();
-                   curNote->addEffects(prevEff);
-               }
-
-               if (prevFret == 64)
-               {
-                   qDebug() <<"Prev Note "<<(int)prevNote<<" sN= "<<stringN;
-                       qDebug() <<"Is Pause "<<(int)curBeat->getPause();
-                       qDebug() <<"Count="<<count<<"; notesCount="<<notesCount[stringN];
-               }
-
-               qDebug() <<"Fret was 63 now "<<prevFret;
-           }
-
-           */
-
-           //SOME GUITAR PRO ACTION
-
-
-
 
            std::uint8_t noteState = curNote->getState();
 
@@ -275,48 +228,13 @@ size_t Track::connectBeats()
            if (nextBar->size()==0)
                continue;
 
-           /*
-
-           qDebug() << "Next len "<<(int)nextBar->size()<<
-                     "Cur len "<<(int)curBar->size()<<" i "<<barI)
-
-           qDebug() << "-";
-           */
-
-
            curBeat = 0;
 
-           if (curBar->size() == 0)
-           {
-               Bar *prevBar = curBar;
-
-               /*
-
-               while (1)
-               {
-                   if (prevBar == 0)
-                   {
-                       qDebug()<<"Exited extrimly! ";
-                       return; ///ehh
-                   }
-
-                   prevBar = prevBar->getPrev();
-
-                   if ((prevBar) && (prevBar->size()))
-                   {
-                       curBeat = prevBar->getV(prevBar->size());
-                       break;
-                   }
-
-
-               }
-
-               */
+           if (curBar->size() == 0) {
+               //Bar *prevBar = curBar;
            }
            else
-           {
                curBeat = curBar->at(curBar->size()-1).get();
-           }
 
            Beat *nextBeat = nextBar->at(0).get();
 

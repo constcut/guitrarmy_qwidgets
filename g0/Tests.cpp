@@ -77,7 +77,7 @@ bool midiPrint(std::string fileName)
 
 
 
-bool testMidi(std::string fileName, std::string outFileName)
+bool testMidi(std::string fileName)
 {
     std::ifstream ifile(fileName.c_str(),std::ifstream::binary);
 

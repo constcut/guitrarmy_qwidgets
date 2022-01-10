@@ -77,7 +77,7 @@ MidiSignal::MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2, std::u
 
 
 double MidiSignal::getSecondsLength(double bpm) {
-    double seconds = (double)(timeStamp.getValue())/960.0;
+    double seconds = static_cast<double>(timeStamp.getValue()) * (120.0 / bpm) / 960.0;
     return seconds;
 }
 

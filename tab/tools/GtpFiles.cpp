@@ -1564,7 +1564,7 @@ void writeString(std::ofstream &file, std::string value, size_t stringLen=0)
 
 void writeTrack(std::ofstream &file, Track *currentTrack)
 {
-    //TEMPLATE
+    //Заглушка TODO
     std::uint8_t trackHeader = 0;
     file.write((const char*)&trackHeader,1);
 
@@ -1599,9 +1599,10 @@ void writeTrack(std::ofstream &file, Track *currentTrack)
 
 }
 
+
 void writeBeatEffects(std::ofstream &file, Beat *cursorBeat)
 {
-    //TEMPLATE
+    //Заглушка
     std::uint8_t beatEffectsHead1; //prepare function!
     std::uint8_t beatEffectsHead2;
 
@@ -3093,200 +3094,55 @@ void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *curs
 
     newNote->setEffect(Effect::None); //flush first
 
-    if (noteHeader & 0x20)
-    {
+    if (noteHeader & 0x20) {
         file.read((char*)&noteType,1);
         std::uint8_t bby=0; //^IN DOCS WE HAVE SHORT INT HERE
         //file.read((char*)&bby,1);
-        if (gtpLog)  qDebug() << "Note type = "<<(int)noteType<<" : "<<bby;
+        if (gtpLog)
+            qDebug() << "Note type = "<<(int)noteType<<" : "<<bby;
 
         //could be leag on 2
         //dead on 3 is ghost
         //normal leeg (dead?)
         //leeged normal, leeged leeg
         newNote->setState(noteType);
-
-        /*
-        byte sNum=newNote->getStringNumber();
-
-        if (noteType == 2)
-        {
-            //1:find last fret to set here
-            //2:update status for last note
-
-            Note *prevNote=0;
-            if (gtpLog)  qDebug() << "Prev note for sNum="<<sNum;
-
-            byte beatShiftBack = 1;
-            byte wasInBlock = 0;
-            bool notFoundInPrev=false;
-
-            if (beatIndex >= 1)
-            {
-                Beat *prevBeat = &cursorBar->getV(beatIndex-beatShiftBack);
-
-                pointx1:
-
-                for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
-                    {
-                        Note *prevNoteSearch = &prevBeat->getV(strInd);
-                        byte prevSNum = prevNoteSearch->getStringNumber();
-                        byte fretPrevValue = prevNoteSearch->getFret();
-                           if (gtpLog)  qDebug()<< strInd <<"PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
-                        if (sNum==prevSNum)
-                        {
-                            notFoundInPrev = false;
-
-
-                            //if (prevNote)
-                                //if (prevNote->getFret()==63)
-                                    //;
-                                       //prevNote->setFret(fretPrevValue);
-
-                            prevNote = prevNoteSearch;
-                            if (fretPrevValue==63)
-                            {
-                                //LZPlane..
-                                if (beatIndex > beatShiftBack)
-                                {
-                                    ++beatShiftBack;
-                                    prevBeat = &cursorBar->getV(beatIndex-beatShiftBack);
-                                    strInd=-1;
-                                    ++wasInBlock;
-                                    notFoundInPrev=true;
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            break;
-                        }
-                    }
-
-                if (notFoundInPrev)
-                {
-                    ++beatShiftBack;
-                    prevBeat = &cursorBar->getV(beatIndex-beatShiftBack);
-
-                    if (beatIndex >= beatShiftBack)
-                    goto pointx1;
-                }
-            }
-            else
-            {
-                //protection from the fool of first leeg needed
-                if (cursorBar)
-                {
-                     Bar *prevBar = cursorBar - 1;
-                     Beat *prevBeat = &prevBar->getV(prevBar->size()-beatShiftBack);
-
-                     pointx0:
-
-                     for (ul strInd = 0; strInd < prevBeat->size(); ++strInd)
-                         {
-                             Note *prevNoteSearch = &prevBeat->getV(strInd);
-                             byte prevSNum = prevNoteSearch->getStringNumber();
-                             byte fretPrevValue = prevNoteSearch->getFret();
-                             if (gtpLog)  qDebug() << strInd <<" PrevN sNum "<<prevSNum<<" "<<fretPrevValue;
-                             if (sNum==prevSNum)
-                             {
-                                 notFoundInPrev = false;
-                                 if (prevNote)
-                                     if (prevNote->getFret()==63)
-                                     {
-                                           // prevNote->setFret(fretPrevValue);
-                                     }
-
-                                 prevNote = prevNoteSearch;
-                                 if (fretPrevValue==63)
-                                 {
-                                     if (beatIndex > beatShiftBack)
-                                     {
-                                         ++beatShiftBack;
-                                         prevBeat = &cursorBar->getV(beatIndex-beatShiftBack);
-                                         strInd=-1;
-                                         ++wasInBlock;
-                                         notFoundInPrev = true;
-                                         continue;
-                                     }
-                                     else
-                                         break;
-                                 }
-                                 break;
-                             }
-                         }
-
-                     if (notFoundInPrev)
-                     {
-                         ++beatShiftBack;
-                         prevBeat = &cursorBar->getV(beatIndex-beatShiftBack);
-
-                         if (beatIndex >= beatShiftBack)
-                         goto pointx0;
-                     }
-
-                }
-
-            }
-            if (prevNote)
-            {
-                byte prevFret = prevNote->getFret();
-                if (gtpLog)  qDebug() << "Prev found "<<prevNote->getStringNumber()<<
-                       " "<<prevFret ;
-
-
-                prevNote->signStateLeeged();
-
-                if (prevNote->getEffects() == 1)
-                {
-                    newNote->setEffect(1);
-                    //and other effects not to break - refact attention
-                }
-
-                newNote->setFret(prevFret);
-
-
-                if (gtpLog)  qDebug() << "After leeg sign state "<<prevNote->getState()<<" wib "<<wasInBlock;
-
-
-                if (prevFret==63)
-                if (gtpLog)  qDebug()<<"if (gtpLog)  log";
-            }
-        } */
+        //Long commented code removed her
     }
 
     //we push it down with a
-    if (noteHeader & 1)
-    {
-
+    if (noteHeader & 1) {
         //another duration
-        if (gtpLog)  qDebug()  <<"Time independent ";
+        if (gtpLog)
+            qDebug()  <<"Time independent ";
         std::uint8_t t1,t2;
         file.read((char*)&t1,1);
         file.read((char*)&t2,1);
-        if (gtpLog)  qDebug()<<"T: "<<t1<<";"<<t2;
+        if (gtpLog)
+            qDebug()<<"T: "<<t1<<";"<<t2;
         //attention?
 
     }
 
-    if (noteHeader & 16)
-    {
-        if (gtpLog)  qDebug() <<"Bit 4 in header turned on";
+    if (noteHeader & 16) {
+        if (gtpLog)
+            qDebug() <<"Bit 4 in header turned on";
         std::uint8_t bByte=0;
         file.read((char*)&bByte,1);
-        if (gtpLog)  qDebug()<<"velocity byte(forte) "<<bByte;
+        if (gtpLog)
+            qDebug()<<"velocity byte(forte) "<<bByte;
         newNote->setVolume(bByte);
     }
 
-    if (noteHeader & 32)
-    {
-        if (gtpLog)  qDebug() <<"Bit 5 in header turned on";
+    if (noteHeader & 32) {
+        if (gtpLog)
+            qDebug() <<"Bit 5 in header turned on";
         std::uint8_t bByte=0;
         file.read((char*)&bByte,1);
-        if (gtpLog)  qDebug()<<"some byte fret "<<bByte;
-        if (noteType != 2)
-        {
-            if (gtpLog)  qDebug()<<"not leeg setting prev fret";
+        if (gtpLog)
+            qDebug()<<"some byte fret "<<bByte;
+        if (noteType != 2) {
+            if (gtpLog)
+                qDebug()<<"not leeg setting prev fret";
             newNote->setFret(bByte);
         }
         else
@@ -3294,41 +3150,35 @@ void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *curs
     }
 
 
-
     if (noteHeader & 2)
        if (gtpLog)  qDebug() <<"Bit 1 in header turned on"; //DOT NOTE //wow - where is it turned then?
 
-    if (noteHeader & 4)
-    {
-        if (gtpLog)  qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
-        //ghost not here
+    if (noteHeader & 4) {
+        if (gtpLog)
+            qDebug() <<"Bit 2 in header turned on"; //GHOST NOTE
         newNote->setEffect(Effect::GhostNote); //ghost note
     }
 
-    if (noteHeader & 64)
-    {
-        if (gtpLog)  qDebug() <<"Bit 6 in header turned on"; //ACCENTED
+    if (noteHeader & 64) {
+        if (gtpLog)
+            qDebug() <<"Bit 6 in header turned on"; //ACCENTED
         newNote->setEffect(Effect::HeavyAccented); //there is no heavy accented note anymore (
-        //in gp4
-
     }
 
-    if (noteHeader & 128)
-    {
-        if (gtpLog)  qDebug() <<"Bit 7 in header turned on";
+    if (noteHeader & 128) {
+        if (gtpLog)
+            qDebug() <<"Bit 7 in header turned on";
 
         std::uint8_t bByte=0;
         std::uint8_t bByte2=0;
         file.read((char*)&bByte,1);
         file.read((char*)&bByte2,1);
-
-        if (gtpLog)  qDebug()<<"fingering byte "<<bByte<<":"<<bByte2;
+        if (gtpLog)
+            qDebug()<<"fingering byte "<<bByte<<":"<<bByte2;
     }
 
     if (noteHeader & 8)
-    {
        readNoteEffectsGP3(file,newNote);
-    }
 }
 
 /////////////////////////////////////////////////////////////

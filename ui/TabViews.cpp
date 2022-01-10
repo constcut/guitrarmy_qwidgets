@@ -313,9 +313,8 @@ void TabView::draw(QPainter *painter)
                         painter->drawText(200+30*j,70-60,markerText.c_str());
                    }
                }
-                painter->drawRect(200+30*j,yPos,20,20);
-
-                if ((200+j*30) > (xLimit-100)) //800 border
+                painter->drawRect(200 + 30 * j, yPos, 20, 20);
+                if ((200 + j * 30) > (xLimit - 100)) //800 border
                     break;
            }
 

@@ -878,6 +878,7 @@ void BarView::drawEffects(QPainter *painter, int x1, int y1, int w1, int h1, con
     }
 }
 
+
 int BarView::getClickString(int y1) const
 {
     int yOffset = y1-y;
@@ -886,6 +887,7 @@ int BarView::getClickString(int y1) const
     //unknown issue
     return stringIndex;
 }
+
 
 int BarView::getClickBeat(int x1) const
 {

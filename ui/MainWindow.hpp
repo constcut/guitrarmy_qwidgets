@@ -78,10 +78,9 @@ namespace gtmy {
        QAction* addToolButton(QToolBar *toolBar, std::string button, std::string confValue);
 
         void moveEvent(QMoveEvent *ev) override;
-        virtual void setStatusBarMessage(int index, std::string text, int timeOut=0) override;
+        virtual void setStatusBarMessage(size_t index, std::string text, int timeOut=0) override;
 
-        void pleaseRepaint() override
-        {
+        void pleaseRepaint() override {
             update();
         }
 
@@ -131,8 +130,7 @@ namespace gtmy {
         QDockWidget* createToolDock(std::string dockname, GPannel *pannel);
         QMenu *createToolMenu(GPannel *pannel);
 
-        void setViewPannel(int val) override
-        {
+        void setViewPannel(size_t val) override {
             if (win)
                 win->setCurrentIndex(val);
         }

@@ -122,9 +122,9 @@ void CenterView::ViewWasChanged()
 
 }
 
-void CenterView::renewComboParams(int index, std::string params) {
+void CenterView::renewComboParams(size_t index, std::string params) {
     int VType = getCurrentViewType();
-    int inWidAmount = _uiWidgets.at(VType).size();
+    size_t inWidAmount = _uiWidgets.at(VType).size();
     if (inWidAmount > index) {
         GQCombo *newBox = dynamic_cast<GQCombo*>(_uiWidgets.at(VType)[index]);
         renewComboParams(newBox,params);
@@ -473,11 +473,11 @@ void CenterView::renewComboParams(GQCombo *newBox, std::string params)
 }
 
 
-void CenterView::setComboBox(int index, std::string params, int x1, int y1, int w1, int h1, int forceValue)
+void CenterView::setComboBox(size_t index, std::string params, int x1, int y1, int w1, int h1, int forceValue)
 {
     int VType = getCurrentViewType();
     double scaleCoef = AConfig::getInst().getScaleCoef();
-    int inWidAmount = _uiWidgets.at(VType).size();
+    size_t inWidAmount = _uiWidgets.at(VType).size();
 
     x1 *= scaleCoef;
     y1 *= scaleCoef;
@@ -770,7 +770,7 @@ int CenterView::getHeight() {
 }
 
 
-void CenterView::setStatusBarMessage(int index, std::string text, int timeOut) {
+void CenterView::setStatusBarMessage(size_t index, std::string text, int timeOut) {
    if (_statusSetter)
        _statusSetter->setStatusBarMessage(index,text,timeOut);
 }

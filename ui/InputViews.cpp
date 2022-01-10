@@ -272,20 +272,14 @@ void PatternInput::keyevent(std::string press)
         items.push_back("32");
         QString resp = QInputDialog::getItem(0,"Input ",
                                      "denumeration",items,0,false,&ok);
-
-        if (ok)
-        {
+        if (ok) {
             int listValue = -1;
-
-            for (size_t i = 0; i < items.size(); ++i)
-            {
-                if (items.at(i)==resp)
-                {
+            for (int i = 0; i < items.size(); ++i){
+                if (items.at(i)==resp){
                     listValue = i;
-                  break;
+                    break;
                 }
             }
-
             if (listValue >=0)
                 _currentDen = listValue;
         }
