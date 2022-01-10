@@ -20,8 +20,6 @@ namespace gtmy {
         int _cursor;
         int _stringCursor;
 
-        int _nBeats;
-
         int _barNumber;
 
         bool _sameSign;
@@ -34,20 +32,20 @@ namespace gtmy {
 
     public:
 
-        int getBarsize() const { return _nBeats; }
-
-        void setSameSign(bool value) {_sameSign = value;}
-
-        void setSelectors(int beg, int end){_selectorBegin=beg; _selectorEnd=end;}
-        void flushSelectors(){_selectorBegin=_selectorEnd=-1;}
-
-        BarView(Bar *b,int nstr, int barNum=-1);
-
+        BarView(Bar *b, int nstr, int barNum = -1);
 
         void setBar(Bar *newBar) {_pBar = newBar;}
         Bar *getBar() const { return _pBar; }
 
-        void setCursor(int cur, int strCur=-1) { _cursor = cur; _stringCursor =strCur; }
+        int getBarsize() const { return _pBar->size(); }
+
+        void setSameSign(bool value) { _sameSign = value; }
+
+        void setSelectors(int beg, int end){_selectorBegin = beg; _selectorEnd = end;}
+        void flushSelectors() { _selectorBegin = _selectorEnd = -1; }
+
+
+        void setCursor(int cur, int strCur = -1) { _cursor = cur; _stringCursor =strCur; }
         int getCursor() const { return _cursor; }
 
         int getClickString(int y1) const;
@@ -63,16 +61,14 @@ namespace gtmy {
 
         void draw(QPainter *painter); //from beat to beat
 
-        void setShifts(int x1, int y1)
-        {
+        void setShifts(int x1, int y1) {
             _xShift =x1;
             _yShift =y1;
             x = x1+20;
             y = y1+20;
         }
 
-
-        void setNStrings(int ns){_nStrings = ns;}
+        void setNStrings(int ns) { _nStrings = ns; }
     };
 
 }

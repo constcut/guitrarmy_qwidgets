@@ -35,7 +35,6 @@ namespace gtmy {
 
         size_t _limit;
 
-
         int _bpm;
         std::vector<int> _waitTimes;
         std::vector<int> _waitIndexes;

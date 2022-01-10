@@ -267,14 +267,11 @@ void BarView::drawNote(QPainter *painter, std::uint8_t noteDur, std::uint8_t dot
         }
     }
     else
-    {
         painter->drawEllipse(xPoint-radiusShift,yPoint-radiusShift,mainRadius,mainRadius); //default circle
-    }
 
 
     if (dotted)
         painter->drawEllipse(xPoint+7,yPoint,2,2); //check fine on large
-
 
     if (noteDur >= 1)
         painter->drawLine(xPoint+noteTail,yPoint,xPoint+noteTail,yPoint-note4*nU); //line (1+)
@@ -302,40 +299,36 @@ BarView::BarView(Bar *b,int nstr, int barNum): //stringWidth(12),inbarWidth(20),
     _repBegin=false;
     _repEnd=false;
 
+    const size_t barLen = b->size();
+    h = stringWidth * (nstr + 1); //
 
-
-    int barLen = b->size();
-    h = stringWidth*(nstr+1); //
-
-    if (CONF_PARAM("TrackView.largeNotes")=="1")
+    if (CONF_PARAM("TrackView.largeNotes") == "1")
         h = stringWidth*(nstr+2);
 
+    h += 10; //mini shift from last
+    w = (barLen + 1) * inbarWidth;
 
-    h+= 10; //mini shift from last
-    w = (barLen+1)*inbarWidth;
-
-    if (CONF_PARAM("upsideDownNotes")=="1")
+    if (CONF_PARAM("upsideDownNotes") == "1")
         h+= 10;
 
-
-    if (CONF_PARAM("showNotesView")=="1")
-    {
+    if (CONF_PARAM("showNotesView") == "1") {
        h += (stringWidth-3)*(5);
        h += 75;
-
-       h+= 20; //to ensure bass would be ok
-
+       h += 20; //to ensure bass would be ok
        if (CONF_PARAM("upsideDownNotes")=="0")
            h+=10;
     }
 
-    _nBeats=barLen;
-
-    if (b->getRepeat()&1)
-    { _repBegin = true; w += 15; }
-    if (b->getRepeat()&2)
-    { _repEnd = true; w += 15; }
+    if (b->getRepeat() & 1) {
+        _repBegin = true;
+        w += 15;
+    }
+    if (b->getRepeat() & 2) {
+        _repEnd = true;
+        w += 15;
+    }
 }
+
 
 void BarView::draw(QPainter *painter)
 {
@@ -352,18 +345,12 @@ void BarView::draw(QPainter *painter)
         int skipFromEnd = (bar1->size() - _selectorEnd)*inbarWidth;
 
         if (_selectorEnd == -1)
-        {
             painter->fillRect(getX()+skipFromStart,getY(),
                               getW()-skipFromStart,getH(),QColor(CONF_PARAM("colors.selection").c_str()));
-        }   //to the end
         else
-        {
             painter->fillRect(getX()+skipFromStart,getY(),
                               getW()-skipFromStart-skipFromEnd,getH(),QColor(CONF_PARAM("colors.selection").c_str()));
-        }
         isSelected = true;
-
-
     }
 
     //check widht and height
