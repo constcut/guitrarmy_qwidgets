@@ -45,6 +45,15 @@ namespace gtmy {
 
         TimeLineKnot(std::uint8_t newType, int newValue):type(newType),value(newValue){}
     };
+
+    struct BpmChangeKnot {
+        int bpm;
+        int time;
+
+        BpmChangeKnot(int newBpm, int newTime):bpm(newBpm),time(newTime){}
+        bool operator<(const BpmChangeKnot& another) const {  return time < another.time; }
+    };
+
 }
 
 

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <QDebug>
 
-//#include "TabLoader.hpp"
+
 
 bool tabLog = false;
 
@@ -43,29 +43,15 @@ Tab &Tab::operator=([[maybe_unused]]Tab another) {
 }
 
 
-
-void Tab::printToStream(std::ostream &stream) const
-{
-    stream << "Outputing #"<<size()<<" Tracks."<<std::endl;
+void Tab::printToStream(std::ostream &stream) const {
+    stream << "Outputing #" << size() << " Tracks." << std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
-
 }
 
-struct BpmChangeKnot {
-
-    int bpm;
-    int time;
-
-    BpmChangeKnot(int newBpm, int newTime):bpm(newBpm),time(newTime){}
-
-    bool operator<(const BpmChangeKnot& another) const {  return time < another.time; }
-};
 
 
-
-std::uint8_t Tab::getBPMStatusOnBar(size_t barN) const
-{
+std::uint8_t Tab::getBPMStatusOnBar(size_t barN) const {
     for (size_t i = 0 ; i < size(); ++i) {
         auto& bar = at(i)->at(barN);
         if (bar->size())
@@ -87,128 +73,94 @@ int Tab::getBpmOnBar([[maybe_unused]] size_t barN) const {
 
 void Tab::createTimeLine(size_t shiftTheCursor)
 {
- _timeLine.clear();
+    _timeLine.clear();
+    TimeLineKnot initKnot(1, getBPM());
+    _timeLine.push_back(initKnot);
+    int lastNumDen = 0;
 
- //INITIAL value
- TimeLineKnot initKnot(1,getBPM());
-
- _timeLine.push_back(initKnot);//fuck loo
-
- int lastNumDen=0;
-
-
- size_t barsAmount = at(0)->getTimeLoop().size(); //should search longest
- for (size_t barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
- {
-     std::vector<BpmChangeKnot> timeChanges;
-
-     for (size_t tracksI = 0; tracksI < size(); ++tracksI)
-     {
-        short int localAccumulate = 0;///tracksI
-
-        const auto& timeLoop = at(tracksI)->getTimeLoop();
-        if (timeLoop.size() <= barsI) //TODO по идее просто по индексу
-            continue;
-
-        Bar* currentBar = timeLoop[barsI]; //attention refact fix
-
-        for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
+    size_t barsAmount = at(0)->getTimeLoop().size();
+    for (size_t barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
+    {
+        std::vector<BpmChangeKnot> timeChanges;
+        for (size_t tracksI = 0; tracksI < size(); ++tracksI)
         {
-            if (currentBar->at(beatI)->getEffects().getEffectAt(Effect::Changes)) //changes
+            short int localAccumulate = 0;
+            const auto& timeLoop = at(tracksI)->getTimeLoop();
+            if (timeLoop.size() <= barsI) //TODO по идее просто по индексу
+                continue;
+
+            Bar* currentBar = timeLoop[barsI];
+
+            for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
             {
-                //search for bpm changes
-                ChangesList *changes = currentBar->at(beatI)->getChangesPtr();
+                if (currentBar->at(beatI)->getEffects().getEffectAt(Effect::Changes)) //changes
+                {
+                    ChangesList *changes = currentBar->at(beatI)->getChangesPtr();
+                    for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
+                        if (changes->at(indexChange).changeType == 8) {
+                            size_t newBPM = changes->at(indexChange).changeValue;
+                            BpmChangeKnot newChangeBpm(newBPM,localAccumulate);
+                            timeChanges.push_back(newChangeBpm);
+                            break;
+                        }
+                }
 
-                for (size_t indexChange = 0; indexChange != changes->size(); ++indexChange)
-                  if (changes->at(indexChange).changeType==8)
-                  {
-                      size_t newBPM = changes->at(indexChange).changeValue;
+                std::uint8_t beatDur = currentBar->at(beatI)->getDuration();
+                std::uint8_t durDetail = currentBar->at(beatI)->getDurationDetail();
+                std::uint8_t isDotted = currentBar->at(beatI)->getDotted();
 
-                      BpmChangeKnot newChangeBpm(newBPM,localAccumulate);
+                int localAbs = translaeDuration(beatDur);
 
-                      timeChanges.push_back(newChangeBpm);
-                      break;
-                  }
+                if (durDetail)
+                    localAbs = updateDurationWithDetail(durDetail,localAbs);
 
+                if (isDotted & 1) {
+                    localAbs *= 3;
+                    localAbs /= 2;
+                }
+                localAccumulate += localAbs;
             }
-
-            std::uint8_t beatDur = currentBar->at(beatI)->getDuration();
-            std::uint8_t durDetail = currentBar->at(beatI)->getDurationDetail();
-            std::uint8_t isDotted = currentBar->at(beatI)->getDotted();
-
-            int localAbs = translaeDuration(beatDur);
-
-            if (durDetail)
-                localAbs = updateDurationWithDetail(durDetail,localAbs);
-
-            if (isDotted&1)
-            {
-                //first only one dot
-                localAbs *= 3;
-                localAbs /= 2;
-            }
-
-            localAccumulate += localAbs;
-
         }
 
-     }
+        std::uint8_t thatNum = at(0)->getTimeLoop().at(barsI)->getSignNum();
+        std::uint8_t thatDen = at(0)->getTimeLoop().at(barsI)->getSignDenum();
 
+        int packedMeter = 0;
+        packedMeter = (thatNum << 8) + thatDen;
 
-     //NOT POLY YET
-     std::uint8_t thatNum = at(0)->getTimeLoop().at(barsI)->getSignNum();
-     std::uint8_t thatDen = at(0)->getTimeLoop().at(barsI)->getSignDenum();
+        if (packedMeter != lastNumDen) {
+            TimeLineKnot changeNumDen(2, packedMeter);
+            _timeLine.push_back(changeNumDen);
+            lastNumDen = packedMeter;
+        }
 
+        int barAbs = translateDenum(thatDen) * thatNum;
 
-     int packedMeter=0;
-     packedMeter=(thatNum<<8) + thatDen;
+        if (timeChanges.empty()) {
+            TimeLineKnot noChangeBar(0, barAbs);
+            _timeLine.push_back(noChangeBar);
+        }
+        else
+        {
+             std::sort(timeChanges.begin(),timeChanges.end());
+             short int lastChange = -1;
+             for (size_t i = 0; i < timeChanges.size(); ++i)
+                if (timeChanges[i].time != lastChange) {
+                    int currentChange = timeChanges[i].time - lastChange;
+                    lastChange = timeChanges[i].time;
+                    TimeLineKnot timeWait(0, currentChange);
+                    TimeLineKnot bpmChange(1, timeChanges[i].bpm);
+                    _timeLine.push_back(timeWait);
+                    _timeLine.push_back(bpmChange);
+                }
 
-     if (packedMeter != lastNumDen)
-     {
-        TimeLineKnot changeNumDen(2,packedMeter);
-        _timeLine.push_back(changeNumDen);
-        lastNumDen = packedMeter;
-     }
-
-     int barAbs = translateDenum(thatDen)*thatNum;
-
-     if (timeChanges.empty())
-     {
-        TimeLineKnot noChangeBar(0,barAbs);
-
-        _timeLine.push_back(noChangeBar);
-     }
-     else
-     {
-         std::sort(timeChanges.begin(),timeChanges.end());
-
-         short int lastChange = -1;
-
-         for (size_t i = 0; i < timeChanges.size(); ++i)
-         {
-            if (timeChanges[i].time != lastChange)
-            {
-
-                int currentChange = timeChanges[i].time-lastChange;
-                lastChange = timeChanges[i].time;
-
-                TimeLineKnot timeWait(0,currentChange);
-                TimeLineKnot bpmChange(1,timeChanges[i].bpm);
-
-                _timeLine.push_back(timeWait);
-                _timeLine.push_back(bpmChange);
-            }
-         }
-
-         if (lastChange < barAbs)
-         {
-             TimeLineKnot timeWait(0,barAbs-lastChange);
-             _timeLine.push_back(timeWait);
-         }
-     }
-
-     timeChanges.clear();
- }
+             if (lastChange < barAbs) {
+                 TimeLineKnot timeWait(0, barAbs-lastChange);
+                 _timeLine.push_back(timeWait);
+             }
+        }
+        timeChanges.clear();
+    }
 }
 
 
