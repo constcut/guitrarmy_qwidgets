@@ -173,6 +173,7 @@ std::uint8_t Bar::getCompleteStatus()
            if (newNoteAbs > 10)
                lastAbs = newNoteAbs;
            else
+               --_completeIndex;
 
            _completeAbs = lastAbs;
 

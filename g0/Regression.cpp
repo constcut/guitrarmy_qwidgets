@@ -253,7 +253,7 @@ void gtmy::runRegressionTests() {
         return;
     }
     else
-        std::cout << "Has no regression" << std::endl;
+        std::cout << "Has no regression" << std::endl; //TODO also check more from 3rd group generate on oldest version
 
     //TODO midi read write test (streaming operator check)
     macroSimpleTest1(); //Tab commands plain
