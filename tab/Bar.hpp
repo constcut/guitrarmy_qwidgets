@@ -1,7 +1,7 @@
 #ifndef BAR_H
 #define BAR_H
 
-#include "Types.hpp"
+#include "Chain.hpp"
 #include "Beat.hpp"
 
 

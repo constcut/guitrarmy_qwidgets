@@ -1,7 +1,7 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include "Types.hpp"
+#include "Chain.hpp"
 #include <unordered_map>
 #include "Commands.hpp" //move into g0
 #include "Bar.hpp"

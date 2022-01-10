@@ -1,7 +1,7 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
 
-#include "Types.hpp"
+#include "Chain.hpp"
 
 #include <map>
 

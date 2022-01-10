@@ -1,7 +1,7 @@
 #ifndef TAB_H
 #define TAB_H
 
-#include "Types.hpp"
+#include "Chain.hpp"
 
 #include <unordered_map>
 #include <list>

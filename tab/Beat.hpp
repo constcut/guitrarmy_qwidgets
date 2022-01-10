@@ -5,8 +5,8 @@
 #include <vector>
 #include <string>
 
-#include "BeatStructs.h"
-#include "Types.hpp"
+#include "BeatStructs.hpp"
+#include "Chain.hpp"
 #include "Note.hpp"
 
 

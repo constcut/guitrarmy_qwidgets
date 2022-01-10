@@ -80,17 +80,18 @@ HEADERS  += \
     midi/MidiTrack.hpp \
     tab/Bar.hpp \
     tab/Beat.hpp \
-    tab/BeatStructs.h \
+    tab/BeatStructs.hpp \
+    tab/Chain.hpp \
     tab/Commands.hpp \
     tab/Effects.hpp \
     tab/GmyFile.hpp \
     tab/GtpFiles.hpp \
     tab/Note.hpp \
+    tab/NoteStructs.hpp \
     tab/Tab.hpp \
     tab/TabClipboard.hpp \
     tab/TabLoader.hpp \
     tab/Track.hpp \
-    tab/Types.hpp \
     ui/BarView.hpp \
     ui/CenterView.hpp \
     ui/Components.hpp \

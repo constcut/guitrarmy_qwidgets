@@ -1,5 +1,5 @@
-#ifndef TYPES_H
-#define TYPES_H 
+#ifndef CHAIN_H
+#define CHAIN_H 
 
 #include <vector>
 #include <memory>
@@ -100,4 +100,4 @@ namespace gtmy {
 
 }
 
-#endif // TYPES_H
+#endif // CHAIN_H
