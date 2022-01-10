@@ -7,7 +7,7 @@ namespace gtmy {
 
     class AConfig;
 
-    int getTime(); //TODO find a better place for all those functions
+    int getTime();
     bool testScenario();
     void connectConfigs(AConfig& config);
     bool midiPrint(std::string fileName);

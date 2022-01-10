@@ -127,7 +127,6 @@ namespace gtmy {
         int& digitPress() { return _digitPress; }
 
 
-        //TODO command handler
         void switchEffect(Effect effect);
         void switchBeatEffect(Effect effect);
         void switchNoteState(NoteStates changeState);
@@ -211,7 +210,7 @@ namespace gtmy {
 
 
     private:
-        //TODO внимательно проверить
+
         std::unordered_map<TrackCommand, void (Track::*)()> handlers =  {
             {TrackCommand::GotoStart, &Track::gotoTrackStart},
             {TrackCommand::SelectionExpandLeft, &Track::moveSelectionLeft},

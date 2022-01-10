@@ -12,6 +12,18 @@
 namespace gtmy {
 
 
+    enum CommandPack { //Типы комманд
+        SingleTabCommand=0,
+        SingleTrackCommand,
+        IntTabCommand,
+        IntTrackCommand,
+        StringTabCommand,
+        StringTrackCommand,
+        TwoIntTabCommand,
+        TwoIntTrackCommand
+    };
+
+
     enum class TabCommand {
         SetSignTillEnd,
         SaveAs,

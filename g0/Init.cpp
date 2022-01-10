@@ -27,7 +27,7 @@
 using namespace gtmy;
 
 
-void posix_death_signal(int signum) //TODO move whole init actions into another file
+void posix_death_signal(int signum)
 {
     std::cerr << "Crash happend signal:"<<signum;
     signal(signum, SIG_DFL);
@@ -94,9 +94,8 @@ void posix_death_signal(int signum) //TODO move whole init actions into another 
     exit(3);
 }
 
-QString getUserID(){
-    QString text;
-    //TODO анонимный айди
+QString getUserID() {
+    QString text; //Delayed для серверных функций в будущем
     return text;
 }
 
@@ -225,13 +224,11 @@ void gtmy::setWindowIcon(MainWindow& w) {
 
 
 void gtmy::setLogFilename() {
-    std::string logName = AConfig::getInst().testsLocation + std::string("log.txt"); //TODO log init
-    //TODO add init logger form gtab3
+    std::string logName = AConfig::getInst().testsLocation + std::string("log.txt");
 
     if (AConfig::getInst().platform == "android")
-        if (CONF_PARAM("sdcardLogDebug")=="1") //very temp
+        if (CONF_PARAM("sdcardLogDebug")=="1")
             logName = "/sdcard/Guitarmy.log";
-    //TODO log hanler for gtab3
 }
 
 
@@ -256,7 +253,7 @@ void gtmy::initNewTab(MainWindow& w) {
 }
 
 
-void gtmy::copyResourcesIntoTempDir() { //TODO может быть во временную копировать только тесты?
+void gtmy::copyResourcesIntoTempDir() { //TODO во временную копировать только тесты
     static QTemporaryDir tempDir;
     setTestLocation(tempDir.path().toStdString() + "/");
     QDir dir;

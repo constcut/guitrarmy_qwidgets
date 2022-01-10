@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
        out = a.exec();
     }
     catch(...){
-        qDebug() << "Exception thrown"; //TODO save logs into file
+        qDebug() << "Exception thrown";
     }
     qDebug() << "Main function done" ;
     return out;

@@ -120,7 +120,7 @@ namespace gtmy {
 
         void playCommand(MacroCommand& command) {
             if (std::holds_alternative<TabCommand>(command)) {
-                onTabCommand(std::get<TabCommand>(command)); //TODO флаг записи
+                onTabCommand(std::get<TabCommand>(command));
             }
             else if (std::holds_alternative<TrackCommand>(command)) {
                 at(_currentTrack)->onTrackCommand(std::get<TrackCommand>(command));

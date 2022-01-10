@@ -391,7 +391,7 @@ bool gtmy::exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_
 
     std::uint8_t fret = note->getFret();
     std::uint8_t stringN = note->getStringNumber();
-    std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1]; //TODO убрать потом в класс генератор
+    std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1];
 
     std::uint8_t volume = note->getVolume();
     std::uint8_t midiVelocy = volume*15; //calcMidiVolumeGP(volume);

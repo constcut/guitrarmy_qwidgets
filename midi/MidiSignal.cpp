@@ -15,7 +15,7 @@ NBytesInt::NBytesInt(std::uint32_t source) {
         return;
     }
 
-    std::vector<std::uint8_t> byteParts; //TODO reserve
+    std::vector<std::uint8_t> byteParts; //TODO использовать алгоритм для разворачивания вектора потом
     while (source) {
         std::uint8_t nextByte = source % 128;
         byteParts.push_back(nextByte);
@@ -23,7 +23,7 @@ NBytesInt::NBytesInt(std::uint32_t source) {
     }
 
     for (int i = byteParts.size()-1; i >=0 ; --i)
-        push_back(byteParts[i]); ///TODO algo
+        push_back(byteParts[i]);
 }
 
 std::uint32_t NBytesInt::readStream(std::ifstream& f) {
@@ -156,7 +156,7 @@ std::uint32_t MidiSignal::readStream(std::ifstream& f) {
     f.read((char*)&param1, 1);
     ++totalBytesRead;
 
-    if (isMetaEvent()) { //TODO refact : metaProcess & usualProcess
+    if (isMetaEvent()) {
         totalBytesRead += metaLen.readStream(f);
         std::uint32_t bytesInMetaBufer = metaLen.getValue();
         metaBufer.clear(); //to be sure we don't makeit grow

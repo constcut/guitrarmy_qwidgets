@@ -279,7 +279,7 @@ void Bar::flush() {
 }
 
 
-void Bar::push_back(std::unique_ptr<Beat> val) { //TODO так же в TAB
+void Bar::push_back(std::unique_ptr<Beat> val) {
     if (val) {
         val->setParent(this);
         ChainContainer<Beat, Track>::push_back(std::move(val));

@@ -47,9 +47,9 @@ bool gtmy::checkHasRegression() {
             itfile.open(gp4File.c_str(),std::ifstream::binary);
 
             Tab tab;
-            importer.import(itfile, &tab); //Перегрузить на просто ссылку и на умный указатель TODO
+            importer.import(itfile, &tab);
             tab.postLoading();
-            tab.connectTracks(); //new for chains refac
+            tab.connectTracks();
 
             size_t bytesWritten = 0;
             auto f = exportMidi(&tab);
@@ -57,7 +57,6 @@ bool gtmy::checkHasRegression() {
                 std::ofstream midiOut(midiFile, std::ios::binary);
                 bytesWritten = f->writeStream(midiOut);
                 std::cerr << "MidiSize: " << bytesWritten << " to " << testName <<  std::endl;
-                //TODO сделать сравнение со старой версией, убедиться что за последние 10 дней работы не было внесено новой регрессии
             }
             auto fSize = std::filesystem::file_size(midiFileCheck);
 
@@ -66,7 +65,7 @@ bool gtmy::checkHasRegression() {
                 ++regressionCountMidi;
             }
             else {
-                //TODO compare binnary each byte
+                //Delayed compare binnary each byte (mtherapp)
             }
 
             std::string gmyFile = testLocation + std::string("regression_check/") + testName + std::string(".gmy");
@@ -76,7 +75,6 @@ bool gtmy::checkHasRegression() {
                 std::ofstream gmyOut(gmyFile, std::ios::binary);
                 exporter.saveToFile(gmyOut, &tab);
             }
-
 
             auto sizeNew = std::filesystem::file_size(gmyFile);
             auto sizeOld = std::filesystem::file_size(gmyFileCheck);
@@ -255,7 +253,6 @@ void gtmy::runRegressionTests() {
     else
         std::cout << "Has no regression" << std::endl; //TODO also check more from 3rd group generate on oldest version
 
-    //TODO midi read write test (streaming operator check)
     macroSimpleTest1(); //Tab commands plain
     macroSimpleTest2(); //String tab command
     macroSimpleTest3(); //Int tab command

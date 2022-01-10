@@ -1,7 +1,7 @@
 #ifndef BEAT_H
 #define BEAT_H
 
-#include <memory.h>  //TODO find modern way
+#include <memory.h>
 #include <vector>
 #include <string>
 

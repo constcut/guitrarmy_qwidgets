@@ -27,11 +27,11 @@ void PlayAnimationThr::threadRun()
            break;
         }
 
-        (*_incrementA) = _waitIndexes[indexWait];
+        (*_cursorToInc1) = _waitIndexes[indexWait];
         int nowWait = _waitTimes[indexWait];
 
-        if (_incrementB)
-        (*_incrementB) = 0;
+        if (_cursorToInc2)
+        (*_cursorToInc2) = 0;
 
         if (_pleaseStop) {
             _status = 1;
@@ -67,7 +67,7 @@ void PlayAnimationThr::threadRun()
                    break;
                 }
 
-                (*_incrementB) = (*_incrementB) +1;
+                (*_cursorToInc2) = (*_cursorToInc2) +1;
                 callUpdate();
             }
      //check for beats times - for cycle
@@ -84,8 +84,8 @@ void PlayAnimationThr::threadRun()
             break;
          }
 
-         if (_incrementB != 0) {
-            (*_incrementB) = (*_incrementB) - 1;
+         if (_cursorToInc2 != 0) {
+            (*_cursorToInc2) = (*_cursorToInc2) - 1;
             callUpdate();
          }
          sleepThread(nowWait);
@@ -98,7 +98,7 @@ void PlayAnimationThr::threadRun()
    }
 
    _status = 1;
-   if (_incrementB == 0)
+   if (_cursorToInc2 == 0)
        noticeFinished();
 }
 

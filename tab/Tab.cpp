@@ -86,7 +86,7 @@ void Tab::createTimeLine(size_t shiftTheCursor)
         {
             short int localAccumulate = 0;
             const auto& timeLoop = at(tracksI)->getTimeLoop();
-            if (timeLoop.size() <= barsI) //TODO по идее просто по индексу
+            if (timeLoop.size() <= barsI) //TODO по идее просто по индексу - всё что не 0 пропускаем
                 continue;
 
             Bar* currentBar = timeLoop[barsI];

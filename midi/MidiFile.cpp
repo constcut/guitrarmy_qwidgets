@@ -12,24 +12,6 @@ bool midiLog = false;
 
 using namespace gtmy;
 
-/*
-void reverseEndian(void _*_ p,int s) {
-    char *bytes = (char*)p;
-    if (s == 4){
-        char b = bytes[0];
-        bytes[0] = bytes[3];
-        bytes[3] = b;
-        b = bytes[1];
-        bytes[1] = bytes[2];
-        bytes[2] = b;
-    }
-    if (s == 2) {
-        char b = bytes[0];
-        bytes[0] = bytes[1];
-        bytes[1] = b;
-    }
-}*/ //TODO check midi file read-write stays the same - then wipe
-
 
 template <class T>
 void reverseEndian(T *objp) {
