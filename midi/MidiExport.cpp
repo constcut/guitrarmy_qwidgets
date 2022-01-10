@@ -561,7 +561,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
         }
 
         if (note->getEffects().getEffectAt(Effect::Bend)) { //bend
-            BendPoints *bend = &note->bend;
+            BendPoints *bend = note->getBendPtr();
             pushBendToTrack(bend, midiTrack,channel);
         }
 

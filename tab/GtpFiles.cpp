@@ -634,7 +634,7 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
     {//bend
         if (gtpLog)  qDebug() << "Bend found.";
 
-        BendPoints *bend = &newNote->bend;
+        BendPoints *bend = newNote->getBendPtr();
         readBendGTP(&file,bend);
         if (gtpLog)
             qDebug()<< " Bend h "<<"; len "<<bend->size()<<"; type"<<bend->getType();
@@ -666,12 +666,8 @@ void readNoteEffects(std::ifstream &file, Note *newNote, int gpVersion=4)
             if (gtpLog)  qDebug()<<"Gp5 grace flags "<<flags;
         }
 
-        newNote->graceNote[0] = graceFret;
-        newNote->graceNote[2] = graceTransition;
-        newNote->graceNote[3] = graceDuration;
-
-        newNote->graceIsHere = true; //temp way
-        newNote->graceNote[1] = graceDynamic;
+        newNote->setGraceStats({graceFret, graceDynamic, graceTransition, graceDuration});
+        newNote->setGraceNote(true);
 
         newNote->setEffect(Effect::GraceNote); //grace note
     }
@@ -1757,7 +1753,7 @@ void writeNoteEffects(std::ofstream &file, Note *newNote)
 
     if (noteEffectsHead1&1)
     {
-        writeBendGTP(&file, &newNote->bend);
+        writeBendGTP(&file, newNote->getBendPtr());
     }
 
 
@@ -2944,7 +2940,7 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
     if (noteEffectsHead&1)
     {//bend
         if (gtpLog)  qDebug() << "Bend found.";
-        readBendGTP(&file,&(newNote->bend));
+        readBendGTP(&file, newNote->getBendPtr());
         newNote->setEffect(Effect::Bend);//first common pattern
     }
 
@@ -2966,13 +2962,9 @@ void readNoteEffectsGP3(std::ifstream &file, Note *newNote)
         if (gtpLog)  qDebug()<<"Fret "<<graceFret<<" Dyn "
             <<graceDynamic<<" Trans "<<graceTransition<<" Dur "<<graceDuration;
 
-        newNote->graceNote[0] = graceFret;
-        newNote->graceNote[1] = graceDynamic;
-        newNote->graceNote[2] = graceTransition;
-        newNote->graceNote[3] = graceDuration;
 
-        newNote->graceIsHere = true; //temp way
-
+        newNote->setGraceStats({graceFret, graceDynamic, graceTransition, graceDuration});
+        newNote->setGraceNote(true);
         newNote->setEffect(Effect::GraceNote); //grace note
     }
 

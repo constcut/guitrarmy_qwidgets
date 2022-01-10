@@ -364,7 +364,7 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
                         if (effPackNote == Effect::Bend) //bend
                         {
-                            BendPoints *bend = &note->bend;
+                            BendPoints *bend = note->getBendPtr();
                             writeBendGMY(file,bend);
                         }
                     }
@@ -779,7 +779,7 @@ bool GmyFile::loadFromFile(std::ifstream& file, Tab *tab, bool skipVersion)
                         //note.effPack.set(17,false); //turn off bend
                         if (note->getEffects() == Effect::Bend)
                         {
-                            BendPoints *bend = &note->bend;
+                            BendPoints *bend = note->getBendPtr();
                             readBendGMY(file,bend);
                             beat->getEffects().setEffectAt(Effect::Bend, true);
                         }

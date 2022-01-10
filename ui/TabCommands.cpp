@@ -281,17 +281,18 @@ void setBendOnNote(Note* currentNote, MasterView* mw) {
 
    if (currentNote->getEffects().getEffectAt(Effect::Bend)) {
 
-        BendPoints *bend = &currentNote->bend;
+        BendPoints *bend = currentNote->getBendPtr();
         BendInput::setPtrNote(currentNote);
         BendInput::setPtrBend(bend);
    }
    else {
-        BendInput::setPtrBend(&currentNote->bend); //TODO double check
+        BendInput::setPtrBend(currentNote->getBendPtr());
         BendInput::setPtrNote(currentNote);
    }
     if (mw)
         mw->pushForceKey("bend_view");
 }
+
 
 void setTextOnBeat(Track *track) {
     auto& beat = track->at(track->cursor())->at(track->cursorBeat());

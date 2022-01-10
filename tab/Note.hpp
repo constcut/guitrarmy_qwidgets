@@ -56,6 +56,13 @@ namespace gtmy {
     };
 
 
+    struct GraceNote {
+        uint8_t fret;
+        uint8_t dynamic;
+        uint8_t transition;
+        uint8_t duration;
+    };
+
 
     class Note
     {
@@ -79,14 +86,9 @@ namespace gtmy {
             leegedLeeg = 6
         };
 
-        Note(): _fret(emptyFret), _volume(0), _fingering(0), graceIsHere(false) {}
-
+        Note(): _fret(emptyFret), _volume(0), _fingering(0), _graceIsHere(false) {}
         virtual ~Note() = default;
-
-        Note& operator=(Note *anotherNote) {
-            clone(anotherNote);
-            return *this;
-        }
+        Note& operator=(Note *anotherNote);
 
     private:
 
@@ -102,9 +104,14 @@ namespace gtmy {
         std::uint8_t _stringNumber;
 
         Note* _prevNote;
-        Note* _nextNote; //TODO разве этого нет в Chain?
+        Note* _nextNote; //TODO возможно шаблон от которого наследоваться prev/next/parent?
 
         ABitArray _effPack;
+
+        bool _graceIsHere; //Возможно достаточно флага в эффектах
+        GraceNote _graceStats;
+
+        BendPoints _bend;
 
     public:
 
@@ -115,23 +122,16 @@ namespace gtmy {
         Note *getPrev() const { return _prevNote; }
 
 
-        bool graceIsHere;
-        std::uint8_t graceNote[4]; //TODO заменить структурой, добавить set\get
-        BendPoints bend;
-
-
         void setStringNumber(std::uint8_t num) {_stringNumber = num;}
         std::uint8_t getStringNumber() const { return _stringNumber; }
 
         void setFret(std::uint8_t fValue) { _fret = fValue; }
         std::uint8_t getFret() const { return _fret; }
 
-        int getMidiNote(int tune=0) const {
-            return _fret + tune;
-        }
+        int getMidiNote(int tune = 0) const { return _fret + tune; }
 
         void setState(std::uint8_t nState) { _noteState = nState; }
-        void signStateLeeged() { if (_noteState<=1) _noteState=4; if (_noteState==2) _noteState=6; }
+        void signStateLeeged();
         std::uint8_t getState() const { return _noteState;}
 
         void setVolume(std::uint8_t vValue) { _volume = vValue; }
@@ -145,14 +145,18 @@ namespace gtmy {
         ABitArray& getEffectsRef();
         void addEffects(ABitArray &append) { _effPack.mergeWith(append); }
 
+        BendPoints* getBendPtr() { return &_bend; }
 
         void setFingering1(std::uint8_t fValue) { _fingering1 = fValue; } //Older versions
         void setFingering2(std::uint8_t fValue) { _fingering2 = fValue; }
         std::uint8_t getFingering1() const { return _fingering1; }
         std::uint8_t getFingering2() const { return _fingering2; }
 
-        void setGrace(size_t index, std::uint8_t gValue) { graceNote[index] = gValue;}
-        std::uint8_t getGrace(size_t index) const { return graceNote[index]; }
+        void setGraceStats(GraceNote stats) { _graceStats = stats; }
+        GraceNote getGraceStats() const { return _graceStats; }
+
+        bool isGraceNote() const { return _graceIsHere; }
+        void setGraceNote(bool flag) { _graceIsHere = flag; }
 
         void clone(Note *from);
     };

@@ -5,6 +5,7 @@
 using namespace gtmy;
 
 
+
 void Note::clone(Note *from)
 {
     _fret = from->_fret;
@@ -13,6 +14,13 @@ void Note::clone(Note *from)
     _stringNumber = from->_stringNumber;
     auto eff = from->getEffects();
     _effPack.mergeWith(eff);
+}
+
+
+
+Note& Note::operator=(Note *anotherNote) {
+    clone(anotherNote);
+    return *this;
 }
 
 void Note::printToStream(std::ostream &stream) const
@@ -34,4 +42,11 @@ void Note::setEffect(Effect eff)
         _effPack.flush();
     else
         _effPack.setEffectAt(eff,true);
+}
+
+void Note::signStateLeeged() {
+    if (_noteState <= 1)
+        _noteState=4;
+    if (_noteState==2)
+        _noteState=6;
 }
