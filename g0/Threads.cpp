@@ -220,7 +220,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
         }
         _beatTimes.push_back(barMoments);
 
-        addNumDenum(bar->getSignNum(), bar->getSignDenum(), track->timeLoopIndexStore[barI]);
+        addNumDenum(bar->getSignNum(), bar->getSignDenum(), track->getTimeLoopIndexes()[barI]);
     }
 
     setLimit(track->getTimeLoop().size());

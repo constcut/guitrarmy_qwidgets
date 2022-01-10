@@ -381,7 +381,7 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
     size_t timeLoopLen = timeLoop.size();
     for (size_t i = shiftTheCursor; i < timeLoopLen;++i) {
         localThr->addNumDenum(timeLoop.at(i)->getSignNum(),
-        timeLoop.at(i)->getSignDenum(), pTrack->timeLoopIndexStore[i]);
+        timeLoop.at(i)->getSignDenum(), pTrack->getTimeLoopIndexes()[i]);
     }
     localThr->setLimit(timeLoop.size());
 

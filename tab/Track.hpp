@@ -29,9 +29,6 @@ namespace gtmy {
 
         void printToStream(std::ostream &stream);
 
-
-        std::vector<size_t> timeLoopIndexStore;
-
         Track &operator=([[maybe_unused]]Track another);
 
         virtual void push_back(std::unique_ptr<Bar> val) override;
@@ -53,6 +50,7 @@ namespace gtmy {
         GuitarTuning _tuning;
 
         std::vector<Bar*> _timeLoop;
+        std::vector<size_t> _timeLoopIndexStore;
 
     public:
 
@@ -63,6 +61,7 @@ namespace gtmy {
         void connectAll();
 
         const std::vector<Bar*>& getTimeLoop() const { return _timeLoop; }
+        const std::vector<size_t>& getTimeLoopIndexes() const { return _timeLoopIndexStore; }
 
         void pushReprise(Bar *beginRepeat, Bar *endRepeat,
                          Bar *preTail, Bar *tailBegin, Bar *tailEnd, size_t beginIndex, size_t endIndex,

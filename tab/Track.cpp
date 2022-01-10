@@ -386,7 +386,7 @@ size_t Track::connectTimeLoop()
        return 0;
 
    _timeLoop.clear();
-   timeLoopIndexStore.clear();
+   _timeLoopIndexStore.clear();
 
    //FEW WORDS:
     //in guitar pro only 1 bar works after reprize!
@@ -427,7 +427,7 @@ size_t Track::connectTimeLoop()
                while (beginRepeat != curBar)
                {
                    _timeLoop.push_back(beginRepeat);
-                   timeLoopIndexStore.push_back(beginIndex);
+                   _timeLoopIndexStore.push_back(beginIndex);
 
                    ++beginIndex;
                    beginRepeat = (Bar*)beginRepeat->getNext();
@@ -549,7 +549,7 @@ size_t Track::connectTimeLoop()
            if (beginRepeat == 0)
            {
                _timeLoop.push_back(curBar);
-               timeLoopIndexStore.push_back(curIndex);
+               _timeLoopIndexStore.push_back(curIndex);
            }
 
            curBar = (Bar*)curBar->getNext();
@@ -633,12 +633,12 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                 for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                 {
                     _timeLoop.push_back(barI);
-                    timeLoopIndexStore.push_back(beginIndex+localIndex);
+                    _timeLoopIndexStore.push_back(beginIndex+localIndex);
                     ++localIndex;
                 }
 
                 _timeLoop.push_back(endRepeat);
-                timeLoopIndexStore.push_back(endIndex);
+                _timeLoopIndexStore.push_back(endIndex);
             }
         }
         else
@@ -652,7 +652,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                {
                    _timeLoop.push_back(barI);
-                   timeLoopIndexStore.push_back(beginIndex+localIndex);
+                   _timeLoopIndexStore.push_back(beginIndex+localIndex);
                    ++localIndex;
                }
 
@@ -667,7 +667,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                        for (size_t j = 0; j < thatEnd->size(); ++j)
                        {
                            _timeLoop.push_back(thatEnd->at(j));
-                           timeLoopIndexStore.push_back(thatRayInd[j]);
+                           _timeLoopIndexStore.push_back(thatRayInd[j]);
                        }
                            //timeLoop += thatEnd;
                    }
@@ -675,7 +675,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                else //add default value
                {
                    _timeLoop.push_back(endRepeat);
-                   timeLoopIndexStore.push_back(endIndex);
+                   _timeLoopIndexStore.push_back(endIndex);
                }
            }
         }
@@ -698,7 +698,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext())
                {
                    _timeLoop.push_back(barI);
-                   timeLoopIndexStore.push_back(beginIndex+localIndex);
+                   _timeLoopIndexStore.push_back(beginIndex+localIndex);
                    ++localIndex;
                }
 
@@ -710,14 +710,14 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                    for (size_t j = 0; j < thatEnd->size(); ++j)
                    {
                        _timeLoop.push_back(thatEnd->at(j));
-                       timeLoopIndexStore.push_back(thatRayInd[j]);
+                       _timeLoopIndexStore.push_back(thatRayInd[j]);
                    }
                        //timeLoop += thatEnd;
                }
                else //add default value
                {
                    _timeLoop.push_back(endRepeat);
-                   timeLoopIndexStore.push_back(endIndex);
+                   _timeLoopIndexStore.push_back(endIndex);
                    //POSSIBLE THERE would be ISSUE - hard test it
                    if (trackLog)
                    qDebug() << "Tail begin=0, pre tail=1?; attention";
