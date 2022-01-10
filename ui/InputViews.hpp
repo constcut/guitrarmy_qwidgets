@@ -15,24 +15,20 @@ namespace gtmy {
     {
     protected:
 
-        std::vector<GCheckButton> checkButtons; //one track
-        std::vector<GLabel> lineInstrLabels;
+        std::vector<GCheckButton> _checkButtons; //one track
+        std::vector<GLabel> _lineInstrLabels;
 
-        std::unique_ptr<Bar> bar;
-        std::unique_ptr<BarView> barView;
+        std::unique_ptr<Bar> _bar;
+        std::unique_ptr<BarView> _barView;
 
-        std::unique_ptr<GLabel> sigNumBut;
-        std::unique_ptr<GLabel> sigDenBut;
-        std::unique_ptr<GLabel> bpmBut;
-        std::unique_ptr<GLabel> bpmValue;
-        std::unique_ptr<GLabel> repeatLabel;
-        std::unique_ptr<GCheckButton> butRepeat;
+        std::unique_ptr<GLabel> _sigNumBut;
+        std::unique_ptr<GLabel> _sigDenBut;
+        std::unique_ptr<GLabel> _bpmBut;
+        std::unique_ptr<GLabel> _bpmValue;
+        std::unique_ptr<GLabel> _repeatLabel;
+        std::unique_ptr<GCheckButton> _butRepeat;
 
-        int currentDen;
-
-        //Check buttons
-        //bar
-        //button to create the bar
+        int _currentDen;
 
     public:
 
@@ -40,14 +36,14 @@ namespace gtmy {
 
         void keyevent(std::string press);
 
-        PatternInput():currentDen(4)
+        PatternInput():_currentDen(4)
         {
-            sigNumBut = std::make_unique<GLabel>(100,330-75,"16");
-            sigDenBut = std::make_unique<GLabel>(150,330-75,"16");
-            bpmBut = std::make_unique<GLabel>(20,330-75,"new bpm");
-            bpmValue = std::make_unique<GLabel>(20,300-75,"120");
-            butRepeat = std::make_unique<GCheckButton>(100,310,70,30);
-            repeatLabel = std::make_unique<GLabel>(20,330,"Repeat bar:","",false);
+            _sigNumBut = std::make_unique<GLabel>(100,330-75,"16");
+            _sigDenBut = std::make_unique<GLabel>(150,330-75,"16");
+            _bpmBut = std::make_unique<GLabel>(20,330-75,"new bpm");
+            _bpmValue = std::make_unique<GLabel>(20,300-75,"120");
+            _butRepeat = std::make_unique<GCheckButton>(100,310,70,30);
+            _repeatLabel = std::make_unique<GLabel>(20,330,"Repeat bar:","",false);
             addButtons();
         }
 
@@ -65,12 +61,12 @@ namespace gtmy {
                     case 3: instrText = "36"; break;
                 }
                 GLabel lineLab(shX,shY,instrText);
-                lineInstrLabels.push_back(std::move(lineLab));
+                _lineInstrLabels.push_back(std::move(lineLab));
                 shX += 70;
                 for (size_t i = 0; i < 16; ++i) {
                     GCheckButton but(shX,shY-30,30,30);
                     shX += but.getW() + 10;
-                    checkButtons.push_back(but);
+                    _checkButtons.push_back(but);
                 }
             }
         }
@@ -88,47 +84,44 @@ namespace gtmy {
     class TapRyView : public GView
     {
     protected:
-        std::unique_ptr<GLabel> labA;
-        std::unique_ptr<GLabel> stopMetr;
-        std::unique_ptr<GLabel> labB;
+        std::unique_ptr<GLabel> _labA;
+        std::unique_ptr<GLabel> _stopMetr;
+        std::unique_ptr<GLabel> _labB;
 
-        std::unique_ptr<GLabel> labClean;
-        std::unique_ptr<GLabel> labStat;
-        std::unique_ptr<GLabel> labExp;
-        std::unique_ptr<GLabel> bpmLabel;
+        std::unique_ptr<GLabel> _labClean;
+        std::unique_ptr<GLabel> _labStat;
+        std::unique_ptr<GLabel> _labExp;
+        std::unique_ptr<GLabel> _bpmLabel;
 
-        GRect leftPress;
-        GRect rightPress;
+        GRect _leftPress;
+        GRect _rightPress;
 
-        std::unique_ptr<Bar> ryBar;
-        std::unique_ptr<BarView> barView;
+        std::unique_ptr<Bar> _ryBar;
+        std::unique_ptr<BarView> _barView;
 
-        struct intPair {
-            int first;
-            int second;
-        };
+        using intPair = std::pair<int, int>;
+        std::vector<intPair> _presses;
 
-        std::vector<intPair> presses;
     public:
 
         virtual void setUI();
 
         void measureTime(); //perfect to do in another thread
 
-        TapRyView():leftPress(0,280,200,200), rightPress(600,280,200,200) {
-            labA = std::make_unique<GLabel>(50,100-80,"Launch pseudo-metronome");
-            labA->setW(labA->getW() + 20);
-            stopMetr = std::make_unique<GLabel>(300,100-80,"stop");
-            labB = std::make_unique<GLabel>(50,200-55,"Please click here :)");
-            labB->setVisible(false);
-            labClean = std::make_unique<GLabel>(500,100-80,"clean");
-            labStat = std::make_unique<GLabel>(50,10,"Info:                 ");
-            labStat->setBorder(false);
-            labStat->setVisible(false);
-            labExp = std::make_unique<GLabel>(200,150-80,"stop record");
-            labExp->setVisible(false);
-            bpmLabel = std::make_unique<GLabel>(400,100-80,"120");
-            barView = 0;
+        TapRyView():_leftPress(0,280,200,200), _rightPress(600,280,200,200) {
+            _labA = std::make_unique<GLabel>(50,100-80,"Launch pseudo-metronome");
+            _labA->setW(_labA->getW() + 20);
+            _stopMetr = std::make_unique<GLabel>(300,100-80,"stop");
+            _labB = std::make_unique<GLabel>(50,200-55,"Please click here :)");
+            _labB->setVisible(false);
+            _labClean = std::make_unique<GLabel>(500,100-80,"clean");
+            _labStat = std::make_unique<GLabel>(50,10,"Info:                 ");
+            _labStat->setBorder(false);
+            _labStat->setVisible(false);
+            _labExp = std::make_unique<GLabel>(200,150-80,"stop record");
+            _labExp->setVisible(false);
+            _bpmLabel = std::make_unique<GLabel>(400,100-80,"120");
+            _barView = 0;
         }
 
         void draw(QPainter *painter);
@@ -143,19 +136,21 @@ namespace gtmy {
         {}
     };
 
+
     class MorzeInput : public GView
     {
     protected:
-        std::unique_ptr<Bar> bar;
-        std::unique_ptr<BarView> barView;
-        std::unique_ptr<GLabel> createBut;
+
+        std::unique_ptr<Bar> _bar;
+        std::unique_ptr<BarView> _barView;
+        std::unique_ptr<GLabel> _createBut;
 
     public:
 
         virtual void setUI();
 
         MorzeInput() {
-            createBut = std::make_unique<GLabel>(100,100,"create tab from text");
+            _createBut = std::make_unique<GLabel>(100,100,"create tab from text");
         }
 
         virtual void keyevent(std::string keypress);

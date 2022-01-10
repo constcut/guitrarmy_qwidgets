@@ -35,50 +35,50 @@ void changeColor(const std::string& color, QPainter* src);
 
 void PatternInput::draw(QPainter *painter)
 {
-    repeatLabel->draw(painter);
+    _repeatLabel->draw(painter);
 
-    for (size_t i = 0; i < checkButtons.size(); ++i)
-        checkButtons[i].draw(painter);
-
-
-
-    sigDenBut->draw(painter);     
-    sigNumBut->draw(painter);
-    bpmBut->draw(painter);
+    for (size_t i = 0; i < _checkButtons.size(); ++i)
+        _checkButtons[i].draw(painter);
 
 
-    bpmValue->draw(painter);
 
-    if (barView)
-        barView->draw(painter);
+    _sigDenBut->draw(painter);     
+    _sigNumBut->draw(painter);
+    _bpmBut->draw(painter);
 
-    butRepeat->draw(painter);
+
+    _bpmValue->draw(painter);
+
+    if (_barView)
+        _barView->draw(painter);
+
+    _butRepeat->draw(painter);
 }
 
 
 void PatternInput::createBar()
 {
-    bar = std::make_unique<Bar>();
-    bar->flush();
+    _bar = std::make_unique<Bar>();
+    _bar->flush();
 
-    int num = atoi(sigNumBut->getText().c_str());
-    int den = atoi(sigDenBut->getText().c_str());
+    int num = atoi(_sigNumBut->getText().c_str());
+    int den = atoi(_sigDenBut->getText().c_str());
 
-    bar->setSignDenum(den);
-    bar->setSignNum(num);
+    _bar->setSignDenum(den);
+    _bar->setSignNum(num);
 
-    for (size_t i = 0; i < (checkButtons.size()/4); ++i) {
+    for (size_t i = 0; i < (_checkButtons.size()/4); ++i) {
         auto beat = std::make_unique<Beat>();
-        beat->setDuration(currentDen);
+        beat->setDuration(_currentDen);
         beat->setDotted(0);
         beat->setDurationDetail(0);
         beat->setPause(false);
         bool oneChecked = false;
         for (size_t iCoef = 0; iCoef < 4; ++iCoef) {
-            size_t ind = i + iCoef*(checkButtons.size()/4);
-            if (checkButtons[ind].isChecked()){
+            size_t ind = i + iCoef*(_checkButtons.size()/4);
+            if (_checkButtons[ind].isChecked()){
                 auto newNote = std::make_unique<Note>();
-                std::uint8_t localFret = atoi(lineInstrLabels[iCoef].getText().c_str());
+                std::uint8_t localFret = atoi(_lineInstrLabels[iCoef].getText().c_str());
                 if (getMaster())
                     localFret = getMaster()->getComboBoxValue(iCoef)+27;
                 /*
@@ -101,13 +101,13 @@ void PatternInput::createBar()
         if (oneChecked == false)
             beat->setPause(true);
 
-        bar->push_back(std::move(beat));
+        _bar->push_back(std::move(beat));
     }
 
-    barView = std::make_unique<BarView>(bar.get(), 6);
-    barView->setShifts(250,300-55-30);
+    _barView = std::make_unique<BarView>(_bar.get(), 6);
+    _barView->setShifts(250,300-55-30);
 
-    AClipboard::current()->setPtr(bar.get());
+    AClipboard::current()->setPtr(_bar.get());
     AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
 }
@@ -123,16 +123,16 @@ void PatternInput::playBar() {
     patternTrack->setVolume(15);
     patternTrack->setPan(8);
 
-    AClipboard::current()->setPtr(bar.get());
+    AClipboard::current()->setPtr(_bar.get());
     AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
-    if (butRepeat->isChecked())
+    if (_butRepeat->isChecked())
     {
-        bar->setRepeat(1);
-        bar->setRepeat(2,10);
+        _bar->setRepeat(1);
+        _bar->setRepeat(2,10);
     }
 
-    patternTrack->push_back(std::move(bar));
+    patternTrack->push_back(std::move(_bar));
 
     auto& tuning = patternTrack->getTuningRef();
     tuning.setStringsAmount(6);
@@ -142,7 +142,7 @@ void PatternInput::playBar() {
 
     patternTab.push_back(std::move(patternTrack));
 
-    int patternBPM = atoi(bpmValue->getText().c_str());
+    int patternBPM = atoi(_bpmValue->getText().c_str());
     patternTab.setBPM(patternBPM);
     patternTab.connectTracks();
 
@@ -156,14 +156,14 @@ void PatternInput::playBar() {
 
     //STARTMIDI
 
-    bar->setParent(0);
+    _bar->setParent(0);
 
     patternTrack->remove(0);
 }
 
 void PatternInput::setUI()
 {
-    for (size_t i = 0; i < lineInstrLabels.size(); ++i) {
+    for (size_t i = 0; i < _lineInstrLabels.size(); ++i) {
         int shY = 100-55+50*i;
         int shX = 30;
         if (getMaster())
@@ -171,18 +171,18 @@ void PatternInput::setUI()
     }
 
     if (getMaster()) {
-       size_t i = lineInstrLabels.size();
-       getMaster()->SetButton(i,sigDenBut->getText(),sigDenBut->getX(),
-                              sigDenBut->getY(),sigDenBut->getW(),sigDenBut->getH(),"newDen");
+       size_t i = _lineInstrLabels.size();
+       getMaster()->SetButton(i,_sigDenBut->getText(),_sigDenBut->getX(),
+                              _sigDenBut->getY(),_sigDenBut->getW(),_sigDenBut->getH(),"newDen");
        ++i;
-       getMaster()->SetButton(i,sigNumBut->getText(),sigNumBut->getX(),
-                              sigNumBut->getY(),sigNumBut->getW(),sigNumBut->getH(),"newNum");
+       getMaster()->SetButton(i,_sigNumBut->getText(),_sigNumBut->getX(),
+                              _sigNumBut->getY(),_sigNumBut->getW(),_sigNumBut->getH(),"newNum");
        ++i;
-       getMaster()->SetButton(i,bpmBut->getText(),bpmBut->getX(),
-                              bpmBut->getY(),bpmBut->getW(),bpmBut->getH(),"newBpm");
+       getMaster()->SetButton(i,_bpmBut->getText(),_bpmBut->getX(),
+                              _bpmBut->getY(),_bpmBut->getW(),_bpmBut->getH(),"newBpm");
        ++i;
-       getMaster()->SetButton(i,"play",bpmBut->getX()+180,
-                              bpmBut->getY(),30,20,CONF_PARAM("TrackView.playMidi"));
+       getMaster()->SetButton(i,"play",_bpmBut->getX()+180,
+                              _bpmBut->getY(),30,20,CONF_PARAM("TrackView.playMidi"));
     }
 }
 
@@ -190,7 +190,7 @@ void PatternInput::keyevent(std::string press)
 {
     if (press==CONF_PARAM("TrackView.playMidi"))
     {
-        if (bar)
+        if (_bar)
         {
             playBar();
         }
@@ -204,7 +204,7 @@ void PatternInput::keyevent(std::string press)
                              40,255,1,&ok);
 
         if (ok)
-            bpmValue->setText(std::to_string(newBpm));
+            _bpmValue->setText(std::to_string(newBpm));
     }
 
     if (press=="newNum")
@@ -217,8 +217,8 @@ void PatternInput::keyevent(std::string press)
                              1,256,1,&ok);
         if (ok)
         {
-            lineInstrLabels.clear();
-            checkButtons.clear();
+            _lineInstrLabels.clear();
+            _checkButtons.clear();
 
             int shX = 30;
             int shY = 100-55;
@@ -238,7 +238,7 @@ void PatternInput::keyevent(std::string press)
                 }
 
                 GLabel lineLab(shX,shY,instrText);
-                lineInstrLabels.push_back(std::move(lineLab));
+                _lineInstrLabels.push_back(std::move(lineLab));
 
                 shX += 70;
 
@@ -246,14 +246,14 @@ void PatternInput::keyevent(std::string press)
                 {
                     GCheckButton but(shX,shY-30,30,30);
                     shX += but.getW() + 10;
-                    checkButtons.push_back(but);
+                    _checkButtons.push_back(but);
 
                     if (shX > maxShX)
                         maxShX = shX;
                 }
             }
 
-            sigNumBut->setText(std::to_string(newNum));
+            _sigNumBut->setText(std::to_string(newNum));
             getMaster()->requestWidth(maxShX + 10);
 
         }
@@ -287,46 +287,46 @@ void PatternInput::keyevent(std::string press)
             }
 
             if (listValue >=0)
-                currentDen = listValue;
+                _currentDen = listValue;
         }
 
        std::string stdResp = resp.toStdString();
-       sigDenBut->setText(stdResp);
+       _sigDenBut->setText(stdResp);
     }
 }
 
 void PatternInput::onclick(int x1, int y1)
 {
-    if (butRepeat->hit(x1,y1))
+    if (_butRepeat->hit(x1,y1))
     {
-        butRepeat->onclick(x1,y1);
-        if (butRepeat->isChecked()==false)
+        _butRepeat->onclick(x1,y1);
+        if (_butRepeat->isChecked()==false)
         {
             //STARTMIDI (stop)
         }
     }
 
-    if (sigNumBut->hit(x1,y1))
+    if (_sigNumBut->hit(x1,y1))
     {
         getMaster()->pushForceKey("newNum");
     }
 
-    if (sigDenBut->hit(x1,y1))
+    if (_sigDenBut->hit(x1,y1))
     {
         //16 is default
         getMaster()->pushForceKey("newDen");
     }
 
-    for (size_t i = 0; i < checkButtons.size(); ++i)
-       if  (checkButtons[i].hit(x1,y1))
+    for (size_t i = 0; i < _checkButtons.size(); ++i)
+       if  (_checkButtons[i].hit(x1,y1))
        {
-           checkButtons[i].onclick(x1,y1);
+           _checkButtons[i].onclick(x1,y1);
            createBar();
            break;
        }
 
-    for (size_t i = 0; i < lineInstrLabels.size(); ++i)
-       if  (lineInstrLabels[i].hit(x1,y1))
+    for (size_t i = 0; i < _lineInstrLabels.size(); ++i)
+       if  (_lineInstrLabels[i].hit(x1,y1))
        {
            /*now comboboxes
            bool ok=false;
@@ -343,7 +343,7 @@ void PatternInput::onclick(int x1, int y1)
            createBar();
        }
 
-    if (bpmBut->hit(x1,y1))
+    if (_bpmBut->hit(x1,y1))
     {
         getMaster()->pushForceKey("newBpm");
     }
@@ -395,21 +395,21 @@ void TapRyView::setUI()
         int fullW = getMaster()->getWidth();
         int fullH = getMaster()->getHeight();
 
-        leftPress.setX(0); leftPress.setY(fullH-200);
-        leftPress.setW(200); leftPress.setH(200);
+        _leftPress.setX(0); _leftPress.setY(fullH-200);
+        _leftPress.setW(200); _leftPress.setH(200);
 
-        rightPress.setX(fullW-200); rightPress.setY(fullH-200);
-        rightPress.setW(200); rightPress.setH(200);
+        _rightPress.setX(fullW-200); _rightPress.setY(fullH-200);
+        _rightPress.setW(200); _rightPress.setH(200);
 
-        getMaster()->setComboBox(0,"drums",leftPress.getX()+10,leftPress.getY()+10,150,30,-1);
-        getMaster()->setComboBox(1,"drums",rightPress.getX()+10,rightPress.getY()+10,150,30,-1);
+        getMaster()->setComboBox(0,"drums",_leftPress.getX()+10,_leftPress.getY()+10,150,30,-1);
+        getMaster()->setComboBox(1,"drums",_rightPress.getX()+10,_rightPress.getY()+10,150,30,-1);
 
-        getMaster()->SetButton(2,labClean.get(),"clean tap");
-        getMaster()->SetButton(3,stopMetr.get(),"stop metr");
-        getMaster()->SetButton(4,bpmLabel.get(),"newBpm");
-        getMaster()->SetButton(5,labA.get(),"start metr");
+        getMaster()->SetButton(2,_labClean.get(),"clean tap");
+        getMaster()->SetButton(3,_stopMetr.get(),"stop metr");
+        getMaster()->SetButton(4,_bpmLabel.get(),"newBpm");
+        getMaster()->SetButton(5,_labA.get(),"start metr");
 
-        getMaster()->SetButton(6,"play",600,labClean->getY(),50,20,"ent");
+        getMaster()->SetButton(6,"play",600,_labClean->getY(),50,20,"ent");
     }
 
 
@@ -421,33 +421,33 @@ void TapRyView::draw(QPainter *painter)
     int fullH = getMaster()->getHeight();
 
 
-    leftPress.setX(0); leftPress.setY(fullH-200);
-    leftPress.setW(200); leftPress.setH(200);
-    rightPress.setX(fullW-200); rightPress.setY(fullH-200);
-    rightPress.setW(200); rightPress.setH(200);
+    _leftPress.setX(0); _leftPress.setY(fullH-200);
+    _leftPress.setW(200); _leftPress.setH(200);
+    _rightPress.setX(fullW-200); _rightPress.setY(fullH-200);
+    _rightPress.setW(200); _rightPress.setH(200);
 
 
-    rightPress.draw(painter);
-    leftPress.draw(painter);
+    _rightPress.draw(painter);
+    _leftPress.draw(painter);
 
 
 
-    labA->draw(painter);
-    labB->draw(painter);
-    labStat->draw(painter);
-    labExp->draw(painter);
+    _labA->draw(painter);
+    _labB->draw(painter);
+    _labStat->draw(painter);
+    _labExp->draw(painter);
 
-    labClean->draw(painter);
-    stopMetr->draw(painter);
+    _labClean->draw(painter);
+    _stopMetr->draw(painter);
 
     //bpmLabel->setY(bpmLabel->getY() + 50);
     //bpmLabel->setBorder(false);
 
-    bpmLabel->draw(painter);
+    _bpmLabel->draw(painter);
 
 
-    if (barView)
-        barView->draw(painter);
+    if (_barView)
+        _barView->draw(painter);
 }
 
 
@@ -577,28 +577,28 @@ void TapRyView::createBar()
 {
     //create tab values push them into stat
 
-    if (presses.size() < 2)
+    if (_presses.size() < 2)
         return; //avoid crah
 
-    int thatBPM = atoi(bpmLabel->getText().c_str());
+    int thatBPM = atoi(_bpmLabel->getText().c_str());
 
 
-    if (ryBar)
-        ryBar = nullptr;
+    if (_ryBar)
+        _ryBar = nullptr;
 
 
-    ryBar = std::make_unique<Bar>();
-    ryBar->flush();
+    _ryBar = std::make_unique<Bar>();
+    _ryBar->flush();
 
-    ryBar->setSignDenum(4); ryBar->setSignNum(8);
+    _ryBar->setSignDenum(4); _ryBar->setSignNum(8);
 
     std::uint8_t lastDur = 0;
 
     int lastPressInstr = 0;
 
-    for (size_t i = 1; i < presses.size(); ++i)
+    for (size_t i = 1; i < _presses.size(); ++i)
     {
-        int step = presses[i].first-presses[i-1].first;
+        int step = _presses[i].first-_presses[i-1].first;
         std::uint8_t dur=0,det=0,dot=0;
         findClosestRhythm(step,dur,det,dot,thatBPM);
 
@@ -628,7 +628,7 @@ void TapRyView::createBar()
 
 
 
-        if (presses[i].second == 1)
+        if (_presses[i].second == 1)
         {
             if (getMaster())
             {
@@ -659,7 +659,7 @@ void TapRyView::createBar()
         rNote->setStringNumber(5);
         ryBeat->push_back(std::move(rNote));
 
-        ryBar->push_back(std::move(ryBeat));
+        _ryBar->push_back(std::move(ryBeat));
     }
 
     //last note thats missing
@@ -677,12 +677,12 @@ void TapRyView::createBar()
         rNote->setStringNumber(5);
         ryBeat->push_back(std::move(rNote));
 
-        ryBar->push_back(std::move(ryBeat));
+        _ryBar->push_back(std::move(ryBeat));
     }
 
 
-    while (ryBar->getCompleteStatus()==2)
-        ryBar->setSignNum(ryBar->getSignNum()+1);
+    while (_ryBar->getCompleteStatus()==2)
+        _ryBar->setSignNum(_ryBar->getSignNum()+1);
 
 
 
@@ -692,13 +692,13 @@ void TapRyView::createBar()
     //labStat->setText(sX.c_str());
 
 
-    if (barView == nullptr) {
-        barView = std::make_unique<BarView>(ryBar.get(),6);
-        barView->setShifts(210,80);
+    if (_barView == nullptr) {
+        _barView = std::make_unique<BarView>(_ryBar.get(),6);
+        _barView->setShifts(210,80);
     }
-        else barView->setBar(ryBar.get());
+        else _barView->setBar(_ryBar.get());
 
-    AClipboard::current()->setPtr(ryBar.get());
+    AClipboard::current()->setPtr(_ryBar.get());
     AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
 }
@@ -707,10 +707,10 @@ void TapRyView::copyAndPlayBar()
 {
     //createBar();
 
-    if (ryBar==0)
+    if (_ryBar==0)
         return;
 
-    int thatBPM = atoi(bpmLabel->getText().c_str());
+    int thatBPM = atoi(_bpmLabel->getText().c_str());
 
     //createBar();
     //copy paste
@@ -722,7 +722,7 @@ void TapRyView::copyAndPlayBar()
     patternTrack->setVolume(15);
     patternTrack->setPan(8);
 
-    patternTrack->push_back(std::move(ryBar));
+    patternTrack->push_back(std::move(_ryBar));
 
     auto& tuning = patternTrack->getTuningRef();
     tuning.setStringsAmount(6);
@@ -742,7 +742,7 @@ void TapRyView::copyAndPlayBar()
 
     //STARTMIDI
 
-    ryBar->setParent(0);
+    _ryBar->setParent(0);
     patternTrack->remove(0);
 
 }
@@ -756,9 +756,9 @@ void TapRyView::keyevent(std::string press)
 
     if (press == "clean tap")
     {
-        presses.clear();
-        ryBar = nullptr;
-        barView = nullptr;
+        _presses.clear();
+        _ryBar = nullptr;
+        _barView = nullptr;
     }
 
     if (press == "stop metr")
@@ -775,21 +775,21 @@ void TapRyView::keyevent(std::string press)
                              40,255,1,&ok);
         if (ok)
         {
-            bpmLabel->setText(std::to_string(newBpm));
-            getMaster()->SetButton(4,bpmLabel.get(),"newBpm");
+            _bpmLabel->setText(std::to_string(newBpm));
+            getMaster()->SetButton(4,_bpmLabel.get(),"newBpm");
         }
     }
 
     if (press == "start metr")
     {
         //START PSEUDO METRONOME
-        ryBar = nullptr;
-        barView = nullptr;
+        _ryBar = nullptr;
+        _barView = nullptr;
 
-        ryBar = std::make_unique<Bar>();
-        ryBar->flush();
+        _ryBar = std::make_unique<Bar>();
+        _ryBar->flush();
 
-        ryBar->setSignDenum(4); ryBar->setSignNum(4);
+        _ryBar->setSignDenum(4); _ryBar->setSignNum(4);
 
         for (size_t i =0; i < 4; ++i)
         {
@@ -810,7 +810,7 @@ void TapRyView::keyevent(std::string press)
             rNote->setStringNumber(5);
             ryBeat->push_back(std::move(rNote));
 
-            ryBar->push_back(std::move(ryBeat));
+            _ryBar->push_back(std::move(ryBeat));
         }
 
         Tab patternTab;
@@ -821,10 +821,10 @@ void TapRyView::keyevent(std::string press)
         patternTrack->setVolume(15);
         //patternTrack.setPan();
 
-        ryBar->setRepeat(1);
-        ryBar->setRepeat(2,100);
+        _ryBar->setRepeat(1);
+        _ryBar->setRepeat(2,100);
 
-        patternTrack->push_back(std::move(ryBar));
+        patternTrack->push_back(std::move(_ryBar));
 
         auto& tuning = patternTrack->getTuningRef();
         tuning.setStringsAmount(6);
@@ -833,7 +833,7 @@ void TapRyView::keyevent(std::string press)
 
         patternTab.push_back(std::move(patternTrack));
 
-        int thatBPM = atoi(bpmLabel->getText().c_str());
+        int thatBPM = atoi(_bpmLabel->getText().c_str());
         patternTab.setBPM(thatBPM);
         patternTab.connectTracks();
 
@@ -854,27 +854,27 @@ void TapRyView::keyevent(std::string press)
 
 void TapRyView::onclick(int x1, int y1)
 {
-    if (stopMetr->hit(x1,y1))
+    if (_stopMetr->hit(x1,y1))
     {
        getMaster()->pushForceKey("stop metr");
     }
 
-    if (bpmLabel->hit(x1,y1))
+    if (_bpmLabel->hit(x1,y1))
     {
        getMaster()->pushForceKey("newBpm");
     }
 
-    if (leftPress.hit(x1,y1)||rightPress.hit(x1,y1))
+    if (_leftPress.hit(x1,y1)||_rightPress.hit(x1,y1))
     {
 
-        if (leftPress.hit(x1,y1))
-            leftPress.pressIt();
+        if (_leftPress.hit(x1,y1))
+            _leftPress.pressIt();
             else
-                rightPress.pressIt();
+                _rightPress.pressIt();
 
         //most important
 
-        if (presses.size() == 0)
+        if (_presses.size() == 0)
         {
             getTime();
         }
@@ -888,27 +888,27 @@ void TapRyView::onclick(int x1, int y1)
         int timeNow= timez; //*AConfig::getInstance().getTimeCoef();
         intPair newPair;
         newPair.first = timeNow;
-        newPair.second = leftPress.hit(x1,y1) ? 1: 2;
+        newPair.second = _leftPress.hit(x1,y1) ? 1: 2;
 
         if (timeNow < 0)
         {
             qDebug() <<"Y";
         }
-        presses.push_back(newPair);
+        _presses.push_back(newPair);
 
         //add value to vector or poly
         std::string info=
-        "Presses " + std::to_string( presses.size() ) + "; last- " + std::to_string(timeNow);
+        "Presses " + std::to_string( _presses.size() ) + "; last- " + std::to_string(timeNow);
 
         qDebug() << info.c_str();
 
-        labStat->setText(info.c_str());
+        _labStat->setText(info.c_str());
 
         createBar();
 
         int midiNote = 0;
 
-        if (leftPress.hit(x1,y1))
+        if (_leftPress.hit(x1,y1))
         {
             int drumInstr = getMaster()->getComboBoxValue(0);
             if (drumInstr == -1)
@@ -933,17 +933,17 @@ void TapRyView::onclick(int x1, int y1)
         //getMaster()->pleaseRepaint();
     }
 
-    if (labClean->hit(x1,y1))
+    if (_labClean->hit(x1,y1))
     {
         getMaster()->pushForceKey("clean tap");
     }
 
-    if (labA->hit(x1,y1))
+    if (_labA->hit(x1,y1))
     {
         getMaster()->pushForceKey("start metr");
     }
 
-    if (labExp->hit(x1,y1))
+    if (_labExp->hit(x1,y1))
     {
         //copyAndPlayBar();
     }
@@ -956,17 +956,17 @@ void TapRyView::onclick(int x1, int y1)
 
 void MorzeInput::draw(QPainter *painter)
 {
-    createBut->draw(painter);
+    _createBut->draw(painter);
 
-    if (barView)
-        barView->draw(painter);
+    if (_barView)
+        _barView->draw(painter);
 }
 
 //REFACT NOTES - GROUP input metods into GInputView
 
 void MorzeInput::playBar()
 {
-    if (bar)
+    if (_bar)
     {
         Tab morzeTab;
         auto morzeTrack= std::make_unique<Track>();
@@ -976,7 +976,7 @@ void MorzeInput::playBar()
         morzeTrack->setVolume(15);
         morzeTrack->setPan(8);
 
-        morzeTrack->push_back(std::move(bar));
+        morzeTrack->push_back(std::move(_bar));
 
         auto& tuning = morzeTrack->getTuningRef();
         tuning.setStringsAmount(6);
@@ -1021,7 +1021,7 @@ void MorzeInput::setUI()
 
 void MorzeInput::onclick(int x1, int y1)
 {
-    if (createBut->hit(x1,y1))
+    if (_createBut->hit(x1,y1))
     {
         //INPUT TEXT
 
@@ -1030,10 +1030,10 @@ void MorzeInput::onclick(int x1, int y1)
 
         if (ok)
         {
-            bar = std::make_unique<Bar>();
+            _bar = std::make_unique<Bar>();
 
-            bar->flush();
-            bar->setSignDenum(4); bar->setSignNum(7);
+            _bar->flush();
+            _bar->setSignDenum(4); _bar->setSignNum(7);
 
             //MORZE operations
 
@@ -1080,21 +1080,21 @@ void MorzeInput::onclick(int x1, int y1)
                 ryBeat->push_back(std::move(rNote));
                 ryBeat2->push_back(std::move(rNote2));
 
-                bar->push_back(std::move(ryBeat)); //����� �
-                bar->push_back(std::move(ryBeat2));
+                _bar->push_back(std::move(ryBeat)); //����� �
+                _bar->push_back(std::move(ryBeat2));
 
                 qDebug() << "Added "<<dur<<" "<<dur2<<" beat";
             }
 
 
-            barView = std::make_unique<BarView>(bar.get(),6);
-            barView->setShifts(100,200-55);
+            _barView = std::make_unique<BarView>(_bar.get(),6);
+            _barView->setShifts(100,200-55);
 
-            AClipboard::current()->setPtr(bar.get());
+            AClipboard::current()->setPtr(_bar.get());
             AClipboard::current()->setClipboardType(ClipboardType::BarPointer); //ptr
 
-            bar->setRepeat(1);
-            bar->setRepeat(2, 2);
+            _bar->setRepeat(1);
+            _bar->setRepeat(2, 2);
 
             playBar();
         }

@@ -42,11 +42,11 @@ void ImagePreloader::loadImage(std::string imageName)
    if (img->height() < 72)
       *img = img->scaled(72,72);
 
-   if (inv)
+   if (_invertImages)
        if (img)
            img->invertPixels();
 
-   imageMap[imageName] = std::move(img);
+   _imageMap[imageName] = std::move(img);
 }
 
 
@@ -118,15 +118,15 @@ void ImagePreloader::loadImages()
     }
 }
 
-QImage* ImagePreloader::getImage(std::string imageName)
+QImage* ImagePreloader::getImage(std::string imageName) const
 {
-    if (imageMap.count(imageName))
-        return imageMap[imageName].get();
+    if (_imageMap.count(imageName))
+        return _imageMap.at(imageName).get();
     return 0;
 }
 
 void ImagePreloader::invertAll()
 {
-    for (auto it = imageMap.begin(); it != imageMap.end(); ++it)
+    for (auto it = _imageMap.begin(); it != _imageMap.end(); ++it)
        it->second->invertPixels();
 }

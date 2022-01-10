@@ -13,18 +13,18 @@
     class ImagePreloader
     {
     protected:
-        std::unordered_map<std::string, std::unique_ptr<QImage>> imageMap;
-        bool inv;
+        std::unordered_map<std::string, std::unique_ptr<QImage>> _imageMap;
+        bool _invertImages;
 
     public:
         void loadImage(std::string imageName);
         void loadImages();
 
-        QImage *getImage(std::string imageName);
+        QImage* getImage(std::string imageName) const;
 
         void invertAll();
 
-        void setInvert(bool toInvert) {inv=toInvert;}
+        void setInvert(bool toInvert) {_invertImages=toInvert;}
 
     public:
             static ImagePreloader& getInstance() {
@@ -33,7 +33,7 @@
             }
 
     private:
-            ImagePreloader(): inv(false) {}
+            ImagePreloader(): _invertImages(false) {}
             ImagePreloader(const ImagePreloader& root) = delete;
             ImagePreloader& operator=(const ImagePreloader&) = delete;
     };
