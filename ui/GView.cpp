@@ -1,19 +1,15 @@
+//This deprecated file formated with clang-format
 #include "GView.hpp"
 
 #include <QDebug>
 #include <QFileDialog>
 
 #include "g0/Config.hpp"
-#include "g0/Threads.hpp"
-#include "midi/MidiFile.hpp"
-#include "tab/Tab.hpp"
-#include "tab/tools/GmyFile.hpp"
-#include "tab/tools/GtpFiles.hpp"
-#include "tab/tools/TabLoader.hpp"  //loader
 
 bool gViewLog = false;
 
 using namespace gtmy;
+
 
 GView *MasterView::changeChild(GView *newChild) {
   GView *oldCh = child;
@@ -32,6 +28,7 @@ GView *MasterView::changeChild(GView *newChild) {
   return oldCh;
 }
 
+
 GLabel::GLabel(int x, int y, std::string text, std::string pressSyn,
                bool showBord)
     : visible(true), showBorder(showBord) {
@@ -45,27 +42,7 @@ GLabel::GLabel(int x, int y, std::string text, std::string pressSyn,
   pressSynonim = pressSyn;
 
   if (CONF_PARAM("images") == "1") {
-    // later preloaded images should apear
-    // REFACT: use map
-
     QImage *imgPtr = ImagePreloader::getInstance().getImage(text);
-
-    /*
-    if ((text =="prevBeat") || (text =="nextBeat") || (text =="upString") ||
-    (text =="downString") || (text =="prevBar") || (text =="nextBar") || (text
-    =="play") || (text =="save") || (text=="open")|| (text =="new")
-            || (text =="config")
-            || (text =="record")|| (text =="tap")
-            || (text =="pattern")|| (text =="tests")||
-            (text=="tab")||(text=="backview")||
-            (text=="morze")||(text=="info")||(text=="openPannel")||
-            (text=="1")||(text=="2")||(text=="3")||
-            (text=="4")||(text=="5")||(text=="6")||
-            (text=="7")||(text=="8")||(text=="9")||
-            (text=="0")||(text=="qp")||(text=="qm")||
-            (text=="p")||(text=="del")||(text==".")
-            ||(text=="-3-")||(text=="leeg")||(text=="x")) */
-
     if (imgPtr) {
       imageLabel = std::make_unique<GImage>(x, y, text);
       setW(imageLabel->getW());
@@ -73,6 +50,7 @@ GLabel::GLabel(int x, int y, std::string text, std::string pressSyn,
     }
   }
 }
+
 
 bool GLabel::hit(int hX, int hY) {
   bool hitten = false;
@@ -90,4 +68,49 @@ bool GLabel::hit(int hX, int hY) {
   }
 
   return hitten;
+}
+
+
+void GCheckButton::draw(QPainter *painter) {
+  if (checked)
+    painter->fillRect(x, y, w, h, Qt::darkGray);  // painter->fillRect(x,y,w,h,CONF_PARAM("colors.curBar"));
+  painter->drawRect(x, y, w, h);
+}
+
+
+void GCheckButton::onclick([[maybe_unused]] int x1, [[maybe_unused]] int y1) {
+  if (checked)
+    checked = false;
+  else
+    checked = true;
+}
+
+
+void GLabel::draw(QPainter *painter) {
+  if (visible == false) return;
+
+  if (imageLabel == 0) {
+    painter->drawText(x + 5, y, ownText.c_str());
+
+    if (showBorder)
+      painter->drawRect(x, y - 15, w, h);  // 10 half of text height
+  } else {
+    imageLabel->setX(x);
+    imageLabel->setY(y - 10);
+    imageLabel->draw(painter);
+
+    if (showBorder)
+      painter->drawRect(x, y - 10, imageLabel->getW(), imageLabel->getH());
+  }
+}
+
+
+bool GView::hit(int hX, int hY) {
+  if ((hX >= x) && (hY >= y)) {
+    int xDiff = hX - x;
+    int yDiff = hY - y;
+    if ((xDiff <= w) && (yDiff <= h))
+        return true;
+  }
+  return false;
 }
