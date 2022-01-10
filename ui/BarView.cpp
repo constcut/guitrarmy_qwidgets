@@ -549,7 +549,7 @@ void BarView::draw(QPainter *painter)
                 {
                     if (_selectorEnd == -1)//till end
                     {
-                        if (i>=_selectorBegin)
+                        if (i >= _selectorBegin)
                             thatBack = CONF_PARAM("colors.selection");
                     }
                     else

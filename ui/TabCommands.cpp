@@ -53,7 +53,8 @@ void reactOnComboTrackViewQt(const std::string& press, Track* pTrack, MasterView
 
 
 
-void changeBarSignsQt(Track* pTrack, int&  selectionBarFirst, int& selectionBarLast) {
+void changeBarSignsQt(Track* pTrack, [[maybe_unused]] int&  selectionBarFirst, [[maybe_unused]] int& selectionBarLast) {
+   //TODO возможно избавиться от аргументов
     bool ok=false;
     int newNum = QInputDialog::getInt(0,"Input",
                          "New Num:", QLineEdit::Normal,
@@ -74,11 +75,11 @@ void changeBarSignsQt(Track* pTrack, int&  selectionBarFirst, int& selectionBarL
 void handleKeyInput(int digit, int& digitPress, Track* pTrack, size_t cursor, size_t cursorBeat, size_t stringCursor, std::vector<ReversableCommand>& commandSequence) {
 
     //group operations
-    if (digitPress>=0) {
-        if (digitPress<10) {
+    if (digitPress >= 0) {
+        if (digitPress < 10) {
             int pre = digitPress;
-            digitPress*=10;
-            digitPress+=digit;
+            digitPress *= 10;
+            digitPress += digit;
             if (digitPress > pTrack->getMidiInfo(3)) { //Destoy all GPCOMP TODO
                 digitPress = digit;
                 if (digit == pre)
@@ -597,10 +598,11 @@ void setTune(Track* pTrack) {
             }
 
             int coefOctave = 1;
-            for (int z=0; z <i; ++z)
-                coefOctave*=2;
+            for (size_t z = 0; z < i; ++z)
+                coefOctave *= 2;
+
             double theFreq = fTable[j]*coefOctave;
-            midiNote = 12+j + 12*i;
+            midiNote = 12 + j + 12 * i;
             std::string fullLine = note + octave +" - " +
                 std::to_string(midiNote) +" - " + std::to_string(theFreq);
             items.push_back(fullLine.c_str());
@@ -614,7 +616,7 @@ void setTune(Track* pTrack) {
         QString resp = QInputDialog::getItem(0,"Input tune",
                                         ("String #" + std::to_string(i+1)).c_str(),items,preValue,false,&ok);
         int respIndex = -1;
-        for (size_t j = 0; j < items.size(); ++j)
+        for (int j = 0; j < items.size(); ++j)
             if (items.at(j)==resp) {
                 respIndex = j;
                 break;

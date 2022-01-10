@@ -236,16 +236,16 @@ void TrackView::ondblclick(int x1, int y1)
             }
             else
             {
-                if (i+displayIndex > selectionBarLast)
+                if (i + displayIndex > selectionBarLast)
                 {
                     selectionBeatLast =  bV->getClickBeat(x1);
-                    selectionBarLast = i+displayIndex;
+                    selectionBarLast = i + displayIndex;
                 }
                 else
-                if (i+displayIndex < selectionBarFirst)
+                if (i + displayIndex < selectionBarFirst)
                 {
                     selectionBeatFirst =   bV->getClickBeat(x1);
-                    selectionBarFirst = i+displayIndex;
+                    selectionBarFirst = i + displayIndex;
                 }
                 else
                 {
@@ -261,18 +261,18 @@ void TrackView::ondblclick(int x1, int y1)
                     {
                         int addBeat = bV->getClickBeat(x1);
                         //if (addBeat > selectionBeatLast)
-                        if (i+displayIndex ==selectionBarLast)
+                        if (i + displayIndex == selectionBarLast)
                         {
                             selectionBeatLast = addBeat;
                         }
                         else //if (addBeat < selectionBeatfirstt)
-                        if (i+displayIndex ==selectionBarFirst)
+                        if (i + displayIndex == selectionBarFirst)
                         {
                             selectionBeatFirst = addBeat;
                         }
                         else
                         {
-                            if (i+displayIndex ==selectionBarLast-1)
+                            if (i + displayIndex ==selectionBarLast-1)
                             {
                                 //pre last bar
                                 if (addBeat==_pTrack->at(i+displayIndex)->size()-1)
@@ -287,13 +287,13 @@ void TrackView::ondblclick(int x1, int y1)
                                 }
                             }
 
-                            if (i+displayIndex ==selectionBarFirst+1)
+                            if ( i+ displayIndex == selectionBarFirst + 1)
                             {
                                 //pre last bar
                                 if (addBeat==0)
                                 {
                                     //its last beat
-                                    if (selectionBeatFirst == _pTrack->at(i+displayIndex-1)->size()-1)
+                                    if (selectionBeatFirst == _pTrack->at(i + displayIndex-1)->size() - 1)
                                     {
                                         //and current beat is irst in last bar
                                         selectionBeatFirst = 0;
@@ -440,13 +440,13 @@ void TrackView::draw(QPainter *painter)
                 //if one - then same (first)
                 //if last - then second (last)
                 //if middle - -1(whole)
-                if (selectionBarLast==selectionBarFirst)
+                if (selectionBarLast == selectionBarFirst)
                     bView.setSelectors(selectionBeatFirst,selectionBeatLast);
                 else
                 {
-                    if (selectionBarFirst==i)
-                        bView.setSelectors(selectionBeatFirst,-1);
-                    else if (selectionBarLast==i)
+                    if (selectionBarFirst == i)
+                        bView.setSelectors(selectionBeatFirst, -1);
+                    else if (selectionBarLast == i)
                          bView.setSelectors(0,selectionBeatLast);
                     else
                         bView.setSelectors(0,-1); //in the middle

@@ -1562,7 +1562,7 @@ void writeString(std::ofstream &file, std::string value, size_t stringLen=0)
 }
 
 
-void writeTrack(std::ofstream &file, Track *currentTrack)
+void writeTrack(std::ofstream &file, [[maybe_unused]] Track *currentTrack)
 {
     //Заглушка TODO
     std::uint8_t trackHeader = 0;
@@ -1600,11 +1600,11 @@ void writeTrack(std::ofstream &file, Track *currentTrack)
 }
 
 
-void writeBeatEffects(std::ofstream &file, Beat *cursorBeat)
+void writeBeatEffects(std::ofstream &file, [[maybe_unused]] Beat *cursorBeat)
 {
     //Заглушка
-    std::uint8_t beatEffectsHead1; //prepare function!
-    std::uint8_t beatEffectsHead2;
+    std::uint8_t beatEffectsHead1 = 0; //prepare function!
+    std::uint8_t beatEffectsHead2 = 0;
 
     file.write((const char*)&beatEffectsHead1,1);
     file.write((const char*)&beatEffectsHead2,1);
@@ -1725,7 +1725,7 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
 
     if (precMarker)
     {
-        std::uint8_t markerSize;
+        std::uint8_t markerSize = 0;
         file.write((const char*)&markerSize,1);
         char markerBufer[255];
         file.write((const char*)markerBufer, markerSize);
@@ -1744,7 +1744,7 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
 void writeNoteEffects(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
-    std::uint8_t noteEffectsHead1, noteEffectsHead2; //prepare
+    std::uint8_t noteEffectsHead1 = 0, noteEffectsHead2 = 0; //prepare
     file.write((const char*)&noteEffectsHead1,1);
     file.write((const char*)&noteEffectsHead2,1);
 
@@ -1791,7 +1791,7 @@ void writeNoteEffects(std::ofstream &file, Note *newNote)
     }\
 }
 
-void writeStringsFlag(std::ofstream &file, Beat *cursorBeat)
+void writeStringsFlag([[maybe_unused]] std::ofstream &file, [[maybe_unused]] Beat *cursorBeat)
 { //TEMPLATE
 } //UNDONE
 
@@ -1799,7 +1799,7 @@ void writeStringsFlag(std::ofstream &file, Beat *cursorBeat)
 void writeNote(std::ofstream &file, Note *newNote)
 { //TEMPLATE
 
-    std::uint8_t noteHeader; //prepare
+    std::uint8_t noteHeader = 0; //prepare
     file.write((const char*)&noteHeader,1);
 
     if (noteHeader & 0x20)
@@ -3081,9 +3081,9 @@ void readBeatGP3(std::ifstream &file, Beat *cursorBeat)
 
 }
 
-void readNoteGP3(std::ifstream &file, Note *newNote, size_t beatIndex, Bar *cursorBar)
+void readNoteGP3(std::ifstream &file, Note *newNote, [[maybe_unused]] size_t beatIndex, [[maybe_unused]] Bar *cursorBar)
 {
-    std::uint8_t noteHeader;
+    std::uint8_t noteHeader = 0;
     file.read((char*)&noteHeader,1);
 
     std::uint8_t noteType=0;
