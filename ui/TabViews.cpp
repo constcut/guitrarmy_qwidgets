@@ -88,8 +88,8 @@ int scaleCoef = 1;
 //Tab view
 TabView::TabView():GView(0,0,0,0)
 {
-    statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
-    bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
+    _statusLabel = std::make_unique<GLabel>(50,460,"file was loaded.");
+    _bpmLabel = std::make_unique<GLabel>(300,460,"bpm=notsetyet");
 }
 
 void TabView::addSingleTrack(Track *track)
@@ -103,7 +103,7 @@ void TabView::addSingleTrack(Track *track)
     tV->setH(hSet);
     tV->setW(wSet);
 
-    tracksView.push_back(std::move(tV));
+    _tracksView.push_back(std::move(tV));
 }
 
 void TabView::setUI()
@@ -115,7 +115,7 @@ void TabView::setUI()
 }
 
 void TabView::setTab(std::unique_ptr<Tab> point2Tab) {
-    pTab = std::move(point2Tab);
+    _pTab = std::move(point2Tab);
     refreshTabStats();
 }
 
@@ -123,19 +123,19 @@ void TabView::refreshTabStats() {
     stopAllThreads();
     setPlaying(false);
 
-    tracksView.clear();
+    _tracksView.clear();
 
-    if (pTab) {
-        pTab->getDisplayBar() = 0;
-        pTab->getDisplayTrack() = 0;
-        pTab->getCurrentTrack() = 0;
-        pTab->getCurrentBar() = 0;
-        bpmLabel->setText("bpm=" + std::to_string(pTab->getBPM()));
-        for (size_t i = 0; i < pTab->size(); ++i)
-            addSingleTrack(pTab->at(i).get());
+    if (_pTab) {
+        _pTab->getDisplayBar() = 0;
+        _pTab->getDisplayTrack() = 0;
+        _pTab->getCurrentTrack() = 0;
+        _pTab->getCurrentBar() = 0;
+        _bpmLabel->setText("bpm=" + std::to_string(_pTab->getBPM()));
+        for (size_t i = 0; i < _pTab->size(); ++i)
+            addSingleTrack(_pTab->at(i).get());
         std::string statusBar1,statusBar2;
         statusBar1 = "Tab Name";
-        statusBar2 = "BPM = " + std::to_string(pTab->getBPM());
+        statusBar2 = "BPM = " + std::to_string(_pTab->getBPM());
         getMaster()->setStatusBarMessage(1,statusBar1.c_str());
         getMaster()->setStatusBarMessage(2,statusBar2.c_str());
         getMaster()->setStatusBarMessage(0,"Tab was loaded",500);
@@ -145,9 +145,9 @@ void TabView::refreshTabStats() {
 
 void TabView::onclick(int x1, int y1)
 {
-    if (pTab==0)
+    if (_pTab==0)
         return;
-    if (bpmLabel->hit(x1,y1)) {
+    if (_bpmLabel->hit(x1,y1)) {
         //if (pan->isOpenned()) return;
         //keyevent("bpm");
         //return;
@@ -159,37 +159,37 @@ void TabView::onclick(int x1, int y1)
     awaitTrack-=1;
 
     if (awaitBar >= 0){
-        awaitBar += pTab->getDisplayBar();
-        if (awaitBar == pTab->getCurrentBar()){
+        awaitBar += _pTab->getDisplayBar();
+        if (awaitBar == _pTab->getCurrentBar()){
             qDebug() << "Track pressed "<<awaitTrack<<"; Bar "<<awaitBar;
             if (awaitTrack >= 0){
-                if (awaitTrack < pTab->size()) {
-                    auto& trackView = tracksView[awaitTrack];
-                    pTab->getLastOpenedTrack() = awaitTrack;
+                if (awaitTrack < _pTab->size()) {
+                    auto& trackView = _tracksView[awaitTrack];
+                    _pTab->getLastOpenedTrack() = awaitTrack;
                     trackView->setDisplayBar(awaitBar);
                     MainView *mainView = (MainView*)getMaster()->getFirstChild();
                     mainView->changeCurrentView(trackView.get());
                     std::string statusBar1,statusBar2;
-                    statusBar1 = pTab->at(awaitTrack)->getName();
-                    statusBar2 = "bar " + std::to_string( pTab->getCurrentBar() );
+                    statusBar1 = _pTab->at(awaitTrack)->getName();
+                    statusBar2 = "bar " + std::to_string( _pTab->getCurrentBar() );
                     getMaster()->setStatusBarMessage(1,statusBar1.c_str());
                     getMaster()->setStatusBarMessage(2,statusBar2.c_str());
                 }
             }
         }
         else
-            if (awaitBar < pTab->at(0)->size()) {
-                pTab->getCurrentBar() = awaitBar;
-                size_t chosenTrack = pTab->getDisplayTrack() + awaitTrack;
-                if ((awaitTrack>=0) && (chosenTrack < pTab->size()))
-                        pTab->getCurrentTrack() = chosenTrack;
+            if (awaitBar < _pTab->at(0)->size()) {
+                _pTab->getCurrentBar() = awaitBar;
+                size_t chosenTrack = _pTab->getDisplayTrack() + awaitTrack;
+                if ((awaitTrack>=0) && (chosenTrack < _pTab->size()))
+                        _pTab->getCurrentTrack() = chosenTrack;
             }
     }
     else {
         ++awaitTrack;
-        size_t chosenTrack = pTab->getDisplayTrack() + awaitTrack;
-        if ((awaitTrack>=0) && (chosenTrack < pTab->size()))
-                pTab->getCurrentTrack() = chosenTrack;
+        size_t chosenTrack = _pTab->getDisplayTrack() + awaitTrack;
+        if ((awaitTrack>=0) && (chosenTrack < _pTab->size()))
+                _pTab->getCurrentTrack() = chosenTrack;
     }
 }
 
@@ -202,13 +202,13 @@ void TabView::ondblclick(int x1, int y1) {
 void TabView::ongesture(int offset, bool horizontal) {
     int quant = offset/25;
     if (horizontal) {
-        size_t nextCursor = quant + pTab->getDisplayBar();
+        size_t nextCursor = quant + _pTab->getDisplayBar();
         if (nextCursor<0)
             nextCursor=0;
         else
-            if (nextCursor > pTab->at(0)->size())
-                nextCursor = pTab->at(0)->size()-1;
-        pTab->getDisplayBar() = nextCursor;
+            if (nextCursor > _pTab->at(0)->size())
+                nextCursor = _pTab->at(0)->size()-1;
+        _pTab->getDisplayBar() = nextCursor;
     }
     else {
         if (quant >= 2)
@@ -225,36 +225,36 @@ void TabView::draw(QPainter *painter)
     //statusLabel->draw(painter);
     //bpmLabel->draw(painter);
 
-   if (pTab != 0)
+   if (_pTab != 0)
     {
-        if (pTab->playing())
-            pTab->getDisplayBar()=pTab->getCurrentBar();
+        if (_pTab->playing())
+            _pTab->getDisplayBar()=_pTab->getCurrentBar();
 
         int yLimit = getMaster()->getHeight();
         int xLimit = getMaster()->getWidth();
 
         //TrackView should be agregated
-        for (size_t i = 0 ; i < pTab->size(); ++i)
+        for (size_t i = 0 ; i < _pTab->size(); ++i)
         {
-           size_t trackIndex = i + pTab->getDisplayTrack();
-           if (trackIndex >= pTab->size())
+           size_t trackIndex = i + _pTab->getDisplayTrack();
+           if (trackIndex >= _pTab->size())
             break;
-           std::string trackVal = std::to_string(trackIndex+1) +" " + pTab->at(trackIndex)->getName();
+           std::string trackVal = std::to_string(trackIndex+1) +" " + _pTab->at(trackIndex)->getName();
            //int pannelShift = getMaster()->getToolBarHeight();
            int yPos = (i+1)*30; //pannelShift+(i+2)*30;
            if (yPos > (yLimit-100))
                break;
-           if (trackIndex == pTab->getCurrentTrack())
+           if (trackIndex == _pTab->getCurrentTrack())
                 gtmy::changeColor(CONF_PARAM("colors.curTrack"), painter);
 
            painter->drawText(20,yPos,trackVal.c_str());
            //painter->drawEllipse(10,yPos,5,5);
            painter->drawRect(7,yPos-10,10,10);
 
-           if (trackIndex == pTab->getCurrentTrack())
+           if (trackIndex == _pTab->getCurrentTrack())
                gtmy::changeColor(CONF_PARAM("colors.default"), painter);
 
-           std::uint8_t trackStat = pTab->at(trackIndex)->getStatus();
+           std::uint8_t trackStat = _pTab->at(trackIndex)->getStatus();
            if (trackStat==1)
             painter->drawText(9,yPos+3,"m");
            else
@@ -262,10 +262,10 @@ void TabView::draw(QPainter *painter)
                 painter->drawText(9,yPos+3,"s");
 
 
-           auto& tr = pTab->at(trackIndex);
+           auto& tr = _pTab->at(trackIndex);
            for (size_t j = 0 ; j < tr->size(); ++j)
            {
-               size_t barIndex = j + pTab->getDisplayBar();
+               size_t barIndex = j + _pTab->getDisplayBar();
                if (barIndex >= tr->size())
                     break;
 
@@ -286,7 +286,7 @@ void TabView::draw(QPainter *painter)
                bool isMarkerHere = markerText.empty() == false;
 
                 //hi light color bar
-               if (barIndex == pTab->getCurrentBar())
+               if (barIndex == _pTab->getCurrentBar())
                    painter->fillRect(200+30*j,yPos,20,20,QColor(CONF_PARAM("colors.curBar").c_str()));
 
                painter->drawText(200+30*j,yPos+10,sX.c_str());
@@ -350,32 +350,32 @@ void TabView::draw(QPainter *painter)
 
 void TabView::prepareAllThreads(size_t shiftTheCursor)
 {
-    for (size_t i = 0; i <tracksView.size(); ++i)
+    for (size_t i = 0; i <_tracksView.size(); ++i)
     {
-        tracksView[i]->prepareThread(shiftTheCursor);
-        int thrLenSeconds = tracksView[i]->threadSeconds();
+        _tracksView[i]->prepareThread(shiftTheCursor);
+        int thrLenSeconds = _tracksView[i]->threadSeconds();
         qDebug() << "Thread "<<i<<" seconds "<<thrLenSeconds;
     }
 
-    auto& pTrack = pTab->at(0);
+    auto& pTrack = _pTab->at(0);
 
-    if (localThr) {
-        localThr->requestStop();
+    if (_localThr) {
+        _localThr->requestStop();
         //localThr->wait();
-        finishPool.push_back(std::move(localThr)); //Consumes memory TODO checker to delete finished
+        _finishPool.push_back(std::move(_localThr)); //Consumes memory TODO checker to delete finished
     }
 
-    localThr = std::make_unique<ThreadLocal>();
-    localThr->setInc(&pTab->getCurrentBar(), nullptr); //oh shhhi 2nd arg
-    localThr->setBPM(pTab->getBPM());
+    _localThr = std::make_unique<ThreadLocal>();
+    _localThr->setInc(&_pTab->getCurrentBar(), nullptr); //oh shhhi 2nd arg
+    _localThr->setBPM(_pTab->getBPM());
 
     const auto& timeLoop = pTrack->getTimeLoop();
     size_t timeLoopLen = timeLoop.size();
     for (size_t i = shiftTheCursor; i < timeLoopLen;++i) {
-        localThr->addNumDenum(timeLoop.at(i)->getSignNum(),
+        _localThr->addNumDenum(timeLoop.at(i)->getSignNum(),
         timeLoop.at(i)->getSignDenum(), pTrack->getTimeLoopIndexes()[i]);
     }
-    localThr->setLimit(timeLoop.size());
+    _localThr->setLimit(timeLoop.size());
 
     qDebug() << "All threads prepared";
 }
@@ -384,42 +384,42 @@ void TabView::launchAllThreads()
 {
 
 
-    for (size_t i = 0; i <tracksView.size(); ++i)
-        tracksView[i]->launchThread();
+    for (size_t i = 0; i <_tracksView.size(); ++i)
+        _tracksView[i]->launchThread();
 
     //return;
 
-    if (localThr)
-        localThr->start();
+    if (_localThr)
+        _localThr->start();
 }
 
 void TabView::stopAllThreads()
 {
-    for (size_t i = 0; i <tracksView.size(); ++i)
-        tracksView[i]->stopThread();
+    for (size_t i = 0; i <_tracksView.size(); ++i)
+        _tracksView[i]->stopThread();
 
-    if (localThr) {
-        localThr->requestStop();
+    if (_localThr) {
+        _localThr->requestStop();
         //localThr->wait();
     }
 }
 
 
 TabView::~TabView() {
-    if (localThr) {
-        localThr->requestStop();
-        localThr->wait();
+    if (_localThr) {
+        _localThr->requestStop();
+        _localThr->wait();
     }
 }
 
 void TabView::connectAllThreadsSignal(MasterView *masterView)
 {
-    for (size_t i = 0; i <tracksView.size(); ++i)
-        tracksView[i]->connectThreadSignal(masterView);
+    for (size_t i = 0; i <_tracksView.size(); ++i)
+        _tracksView[i]->connectThreadSignal(masterView);
 
    // masterView->connectThread(localThr);
 
-   masterView->connectMainThread(localThr);
+   masterView->connectMainThread(_localThr);
 }
 
 
@@ -429,8 +429,8 @@ void TabView::connectAllThreadsSignal(MasterView *masterView)
 
 bool TabView::gotChanges() const
 {
-    for (size_t i = 0; i < tracksView.size(); ++i)
-        if (tracksView[i]->gotChanges())
+    for (size_t i = 0; i < _tracksView.size(); ++i)
+        if (_tracksView[i]->gotChanges())
         {
             //REQUEST DIALOG - if no then return true
 
@@ -452,10 +452,10 @@ bool TabView::gotChanges() const
 
 bool TabView::getPlaying()
 {
-    if (pTab->playing())
-        if (localThr)
-            if (localThr->getStatus())
+    if (_pTab->playing())
+        if (_localThr)
+            if (_localThr->getStatus())
                 setPlaying(false);
 
-    return pTab->playing();
+    return _pTab->playing();
 }

@@ -107,6 +107,7 @@ namespace gtmy {
         virtual void setMaster(MasterView *mast);
     };
 
+
     class WelcomeView : public GView
     {
     protected:

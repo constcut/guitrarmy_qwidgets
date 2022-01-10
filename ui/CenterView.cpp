@@ -1279,13 +1279,11 @@ void CenterView::paintEvent([[maybe_unused]] QPaintEvent *event)
 
     painter.scale(scaleX,scaleY);
 
-    if (getChild())
-    {
-    GView *gview = getChild();
-    MainView *mv = dynamic_cast<MainView*>(gview);
+    if (getChild()) {
+        GView *gview = getChild();
+        MainView *mv = dynamic_cast<MainView*>(gview);
 
-        if (mv)
-        {
+        if (mv) {
             gview = mv->getCurrenView();
 
             if (gview->isMovableX()==false)
@@ -1318,9 +1316,9 @@ void CenterView::paintEvent([[maybe_unused]] QPaintEvent *event)
             MainView *mw = (MainView *)getFirstChild();
             TabView *tabV = (TabView *)mw->getCurrenView();
 
-            if (tabV->tracksView.size())
+            if (tabV->getTracksViewRef().size())
             {
-                auto& trackV = tabV->tracksView[tabV->getCurTrack()];
+                auto& trackV = tabV->getTracksViewRef()[tabV->getCurTrack()];
                 trackV->setMaster(mw->getMaster());
 
                 MainView *mw2 =  (MainView *)ownChild->getFirstChild();

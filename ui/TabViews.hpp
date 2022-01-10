@@ -24,64 +24,65 @@ namespace gtmy {
 
     class TabView : public GView
     {
-    protected:
-        std::unique_ptr<Tab> pTab;
+    private:
+        std::unique_ptr<Tab> _pTab;
 
-        std::unique_ptr<GLabel> statusLabel;
-        std::unique_ptr<GLabel> bpmLabel;
+        std::unique_ptr<GLabel> _statusLabel;
+        std::unique_ptr<GLabel> _bpmLabel;
 
-        std::unique_ptr<ThreadLocal> localThr; //Подумать, можно ли перенести?
-        std::vector<std::unique_ptr<ThreadLocal>> finishPool;
+        std::unique_ptr<ThreadLocal> _localThr;
+        std::vector<std::unique_ptr<ThreadLocal>> _finishPool;
+
+        std::vector<std::unique_ptr<TrackView>> _tracksView;
 
     public:
-
-        virtual void setUI() override;
-
-        void setCurrentBar(int curBar) {
-            pTab->getCurrentBar() = curBar; }
-
-        virtual bool isMovableX() override { return true; }
-        virtual bool isMovableY() override { return true; }
 
         TabView();
         virtual ~TabView();
 
-        std::vector<std::unique_ptr<TrackView>> tracksView;
+        virtual void setUI() override;
 
-        int getCurTrack() { return pTab->getCurrentTrack(); }
-        int getLastOpenedTrack() { return pTab->getLastOpenedTrack(); }
+        void setCurrentBar(int curBar) {
+            _pTab->getCurrentBar() = curBar; }
+
+        virtual bool isMovableX() override { return true; }
+        virtual bool isMovableY() override { return true; }
+
+
+        int getCurTrack() { return _pTab->getCurrentTrack(); }
+        int getLastOpenedTrack() { return _pTab->getLastOpenedTrack(); }
 
         void setTab(std::unique_ptr<Tab> point2Tab);// {pTab = point2Tab;}
         void refreshTabStats();
-        std::unique_ptr<Tab>& getTab() { return pTab; }
+        std::unique_ptr<Tab>& getTab() { return _pTab; }
 
-         void draw(QPainter *painter) override;
+        void draw(QPainter *painter) override;
 
-         virtual void keyevent(std::string press) override;
-         virtual void onTabCommand(TabCommand command) override;
-         virtual void onTrackCommand(TrackCommand command) override;
+        virtual void keyevent(std::string press) override;
+        virtual void onTabCommand(TabCommand command) override;
+        virtual void onTrackCommand(TrackCommand command) override;
 
-         void setPlaying(bool playValue) { pTab->setPlaying(playValue); }
-         bool getPlaying();
+        void setPlaying(bool playValue) { _pTab->setPlaying(playValue); }
+        bool getPlaying();
 
-         void addSingleTrack(Track *track);
+        void addSingleTrack(Track *track);
 
-         void onclick(int x1, int y1) override;
-         void ondblclick(int x1, int y1) override;
+        void onclick(int x1, int y1) override;
+        void ondblclick(int x1, int y1) override;
 
-         virtual void ongesture(int offset, bool horizontal) override;
+        virtual void ongesture(int offset, bool horizontal) override;
 
-         void prepareAllThreads(size_t shiftTheCursor);
-         void launchAllThreads();
-         void stopAllThreads();
+        void prepareAllThreads(size_t shiftTheCursor);
+        void launchAllThreads();
+        void stopAllThreads();
 
-         void connectAllThreadsSignal(MasterView *masterView);
+        void connectAllThreadsSignal(MasterView *masterView);
 
-         bool gotChanges() const;
+        bool gotChanges() const;
 
-         //void ondblclick(int x1, int y1);
+        std::vector<std::unique_ptr<TrackView>>& getTracksViewRef() { return _tracksView; }
+
     };
-
 
 }
 

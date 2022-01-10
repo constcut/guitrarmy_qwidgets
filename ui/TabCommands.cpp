@@ -470,7 +470,7 @@ void generateMidiQt(Tab* pTab, GLabel* statusLabel) {
 
 void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, size_t digit) {
     if (digit && digit <= tracksLen) {
-        TrackView *trackView = tabView->tracksView[digit-1].get(); //А обновление интерфейса в модуль Qt TODO выше
+        TrackView *trackView = tabView->getTracksViewRef()[digit-1].get(); //А обновление интерфейса в модуль Qt TODO выше
         lastOpenedTrack = digit-1;
         MainView *mainView = (MainView*)tabView->getMaster()->getFirstChild();
         mainView->changeCurrentView(trackView);
@@ -480,7 +480,7 @@ void openTrackQt(size_t tracksLen, int& lastOpenedTrack, TabView* tabView, size_
 
 void TabView::keyevent(std::string press) {
     if (isdigit(*(press.c_str()))) //The only one left here
-        openTrackQt(pTab->size(),pTab->getLastOpenedTrack(), this, press.c_str()[0]-48);
+        openTrackQt(_pTab->size(),_pTab->getLastOpenedTrack(), this, press.c_str()[0]-48);
 }
 
 //Tab commands area
@@ -888,41 +888,41 @@ int changeTrackInstrument(Tab* pTab) {
 void TabView::onTabCommand(TabCommand command) {
     //TODO undo для команд таблатуры так же
     if (command == TabCommand::SaveAs)
-        saveAs(pTab.get());
+        saveAs(_pTab.get());
     else if (command == TabCommand::SetSignTillEnd)  //TODO хэндлеры для более простого вызова
-        setSignTillEnd(pTab.get());
+        setSignTillEnd(_pTab.get());
     else if (command == TabCommand::Volume)
-        ::changeTrackVolume(pTab.get());
+        ::changeTrackVolume(_pTab.get());
     else if (command == TabCommand::Name)
-        ::changeTrackName(pTab.get());
+        ::changeTrackName(_pTab.get());
     else if (command == TabCommand::DeleteTrack)
-        ::deleteTrack(pTab.get());
+        ::deleteTrack(_pTab.get());
     else if (command == TabCommand::AddMarker)
-        setMarker(pTab.get());
+        setMarker(_pTab.get());
     else if (command == TabCommand::Instument)
-        getMaster()->setComboBox(1,"instruments",240,5,200,30, changeTrackInstrument(pTab.get())); //Only UI feature
+        getMaster()->setComboBox(1,"instruments",240,5,200,30, changeTrackInstrument(_pTab.get())); //Only UI feature
     else if (command == TabCommand::Panoram)
-        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(pTab.get())); //Как и выше сбивает UI при отмене ввода
+        getMaster()->setComboBox(6,"pan",570,5,50,30, changeTrackPanoram(_pTab.get())); //Как и выше сбивает UI при отмене ввода
     else if (command == TabCommand::BPM) {
-        auto newBpm = changeTrackBpm(pTab.get());
-        bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
+        auto newBpm = changeTrackBpm(_pTab.get());
+        _bpmLabel->setText("bpm=" + std::to_string(newBpm)); //Сейчас обновляет каждый раз, даже при отмене - стоит продумать это при разделении Qt ввода и ядра библиотеки TODO
         getMaster()->setStatusBarMessage(2,"BPM= " + std::to_string(newBpm));
     }         
     else if (command == TabCommand::OpenTrack)
-        openTrackQt(pTab->size(),pTab->getLastOpenedTrack(), this, pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
+        openTrackQt(_pTab->size(),_pTab->getLastOpenedTrack(), this, _pTab->getDisplayTrack() + 1); //TODO эту часть внутрь движка - разделяя с QT);
     else if (command == TabCommand::NewTrack) {
-       pTab->createNewTrack(); refreshTabStats(); } //Второе нужно для обновления
+       _pTab->createNewTrack(); refreshTabStats(); } //Второе нужно для обновления
     else if (command == TabCommand::PlayMidi) //Если нам понадобится playMerge оно осталось только в git истории
-        playPressedQt(pTab.get(), localThr, pTab->getCurrentBar(), this);
+        playPressedQt(_pTab.get(), _localThr, _pTab->getCurrentBar(), this);
     else if (command == TabCommand::GenerateMidi)
-        generateMidiQt(pTab.get(), statusLabel.get());
+        generateMidiQt(_pTab.get(), _statusLabel.get());
     else if (command == TabCommand::GotoBar)
-        goToBar(pTab.get());
+        goToBar(_pTab.get());
     //if (press == "alt");//TODO
     else if (command == TabCommand::Tune)
-        setTune(pTab->at(pTab->getCurrentTrack()).get());
+        setTune(_pTab->at(_pTab->getCurrentTrack()).get());
     else if (command == TabCommand::CloseReprise)
-        closeReprise(pTab.get());
+        closeReprise(_pTab.get());
     else
-        pTab->onTabCommand(command);
+        _pTab->onTabCommand(command);
 }
