@@ -114,7 +114,7 @@ bool GTabLoader::open(std::string fileName)
             }
             if (loaded)
             {
-                tab->postGTP();
+                tab->postLoading();
                 tab->connectTracks();
 
                 file.close();

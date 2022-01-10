@@ -48,7 +48,7 @@ bool gtmy::checkHasRegression() {
 
             Tab tab;
             importer.import(itfile, &tab); //Перегрузить на просто ссылку и на умный указатель TODO
-            tab.postGTP();
+            tab.postLoading();
             tab.connectTracks(); //new for chains refac
 
             size_t bytesWritten = 0;

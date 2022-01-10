@@ -1419,8 +1419,7 @@ bool Gp4Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64)
                <<" and ul "<<(int)(sizeof(unsigned int));
 
-    memcpy(tab->midiChannels,midiChannelsData,768);
-
+    tab->copyMidiChannelInfo(midiChannelsData);
 
     size_t beatsAmount = 0;
     size_t tracksAmount = 0;
@@ -2492,8 +2491,7 @@ bool Gp5Import::import(std::ifstream& file, Tab *tab, std::uint8_t knownVersion)
     if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64);
 
-    memcpy(tab->midiChannels,midiChannelsData,768);
-
+    tab->copyMidiChannelInfo(midiChannelsData);
 
     //Unknonwn skip
     file.read((char*)placeToSkip,42);
@@ -3387,7 +3385,6 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     file.read((char*)&bpm,4);
     file.read((char*)&signKey,4);
 
-
     tab->setBPM(bpm);
 
     if (gtpLog)  qDebug() <<"Bpm rate is " << bpm ;
@@ -3400,8 +3397,7 @@ bool Gp3Import::import(std::ifstream &file, Tab *tab, std::uint8_t knownVersion)
     if (gtpLog)  qDebug() << "Midi Channels data read. size of structure: "<<(int)sizeof(MidiChannelInfo)<<
            "; full size = "<<(int)(sizeof(MidiChannelInfo)*64 );
 
-    memcpy(tab->midiChannels,midiChannelsData,768);
-
+    tab->copyMidiChannelInfo(midiChannelsData);
 
     size_t beatsAmount = 0;
     size_t tracksAmount = 0;

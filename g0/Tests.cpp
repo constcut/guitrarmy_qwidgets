@@ -152,7 +152,7 @@ bool testGP4(std::string fileName, std::string outFileName, std::string gmyFile=
     //swtich to different versions of importers 3\4\5
 
     importer.import(itfile,&tab);
-    tab.postGTP();
+    tab.postLoading();
     tab.connectTracks(); //new for chains refact
 
     auto f = exportMidi(&tab);
@@ -194,7 +194,7 @@ bool testGP5(std::string fileName, std::string outFileName)
     //swtich to different versions of importers 3\4\5
 
     importer.import(itfile,&tab);
-    tab.postGTP();
+    tab.postLoading();
     tab.connectTracks(); //new for chains
 
     auto f = exportMidi(&tab);

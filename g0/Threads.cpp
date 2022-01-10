@@ -116,13 +116,14 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
     int localWait = 0;
     std::vector<BpmWaitNode> bpmChangeList;
 
-    for (size_t ind = 0 ; ind < tab->timeLine.size(); ++ind) {
-       if (tab->timeLine[ind].type == 0)
-           localWait += tab->timeLine[ind].value;
+    const auto& timeLine = tab->getTimeLine();
+    for (size_t ind = 0 ; ind < timeLine.size(); ++ind) {
+       if (timeLine[ind].type == 0)
+           localWait += timeLine[ind].value;
 
-       if (tab->timeLine[ind].type == 1){
+       if (timeLine[ind].type == 1){
            BpmWaitNode newNode;
-           newNode.newBpm = tab->timeLine[ind].value;
+           newNode.newBpm = timeLine[ind].value;
            newNode.waitTime = localWait;
            localWait = 0;
            bpmChangeList.push_back(newNode);

@@ -27,7 +27,7 @@ namespace gtmy {
         Track();
         virtual ~Track() = default;
 
-        void printToStream(std::ostream &stream);
+        void printToStream(std::ostream &stream) const;
 
         Track &operator=([[maybe_unused]]Track another);
 
@@ -38,7 +38,7 @@ namespace gtmy {
 
         std::string _name;
         size_t _instrument; //TODO enum
-        size_t _color; //TODO другой тип
+        size_t _color; //TODO другой тип? (и для маркера)
         std::uint8_t _pan;
         std::uint8_t _volume;
         bool _drums;

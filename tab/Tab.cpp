@@ -12,7 +12,39 @@ bool tabLog = false;
 using namespace gtmy;
 
 
-void Tab::printToStream(std::ostream &stream)
+void Tab::connectTracks(){
+    for (size_t i = 0; i < size(); ++i)
+    at(i)->connectAll();
+    createTimeLine();
+}
+
+
+void Tab::postLoading() {
+    for (size_t i = 0; i < size(); ++i) {
+        size_t port = at(i)->getMidiInfo(0);
+        size_t chan = at(i)->getMidiInfo(1);
+        size_t ind = (chan-1) + (port-1)*16;
+        if (ind < 70) {
+            int instr = _midiChannels[ind].instrument;
+            std::uint8_t pan = _midiChannels[ind].balance;
+            std::uint8_t vol = _midiChannels[ind].volume;
+            Track *t = at(i).get();
+            t->setInstrument(instr);
+            t->setPan(pan);
+            t->setVolume(vol);
+        }
+     }
+}
+
+
+Tab &Tab::operator=([[maybe_unused]]Tab another) {
+    //lone(another); //TODO
+    return *this;
+}
+
+
+
+void Tab::printToStream(std::ostream &stream) const
 {
     stream << "Outputing #"<<size()<<" Tracks."<<std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
@@ -20,8 +52,8 @@ void Tab::printToStream(std::ostream &stream)
 
 }
 
-struct BpmChangeKnot
-{
+struct BpmChangeKnot {
+
     int bpm;
     int time;
 
@@ -32,7 +64,7 @@ struct BpmChangeKnot
 
 
 
-std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
+std::uint8_t Tab::getBPMStatusOnBar(size_t barN) const
 {
     for (size_t i = 0 ; i < size(); ++i)
     {
@@ -49,22 +81,22 @@ std::uint8_t Tab::getBPMStatusOnBar(size_t barN)
     }
 }
 
-int Tab::getBpmOnBar(size_t barN)
+int Tab::getBpmOnBar(size_t barN) const
 {
     int bpmTrace = _bpmTemp;
-    for (size_t i = 0; i < timeLine.size(); ++i){
+    for (size_t i = 0; i < _timeLine.size(); ++i){
         //TODO
     }
 }
 
 void Tab::createTimeLine(size_t shiftTheCursor)
 {
- timeLine.clear();
+ _timeLine.clear();
 
  //INITIAL value
  TimeLineKnot initKnot(1,getBPM());
 
- timeLine.push_back(initKnot);//fuck loo
+ _timeLine.push_back(initKnot);//fuck loo
 
  int lastNumDen=0;
 
@@ -138,7 +170,7 @@ void Tab::createTimeLine(size_t shiftTheCursor)
      if (packedMeter != lastNumDen)
      {
         TimeLineKnot changeNumDen(2,packedMeter);
-        timeLine.push_back(changeNumDen);
+        _timeLine.push_back(changeNumDen);
         lastNumDen = packedMeter;
      }
 
@@ -148,7 +180,7 @@ void Tab::createTimeLine(size_t shiftTheCursor)
      {
         TimeLineKnot noChangeBar(0,barAbs);
 
-        timeLine.push_back(noChangeBar);
+        _timeLine.push_back(noChangeBar);
      }
      else
      {
@@ -167,15 +199,15 @@ void Tab::createTimeLine(size_t shiftTheCursor)
                 TimeLineKnot timeWait(0,currentChange);
                 TimeLineKnot bpmChange(1,timeChanges[i].bpm);
 
-                timeLine.push_back(timeWait);
-                timeLine.push_back(bpmChange);
+                _timeLine.push_back(timeWait);
+                _timeLine.push_back(bpmChange);
             }
          }
 
          if (lastChange < barAbs)
          {
              TimeLineKnot timeWait(0,barAbs-lastChange);
-             timeLine.push_back(timeWait);
+             _timeLine.push_back(timeWait);
          }
      }
 

@@ -517,7 +517,7 @@ void TestsView::openTestNumber(int num) {
         auto forLoad = std::make_unique<Tab>();
         Gp4Import importer;
         importer.import(importFile, forLoad.get());
-        forLoad->postGTP();
+        forLoad->postLoading();
         forLoad->connectTracks();
         qDebug() << "file v 4 was opened: "<<fn.c_str();
 

@@ -17,8 +17,10 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
         tab->createTimeLine(shiftTheCursor);
         //std::cout << tab->timeLine.size() << " is size of timeLine" <<std::endl;
         size_t tlAccum = 0;
-        for (size_t i = 0; i < tab->timeLine.size(); ++i) {
-            if (tab->timeLine[i].type==1) {
+
+        const auto& timeLine = tab->getTimeLine();
+        for (size_t i = 0; i < timeLine.size(); ++i) {
+            if (timeLine[i].type==1) {
                 //changing bpm
                 //std::cout << "Push bpm to "<<tab->timeLine[i].value<<std::endl;
                 //refact to cover under another layer
@@ -27,16 +29,16 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                 int preRValue = rhyBase*power2/4;
                 preRValue *= tlAccum;
                 preRValue /= 1000;
-                timeLineTrack->pushChangeBPM(tab->timeLine[i].value, preRValue);
+                timeLineTrack->pushChangeBPM(timeLine[i].value, preRValue);
                 tlAccum = 0;
             }
 
-            if (tab->timeLine[i].type==0) {
-                tlAccum += tab->timeLine[i].value;
+            if (timeLine[i].type==0) {
+                tlAccum += timeLine[i].value;
             }
 
-            if (tab->timeLine[i].type==2) {
-                int packedMeter = tab->timeLine[i].value;
+            if (timeLine[i].type==2) {
+                int packedMeter = timeLine[i].value;
                 int newDen = packedMeter & 0xff;
                 packedMeter -= newDen;
                 int newNum = (packedMeter>>8);

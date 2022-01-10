@@ -1,11 +1,12 @@
 #ifndef TAB_H
 #define TAB_H
 
-#include "Chain.hpp"
-
 #include <unordered_map>
 #include <list>
+#include <cassert>
 
+#include "TabStructs.hpp"
+#include "Chain.hpp"
 #include "tab/Commands.hpp"
 #include "Track.hpp"
 
@@ -16,115 +17,53 @@ namespace gtmy {
 
     class Track;
 
-
-    //here would lay Guitar Pro header comptibilator
-    struct MidiChannelInfo
-    {
-        unsigned int instrument; //refact types
-
-        std::uint8_t volume;
-        std::uint8_t balance;
-        std::uint8_t chorus;
-        std::uint8_t reverb;
-
-        std::uint8_t phaser;
-        std::uint8_t tremolo;
-        std::uint8_t blank1;
-        std::uint8_t blank2;
-    };
-
-
-    struct VariableString
-    {
-        std::uint8_t lineType;
-        std::string name;
-
-        std::list<std::string> v;
-
-        VariableString(std::string stringName, std::string stringValue) : lineType(0), name(stringName) { v.push_back(stringValue); }
-        VariableString(std::string stringName, std::list<std::string> stringsValues) : lineType(1), name(stringName) { v = stringsValues; }
-    };
-
-    class VariableStrings : public ChainContainer<VariableString, void>
-    {
-        //search options
-    };
-
-
-    struct TimeLineKnot
-    {
-        std::uint8_t type;
-        int value;
-
-        TimeLineKnot(std::uint8_t newType, int newValue):type(newType),value(newValue){}
-    };
-
-
-
-
     class Tab : public ChainContainer<Track, void>
     {
     public:
 
         Tab() :_isPlaying(false), _displayTrack(0), _currentTrack(0),
             _currentBar(0), _displayBar(0), _lastOpenedTrack(0) {}
-
-        std::vector<TimeLineKnot> timeLine;
-
         virtual ~Tab() = default;
+        Tab &operator=(Tab another);
 
-        void printToStream(std::ostream &stream);
+        void printToStream(std::ostream &stream) const;
 
-        void createTimeLine(size_t shiftTheCursor=0);
-        std::uint8_t getBPMStatusOnBar(size_t barN);
-        int getBpmOnBar(size_t barN);
+        void createTimeLine(size_t shiftTheCursor = 0);
+        std::uint8_t getBPMStatusOnBar(size_t barN) const;
+        int getBpmOnBar(size_t barN) const;
 
-        void connectTracks(){
-            for (size_t i = 0; i < size(); ++i)
-            at(i)->connectAll();
-            createTimeLine();
-        }
+        void connectTracks();
+        void postLoading();
 
-        void postGTP() {
-            for (size_t i = 0; i < size(); ++i) {
-                size_t port = at(i)->getMidiInfo(0);
-                size_t chan = at(i)->getMidiInfo(1);
-                size_t ind = (chan-1) + (port-1)*16;
-                if (ind < 70) {
-                    int instr = midiChannels[ind].instrument;
-                    std::uint8_t pan = midiChannels[ind].balance;
-                    std::uint8_t vol = midiChannels[ind].volume;
-                    Track *t = at(i).get();
-                    t->setInstrument(instr);
-                    t->setPan(pan);
-                    t->setVolume(vol);
-                }
-             }
-        }
-
-        Tab &operator=([[maybe_unused]]Tab another) {
-            //lone(another); //TODO
-            return *this;
-        }
+        const std::vector<TimeLineKnot>& getTimeLine() { return _timeLine; }
 
 
      private:
         int _bpmTemp;
-        //version control flag
-        std::string _origin; //glink - short link determines were from file came (from guitarmy network) az09AZ style
+        bool _isPlaying;
+
+        std::string _origin;
         std::uint8_t _signKey;
-        std::uint8_t _signOctave; //TODO get rid
+        std::uint8_t _signOctave;
         std::uint8_t _tripletFeel;
 
+        std::vector<TimeLineKnot> _timeLine;
+
+        MidiChannelInfo _midiChannels[64];
+        VariableStrings _variableInforation; //TODO load for bast stats
+
     public:
-        VariableStrings variableInforation;
-        MidiChannelInfo midiChannels[64]; //TODO refactor
+
+        void copyMidiChannelInfo(char* src) { assert(sizeof(_midiChannels) == 768); memcpy(_midiChannels, src, 768); }
 
         int getBPM() const { return _bpmTemp; }
         void setBPM(int newBPM) { _bpmTemp = newBPM; }
 
-    private: //Move from TabView
-        bool _isPlaying;
+        bool playing() const { return _isPlaying; }
+        void setPlaying(bool v) { _isPlaying = v; }
+
+    private:
+
         size_t _displayTrack;
         size_t _currentTrack;
         size_t _currentBar;
@@ -132,32 +71,15 @@ namespace gtmy {
         int _lastOpenedTrack;
 
     public:
-        bool playing() const {
-            return _isPlaying;
-        }
-        void setPlaying(bool v) {
-            _isPlaying = v;
-        }
+        //TODO спрятать бы (мб френд как и для трека??)
+        size_t& getDisplayTrack() { return _displayTrack; }
+        size_t& getCurrentTrack() { return _currentTrack; }
+        size_t& getCurrentBar() { return _currentBar; }
+        size_t& getDisplayBar() { return _displayBar; }
+        int& getLastOpenedTrack() { return _lastOpenedTrack; }
 
-        size_t& getDisplayTrack() { //TODO спрятать бы (мб френд как и для трека??)
-            return _displayTrack;
-        }
-        size_t& getCurrentTrack() {
-            return _currentTrack;
-        }
-        size_t& getCurrentBar() {
-            return _currentBar;
-        }
-        size_t& getDisplayBar() {
-            return _displayBar;
-        }
         void onTabCommand(TabCommand command);
 
-        int& getLastOpenedTrack() {
-            return _lastOpenedTrack;
-        }
-
-    public: //later cover under midlayer TabCommandsHandler
         void createNewTrack();
 
         void muteTrack(); //current
@@ -187,13 +109,13 @@ namespace gtmy {
 
 
         void addMacro(TrackCommand command) {
-            macroCommands.push_back(command);
+            _macroCommands.push_back(command);
         }
         void addMacro(StringCommand<TrackCommand> command) {
-            macroCommands.push_back(command);
+            _macroCommands.push_back(command);
         }
         void addMacro(TwoIntCommand<TrackCommand> command) {
-            macroCommands.push_back(command);
+            _macroCommands.push_back(command);
         }
 
         void playCommand(MacroCommand& command) {
@@ -205,17 +127,17 @@ namespace gtmy {
             }
             else if (std::holds_alternative<IntCommand<TabCommand>>(command)) {
                 auto paramCommand = std::get<IntCommand<TabCommand>>(command);
-                if (intHandlers.count(paramCommand.type))
-                    (this->*intHandlers.at(paramCommand.type))(paramCommand.parameter);
+                if (_intHandlers.count(paramCommand.type))
+                    (this->*_intHandlers.at(paramCommand.type))(paramCommand.parameter);
             }
             else if (std::holds_alternative<TwoIntCommand<TabCommand>>(command)) {
                 auto paramCommand = std::get<TwoIntCommand<TabCommand>>(command);
-                if (twoIntHandlers.count(paramCommand.type))
-                    (this->*twoIntHandlers.at(paramCommand.type))(paramCommand.parameter1, paramCommand.parameter2);
+                if (_twoIntHandlers.count(paramCommand.type))
+                    (this->*_twoIntHandlers.at(paramCommand.type))(paramCommand.parameter1, paramCommand.parameter2);
             } else if (std::holds_alternative<StringCommand<TabCommand>>(command)) {
                 auto paramCommand = std::get<StringCommand<TabCommand>>(command);
-                if (stringHandlers.count(paramCommand.type))
-                    (this->*stringHandlers.at(paramCommand.type))(paramCommand.parameter);
+                if (_stringHandlers.count(paramCommand.type))
+                    (this->*_stringHandlers.at(paramCommand.type))(paramCommand.parameter);
             }
             else {
                 at(_currentTrack)->playCommand(command);
@@ -223,10 +145,10 @@ namespace gtmy {
 
         }
 
-        const std::vector<MacroCommand>& getMacro() const { return macroCommands; }
+        const std::vector<MacroCommand>& getMacro() const { return _macroCommands; }
 
     private:
-        std::unordered_map<TabCommand, void (Tab::*)()> handlers =  {
+        std::unordered_map<TabCommand, void (Tab::*)()> _handlers =  {
             {TabCommand::Mute, &Tab::muteTrack},
             {TabCommand::Solo, &Tab::soloTrack},
             {TabCommand::MoveRight, &Tab::moveCursorInTrackRight},
@@ -239,7 +161,7 @@ namespace gtmy {
             {TabCommand::NewTrack, &Tab::createNewTrack}};
 
 
-        std::unordered_map<TabCommand, void (Tab::*)(size_t)> intHandlers =  {
+        std::unordered_map<TabCommand, void (Tab::*)(size_t)> _intHandlers =  {
             {TabCommand::Instument, &Tab::changeTrackInstrument},
             {TabCommand::GotoBar, &Tab::gotoBar},
             {TabCommand::CloseReprise, &Tab::closeReprise},
@@ -247,16 +169,16 @@ namespace gtmy {
             {TabCommand::Volume, &Tab::changeTrackVolume},
         };
 
-        std::unordered_map<TabCommand, void (Tab::*)(size_t, size_t)> twoIntHandlers =  {
+        std::unordered_map<TabCommand, void (Tab::*)(size_t, size_t)> _twoIntHandlers =  {
             {TabCommand::SetSignTillEnd, &Tab::setSignsTillEnd},
         };
 
-        std::unordered_map<TabCommand, void (Tab::*)(std::string)> stringHandlers =  {
+        std::unordered_map<TabCommand, void (Tab::*)(std::string)> _stringHandlers =  {
             {TabCommand::Name, &Tab::changeTrackName},
             {TabCommand::Name, &Tab::saveAs}
         };
 
-        std::vector<MacroCommand> macroCommands;
+        std::vector<MacroCommand> _macroCommands;
     };
 
 

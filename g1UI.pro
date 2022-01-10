@@ -91,6 +91,7 @@ HEADERS  += \
     tab/Tab.hpp \
     tab/TabClipboard.hpp \
     tab/TabLoader.hpp \
+    tab/TabStructs.hpp \
     tab/Track.hpp \
     tab/TrackStructs.hpp \
     ui/BarView.hpp \

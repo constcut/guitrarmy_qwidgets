@@ -44,7 +44,7 @@ void Track::insertBefore(std::unique_ptr<Bar> val, int index){
 }
 
 
-void Track::printToStream(std::ostream& stream) {
+void Track::printToStream(std::ostream& stream) const {
     stream << "Outputing #" << size() << " Bars."<< std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
