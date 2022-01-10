@@ -1,9 +1,9 @@
 #ifndef TABLOADER_H
 #define TABLOADER_H
 
-#include "tab/Tab.hpp"
-
 #include <memory>
+
+#include "tab/Tab.hpp"
 
 
 namespace gtmy {
@@ -13,11 +13,7 @@ namespace gtmy {
     {
     public:
         bool open(std::string fileName);
-
-        GTabLoader():type(255) {}
-
-        std::unique_ptr<Tab>& getTab() { return tab;} //some attention here posible leak if use mindless
-
+        std::unique_ptr<Tab>& getTab() { return tab; }
     private:
         std::unique_ptr<Tab> tab;
     };

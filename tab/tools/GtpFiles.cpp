@@ -1728,7 +1728,7 @@ void writeBar(std::ofstream &file, Bar *cursorBar)
         std::uint8_t markerSize;
         file.write((const char*)&markerSize,1);
         char markerBufer[255];
-        file.write((const char*)markerBufer,markerSize);
+        file.write((const char*)markerBufer, markerSize);
         size_t markerColor;
         file.write((const char*)&markerColor,4);
     }
@@ -1749,10 +1749,7 @@ void writeNoteEffects(std::ofstream &file, Note *newNote)
     file.write((const char*)&noteEffectsHead2,1);
 
     if (noteEffectsHead1&1)
-    {
         writeBendGTP(&file, newNote->getBendPtr());
-    }
-
 
     if (noteEffectsHead1&16)
     {   //grace note
