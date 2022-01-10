@@ -10,7 +10,7 @@ using namespace gtmy;
 
 
 
-Track::Track() : _timeLoop(), _pan(0), _drums(false), _status(0),
+Track::Track() :  _pan(0), _drums(false), _status(0), _timeLoop(),
     _cursor(0),_cursorBeat(0),_stringCursor(0), _displayIndex(0),
     _lastSeen(0),_selectCursor(-1), _digitPress(-1)
 {
@@ -55,15 +55,12 @@ void Track::connectAll()
 {
     if (trackLog)
         qDebug() <<"Connection initiated for track "<<_name.c_str();
-
     connectBars();
-    connectBeats(); //uncomment for
-    connectNotes(); //uncomment for effects refactoring
+    connectBeats();
+    connectNotes();
     connectTimeLoop();
-
     if (trackLog)
         qDebug() <<"Connection finished for track "<<_name.c_str();
-
     return;
 }
 
@@ -71,77 +68,58 @@ void Track::connectAll()
 
 size_t Track::connectNotes() //for let ring
 {
-   Bar* curBar;
-   Beat *curBeat;
-   size_t index=0;
+    Bar* curBar;
+    Beat *curBeat;
+    size_t index = 0;
 
-   if (size() == 0)
+    if (size() == 0)
        return 0;
 
-   curBar = at(0).get();
-
-   if (curBar->size())
+    curBar = at(0).get();
+    if (curBar->size())
     curBeat = curBar->at(0).get();
-   else {
-       while (curBar && curBar->size()==0)
+    else {
+        while (curBar && curBar->size()==0)
             curBar = (Bar*)curBar->getNext();
 
-       if (curBar==0)
+        if (curBar==0)
             return 0;
        curBeat = curBar->at(0).get();
-   }
+    }
 
-   Note *ringRay[16] = {0}; //let this remember to set max strings up to 16
-   size_t indRay[10] = {0};
-   size_t notesCount[16] = {0};
+    Note* ringRay[32] = {0};
+    size_t indRay[32] = {0};
+    size_t notesCount[32] = {0};
+    size_t count = 0;
 
-   size_t count = 0;
-
-   while (index < _beatsAmount) {
+    while (index < _beatsAmount) {
 
        for (size_t noteI=0; noteI < curBeat->size(); ++noteI) {
            Note *curNote = curBeat->at(noteI).get();
-
            std::uint8_t stringN = curNote->getStringNumber();
            Note *prevNote = ringRay[stringN];
            size_t prevInd = indRay[stringN];
-
            if (prevNote) {
                prevNote->setNext(curNote);
                curNote->setPrev(prevNote);
            }
-
            std::uint8_t noteState = curNote->getState();
 
-           if (noteState == 2) {
-               if (prevNote)
-               {
+           if (noteState == 2)
+           {
+               if (prevNote) {
                    if ((index-prevInd)>1)
                        curNote->setState(3); //dead it
-                   else
-                   {
+                   else {
                        std::uint8_t prevFret = prevNote->getFret();
                        if (trackLog)
                        qDebug() << "Prev found "<<prevNote->getStringNumber()<<
                               " "<<prevFret;
-
-                       //curBeat
-
                        prevNote->signStateLeeged();
 
-
-                       //Full copy not yet used well
                        ABitArray prevEff = prevNote->getEffects();
                        curNote->addEffects(prevEff);
-
-
                        curNote->setFret(prevFret);
-
-                       if (prevFret==63)
-                       {
-                           //prevNote->setState(3); //dead
-                           //curNote->setState(3);
-                       }
                    }
                }
                else
@@ -153,33 +131,25 @@ size_t Track::connectNotes() //for let ring
            if (nowFret == 63)
                curNote->setState(3); //dead it
 
-
            if (trackLog)
                qDebug() <<stringN<<"ZFret "<<nowFret<<"; newState= "<<newNoteState<<"; oldS= "<<noteState;
 
-
-           //if (curNote != 0)
-           {
-               ringRay[stringN] = curNote;
-               indRay[stringN] = index;
-
-               ++count;
-               ++notesCount[stringN];
-           }
-
+           ringRay[stringN] = curNote;
+           indRay[stringN] = index;
+           ++count;
+           ++notesCount[stringN];
        }
-
 
        ++index;
        curBeat = (Beat*)curBeat->getNext(); // like ++;
        if (curBeat == 0)
            break; //attention could miss the errors
-   }
+    }
 
-   if (trackLog)
-   qDebug() << "Connect notes done "<<count<<"; S1="<<notesCount[1]<<
-          "; S2="<<notesCount[2]<<"; S3="<<notesCount[3]<<"; S4="<<notesCount[4]<<
-          "; S5="<<notesCount[5]<<"; S6="<<notesCount[6];
+    if (trackLog)
+        qDebug() << "Connect notes done "<<count<<"; S1="<<notesCount[1]<<
+              "; S2="<<notesCount[2]<<"; S3="<<notesCount[3]<<"; S4="<<notesCount[4]<<
+              "; S5="<<notesCount[5]<<"; S6="<<notesCount[6];
 
   return count;
 }
@@ -187,47 +157,42 @@ size_t Track::connectNotes() //for let ring
 
 size_t Track::connectBeats()
 {
-   Bar* curBar;
-   Beat *curBeat;
+    Bar* curBar;
+    Beat* curBeat;
 
-   if (size() == 0)
+    if (size() == 0)
        return 0;
 
-   curBar = at(0).get();
-   size_t trackLen = size();
-   size_t fullCount=0;
+    curBar = at(0).get();
+    size_t trackLen = size();
+    size_t fullCount=0;
 
-   if (trackLog)
+    if (trackLog)
        qDebug() <<"ConnectingBeats";
 
-
-   for (size_t barI = 0; barI < trackLen; ++barI)
-   {
+    for (size_t barI = 0; barI < trackLen; ++barI)
+    {
        curBar = at(barI).get();
 
        if (curBar->size())
-       for (size_t beatI = 0; beatI < (curBar->size()-1); ++beatI)
-       {
-           curBeat = curBar->at(beatI).get();
-           Beat *nextBeat = curBar->at(beatI+1).get();
-
-           if ((nextBeat)&&(curBeat))
+           for (size_t beatI = 0; beatI < (curBar->size() - 1); ++beatI)
            {
-               nextBeat->setPrev(curBeat);
-               curBeat->setNext(nextBeat);
-               ++fullCount;
+               curBeat = curBar->at(beatI).get();
+               Beat *nextBeat = curBar->at(beatI + 1).get();
+               if ((nextBeat)&&(curBeat)) {
+                   nextBeat->setPrev(curBeat);
+                   curBeat->setNext(nextBeat);
+                   ++fullCount;
+               }
+               else
+                   qDebug() <<"Issue connecting beats";
            }
-           else
-               qDebug() <<"Issue connecting beats";
-       }
 
-       if (barI+1 != trackLen)
+       if (barI + 1 != trackLen)
        { //not the lastBar
-           Bar *nextBar = at(barI+1).get();
-
+           Bar *nextBar = at(barI + 1).get();
            if (nextBar->size()==0)
                continue;
-
            curBeat = 0;
 
            if (curBar->size() == 0) {
@@ -237,7 +202,6 @@ size_t Track::connectBeats()
                curBeat = curBar->at(curBar->size()-1).get();
 
            Beat *nextBeat = nextBar->at(0).get();
-
            if ((nextBeat)&&(curBeat))
            {
                nextBeat->setPrev(curBeat);
@@ -247,13 +211,13 @@ size_t Track::connectBeats()
            else
                qDebug() <<"Issue connecting beatz";
        }
-   }
+    }
 
-   if (trackLog)
-   qDebug() << "Full count of the beats is "<<fullCount;
-   _beatsAmount = fullCount;
+    if (trackLog)
+        qDebug() << "Full count of the beats is "<<fullCount;
+    _beatsAmount = fullCount;
 
-   return fullCount;
+    return fullCount;
 }
 
 
@@ -269,14 +233,12 @@ size_t Track::connectBars()
     std::uint8_t currentNum = at(0)->getSignNum();
     std::uint8_t currentDen = at(0)->getSignDenum();
 
-
     size_t trackLen = size();
 
     for(size_t barsI=1; barsI < trackLen; ++barsI)
     {
         at(barsI)->setPrev(at(barsI-1).get());
         at(barsI-1)->setNext(at(barsI).get());
-
         std::uint8_t thatNum = at(barsI)->getSignNum();
         std::uint8_t thatDen = at(barsI)->getSignDenum();
 
@@ -289,78 +251,56 @@ size_t Track::connectBars()
             at(barsI)->setSignDenum(currentDen);
         else
             currentDen = thatDen;
-
     }
-
     return trackLen;
 }
 
 
-
-
-size_t Track::connectTimeLoop()
+size_t Track::connectTimeLoop() //in gtp only 1 bar works after reprize (alt)!//and only 1 goes fine in the en - so pretail is - the only :|
 {
-   if (size() == 0)
+    if (size() == 0)
        return 0;
 
-   _timeLoop.clear();
-   _timeLoopIndexStore.clear();
+    _timeLoop.clear();
+    _timeLoopIndexStore.clear();
 
-   //FEW WORDS:
-    //in guitar pro only 1 bar works after reprize!
-    //so no need to search for after tail,
-    //and only 1 goes fine in the en - so pretail is - the only :|
+    size_t lastIndex = size();
+    size_t curIndex = 0;
+    Bar* curBar = at(0).get();
+    Bar* lastBeginRepeat = curBar;
+    Bar* beginRepeat = 0;
+    Bar* endRepeat = 0;
+    size_t beginIndex = 0;
+    size_t endIndex = 0;
+    Bar* tailEnd = 0;
+    Bar* tailBegin = 0;
+    size_t tailEndIndex = 0;
+    size_t tailBeginIndex = 0;
 
-   size_t lastIndex = size();
-   size_t curIndex = 0;
-   Bar* curBar = at(0).get();
-
-   Bar *lastBeginRepeat = curBar;
-
-   Bar *beginRepeat=0;
-   Bar *endRepeat=0;
-
-   size_t beginIndex=0;
-   size_t endIndex=0;
-
-
-   Bar *tailEnd=0;
-   Bar *tailBegin=0;
-
-   size_t tailEndIndex=0;
-   size_t tailBeginIndex=0;
-
-   if (trackLog)
+    if (trackLog)
        qDebug() << "Start connecting time-loop ";
 
-   while (curIndex < lastIndex)  {
+    while (curIndex < lastIndex)  {
 
        if (curBar==0) //minifix attention
            break;
 
-       if (curBar->getRepeat() & 1)
-       {
+       if (curBar->getRepeat() & 1) {
            if (beginRepeat)
-           {
-               while (beginRepeat != curBar)
-               {
+               while (beginRepeat != curBar) {
                    _timeLoop.push_back(beginRepeat);
                    _timeLoopIndexStore.push_back(beginIndex);
-
                    ++beginIndex;
                    beginRepeat = (Bar*)beginRepeat->getNext();
                }
-           }
 
            beginRepeat=curBar;
            beginIndex=curIndex;
 
-           if (curBar->getRepeat() & 2)
-           {
+           if (curBar->getRepeat() & 2) {
                //one bar reprize
                endIndex = curIndex;
                endRepeat = curBar;
-
                pushReprise(beginRepeat,endRepeat,
                            0,0,0, beginIndex, endIndex);
 
@@ -382,103 +322,71 @@ size_t Track::connectTimeLoop()
 
            if (curBar)
            {
-               if (curBar->getAltRepeat() != 0)
-               {
-                       tailBegin = curBar;
-                       //qDebug() <<"Tail begin set to "<<(int)tailBegin;
-                       tailEnd = curBar;
-                       tailBeginIndex = curIndex;
+               if (curBar->getAltRepeat() != 0) {
+                  tailBegin = curBar;
+                  //qDebug() <<"Tail begin set to "<<(int)tailBegin;
+                  tailEnd = curBar;
+                  tailBeginIndex = curIndex;
                }
 
                if ((curBar->getRepeat() & 1) == 0)
                {
                    while( curBar->getAltRepeat() != 0 ) //there is alternative
                    {
-                       //could be there appear an error later (if there possible not marked alt bars) attention
                        tailEnd = curBar;
                        tailEndIndex = curIndex;
                        curBar = (Bar*)curBar->getNext();
                        ++curIndex;
-
                        if (curIndex>=lastIndex)
                            break;
-
-                      // qDebug() <<"Tail END reset to "<<(int)tailEnd;
                    }
                }
-               else
-               {
-                   //alt is a start of a ne w repeat
-               }
-               //Post-Tail complete
+               //else //alt is a start of a ne w repeat
            }
-
 
            if (beginRepeat == 0)
                beginRepeat = lastBeginRepeat;
 
-           //Now search for pre-tail in the endings
-           Bar *preTail = 0;
+           Bar* preTail = 0;
            size_t preTailIndex = 0;
 
-           //qDebug() <<"RUN PRE TAIL SEARCH "<<(int)beginRepeat<<" to "<<(int)endRepeat;
-
            int indX=0;
-           for (Bar *barI=endRepeat; barI != beginRepeat; barI=(Bar*)barI->getPrev()
-                ,++indX)//--barI
-           {
-               //qDebug() <<"pre-tail search "<<(int)barI;
-               if (barI->getAltRepeat() != 0)
-               {
+           for (Bar* barI = endRepeat; barI != beginRepeat; barI= dynamic_cast<Bar*>(barI->getPrev()), ++indX)
+               if (barI->getAltRepeat() != 0) {
                    preTail = barI;
                    preTailIndex = endIndex-indX;
-                   //qDebug() <<" got alt ";
                }
-           }
-
-           //Now we collect all:
-           //BEGIN-END(pre-Tail)-tailBegin-tailEnd
-           //and we can push it into timeloop
 
            pushReprise(beginRepeat,endRepeat,
                        preTail,tailBegin,tailEnd, beginIndex, endIndex,
                        preTailIndex,tailBeginIndex,tailEndIndex);
-           //there is issue in tail - it could be only 1 takt long, but here not only
-
 
            lastBeginRepeat = beginRepeat;
-
-           //then flush begin and end repeat
            beginRepeat = endRepeat = 0;
            tailBegin = tailEnd = 0;
            preTail = 0;
        }
 
-       //new reprise
        if (curBar)
        {
-           if (curBar->getRepeat() & 1)
-           {
+           if (curBar->getRepeat() & 1) {
                beginRepeat=curBar;
                beginIndex=curIndex;
            }
-
-           if (curIndex < lastIndex) //not get out of
-           if (beginRepeat == 0)
+           if (curIndex < lastIndex && beginRepeat == 0)
            {
                _timeLoop.push_back(curBar);
                _timeLoopIndexStore.push_back(curIndex);
            }
-
            curBar = (Bar*)curBar->getNext();
            ++curIndex;
        }
-   }
+    }
 
-   if (trackLog)
-   qDebug() << "TIME LOOP size is "<<(int)_timeLoop.size();
+    if (trackLog)
+    qDebug() << "TIME LOOP size is "<<(int)_timeLoop.size();
 
-   return _timeLoop.size();
+    return _timeLoop.size();
 }
 
 
@@ -486,19 +394,14 @@ size_t Track::connectTimeLoop()
 typedef std::map<std::uint8_t, ChainedBars> AltRay;
 typedef std::map<std::uint8_t, std::vector<int> > AltRayInd;
 
+
 void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t indA, size_t indB)
 {
-    //possible we will need value for the default repeat
+
     std::uint8_t currentAlt = 0;
 
-    //int normalW = (int)b - (int)a;
-    //int backW = (int)a - (int)b;
-    //qDebug() << "Creating alt ray NORM: "<<normalW<<"; BACK: "<<backW;
-    //qDebug() << "Alt a : "<<(int)a<< " alt b :"<<(int)b;
-
     size_t localInd = 0;
-    for (Bar *barI=a; barI!=b; barI=(Bar*)barI->getNext()
-         ,++localInd)
+    for (Bar *barI = a; barI != b; barI = dynamic_cast<Bar*>(barI->getNext()), ++localInd)
     {
        if (trackLog)
         qDebug() << "ALTRAY Bar ptr "<<barI;
@@ -506,18 +409,17 @@ void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t i
            currentAlt = barI->getAltRepeat();
 
        for (std::uint8_t i=0; i < 8; ++i) {
-           std::uint8_t altMaskI = currentAlt & (1<<i);
+           std::uint8_t altMaskI = currentAlt & (1 << i);
            if (altMaskI) {
                altRay[i].push_back(barI);
-               //altRayInd[i].push_back()
                altRayInd[i].push_back(localInd+indA);
            }
        }
     }
 
-    currentAlt=b->getAltRepeat();
-    for (std::uint8_t i=0; i < 8; ++i) {
-        std::uint8_t altMaskI = currentAlt & (1<<i);
+    currentAlt = b->getAltRepeat();
+    for (std::uint8_t i = 0; i < 8; ++i) {
+        std::uint8_t altMaskI = currentAlt & (1 << i);
         if (altMaskI) {
                altRay[i].push_back(b);
                altRayInd[i].push_back(indB);
@@ -527,34 +429,26 @@ void createAltRay(AltRay &altRay, AltRayInd &altRayInd, Bar *a, Bar *b, size_t i
 }
 
 
-
 void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                  Bar *preTail, Bar *tailBegin, Bar *tailEnd, size_t beginIndex, size_t endIndex,
                         size_t preTailIndex, size_t tailBeginIndex, size_t tailEndIndex)
 {
-    //ChainContainer<Bar*> timeLoop;
-
-    //if (trackLog)
-    //qDebug() << "Push reprise called; "<<(int)beginRepeat<<"; "<<(int)endRepeat; //exend with values
-    //qDebug() << "Pre: "<<(int)preTail<<"; tailBegin: "<<(int)tailBegin<<"; tE: "<<(int)tailEnd;
 
     AltRay altRay;
     AltRayInd altRayInd;
 
-    if (preTail == 0)
+    if (preTail == nullptr)
     { //no alt ending in begin-end
-        if (tailBegin == 0)
+        if (tailBegin == nullptr)
         { //no alt at all
             for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
             {
                 size_t localIndex = 0;
-                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
-                {
+                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext()) {
                     _timeLoop.push_back(barI);
                     _timeLoopIndexStore.push_back(beginIndex+localIndex);
                     ++localIndex;
                 }
-
                 _timeLoop.push_back(endRepeat);
                 _timeLoopIndexStore.push_back(endIndex);
             }
@@ -563,12 +457,10 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
         {
            createAltRay(altRay, altRayInd, tailBegin,tailEnd,tailBeginIndex,tailEndIndex);
            //there is a tail after
-
            for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
            {
                size_t localIndex = 0;
-               for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
-               {
+               for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext()) {
                    _timeLoop.push_back(barI);
                    _timeLoopIndexStore.push_back(beginIndex+localIndex);
                    ++localIndex;
@@ -581,68 +473,53 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
 
                    if ((thatEnd->at(0)->getRepeat() & 1)==0)
                    { //don't repeat alts that begin
-
-                       for (size_t j = 0; j < thatEnd->size(); ++j)
-                       {
+                       for (size_t j = 0; j < thatEnd->size(); ++j) {
                            _timeLoop.push_back(thatEnd->at(j));
                            _timeLoopIndexStore.push_back(thatRayInd[j]);
                        }
-                           //timeLoop += thatEnd;
                    }
                }
-               else //add default value
-               {
+               else  {
                    _timeLoop.push_back(endRepeat);
                    _timeLoopIndexStore.push_back(endIndex);
                }
            }
         }
-
     }
     else
     {
-       //alt endings in  - worst case
-
        if (tailBegin == 0)
            createAltRay(altRay, altRayInd, preTail,endRepeat,preTailIndex,endIndex);
        else
-       {
            createAltRay(altRay, altRayInd, preTail,tailEnd,preTailIndex,tailEndIndex);
-       }
 
-           for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
-           {
-               size_t localIndex = 0;
-               for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext())
-               {
-                   _timeLoop.push_back(barI);
-                   _timeLoopIndexStore.push_back(beginIndex+localIndex);
-                   ++localIndex;
-               }
+       for (std::uint8_t i = 0; i < endRepeat->getRepeatTimes(); ++i)
+       {
+           size_t localIndex = 0;
+           for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext()) {
+               _timeLoop.push_back(barI);
+               _timeLoopIndexStore.push_back(beginIndex+localIndex);
+               ++localIndex;
+           }
 
-               if (altRay.find(i) != altRay.end())
-               { //add alt ray from a tail
-                   ChainedBars *thatEnd = &altRay[i];
-                   std::vector<int> thatRayInd = altRayInd[i];
+           if (altRay.find(i) != altRay.end()) { //add alt ray from a tail
+               ChainedBars *thatEnd = &altRay[i];
+               std::vector<int> thatRayInd = altRayInd[i];
 
-                   for (size_t j = 0; j < thatEnd->size(); ++j)
-                   {
-                       _timeLoop.push_back(thatEnd->at(j));
-                       _timeLoopIndexStore.push_back(thatRayInd[j]);
-                   }
-                       //timeLoop += thatEnd;
-               }
-               else //add default value
-               {
-                   _timeLoop.push_back(endRepeat);
-                   _timeLoopIndexStore.push_back(endIndex);
-                   //POSSIBLE THERE would be ISSUE - hard test it
-                   if (trackLog)
-                   qDebug() << "Tail begin=0, pre tail=1?; attention";
+               for (size_t j = 0; j < thatEnd->size(); ++j) {
+                   _timeLoop.push_back(thatEnd->at(j));
+                   _timeLoopIndexStore.push_back(thatRayInd[j]);
                }
            }
+           else  {
+               _timeLoop.push_back(endRepeat);
+               _timeLoopIndexStore.push_back(endIndex);
+               //POSSIBLE THERE would be ISSUE - hard test it
+               if (trackLog)
+               qDebug() << "Tail begin=0, pre tail=1?; attention";
+           }
+       }
     }
-
 }
 
 
