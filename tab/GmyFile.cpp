@@ -201,19 +201,12 @@ bool GmyFile::saveToFile(std::ofstream& file, Tab *tab)
 
                 std::uint8_t altRepeat = bar->getAltRepeat();
                 if (altRepeat)
-                {
                     barHead |= 16;
-                }
 
-                std::string markerText;
-                size_t markerColor = 0;
-                //change to bool
-                bar->getMarker(markerText, markerColor);
+                auto [markerText, markerColor] = bar->getMarker();
 
                 if (markerColor != 0)
-                {
                     barHead |= 32;
-                }
 
                 //Now according to barHead WRITE DOWN information
 

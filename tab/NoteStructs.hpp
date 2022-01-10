@@ -8,7 +8,7 @@
 namespace gtmy {
 
 
-    struct BendPointGPOld //Все структуры и статусы в отдельный заголовок TODO
+    struct BendPointGPOld
     {
         size_t absolutePosition;
         size_t heightPosition;

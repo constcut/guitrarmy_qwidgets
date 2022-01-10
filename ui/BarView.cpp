@@ -474,14 +474,10 @@ void BarView::draw(QPainter *painter)
     painter->drawLine(cX+10+0*inbarWidth,cY + stringWidth/2,cX+10+0*inbarWidth,cY+stringWidth*amountStr - stringWidth/2);
     painter->drawLine(cX+10+barLen*inbarWidth,cY + stringWidth/2,cX+10+barLen*inbarWidth,cY+stringWidth*amountStr - stringWidth/2);
 
-    size_t colorMark =0;
-    std::string barMarker;
-    bar1->getMarker(barMarker,colorMark);
-
-    bool markerPrec = barMarker.empty()==false;
+    auto [barMarker, colorMark] = bar1->getMarker();
+    bool markerPrec = barMarker.empty() == false;
 
     bool wasNoBeatEffects = true;
-
     for (size_t i = 0; i < barLen; ++i) {
 
         if (i == _cursor) {

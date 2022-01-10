@@ -17,42 +17,17 @@ namespace gtmy {
     class Bar : public ChainContainer<Beat, Track> {
 
     public:
-        Bar() {
-            flush();
-        }
+        Bar() { flush(); }
         virtual ~Bar() = default;
+        void flush();
+        Bar &operator=(Bar *another);
 
         void printToStream(std::ostream& stream) const;
 
-        void flush() {
-            _signatureNum = _signatureDenum = 0;
-            _repeat = _repeatTimes = _altRepeat = 0;
-            _markerColor = 0;
-            _completeStatus = 0;
-        }
+        virtual void push_back(std::unique_ptr<Beat> val) override;
+        virtual void insertBefore(std::unique_ptr<Beat> val, int index=0) override;
 
-        Bar &operator=(Bar *another)
-        {
-            clone(another);
-            return *this;
-        }
-
-        virtual void push_back(std::unique_ptr<Beat> val) { //TODO так же в TAB
-            if (val) {
-                val->setParent(this);
-                ChainContainer<Beat, Track>::push_back(std::move(val));
-            }
-        }
-
-        virtual void insertBefore(std::unique_ptr<Beat> val, int index=0) {
-            if (val) {
-                val->setParent(this);
-                ChainContainer<Beat, Track>::insertBefore(std::move(val),index);
-            }
-        }
-
-
-    protected:
+    private:
 
         std::uint8_t _signatureNum;
         std::uint8_t _signatureDenum;
@@ -77,18 +52,13 @@ namespace gtmy {
         std::uint8_t getSignNum() const { return _signatureNum; }
         std::uint8_t getSignDenum() const { return _signatureDenum; }
 
-        void countUsedSigns(std::uint8_t& numGet, std::uint8_t& denumGet); //TODO pair
+        std::pair<uint8_t, uint8_t> countUsedSigns() const;
 
         std::uint8_t getCompleteStatus();
         double getCompleteAbs() const;
         size_t getCompleteIndex() const;
 
-        void setRepeat(std::uint8_t rValue, std::uint8_t times=0) {
-            if (rValue == 0) _repeat = 0;
-            else _repeat |= rValue;
-            if(times) _repeatTimes=times;
-        }
-
+        void setRepeat(std::uint8_t rValue, std::uint8_t times = 0);
         std::uint8_t getRepeat() const { return _repeat; }
         std::uint8_t getRepeatTimes() const { return _repeatTimes; }
 
@@ -98,11 +68,10 @@ namespace gtmy {
         void setTonality(std::uint8_t tValue) { _tonality = tValue; }
         std::uint8_t getTonality() const { return _tonality; }
 
-        void setMarker(std::string &text, size_t color) { _markerText = text; _markerColor = color; }
-        void getMarker(std::string &text, size_t& color) const { text = _markerText; color = _markerColor; } //TODO pair
+        void setMarker(const std::string& text, size_t color) { _markerText = text; _markerColor = color; }
+        std::pair<std::string, size_t> getMarker() const { return {_markerText,  _markerColor}; }
 
-        //pack function
-         void clone(Bar *from);
+        void clone(Bar *from);
     };
 
 

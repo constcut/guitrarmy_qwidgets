@@ -289,9 +289,7 @@ void TabView::draw(QPainter *painter)
                }
 
                int reprize = cB->getRepeat();
-               std::string markerText;
-               size_t markerColor;
-               cB->getMarker(markerText, markerColor);
+               auto [markerText, markerColor] = cB->getMarker();
                bool isMarkerHere = markerText.empty() == false;
 
                 //hi light color bar
@@ -299,7 +297,7 @@ void TabView::draw(QPainter *painter)
                    painter->fillRect(200+30*j,yPos,20,20,QColor(CONF_PARAM("colors.curBar").c_str()));
 
                painter->drawText(200+30*j,yPos+10,sX.c_str());
-               if (i==0)  {
+               if (i == 0)  {
                    if (reprize) {
                        std::string rep;
                        if (reprize == 1)

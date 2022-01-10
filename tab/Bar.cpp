@@ -94,21 +94,23 @@ void Bar::clone(Bar *from) {
    }
 }
 
-size_t Bar::getCompleteIndex() const
-{
+Bar& Bar::operator=(Bar *another) {
+    clone(another);
+    return *this;
+}
+
+
+size_t Bar::getCompleteIndex() const {
    return _completeIndex;
 }
 
 
-double Bar::getCompleteAbs() const
-{
+double Bar::getCompleteAbs() const {
     return _completeAbs;
 }
 
 
-//REPLACE with name CALCULATE COMPLETE status
-//and add just getCompleteStatus
-
+//Сохранять кэш, который инвалидировать иногда
 std::uint8_t Bar::getCompleteStatus()
 {
     std::uint8_t completeStatus = 255; //calculation failed
@@ -136,8 +138,7 @@ std::uint8_t Bar::getCompleteStatus()
        if (durDetail)
            localAbs = updateDurationWithDetail(durDetail,localAbs);
 
-       if (isDotted&1)
-       {
+       if (isDotted&1) {
            //first only one dot
            localAbs *= 3;
            localAbs /= 2;
@@ -148,16 +149,14 @@ std::uint8_t Bar::getCompleteStatus()
        //qDebug() << "On "<<i<<" used = "<<usedAbs;
 
        if ((i+1) != barSize) //without case of last
-       if (usedAbs == barAbs)
-       {
-           completeStatus=2; //exceed
-           _completeIndex=i;
-           _completeAbs=localAbs;
-           return completeStatus;
-       }
+           if (usedAbs == barAbs) {
+               completeStatus=2; //exceed
+               _completeIndex=i;
+               _completeAbs=localAbs;
+               return completeStatus;
+           }
 
-       if (usedAbs > barAbs)
-       {
+       if (usedAbs > barAbs) {
            completeStatus=2; //exceed
            _completeIndex=i;
 
@@ -174,10 +173,6 @@ std::uint8_t Bar::getCompleteStatus()
            if (newNoteAbs > 10)
                lastAbs = newNoteAbs;
            else
-           {
-              --_completeIndex; //to small for n ew note
-               //qDebug() <<"SHIFTBACK"; //ATT
-           }
 
            _completeAbs = lastAbs;
 
@@ -189,8 +184,7 @@ std::uint8_t Bar::getCompleteStatus()
     }
 
 
-   if (usedAbs < barAbs)
-   {
+   if (usedAbs < barAbs)  {
        _completeIndex=0; //just for logs
        completeStatus=1; //incomplete
        lastAbs=barAbs-usedAbs;
@@ -202,10 +196,7 @@ std::uint8_t Bar::getCompleteStatus()
    }
 
    if (usedAbs == barAbs)
-   {
        completeStatus = 0;
-   }
-
    //qDebug() << "Bar abs len "<< barAbs<<"; used "<<usedAbs;
    //qDebug() <<"Complete status="<<completeStatus<<"; lastAbs="<<lastAbs<<"; cInd="<<completeIndex;
 
@@ -214,9 +205,7 @@ std::uint8_t Bar::getCompleteStatus()
 
 
 
-////////////Count bar operations ///////////////////////////////////
-
-void Bar::countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet)
+std::pair<uint8_t, uint8_t> Bar::countUsedSigns() const
 {
     size_t num = 0;
     size_t denum = 32;
@@ -228,11 +217,9 @@ void Bar::countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet)
     {
         size_t duration = at(beatInd)->getDuration();
         size_t detail = at(beatInd)->getDurationDetail();
-
         size_t addition = 0;
 
-        switch (duration)
-        { //remember 8 is 8
+        switch (duration) { //remember 8 is 8
             case 5: addition=1; break;
             case 4: addition=2; break;
             case 3: addition=4; break;
@@ -240,46 +227,38 @@ void Bar::countUsedSigns(std::uint8_t &numGet, std::uint8_t &denumGet)
             case 1: addition=16; break;
             case 0: addition=32; break;
             default:
-            if (barLog)  qDebug()<<"Shit in duration "<<duration;
+                if (barLog)  qDebug()<<"Shit in duration "<<duration;
         }
 
-        addition *=2; //dots on 32
+        addition *= 2; //dots on 32
         addition *= 3; //triplets
 
-        if (detail==3)
-        {
+        if (detail == 3) {
             addition *= 2;
             addition /= 3;
         }
 
         bool byteDote = at(beatInd)->getDotted();
-        if (byteDote==1)
-        {
+        if (byteDote == 1)
             addition += addition/2;
-        }
 
         //recalculations for addition
-         num+=addition;
+         num += addition;
         if (barLog)  qDebug()<<"Addition is "<<addition<<"; det= "<<detail
              <<" dur= "<<duration<<" full "<<num<<"; dot "<<byteDote;
     }
 
-    //decre
-
-    while ( (num%2==0)&&(denum%2==0) )
-    {
+    while ( (num % 2 == 0) && (denum % 2 == 0) ) {
         num /= 2;
         denum /= 2;
     }
 
-    while ( (num%3==0)&&(denum%3==0) )
-    {
+    while ( (num % 3 == 0) && (denum % 3 == 0) ) {
         num /= 3;
         denum /= 3;
     }
 
-    numGet = num;
-    denumGet = denum;
+    return {num, denum};
 }
 
 
@@ -288,4 +267,38 @@ void Bar::printToStream(std::ostream &stream) const
     stream << "Outputing #"<<size()<<" Beats."<<std::endl;
     for (size_t ind = 0; ind < size(); ++ind)
             at(ind)->printToStream(stream);
+}
+
+
+void Bar::flush() {
+    _signatureNum = _signatureDenum = 0;
+    _repeat = _repeatTimes = _altRepeat = 0;
+    _markerColor = 0;
+    _completeStatus = 0;
+}
+
+
+void Bar::push_back(std::unique_ptr<Beat> val) { //TODO так же в TAB
+    if (val) {
+        val->setParent(this);
+        ChainContainer<Beat, Track>::push_back(std::move(val));
+    }
+}
+
+
+void Bar::insertBefore(std::unique_ptr<Beat> val, int index) {
+    if (val) {
+        val->setParent(this);
+        ChainContainer<Beat, Track>::insertBefore(std::move(val),index);
+    }
+}
+
+
+void Bar::setRepeat(std::uint8_t rValue, std::uint8_t times) {
+    if (rValue == 0)
+        _repeat = 0;
+    else
+        _repeat |= rValue;
+    if (times)
+        _repeatTimes=times;
 }

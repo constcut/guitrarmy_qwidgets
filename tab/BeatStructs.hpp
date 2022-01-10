@@ -68,7 +68,6 @@ namespace gtmy {
        std::uint8_t newPhaser; //6 total + 4
        std::uint8_t newTremolo;
        size_t newTempo; //OR IT IS INT?
-       //10
        std::uint8_t instrDur;
        std::uint8_t volumeDur;
        std::uint8_t panDur;
