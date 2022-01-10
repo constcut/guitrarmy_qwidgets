@@ -10,7 +10,7 @@ using namespace gtmy;
 
 
 
-Track::Track() : timeLoop(), _pan(0), _drums(false), _status(0),
+Track::Track() : _timeLoop(), _pan(0), _drums(false), _status(0),
     _cursor(0),_cursorBeat(0),_stringCursor(0), _displayIndex(0),
     _lastSeen(0),_selectCursor(-1), _digitPress(-1)
 {
@@ -385,7 +385,7 @@ size_t Track::connectTimeLoop()
    if (size() == 0)
        return 0;
 
-   timeLoop.clear();
+   _timeLoop.clear();
    timeLoopIndexStore.clear();
 
    //FEW WORDS:
@@ -426,7 +426,7 @@ size_t Track::connectTimeLoop()
            {
                while (beginRepeat != curBar)
                {
-                   timeLoop.push_back(beginRepeat);
+                   _timeLoop.push_back(beginRepeat);
                    timeLoopIndexStore.push_back(beginIndex);
 
                    ++beginIndex;
@@ -548,7 +548,7 @@ size_t Track::connectTimeLoop()
            if (curIndex < lastIndex) //not get out of
            if (beginRepeat == 0)
            {
-               timeLoop.push_back(curBar);
+               _timeLoop.push_back(curBar);
                timeLoopIndexStore.push_back(curIndex);
            }
 
@@ -558,9 +558,9 @@ size_t Track::connectTimeLoop()
    }
 
    if (trackLog)
-   qDebug() << "TIME LOOP size is "<<(int)timeLoop.size();
+   qDebug() << "TIME LOOP size is "<<(int)_timeLoop.size();
 
-   return timeLoop.size();
+   return _timeLoop.size();
 }
 
 
@@ -632,12 +632,12 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                 size_t localIndex = 0;
                 for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                 {
-                    timeLoop.push_back(barI);
+                    _timeLoop.push_back(barI);
                     timeLoopIndexStore.push_back(beginIndex+localIndex);
                     ++localIndex;
                 }
 
-                timeLoop.push_back(endRepeat);
+                _timeLoop.push_back(endRepeat);
                 timeLoopIndexStore.push_back(endIndex);
             }
         }
@@ -651,7 +651,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                size_t localIndex = 0;
                for (Bar *barI=beginRepeat; barI != endRepeat; barI=(Bar*)barI->getNext())
                {
-                   timeLoop.push_back(barI);
+                   _timeLoop.push_back(barI);
                    timeLoopIndexStore.push_back(beginIndex+localIndex);
                    ++localIndex;
                }
@@ -666,7 +666,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
 
                        for (size_t j = 0; j < thatEnd->size(); ++j)
                        {
-                           timeLoop.push_back(thatEnd->at(j));
+                           _timeLoop.push_back(thatEnd->at(j));
                            timeLoopIndexStore.push_back(thatRayInd[j]);
                        }
                            //timeLoop += thatEnd;
@@ -674,7 +674,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                }
                else //add default value
                {
-                   timeLoop.push_back(endRepeat);
+                   _timeLoop.push_back(endRepeat);
                    timeLoopIndexStore.push_back(endIndex);
                }
            }
@@ -697,7 +697,7 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
                size_t localIndex = 0;
                for (Bar *barI=beginRepeat; barI != preTail; barI=(Bar*)barI->getNext())
                {
-                   timeLoop.push_back(barI);
+                   _timeLoop.push_back(barI);
                    timeLoopIndexStore.push_back(beginIndex+localIndex);
                    ++localIndex;
                }
@@ -709,14 +709,14 @@ void Track::pushReprise(Bar *beginRepeat, Bar *endRepeat,
 
                    for (size_t j = 0; j < thatEnd->size(); ++j)
                    {
-                       timeLoop.push_back(thatEnd->at(j));
+                       _timeLoop.push_back(thatEnd->at(j));
                        timeLoopIndexStore.push_back(thatRayInd[j]);
                    }
                        //timeLoop += thatEnd;
                }
                else //add default value
                {
-                   timeLoop.push_back(endRepeat);
+                   _timeLoop.push_back(endRepeat);
                    timeLoopIndexStore.push_back(endIndex);
                    //POSSIBLE THERE would be ISSUE - hard test it
                    if (trackLog)

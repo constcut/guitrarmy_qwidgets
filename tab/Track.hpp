@@ -29,7 +29,7 @@ namespace gtmy {
 
         void printToStream(std::ostream &stream);
 
-        std::vector<Bar*> timeLoop;
+
         std::vector<size_t> timeLoopIndexStore;
 
         Track &operator=([[maybe_unused]]Track another);
@@ -52,6 +52,8 @@ namespace gtmy {
 
         GuitarTuning _tuning;
 
+        std::vector<Bar*> _timeLoop;
+
     public:
 
         size_t connectBars();
@@ -59,6 +61,8 @@ namespace gtmy {
         size_t connectNotes(); //for let ring
         size_t connectTimeLoop();
         void connectAll();
+
+        const std::vector<Bar*>& getTimeLoop() const { return _timeLoop; }
 
         void pushReprise(Bar *beginRepeat, Bar *endRepeat,
                          Bar *preTail, Bar *tailBegin, Bar *tailEnd, size_t beginIndex, size_t endIndex,

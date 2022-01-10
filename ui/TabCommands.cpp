@@ -161,8 +161,9 @@ void playTrack(TabView* tabParrent, std::unique_ptr<ThreadLocal>& localThr, size
         if (cursor != 0){
             Bar *barPtr = pTrack->at(cursor).get();
 
-            for (size_t i = 0; i < pTrack->timeLoop.size();++i){
-                 if (pTrack->timeLoop.at(i) == barPtr){
+            const auto& timeLoop = pTrack->getTimeLoop();
+            for (size_t i = 0; i < timeLoop.size();++i){
+                 if (timeLoop.at(i) == barPtr){
                      shiftTheCursor = i;
                      break;
                  }
@@ -414,8 +415,9 @@ void playPressedQt(Tab* pTab, std::unique_ptr<ThreadLocal>& localThr, size_t cur
         size_t shiftTheCursor = 0;
         if (currentBar != 0) {
             Bar *barPtr = pTab->at(0)->at(currentBar).get();
-            for (size_t i = 0; i < pTab->at(0)->timeLoop.size();++i)
-                 if (pTab->at(0)->timeLoop.at(i) == barPtr) {
+            const auto& timeLoop = pTab->at(0)->getTimeLoop();
+            for (size_t i = 0; i < timeLoop.size();++i)
+                 if (timeLoop.at(i) == barPtr) {
                      shiftTheCursor = i;
                      break;
                  }

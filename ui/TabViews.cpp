@@ -377,13 +377,13 @@ void TabView::prepareAllThreads(size_t shiftTheCursor)
     localThr->setInc(&pTab->getCurrentBar(), nullptr); //oh shhhi 2nd arg
     localThr->setBPM(pTab->getBPM());
 
-    size_t timeLoopLen = pTrack->timeLoop.size();
-    for (size_t i = shiftTheCursor; i < timeLoopLen;++i)
-    {
-        localThr->addNumDenum(pTrack->timeLoop.at(i)->getSignNum(),
-        pTrack->timeLoop.at(i)->getSignDenum(), pTrack->timeLoopIndexStore[i]);
+    const auto& timeLoop = pTrack->getTimeLoop();
+    size_t timeLoopLen = timeLoop.size();
+    for (size_t i = shiftTheCursor; i < timeLoopLen;++i) {
+        localThr->addNumDenum(timeLoop.at(i)->getSignNum(),
+        timeLoop.at(i)->getSignDenum(), pTrack->timeLoopIndexStore[i]);
     }
-    localThr->setLimit(pTrack->timeLoop.size());
+    localThr->setLimit(timeLoop.size());
 
     qDebug() << "All threads prepared";
 }

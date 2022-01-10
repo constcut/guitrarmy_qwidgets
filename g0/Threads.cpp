@@ -112,7 +112,7 @@ struct BpmWaitNode
 
 void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor)
 {
-    size_t timeLoopLen = track->timeLoop.size();
+    size_t timeLoopLen = track->getTimeLoop().size();
     int localWait = 0;
     std::vector<BpmWaitNode> bpmChangeList;
 
@@ -146,7 +146,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
     //MAIN CYCLE
     for (size_t barI = shiftTheCursor; barI < timeLoopLen; ++barI)
     {
-        Bar *bar = track->timeLoop.at(barI);
+        Bar *bar = track->getTimeLoop().at(barI);
         barMoments.clear();
 
         //addBeatTimes(bar);
@@ -223,7 +223,7 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
         addNumDenum(bar->getSignNum(), bar->getSignDenum(), track->timeLoopIndexStore[barI]);
     }
 
-    setLimit(track->timeLoop.size());
+    setLimit(track->getTimeLoop().size());
 
     //qDebug() << "prepare thread done";
 }

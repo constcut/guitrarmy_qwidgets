@@ -64,10 +64,11 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
             auto metronomeClickTrack = std::make_unique<MidiTrack>();
             bool firstRun = true;
 
-            for (size_t barI=shiftTheCursor; barI< tab->at(0)->timeLoop.size(); ++barI)
+            const auto& timeLoop = tab->at(0)->getTimeLoop();
+            for (size_t barI=shiftTheCursor; barI< timeLoop.size(); ++barI)
             {
                     //for bars
-                    Bar *bar = tab->at(0)->timeLoop.at(barI);
+                    Bar *bar = timeLoop.at(barI);
 
                     int newDen = bar->getSignDenum(); //nextbar;
 
@@ -202,11 +203,12 @@ void gtmy::exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_
     midiTrack->setTunes(theTunes);
 
 
-    size_t trackLen = track->timeLoop.size();
+    const auto& timeLoop = track->getTimeLoop();
+    size_t trackLen = timeLoop.size();
 
     for (size_t i = shiftCursorBar ; i < trackLen; ++i)
     {
-        Bar *bar = track->timeLoop.at(i);
+        Bar *bar = timeLoop.at(i);
 
         //BAR STATUS
         std::uint8_t completeStatus = bar->getCompleteStatus();

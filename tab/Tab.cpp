@@ -68,7 +68,8 @@ void Tab::createTimeLine(size_t shiftTheCursor)
 
  int lastNumDen=0;
 
- size_t barsAmount = at(0)->timeLoop.size(); //should search longest
+
+ size_t barsAmount = at(0)->getTimeLoop().size(); //should search longest
  for (size_t barsI = shiftTheCursor; barsI < barsAmount; ++barsI)
  {
      std::vector<BpmChangeKnot> timeChanges;
@@ -77,10 +78,11 @@ void Tab::createTimeLine(size_t shiftTheCursor)
      {
         short int localAccumulate = 0;///tracksI
 
-        if (at(tracksI)->timeLoop.size() <= barsI)
+        const auto& timeLoop = at(tracksI)->getTimeLoop();
+        if (timeLoop.size() <= barsI) //TODO по идее просто по индексу
             continue;
 
-        Bar *currentBar = at(tracksI)->timeLoop[barsI]; //attention refact fix
+        Bar* currentBar = timeLoop[barsI]; //attention refact fix
 
         for (size_t beatI = 0; beatI < currentBar->size(); ++beatI)
         {
@@ -126,8 +128,8 @@ void Tab::createTimeLine(size_t shiftTheCursor)
 
 
      //NOT POLY YET
-     std::uint8_t thatNum = at(0)->timeLoop.at(barsI)->getSignNum();
-     std::uint8_t thatDen = at(0)->timeLoop.at(barsI)->getSignDenum();
+     std::uint8_t thatNum = at(0)->getTimeLoop().at(barsI)->getSignNum();
+     std::uint8_t thatDen = at(0)->getTimeLoop().at(barsI)->getSignDenum();
 
 
      int packedMeter=0;

@@ -385,10 +385,9 @@ void TrackView::draw(QPainter *painter)
 
     int xSh=0;
     int ySh=pannelShift; //shift for the pannel
-
     ySh += 30;
 
-    int hLimit = (h-50)/100;
+    int hLimit = (h - 50) / 100;
     hLimit *= 100;
 
     size_t& cursor = _pTrack->cursor();
