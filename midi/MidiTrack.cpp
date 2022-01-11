@@ -58,7 +58,7 @@ void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t time
 {
     auto signatureEvent  = std::make_unique<MidiSignal>(0xff,88,0,timeShift);
 
-    signatureEvent->metaBufer.push_back(num);
+    signatureEvent->metaBufer().push_back(num);
 
     std::uint8_t transDur=0;
     switch (den)
@@ -74,12 +74,12 @@ void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t time
         transDur=6;
     }
 
-    signatureEvent->metaBufer.push_back(transDur);
-    signatureEvent->metaBufer.push_back(metr);
-    signatureEvent->metaBufer.push_back(perQuat);
+    signatureEvent->metaBufer().push_back(transDur);
+    signatureEvent->metaBufer().push_back(metr);
+    signatureEvent->metaBufer().push_back(perQuat);
 
     std::uint8_t metaSize = 4;
-    signatureEvent->metaLen.push_back(metaSize);
+    signatureEvent->metaLen().push_back(metaSize);
 
     push_back(std::move(signatureEvent));
 }
@@ -99,12 +99,12 @@ void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
     std::uint8_t tempB2 = (MCount>>8)&0xff; //0xa1
     std::uint8_t tempB3 = MCount&0xff; //0x20
 
-    changeTempEvent->metaBufer.push_back(tempB1);
-    changeTempEvent->metaBufer.push_back(tempB2);
-    changeTempEvent->metaBufer.push_back(tempB3);
+    changeTempEvent->metaBufer().push_back(tempB1);
+    changeTempEvent->metaBufer().push_back(tempB2);
+    changeTempEvent->metaBufer().push_back(tempB3);
 
     std::uint8_t lenMeta = 3;
-    changeTempEvent->metaLen.push_back(lenMeta);
+    changeTempEvent->metaLen().push_back(lenMeta);
 
     //byte timeZero = 0;
     //changeTempEvent.param2 = 0;
@@ -115,28 +115,17 @@ void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
 
 void MidiTrack::pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel)
 {
-    auto volumeChange = std::make_unique<MidiSignal>();
     if (newVolume > 127)
          newVolume = 127;
 
-    volumeChange->byte0 = 0xB0 | channel;
-    volumeChange->param1 = 7; //volume change
-    volumeChange->param2 = newVolume;
-    std::uint8_t timeZero = 0;
-    volumeChange->timeStamp.push_back(timeZero);
+    auto volumeChange = std::make_unique<MidiSignal>(0xB0 | channel, 7, newVolume, 0);
 
     push_back(std::move(volumeChange));
 }
 
 void MidiTrack::pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel)
 {
-    auto panoramChange = std::make_unique<MidiSignal>();
-    panoramChange->byte0 = 0xB0 | channel;
-    panoramChange->param1 = 0xA; //change panoram
-    panoramChange->param2 = newPanoram;
-    std::uint8_t timeZero = 0;
-    panoramChange->timeStamp.push_back(timeZero);
-
+    auto panoramChange = std::make_unique<MidiSignal>(0xB0 | channel, 0xA, newPanoram, 0);
     this->push_back(std::move(panoramChange));
 }
 
@@ -236,9 +225,8 @@ void MidiTrack::pushEvent47()
     //push_back(std::move(trickB));
 #endif
 
-    auto event47 = std::make_unique<MidiSignal>(0xff,47,0,0);
-    std::uint8_t lenZero = 0;
-    event47->metaLen.push_back(lenZero);
+    auto event47 = std::make_unique<MidiSignal>(0xff,47,0,0); //Attention
+    event47->metaLen().push_back(0);
     this->push_back(std::move(event47));
 }
 

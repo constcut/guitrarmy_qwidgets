@@ -27,14 +27,6 @@ namespace gtmy {
         bool calculateHeader(bool skip=false);
         void printToStream(std::ostream &stream);
 
-        //ul writeStream(AF ile &ofile);
-        //ul readStream(AF ile &ifile); //missing from refactoing
-
-        //bool fromTrack(Track *track, std::uint8_t channel=0, size_t shiftCursorBar=0);
-
-        //void add(MidiSignal &val);
-
-        //HELPERS functions from AMUSIC generation
 
         //no time versions
         void pushChangeInstrument(std::uint8_t newInstr, std::uint8_t channel, size_t timeShift=0);

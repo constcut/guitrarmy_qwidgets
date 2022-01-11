@@ -1,69 +1,116 @@
-#ifndef MIDISIGNAL_H
-#define MIDISIGNAL_H
 
+#ifndef MIDIMESSAGE_H
+#define MIDIMESSAGE_H
+
+#include "NBytesInt.hpp"
 #include <list>
 #include <vector>
 
-#include <deque>
-#include <fstream>
-
+//http://www.music.mcgill.ca/~ich/classes/mumt306/StandardMIDIfileformat.html
+//https://www.usb.org/sites/default/files/midi10.pdf
 
 namespace gtmy {
 
 
-    class NBytesInt : public std::deque<std::uint8_t> {
-
-    public:
-        NBytesInt(){}
-        NBytesInt(std::uint32_t source);
-
-        std::uint32_t readStream(std::ifstream& f);
-        std::uint32_t writeStream(std::ofstream& f);
-
-        std::uint32_t getValue();
+    enum MidiEvent {
+        ReservedExtentions = 0x0,
+        CableReserved = 0x1,
+        SystemCommonMessage2Bytes = 0x2,
+        SystemCommonMessage3Bytes = 0x3,
+        SysExStartOrContinue = 0x4,
+        SystemCommonMessage1Byte = 0x5,
+        SysExEnds2Bytes = 0x6,
+        SysExEnds3Bytes = 0x7,
+        NoteOff = 0x8,
+        NoteOn = 0x9,
+        Aftertouch = 0xA,
+        ControlChange = 0xB,
+        PatchChange = 0xC,
+        ChannelPressure = 0xD,
+        PitchWheel = 0xE,
+        MetaEvent = 0xFF
     };
 
+
+    enum MidiMetaTypes {
+        TrackName = 0x3,
+        KindOfFinish = 0x2f, //:)
+        ChangeTempo = 0x51,
+        ChangeTimeSignature = 0x58
+    };
+
+
+    enum MidiMasks {
+        NoteOffMask = 0x80,
+        NoteOnMask = 0x90,
+        AftetouchMask = 0xA0,
+        ControlChangeMask = 0xB0,
+        PatchChangeMask = 0xC0,
+        ChannelPessureMask = 0xD0,
+        PitchWheelMask = 0xE0,
+
+        ChannelMask = 0xF,
+        EventTypeMask = 0xF0,
+    };
+
+
+    enum MidiChange {
+        ChangeVolume = 0x7,
+        ChangePanoram = 0xA
+    };
 
 
     class MidiSignal
     {
     public:
 
-        std::uint8_t getEventType() ;
-        std::uint8_t getChannel();
-        bool isMetaEvent();
+        uint8_t getEventType() const;
+        uint8_t getChannel() const;
+        bool isMetaEvent() const;
 
         MidiSignal();
-        MidiSignal(std::uint8_t b0, std::uint8_t b1, std::uint8_t b2=0, std::uint32_t timeShift=0);
+        MidiSignal(const uint8_t b0, const uint8_t b1,
+                    const uint8_t b2=0, const uint32_t timeShift=0);
 
-        std::uint32_t calculateSize(bool skipSomeMessages=false);
+        uint32_t calculateSize(const bool skipSomeMessages=false) const;
 
-        bool canSkipThat(); ///TODO doublecheck
+        bool canSkipThat() const;
 
-        std::uint32_t readStream(std::ifstream& f);
-        std::uint32_t writeStream(std::ofstream& f, bool skipSomeMessages=false); //?Todo review name skip
+        uint32_t readStream(std::ifstream& f);
+        uint32_t writeStream(std::ofstream& f, const bool skipSomeMessages=false) const;
 
-        std::string nameEvent(std::int8_t eventNumber);
-        std::string nameController(std::uint8_t controllerNumber);
+        std::string nameEvent(const uint8_t eventNumber) const;
+        std::string nameController(const uint8_t controllerNumber) const;
 
-        double getSecondsLength(double bpm=120.0);
+        double getSecondsLength(const double bpm=120.0) const;
 
-        const std::vector<std::uint8_t>& getMetaInfo() { return metaBufer; }
+        const std::vector<uint8_t>& getMetaInfo() const { return _metaBufer; }
 
-    public: //TODO :(
-        NBytesInt timeStamp;
+        uint8_t getParameter1() const { return _param1; }
+        uint8_t getParameter2() const { return _param2; }
 
-        std::uint8_t byte0; //type + channel //TODO rename typeAndChannel
-        std::uint8_t param1, param2; //parameters //TODO rename paramter1, parameter2
+        uint8_t getTypeAndChannel() const { return _typeAndChannel; }
 
-    public: //TODO cover with push functions
+        void setAbsoluteTime(const double time) { _absoluteTime = time; }
+        double absoluteTime() const { return _absoluteTime; }
+        NBytesInt& metaLen() { return _metaLen; }
+        std::vector<uint8_t>& metaBufer() { return _metaBufer; }
 
-        double absoluteTime; //bad code detected
+    protected:
+        uint8_t _typeAndChannel;
+        uint8_t _param1, _param2;
 
-        NBytesInt metaLen;
-        std::vector<std::uint8_t> metaBufer;
+        NBytesInt _timeStamp;
+
+        double _absoluteTime;
+
+        NBytesInt _metaLen;
+        std::vector<uint8_t> _metaBufer;
+
+        bool isNotSingleParamEvent(const uint8_t eventType) const;
+
     };
 
 }
 
-#endif // MIDISIGNAL_H
+#endif

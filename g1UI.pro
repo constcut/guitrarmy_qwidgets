@@ -38,6 +38,7 @@ SOURCES += main.cpp\
     midi/MidiRender.cpp \
     midi/MidiSignal.cpp \
     midi/MidiTrack.cpp \
+    midi/NBytesInt.cpp \
     tab/Bar.cpp \
     tab/Beat.cpp \
     tab/tools/Commands.cpp \
@@ -78,6 +79,8 @@ HEADERS  += \
     midi/MidiRender.hpp \
     midi/MidiSignal.hpp \
     midi/MidiTrack.hpp \
+    midi/MidiUtils.hpp \
+    midi/NBytesInt.hpp \
     tab/Bar.hpp \
     tab/Beat.hpp \
     tab/BeatStructs.hpp \

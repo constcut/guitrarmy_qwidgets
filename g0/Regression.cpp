@@ -51,14 +51,16 @@ bool gtmy::checkHasRegression() {
             tab.postLoading();
             tab.connectTracks();
 
+            auto fSize = std::filesystem::file_size(midiFileCheck);
+
             size_t bytesWritten = 0;
             auto f = exportMidi(&tab);
             {
                 std::ofstream midiOut(midiFile, std::ios::binary);
                 bytesWritten = f->writeStream(midiOut);
-                std::cerr << "MidiSize: " << bytesWritten << " to " << testName <<  std::endl;
+                std::cerr << "MidiSize: " << bytesWritten << " to " << testName
+                          <<  " expected: " << fSize << std::endl;
             }
-            auto fSize = std::filesystem::file_size(midiFileCheck);
 
             if (fSize != bytesWritten) {
                 std::cerr << "Files " << testName << " got a MIDI regression " << std::endl;
@@ -248,6 +250,7 @@ void gtmy::runRegressionTests() {
     //greatCheckScenarioCase(2, 1, 38, 4);
     if (checkHasRegression()) {
         std::cerr << "Has regression, terminating" << std::endl;
+        exit(0);
         return;
     }
     else
