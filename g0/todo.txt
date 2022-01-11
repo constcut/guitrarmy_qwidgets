@@ -13,3 +13,6 @@
 6) namespace deprecatedui::
 
 7) EXPORT? 4 format
+
+
++) Написать тесты для проверки регрессии Tab->Midi
