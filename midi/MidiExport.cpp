@@ -539,7 +539,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             if ( (note->getEffects() == Effect::Slide) || (note->getEffects() == Effect::LegatoSlide))
             {
                    //if (effects==5) velocyShift=19; //set decreace legatto slide
-                    short int slideStep = midiTrack->getAccum()/8;
+                    short int slideStep = midiTrack->getAccum() / 8;
                     midiTrack->pushSlideUp(channel,2,slideStep);//channel + shift
                     midiTrack->flushAccum();
             }

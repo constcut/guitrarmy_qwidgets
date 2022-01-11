@@ -22,8 +22,8 @@ namespace gtmy {
         void pushChangeVolume(const uint8_t newVolume, const uint8_t channel);
         void pushChangePanoram(const uint8_t newPanoram, const uint8_t channel);
         void pushVibration(const uint8_t channel, const uint8_t depth, const uint16_t step, const uint8_t stepsCount=3);
-        void pushSlideUp(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=3);
-        void pushSlideDown(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=3);
+        void pushSlideUp(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=8);
+        void pushSlideDown(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=8);
         void pushTremolo(const uint8_t channel, uint16_t offset);
 
         void pushFadeIn(const uint16_t offset, const uint8_t channel);
