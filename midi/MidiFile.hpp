@@ -2,48 +2,39 @@
 #define MIDIFILE_H
 
 #include <vector>
-#include <iostream>
-#include <memory>
+#include <fstream>
+#include <string_view>
 
-#include "midi/MidiTrack.hpp"
+#include "MidiTrack.hpp"
+
 
 namespace gtmy {
 
+    class MidiFile : public std::vector<MidiTrack> {
 
-    class MidiFile : public std::vector<std::unique_ptr<MidiTrack>> {
+        public:
+            MidiFile() = default;
+            MidiFile(std::string_view filename);
 
-    public:
-        struct midiHeader {
-            char chunkId[5]; //4
-            int32_t chunkSize; //4b
-            int16_t formatType; //2
-            int16_t nTracks; //2
-            int16_t timeDevision; //2
-            //TODO check uint?
-        };
+            uint32_t calculateHeader(bool skipSomeMessages=false);
 
-    private:
-        struct midiHeader midiHeader;
+            uint32_t readFromFile(std::string_view filename);
+            uint32_t readStream(std::ifstream& file);
 
-        int bpm;
+            uint32_t writeToFile(std::string_view filename, bool skipSomeMessages=false);
+            uint32_t writeStream(std::ofstream& file, bool skipSomeMessages=false);
 
-    public:
+            uint16_t getBPM() const { return _bpm; }
+            void setBPM(const uint16_t newBPM) { _bpm = newBPM; }
 
-        MidiFile():bpm(120) {}
-        virtual ~MidiFile() = default;
+        protected:
+            uint16_t _bpm = 120;
 
-        bool calculateHeader(bool skip=false);
-        void printToStream(std::ostream &stream);
-
-        bool readStream(std::ifstream &ifile);
-        size_t writeStream(std::ofstream &ofile);
-
-        size_t noMetricsTest(std::ofstream &ofile);
-
-        //set get
-        void setBPM(int bpmNew) { bpm = bpmNew; }
-        int  getBPM() { return bpm; }
-
+            char _chunkId[4];
+            uint32_t _chunkSize;
+            uint16_t _formatType;
+            uint16_t _tracksCount;
+            uint16_t _timeDevisition;
     };
 
 }

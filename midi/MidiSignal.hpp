@@ -1,6 +1,6 @@
 
-#ifndef MIDIMESSAGE_H
-#define MIDIMESSAGE_H
+#ifndef MidiSignal_H
+#define MidiSignal_H
 
 #include "NBytesInt.hpp"
 #include <list>

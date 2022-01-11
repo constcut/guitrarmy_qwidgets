@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <fstream>
+#include <iostream>
 
 #include "MainWindow.hpp"
 #include "TabViews.hpp"

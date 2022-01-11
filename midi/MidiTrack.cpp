@@ -1,286 +1,325 @@
 #include "MidiTrack.hpp"
 
+#include <string_view>
+#include <cmath>
 #include <QDebug>
 
-extern bool midiLog; //TODO review log groups, make atomics
+#include "MidiUtils.hpp"
 
+
+extern bool midiLog;
 
 using namespace gtmy;
 
 
-void MidiTrack::printToStream(std::ostream &stream)
-{
-    stream << "Output MidiTrack.";
-    //stream << "chunky = " << trackHeader.chunkId <<std::endl;
-    stream << "Track Size = " << trackHeader.trackSize << std::endl;
 
-    //size_t signalsAmount = size();
-    //for (size_t i = 0; i < signalsAmount; ++i)
-        //at(i)->printToStream(stream); //message printing diabled
-}
-
-
-
-bool MidiTrack::calculateHeader(bool skip)
-{
-    //this function responsable for calculations of data stored inside MidiTrack
-
-    size_t calculatedSize = 0;
-
-    for (size_t i =0; i < size(); ++i)
-    {
-        //seams to be easiest option
-        calculatedSize += at(i).calculateSize(skip);
+constexpr uint32_t returnChunkId(std::string_view str = "MTrk") { //DELAYED: inverse using c++20
+    uint32_t value = 0;
+    for (const auto &s : str) {
+        value <<= 8;
+        auto charId = s;
+        value |= charId;
     }
-
-    if (midiLog)  qDebug() <<"Calculating track size : "<<calculatedSize;
-    if (midiLog)  qDebug() <<"Previously stored : "<<trackHeader.trackSize;
-
-    trackHeader.trackSize=calculatedSize;//NOW PUSED
-
-    //and header defaults
-    memcpy(trackHeader.chunkId,"MTrk",5); //some attention here if normal wouldnt go
-
-    return true;
+    return value;
 }
 
 
-//HELPERS BEGIN
+uint32_t MidiTrack::calculateHeader(bool skipSomeMessages) {
 
-void MidiTrack::pushChangeInstrument(std::uint8_t newInstr, std::uint8_t channel, size_t timeShift)
-{
-    if (midiLog)  qDebug() << "Change instrument "<<newInstr<<" on CH "<<channel;
-    auto instrumentChange = MidiSignal(0xC0|channel,newInstr,0,timeShift);
-    this->push_back(std::move(instrumentChange));
+    uint32_t calculatedSize = 0;
+
+    for (std::size_t i = 0; i < size(); ++i)
+        calculatedSize += operator[](i).calculateSize(skipSomeMessages);
+
+    if (midiLog)
+        if (_trackSize != calculatedSize)
+            qDebug() << "UPDATING track size: " << _trackSize << " to " << calculatedSize;
+
+    _trackSize = calculatedSize;
+
+    _chunkId[0] = 'M';
+    _chunkId[1] = 'T';
+    _chunkId[2] = 'r';
+    _chunkId[3] = 'k';
+    return calculatedSize;
 }
 
-void MidiTrack::pushMetrSignature(std::uint8_t num, std::uint8_t den,size_t timeShift=0, std::uint8_t metr, std::uint8_t perQuat)
-{
-    auto signatureEvent  = MidiSignal(0xff,88,0,timeShift);
-    signatureEvent.metaBufer().push_back(num);
 
-    std::uint8_t transDur=0;
-    switch (den)
-    {
-        case 1: transDur = 0; break;
-        case 2: transDur = 1; break;
-        case 4: transDur = 2; break;
-        case 8: transDur = 3; break;
-        case 16: transDur = 4; break;
-        case 32: transDur = 5; break;
-        case 64: transDur = 6; break;
-    default:
-        transDur=6;
+void MidiTrack::pushChangeInstrument(const uint8_t newInstrument, const uint8_t channel, const uint32_t timeShift) {
+    push_back(MidiSignal(MidiMasks::PatchChangeMask | channel, newInstrument, 0, timeShift));
+}
+
+
+void MidiTrack::pushTrackName(const std::string trackName) {
+    MidiSignal nameTrack(MidiEvent::MetaEvent, MidiMetaTypes::TrackName);
+    nameTrack.metaLen() = NBytesInt(trackName.size());
+
+    for (size_t i = 0; i < trackName.size(); ++i)
+        nameTrack.metaBufer().push_back(trackName[i]);
+
+    push_back(nameTrack);
+}
+
+
+void MidiTrack::pushMetricsSignature(const uint8_t numeration, const uint8_t denumeration,
+                                               const uint32_t timeShift, const uint8_t metr, const uint8_t perQuat) {
+    MidiSignal metrics(MidiEvent::MetaEvent, MidiMetaTypes::ChangeTimeSignature, 0, timeShift);
+    metrics.metaBufer().push_back(numeration);
+
+    uint8_t translatedDuration = std::log2(denumeration);
+    metrics.metaBufer().push_back(translatedDuration);
+    metrics.metaBufer().push_back(metr);
+    metrics.metaBufer().push_back(perQuat);
+    metrics.metaLen() = NBytesInt(4); //size of 4 bytes upper
+
+    push_back(metrics);
+}
+
+
+void MidiTrack::pushChangeBPM(const uint16_t bpm, const uint32_t timeShift) {
+    MidiSignal changeTempo(MidiEvent::MetaEvent, MidiMetaTypes::ChangeTempo, 0, timeShift);
+    uint32_t nanoCount = 60000000 / bpm; //6e7 = amount of nanoseconds
+    changeTempo.metaBufer().push_back((nanoCount >> 16) & 0xff);
+    changeTempo.metaBufer().push_back((nanoCount >> 8) & 0xff);
+    changeTempo.metaBufer().push_back(nanoCount & 0xff);
+    changeTempo.metaLen() = NBytesInt(3); //size upper
+
+    push_back(changeTempo);
+}
+
+
+void MidiTrack::pushChangeVolume(const uint8_t newVolume, const uint8_t channel) {
+    MidiSignal volumeChange(MidiMasks::ControlChangeMask | channel, MidiChange::ChangeVolume, newVolume > 127 ? 127 : newVolume, 0);
+    push_back(volumeChange);
+}
+
+
+void MidiTrack::pushChangePanoram(const uint8_t newPanoram, const uint8_t channel) {
+    MidiSignal panoramChange(MidiMasks::ControlChangeMask | channel, MidiChange::ChangePanoram, newPanoram, 0);
+    push_back(panoramChange);
+}
+
+
+void MidiTrack::pushVibration(const uint8_t channel, const uint8_t depth, const uint16_t step, const uint8_t stepsCount) {
+    const uint8_t middle = 64;
+    uint8_t shiftDown = middle - depth;
+    uint8_t shiftUp = middle + depth;
+    uint8_t signalKey = MidiMasks::PitchWheelMask + channel;
+
+    for (uint32_t i = 0; i < stepsCount; ++i) {
+        push_back(MidiSignal(signalKey, 0, shiftDown, step));
+        push_back(MidiSignal(signalKey, 0, shiftUp, step));
     }
-
-    signatureEvent.metaBufer().push_back(transDur);
-    signatureEvent.metaBufer().push_back(metr);
-    signatureEvent.metaBufer().push_back(perQuat);
-
-    std::uint8_t metaSize = 4;
-    signatureEvent.metaLen().push_back(metaSize);
-
-    push_back(std::move(signatureEvent));
-}
-
-void MidiTrack::pushChangeBPM(int bpm, size_t timeShift)
-{
-    if (midiLog)  qDebug() << "We change midi temp to "<<bpm; //attention
-
-    auto changeTempEvent = MidiSignal(0xff,81,0,timeShift);
-
-    //changeTempEvent.byte0 = 0xff;
-    //changeTempEvent.param1 = 81;
-
-    size_t MCount = 60000000/bpm;
-
-    std::uint8_t tempB1 = (MCount>>16)&0xff; //0x7
-    std::uint8_t tempB2 = (MCount>>8)&0xff; //0xa1
-    std::uint8_t tempB3 = MCount&0xff; //0x20
-
-    changeTempEvent.metaBufer().push_back(tempB1);
-    changeTempEvent.metaBufer().push_back(tempB2);
-    changeTempEvent.metaBufer().push_back(tempB3);
-
-    std::uint8_t lenMeta = 3;
-    changeTempEvent.metaLen().push_back(lenMeta);
-
-    //byte timeZero = 0;
-    //changeTempEvent.param2 = 0;
-    //changeTempEvent.time.
-    this->push_back(std::move(changeTempEvent));
+    push_back(MidiSignal(signalKey, 0, middle, 0));
 }
 
 
-void MidiTrack::pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel)
-{
-    if (newVolume > 127)
-         newVolume = 127;
-
-    auto volumeChange = MidiSignal(0xB0 | channel, 7, newVolume, 0);
-
-    push_back(std::move(volumeChange));
-}
-
-void MidiTrack::pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel)
-{
-    auto panoramChange = MidiSignal(0xB0 | channel, 0xA, newPanoram, 0);
-    this->push_back(std::move(panoramChange));
-}
-
-void MidiTrack::pushVibration(std::uint8_t channel, std::uint8_t depth, short int step, std::uint8_t stepsCount) {
-    std::uint8_t shiftDown = 64-depth;
-    std::uint8_t shiftUp = 64+depth;
-    std::uint8_t signalKey = 0xE0 + channel;
-
-    for (size_t vibroInd=0; vibroInd <stepsCount; ++vibroInd) {
-         auto mSignalVibOn = MidiSignal(signalKey,0,shiftDown,step);
-         auto mSignalVibOff = MidiSignal(signalKey,0,shiftUp,step);
-         push_back(std::move(mSignalVibOn));
-         push_back(std::move(mSignalVibOff));
+void MidiTrack::pushSlideUp(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount) {
+    const uint8_t middle = 64;
+    uint8_t pitchShift = middle;
+    uint8_t signalKey = MidiMasks::PitchWheelMask + channel;
+    for (uint32_t i = 0; i < stepsCount; ++i) {
+        push_back(MidiSignal(signalKey, 0, pitchShift, step));
+        pitchShift += shift;
     }
-
-    auto mSignalVibOn = MidiSignal(signalKey,0,64,0);
-    this->push_back(std::move(mSignalVibOn));
+    push_back(MidiSignal(signalKey, 0, middle, 0));
 }
 
-void MidiTrack::pushSlideUp(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount)
-{
-    std::uint8_t pitchShift = 64;
-    std::uint8_t signalKey = 0xE0 + channel;
 
-    for (size_t slideInd=0; slideInd <stepsCount; ++slideInd)
-    {
-         auto mSignalSlideOn = MidiSignal(signalKey,0,pitchShift,step);
-         this->push_back(std::move(mSignalSlideOn));
-         pitchShift+=shift;
+void MidiTrack::pushSlideDown(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount) {
+    const uint8_t middle = 64;
+    uint8_t pitchShift = middle;
+    uint8_t signalKey = MidiMasks::PitchWheelMask + channel;
+    for (uint32_t i = 0; i < stepsCount; ++i) {
+        push_back(MidiSignal(signalKey, 0, pitchShift, step));
+        pitchShift -= shift;
     }
-    auto mSignalSlideOff = MidiSignal(signalKey,0,64,0);
-    this->push_back(std::move(mSignalSlideOff));
+    push_back(MidiSignal(signalKey, 0, middle, 0));
 }
 
-void MidiTrack::pushSlideDown(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount)
-{
-    std::uint8_t pitchShift = 64;
-    std::uint8_t signalKey = 0xE0 + channel;
 
-    for (size_t slideInd=0; slideInd <stepsCount; ++slideInd)
-    {
-         auto mSignalSlideOn = MidiSignal(signalKey,0,pitchShift,step);
-         this->push_back(std::move(mSignalSlideOn));
-         pitchShift-=shift;
+void MidiTrack::pushTremolo(const uint8_t channel, uint16_t offset) {
+    uint16_t slideStep = offset / 40;
+    const uint8_t middle = 64;
+    uint8_t pitchShift = middle;
+    for (int i = 0; i < 10; ++i) {
+        push_back(MidiSignal(MidiMasks::PitchWheelMask | channel, 0, pitchShift, slideStep));
+        pitchShift -= 3;
     }
-    auto mSignalSlideOff = MidiSignal(signalKey,0,64,0);
-    this->push_back(std::move(mSignalSlideOff));
+    offset -= offset / 4;
+    push_back(MidiSignal(MidiMasks::PitchWheelMask | channel, 0, pitchShift, offset));
+    push_back(MidiSignal(MidiMasks::PitchWheelMask | channel, 0, middle, 0));
 }
 
 
-
-void MidiTrack::pushTremolo(short int rOffset)
-{
-    short int slideStep = rOffset/40; //10 steps of 1/4
-
-    std::uint8_t pitchShift = 64;
-    for (size_t slideInd=0; slideInd <10; ++slideInd)
-    {
-         auto mSignalBend = MidiSignal(0xE1,0,pitchShift,slideStep);
-         this->push_back(std::move(mSignalBend));
-         pitchShift-=3;//calibrate
-    }
-
-    rOffset -= rOffset/4;
-    //last point
-    auto mSignalBendLast = MidiSignal(0xE1,0,pitchShift, rOffset);
-    this->push_back(std::move(mSignalBendLast));
-    auto mSignalBendClose = MidiSignal(0xE1,0,64,0);
-    this->push_back(std::move(mSignalBendClose));
-}
-
-void MidiTrack::pushFadeIn(short int rOffset, std::uint8_t channel)
-{
-
-    std::uint8_t newVolume = 27;
-    short int fadeInStep = rOffset/20;
-
-    auto volumeChangeFirst = MidiSignal(0xB0 | channel,7,newVolume,0);
-    this->push_back(std::move(volumeChangeFirst));
-
-    for (size_t i = 0; i < 20; ++i)
-    {
+void MidiTrack::pushFadeIn(const uint16_t offset, const uint8_t channel) {
+    uint8_t newVolume = 27;
+    uint16_t fadeInStep = offset / 20;
+    push_back(MidiSignal(MidiMasks::ControlChangeMask | channel, MidiChange::ChangeVolume, newVolume, 0));
+    for (int i = 0; i < 20; ++i) {
         newVolume += 5;
-        auto volumeChange = MidiSignal(0xB0 | channel,7,newVolume,fadeInStep);
-        this->push_back(std::move(volumeChange));
-
+        push_back(MidiSignal(MidiMasks::ControlChangeMask | channel, MidiChange::ChangeVolume, newVolume, fadeInStep));
     }
 }
 
-void MidiTrack::pushEvent47()
-{
-
-#ifdef WIN32
-    auto trickA = MidiSignal(0x90 , 64, 3 ,240);
-    auto trickB = MidiSignal(0x80 , 64, 3 ,240);
-    //push_back(std::move(trickA));
-    //push_back(std::move(trickB));
-#endif
-
-    auto event47 = MidiSignal(0xff,47,0,0);
-    event47.metaLen().push_back(0);
-    this->push_back(std::move(event47));
+void MidiTrack::pushEvent47() { //Emergency event
+    MidiSignal event47(MidiEvent::MetaEvent, MidiMetaTypes::KindOfFinish, 0, 0);
+    event47.metaLen() = NBytesInt(0);
+    push_back(event47);
 }
 
 
-short int MidiTrack::calcRhythmDetail(std::uint8_t RDValue, short int rhythmOffset)
-{
-    short int rOffset = rhythmOffset; //TODO
-    if (RDValue == 3) //truplet
-    {
-        rOffset *= 2;
-        rOffset /= 3;
-    }
-    if (RDValue == 5) //five-plet
-    {
-        rOffset *= 4;
-        rOffset /= 5;
-    }
-    if (RDValue == 6) //five-plet
-    {
-        rOffset *= 5;
-        rOffset /= 6;
-    }
-    if (RDValue == 7) //-plet
-    {
-        rOffset *= 4;
-        rOffset /= 7;
-    }
-    if (RDValue == 9) //-plet
-    {
-        rOffset *= 8;
-        rOffset /= 9;
-    }
-
-    //FEW MISSING
-
-    //MAYBE NPLET posibility??
-    //attention for other connections here
-    //miss single double and tripple dot here
-    return rOffset;
+int16_t MidiTrack::calculateRhythmDetail(const uint8_t value, const int16_t offset) const {
+    uint16_t resultOffset = 0;
+    if (value == 3)
+        resultOffset = (offset * 2) / 3;
+    if (value == 5)
+        resultOffset = (offset * 4) / 5;
+    if (value == 6)
+        resultOffset = (offset * 5) / 6;
+    if (value == 7)
+        resultOffset = (offset * 4) / 7;
+    if (value == 9)
+        resultOffset = (offset * 8) / 9;
+    return resultOffset;
 }
 
-std::uint8_t MidiTrack::calcMidiPanoramGP(std::uint8_t pan)
+
+uint32_t MidiTrack::readFromFile(std::ifstream& f)
 {
-    if (midiLog)  qDebug() << "Panoram value = "<<pan;
+    f.read(_chunkId, 4);
+    f.read(reinterpret_cast<char*>(&_trackSize), 4);
+
+    if ((_chunkId[0] != 'M') || (_chunkId[1] != 'T') || (_chunkId[2] != 'r') || (_chunkId[3] != 'k'))
+    {
+        if (midiLog)
+            qDebug() << "Error: Header of track corrupted "
+                  << _chunkId[0] << _chunkId[1] << _chunkId[2] << _chunkId[3];
+        return 8;
+    }
+
+    _trackSize = swapEndian<uint32_t>(_trackSize);
+
+    if (midiLog)
+        qDebug() << "Reading midi track " << _chunkId[0] << _chunkId[1] << _chunkId[2] << _chunkId[3] << _trackSize;
+
+    double totalTime = 0.0;
+    int beatsPerMinute = 120; //default value
+
+    uint32_t bytesRead = 0;
+    while (bytesRead < _trackSize) {
+
+        MidiSignal MidiSignal;
+        bytesRead += MidiSignal.readStream(f);
+        totalTime += MidiSignal.getSecondsLength(beatsPerMinute) * 1000.0; //to ms
+        MidiSignal.setAbsoluteTime(totalTime);
+        push_back(MidiSignal);
+    }
+
+    _timeLengthOnLoad = totalTime;
+
+    if (bytesRead > _trackSize) {
+        if (midiLog)
+            qDebug() << "Critical ERROR readen more bytes then needed " << bytesRead << _trackSize;
+    }
+
+    return bytesRead + 8;
+}
+
+
+uint32_t MidiTrack::writeToFile(std::ofstream& f, bool skipSomeMessages) const {
+    uint32_t totalBytesWritten = 0;
+    //f << _chunkId;
+    f.write(_chunkId, 4);
+
+    uint32_t sizeInverted = swapEndian<uint32_t>(_trackSize);
+    //f << sizeInverted;
+    f.write(reinterpret_cast<const char*>(&sizeInverted), 4);
+    totalBytesWritten += 8;
+
+    if (midiLog)
+        qDebug() << "Writing midi track " << _chunkId[0] << _chunkId[1] << _chunkId[2] << _chunkId[3] << _trackSize;
+
+    for (size_t i = 0; i < size(); ++i)
+        totalBytesWritten += this->at(i).writeStream(f, skipSomeMessages);
+
+    return totalBytesWritten;
+}
+
+
+void MidiTrack::closeLetRings(const uint8_t channel) {
+    for (size_t i = 0; i < 10; ++i)
+        if (_ringRay[i] != 255)
+            closeLetRing(i, channel);
+}
+
+
+void MidiTrack::closeLetRing(const uint8_t stringN, const uint8_t channel) {
+    if (stringN > 8){
+        qDebug() <<"String issue " << stringN;
+        return;
+    }
+
+    uint8_t ringNote = _ringRay[stringN];
+    _ringRay[stringN]=255;
+    uint8_t ringVelocy=80;
+    if (ringNote != 255)
+        pushNoteOff(ringNote,ringVelocy,channel);
+}
+
+
+void MidiTrack::openLetRing(const uint8_t stringN, const uint8_t midiNote,
+                                      const uint8_t velocity, const uint8_t channel) {
+    if (stringN > 8){
+        qDebug() <<"String issue "<<stringN;
+        return;
+    }
+
+    if (_ringRay[stringN]!=255)
+        closeLetRing(stringN,channel);
+    _ringRay[stringN]=midiNote;
+    pushNoteOn(midiNote,velocity,channel);
+}
+
+
+void MidiTrack::finishIncomplete(short specialR) {
+    short int rhyBase = 120;
+    short int power2 = 2<<(3);
+    int preRValue = rhyBase*power2/4;
+    preRValue *= specialR;
+    preRValue /= 1000;
+    accumulate(preRValue);
+}
+
+
+void MidiTrack::pushNoteOn(const uint8_t midiNote, const uint8_t velocity, const uint8_t channel) {
+    MidiSignal msg(MidiMasks::NoteOnMask | channel, midiNote, velocity,_accum);
+    flushAccum();
+    push_back(msg);
+}
+
+
+void MidiTrack::pushNoteOff(const uint8_t midiNote, const uint8_t velocity, const uint8_t channel) {
+    MidiSignal msg(MidiMasks::NoteOffMask | channel, midiNote, velocity,_accum);
+    flushAccum();
+    push_back(msg);
+}
+
+
+std::uint8_t MidiTrack::calcMidiPanoramFromTab(std::uint8_t pan)
+{
     std::uint8_t midiPanoram = pan*8;
     if (midiPanoram>=128) midiPanoram=128;
     return midiPanoram;
 }
-std::uint8_t MidiTrack::calcMidiVolumeGP(std::uint8_t vol)
+
+std::uint8_t MidiTrack::calcMidiVolumeFromTab(std::uint8_t vol)
 {
-    if (midiLog)  qDebug() <<"Volume is "<<vol;
     std::uint8_t midiVolume = vol*8;
     if (midiVolume >= 128) midiVolume=128;
     return midiVolume;
 }
+
 std::uint8_t MidiTrack::calcPalmMuteVelocy(std::uint8_t vel)
 {
     std::uint8_t outputVelocy = vel;
@@ -292,93 +331,3 @@ std::uint8_t MidiTrack::calcLeggatoVelocy(std::uint8_t vel)
 {
     return calcPalmMuteVelocy(vel);//for possible difference
 }
-//HELPERS END
-
-/*
-void MidiTrack::add(MidiSignal &val)
-{
-    ChainContainer::add(val);
-  //  std::cout<<std::endl;
-  //  val.printToStream(std::cout);
-   // if (midiLog)  qDebug() <<"lo";
-}
-*/
-
-
-
-//new fun
-void MidiTrack::closeLetRings(std::uint8_t channel)
-{
-    for (size_t i = 0; i < 10; ++i)
-    {
-        if (ringRay[i] != 255)
-        {
-            closeLetRing(i,channel);
-        }
-    }
-}
-
-void MidiTrack::closeLetRing(std::uint8_t stringN, std::uint8_t channel)
-{
-    if (stringN > 8)
-    {
-        qDebug() <<"String issue "<<stringN;
-        return;
-    }
-
-    std::uint8_t ringNote = ringRay[stringN];
-    ringRay[stringN]=255;
-
-    std::uint8_t ringVelocy=80;
-
-    if (ringNote != 255)
-    pushNoteOff(ringNote,ringVelocy,channel);
-
-}
-
-void MidiTrack::openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
-{
-    if (stringN > 8)
-    {
-        qDebug() <<"String issue "<<stringN;
-        return;
-    }
-
-    if (ringRay[stringN]!=255)
-    {
-        closeLetRing(stringN,channel);
-    }
-    ringRay[stringN]=midiNote;
-
-    pushNoteOn(midiNote,velocity,channel);
-}
-
-void MidiTrack::finishIncomplete(short specialR)
-{
-    //constant refact
-     short int rhyBase = 120;
-
-    short int power2 = 2<<(3);
-    int preRValue = rhyBase*power2/4;
-
-    preRValue *= specialR;
-    preRValue /= 1000;
-
-    accumulate(preRValue);
-}
-
-void MidiTrack::pushNoteOn(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
-{
-    auto noteOn = MidiSignal(0x90 | channel, midiNote, velocity,accum);
-    takeAccum();
-    push_back(std::move(noteOn));
-}
-
-void MidiTrack::pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel)
-{
-    auto noteOn = MidiSignal(0x80 | channel, midiNote, velocity,accum);
-    takeAccum();
-    push_back(std::move(noteOn));
-}
-
-

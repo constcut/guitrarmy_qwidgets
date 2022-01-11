@@ -1,92 +1,87 @@
 #ifndef MIDITRACK_H
 #define MIDITRACK_H
 
-#include <vector>
-#include <memory>
+#include "MidiSignal.hpp"
 
-#include "midi/MidiSignal.hpp"
+#include <vector>
+#include <fstream>
 
 
 namespace gtmy {
 
 
     class MidiTrack : public std::vector<MidiSignal> {
+        public:
+        uint32_t calculateHeader(bool skipSomeMessages=false);
 
-    public:
+        void pushChangeInstrument(const uint8_t newInstrument, const uint8_t channel, const uint32_t timeShift=0);
+        void pushMetricsSignature(const uint8_t numeration, const uint8_t denumeration,
+                                  const uint32_t timeShift, const uint8_t metr=24, const uint8_t perQuat=8);
 
-        struct midiTrackHeader {
-            char chunkId[5];
-            size_t trackSize;
-        };
+        void pushChangeBPM(const uint16_t bpm, const uint32_t timeShift);
+        void pushChangeVolume(const uint8_t newVolume, const uint8_t channel);
+        void pushChangePanoram(const uint8_t newPanoram, const uint8_t channel);
+        void pushVibration(const uint8_t channel, const uint8_t depth, const uint16_t step, const uint8_t stepsCount=3);
+        void pushSlideUp(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=3);
+        void pushSlideDown(const uint8_t channel, const uint8_t shift, const uint16_t step, const uint8_t stepsCount=3);
+        void pushTremolo(const uint8_t channel, uint16_t offset);
 
-        midiTrackHeader trackHeader; //think about it!
-
-        MidiTrack() = default;
-        virtual ~MidiTrack() = default;
-
-        bool calculateHeader(bool skip=false);
-        void printToStream(std::ostream &stream);
-
-
-        //no time versions
-        void pushChangeInstrument(std::uint8_t newInstr, std::uint8_t channel, size_t timeShift=0);
-        void pushChangeBPM(int bpm, size_t timeShift=0); //same way others
-        void pushChangeVolume(std::uint8_t newVolume, std::uint8_t channel);
-        void pushChangePanoram(std::uint8_t newPanoram, std::uint8_t channel);
-
-        void pushMetrSignature(std::uint8_t num, std::uint8_t den, size_t timeShift, std::uint8_t metr=24, std::uint8_t perQuat=8);
-
-        void pushVibration(std::uint8_t channel, std::uint8_t depth, short int step, std::uint8_t stepsCount=3);
-        void pushSlideUp(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
-        void pushSlideDown(std::uint8_t channel, std::uint8_t shift, short int step, std::uint8_t stepsCount=8);
-
-        void pushTremolo(short int rOffset); //yet deadcoded one
-
-        void pushFadeIn(short int rOffset, std::uint8_t channel);
-
-
+        void pushFadeIn(const uint16_t offset, const uint8_t channel);
         void pushEvent47();
+        void pushTrackName(const std::string trackName);
 
-        //END of HELPERS
-
-        short int calcRhythmDetail(std::uint8_t RDValue, short int rhythmOffset);
-        std::uint8_t calcMidiPanoramGP(std::uint8_t pan); //GUITAR P OPTION
-        std::uint8_t calcMidiVolumeGP(std::uint8_t vol); //GUITAR P OPTION
+        int16_t calculateRhythmDetail(const uint8_t value, const int16_t offset) const;
+        std::uint8_t calcMidiPanoramFromTab(std::uint8_t pan);
+        std::uint8_t calcMidiVolumeFromTab(std::uint8_t vol);
         std::uint8_t calcPalmMuteVelocy(std::uint8_t vel);
         std::uint8_t calcLeggatoVelocy(std::uint8_t vel);
 
-    public: //TODO review when midi generation is done
+
+        void closeLetRings(const uint8_t channel);//Those functions used for generation from tablature, in case we would bring tablatures there
+        void openLetRing(const uint8_t stringN, const uint8_t midiNote, const uint8_t velocity, const uint8_t channel);
+        void closeLetRing(const uint8_t stringN, const uint8_t channel);
+        void finishIncomplete(short specialR);
+
+        void pushNoteOn(const uint8_t midiNote, const uint8_t velocity, const uint8_t channel);
+        void pushNoteOff(const uint8_t midiNote, const uint8_t velocity, const uint8_t channel);
 
 
-        std::uint8_t tunes[10];
-        std::uint8_t ringRay[10];
-
-        void closeLetRings(std::uint8_t channel);		//-
-        void openLetRing(std::uint8_t stringN, std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
-        void closeLetRing(std::uint8_t stringN, std::uint8_t channel);  //-
-
-        void finishIncomplete(short specialR); //-
-
-        void pushNoteOn(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //acummulated already inside
-        void pushNoteOff(std::uint8_t midiNote, std::uint8_t velocity, std::uint8_t channel); //-
-
-
-    public:
-
-        int accum;//TODO int& accumulate(); int takeAccumulate();
-
-        int accumulate(int value) { accum += value; return accum; }
-        int getAccum() { return accum; }
-        void takeAccum() { accum=0; }
 
         void setTunes(std::uint8_t *from) {
             for (std::uint8_t i=0; i < 10; ++i){
-                tunes[i]=from[i];
-                ringRay[i]=255;
+                _tunes[i]=from[i];
+                _ringRay[i]=255;
             }
         }
+
+        uint8_t* getTunes() {
+            return _tunes;
+        }
+
+
+        protected:
+            char _chunkId[4]; //DELAYED: as uint32_t = 'xxxx'?
+            uint32_t _trackSize;
+
+        private:
+            int32_t _accum = 0;
+            uint8_t _tunes[10];
+            uint8_t _ringRay[10];
+
+            double _timeLengthOnLoad; //Ms
+
+       public:
+
+
+            void setAccum(int32_t newAcc) { _accum = newAcc; }
+            int32_t accumulate(const int32_t addition) { _accum += addition; return _accum; }
+            int32_t getAccum() const { return _accum; }
+            void flushAccum() { _accum = 0; }
+
+            uint32_t readFromFile(std::ifstream& f);
+            uint32_t writeToFile(std::ofstream& f, bool skipSomeMessages=false) const;
     };
 
 }
 
-#endif // MIDITRACK_H
+#endif

@@ -71,7 +71,7 @@ bool midiPrint(std::string fileName)
     MidiFile midiFile;
     midiFile.readStream(ifile);
     std::cout << "Reading file finished";
-    midiFile.printToStream(std::cout);
+    //midiFile.printToStream(std::cout);
     return true;
 }
 
@@ -93,7 +93,7 @@ bool testMidi(std::string fileName)
     MidiFile midiFile;
     midiFile.readStream(ifile);
     log << "Reading file finished";
-    midiFile.printToStream(std::cout);
+    //midiFile.printToStream(std::cout); //Maybe get it back?
 
     return true;
 }

@@ -3,7 +3,7 @@
 #include <vector>
 #include <QDebug>
 
-static bool enableMidiLog = false; //TODO
+extern bool midiLog;
 
 
 
@@ -33,7 +33,7 @@ uint32_t NBytesInt::readFromFile(std::ifstream& f) {
         push_back(lastByte & 127);
     } while (lastByte & 128);
 
-    if (enableMidiLog) {
+    if (midiLog) {
         qDebug() << "VarInt read "<<getValue()<<" "<<size();
 
         for (size_t i = 0; i < size(); ++i)
@@ -49,7 +49,7 @@ uint32_t NBytesInt::writeToFile(std::ofstream& f) const {
             anotherByte |= 128;
         f << anotherByte;
     }
-    if (enableMidiLog) {
+    if (midiLog) {
         for (size_t i = 0; i < size(); ++i)
             qDebug() << "VarInt[" << i << "] = " << this->operator [](i);
         qDebug() << "VarInt write " << getValue() << " " << size();

@@ -152,7 +152,7 @@ void PatternInput::playBar() {
     auto outMidi = exportMidi(&patternTab);
     outMidi->writeStream(outFile);
     outFile.close();
-    outMidi->printToStream(std::cout);
+    //outMidi->printToStream(std::cout);
 
     //STARTMIDI
 
@@ -988,7 +988,7 @@ void MorzeInput::playBar()
 
         outMidi->writeStream(outFile);
         outFile.close();
-        outMidi->printToStream(std::cout);
+        //outMidi->printToStream(std::cout);
 
         //STARTMIDI
 

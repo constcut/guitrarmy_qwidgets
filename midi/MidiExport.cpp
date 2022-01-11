@@ -1,7 +1,7 @@
 #include "MidiExport.hpp"
 #include "g0/Config.hpp"
 
-bool midiExportLog = false;
+bool midiExportLog = false; //TODO +++ MidiEnums
 
 #include <QDebug>
 
@@ -13,7 +13,7 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
     auto output = std::make_unique<MidiFile>();
     //time line track
     {
-        auto timeLineTrack = std::make_unique<MidiTrack>();
+        auto timeLineTrack = MidiTrack();
         tab->createTimeLine(shiftTheCursor);
         //std::cout << tab->timeLine.size() << " is size of timeLine" <<std::endl;
         size_t tlAccum = 0;
@@ -29,7 +29,7 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                 int preRValue = rhyBase*power2/4;
                 preRValue *= tlAccum;
                 preRValue /= 1000;
-                timeLineTrack->pushChangeBPM(timeLine[i].value, preRValue);
+                timeLineTrack.pushChangeBPM(timeLine[i].value, preRValue);
                 tlAccum = 0;
             }
 
@@ -46,12 +46,12 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                 int preRValue = rhyBase*power2/4;
                 preRValue *= tlAccum;
                 preRValue /= 1000;
-                timeLineTrack->pushMetrSignature(newNum,newDen,preRValue);
+                timeLineTrack.pushMetricsSignature(newNum,newDen,preRValue);
                 tlAccum=0;
             }
         }
 
-        timeLineTrack->pushEvent47();
+        timeLineTrack.pushEvent47();
         output->push_back(std::move(timeLineTrack));
     }
 
@@ -62,7 +62,7 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
 
         if (metronomeTurnedOn)
         {
-            auto metronomeClickTrack = std::make_unique<MidiTrack>();
+            auto metronomeClickTrack = MidiTrack();
             bool firstRun = true;
 
             const auto& timeLoop = tab->at(0)->getTimeLoop();
@@ -92,15 +92,15 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                     for (int i = 0; i < num; ++i)
                         if (firstRun){
                             auto noteOn = MidiSignal(0x90 | 9, 33, 127,0);
-                            metronomeClickTrack->push_back(std::move(noteOn));
+                            metronomeClickTrack.push_back(std::move(noteOn));
                             firstRun = false;
                         }
                         else{
                             auto noteOn = MidiSignal(0x90 | 9, 33, 127,metronomeClickSize);
-                            metronomeClickTrack->push_back(std::move(noteOn));
+                            metronomeClickTrack.push_back(std::move(noteOn));
                         }
                 }
-                metronomeClickTrack->pushEvent47();
+                metronomeClickTrack.pushEvent47();
                 output->push_back(std::move(metronomeClickTrack));
             }
     }
@@ -157,8 +157,8 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
         }
 
 
-        auto mTrack = std::make_unique<MidiTrack>();
-        mTrack->takeAccum();
+        auto mTrack = MidiTrack();
+        mTrack.flushAccum();
         //if (i==0)
         //mTrack->pushChangeBPM(tab->getBPM());
 
@@ -167,10 +167,10 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
         {
             ++drumsTrack;
             size_t realInd = 9;
-            exportTrack(track.get(), mTrack.get(), realInd, startCursorBar);
+            exportTrack(track.get(), &mTrack, realInd, startCursorBar);
         }
         else
-            exportTrack(track.get(), mTrack.get(), i, startCursorBar);
+            exportTrack(track.get(), &mTrack, i, startCursorBar);
 
         //clock_t afterT3 = getTime();
         output->push_back(std::move(mTrack));
@@ -186,8 +186,8 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
 void gtmy::exportTrack(Track* track, MidiTrack* midiTrack, size_t channel, size_t shiftCursorBar) {
 
     size_t instrument = track->getInstrument();
-    std::uint8_t midiPan = midiTrack->calcMidiPanoramGP(track->getPan());
-    std::uint8_t midiVol = midiTrack->calcMidiVolumeGP(track->getVolume());
+    std::uint8_t midiPan = midiTrack->calcMidiPanoramFromTab(track->getPan());
+    std::uint8_t midiVol = midiTrack->calcMidiVolumeFromTab(track->getVolume());
     midiTrack->pushChangeInstrument(instrument, channel);
     midiTrack->pushChangePanoram(midiPan, channel);
     midiTrack->pushChangeVolume(midiVol, channel);
@@ -269,7 +269,7 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
         }
 
        if (det)
-            rOffset = midiTrack->calcRhythmDetail(det,rOffset); //FEW MISSING
+            rOffset = midiTrack->calculateRhythmDetail(det,rOffset); //FEW MISSING
     }
     else
     {
@@ -305,13 +305,13 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
               if (changes->at(indexChange).changeType==8) {
                   //size_t newBPM = changes->at(indexChange).changeValue; //skipped according to time line  //REVIEW, INSURE
                   //pushChangeBPM(newBPM,accum);
-                  //takeAccum();
+                  //flushAccum();
               }
 
               if (changes->at(indexChange).changeType==1) {
                  size_t newInstr = changes->at(indexChange).changeValue;
-                 midiTrack->pushChangeInstrument(newInstr,channel, midiTrack->accum);
-                 midiTrack->takeAccum();
+                 midiTrack->pushChangeInstrument(newInstr,channel, midiTrack->getAccum());
+                 midiTrack->flushAccum();
               }
 
               if (changes->at(indexChange).changeType==2) {
@@ -360,14 +360,14 @@ void gtmy::exportBeat(Beat* beat, MidiTrack* midiTrack, size_t channel, short sp
 
     if (beat->getEffects().getEffectAt(Effect::FadeIn)) //fade in
     {
-        midiTrack->pushFadeIn(midiTrack->accum, channel);
-        midiTrack->takeAccum();
+        midiTrack->pushFadeIn(midiTrack->getAccum(), channel);
+        midiTrack->flushAccum();
     }
 
     if (beat->getEffects().getEffectAt(Effect::Tremolo)) //tremolo
     {
-        midiTrack->pushTremolo(midiTrack->accum);
-        midiTrack->takeAccum();
+        midiTrack->pushTremolo(channel, midiTrack->getAccum());
+        midiTrack->flushAccum();
     }
 
     exportPostEffect(beat, midiTrack, channel);
@@ -391,7 +391,7 @@ bool gtmy::exportSingalsFromNoteOn(Note* note, MidiTrack* midiTrack, std::uint8_
 
     std::uint8_t fret = note->getFret();
     std::uint8_t stringN = note->getStringNumber();
-    std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1];
+    std::uint8_t midiNote = fret + midiTrack->getTunes()[stringN-1];
 
     std::uint8_t volume = note->getVolume();
     std::uint8_t midiVelocy = volume*15; //calcMidiVolumeGP(volume);
@@ -466,7 +466,7 @@ bool gtmy::exportSingalsFromNoteOff(Note* note, MidiTrack* midiTrack, std::uint8
 
     std::uint8_t fret = note->getFret();
     std::uint8_t stringN = note->getStringNumber();
-    std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1];
+    std::uint8_t midiNote = fret + midiTrack->getTunes()[stringN-1];
 
     //std::uint8_t volume = note->getVolume();
     std::uint8_t midiVelocy = 80; //calcMidiVolumeGP(volume);
@@ -498,7 +498,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
 
         std::uint8_t fret = note->getFret();
         std::uint8_t stringN = note->getStringNumber();
-        std::uint8_t midiNote = fret + midiTrack->tunes[stringN-1];
+        std::uint8_t midiNote = fret + midiTrack->getTunes()[stringN-1];
 
         //std::uint8_t volume = note->getVolume();
         std::uint8_t midiVelocy = 95; //calcMidiVolumeGP(volume);
@@ -508,8 +508,8 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
 
         if (noteState == Note::deadNote) //dead note
         {
-            short tempAccum = midiTrack->accum;
-            midiTrack->accum = 20;
+            short tempAccum = midiTrack->getAccum();
+            midiTrack->setAccum(20);
             midiTrack->pushNoteOff(midiNote,midiVelocy,channel);
 
             if (tempAccum > 20)
@@ -517,13 +517,13 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             else
                 tempAccum = 0;
 
-            midiTrack->accum = tempAccum;
+            midiTrack->setAccum(tempAccum);
             //DEAD NOTE
         }
 
         if (note->getEffects().getEffectAt(Effect::GraceNote))
         {
-            short int graceLen = (midiTrack->accum/8);
+            short int graceLen = (midiTrack->getAccum()/8);
             if (graceLen == 0)
                 graceLen = 1;
 
@@ -531,7 +531,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             midiTrack->push_back(std::move(mSignalGraceOff));
             auto mSignalOn = MidiSignal(0x90  | channel,midiNote,midiVelocy,1);
             midiTrack->push_back(std::move(mSignalOn));
-            midiTrack->accum -= graceLen;
+            midiTrack->accumulate(-graceLen);
         }
 
         if (note->getEffects().inRange(Effect::Hammer, Effect::Legato))
@@ -539,21 +539,21 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             if ( (note->getEffects() == Effect::Slide) || (note->getEffects() == Effect::LegatoSlide))
             {
                    //if (effects==5) velocyShift=19; //set decreace legatto slide
-                    short int slideStep = midiTrack->accum/8;
+                    short int slideStep = midiTrack->getAccum()/8;
                     midiTrack->pushSlideUp(channel,2,slideStep);//channel + shift
-                    midiTrack->takeAccum();
+                    midiTrack->flushAccum();
             }
             else if ((note->getEffects() == Effect::SlideDownV2) || (note->getEffects() == Effect::SlideDownV1))
             {
-                short int slideStep = midiTrack->accum/8;
+                short int slideStep = midiTrack->getAccum()/8;
                 midiTrack->pushSlideDown(channel,7,slideStep);//channel + shift
-                midiTrack->takeAccum();
+                midiTrack->flushAccum();
             }
             else if ((note->getEffects() == Effect::SlideUpV2)|| (note->getEffects() == Effect::SlideUpV1))
             {
-                short int slideStep = midiTrack->accum/8;
+                short int slideStep = midiTrack->getAccum()/8;
                 midiTrack->pushSlideUp(channel,7,slideStep);//channel + shift
-                midiTrack->takeAccum();
+                midiTrack->flushAccum();
 
             }
             else if (note->getEffects() == Effect::Legato)
@@ -569,38 +569,37 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
 
         if (note->getEffects().getEffectAt(Effect::TremoloPick)) { //tremolo pick {
             //pushTremoloPick - tremolo pick - trills
-            short int tremoloStep = midiTrack->accum/4;
+            short int tremoloStep = midiTrack->getAccum()/4;
             for (size_t i = 0; i < 3; ++i) {
                 auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,tremoloStep);
                 midiTrack->push_back(std::move(mSignalOff));
                 auto mSignalOn = MidiSignal(0x90 | channel,midiNote,midiVelocy,0);
                 midiTrack->push_back(std::move(mSignalOn));
             }
-            midiTrack->accum = tremoloStep;
-            //takeAccum();
+            midiTrack->setAccum(tremoloStep);
+            //flushAccum();
         }
 
         if (note->getEffects().getEffectAt(Effect::Stokatto)) {
             //stokato - stop earlier
-            short halfAccum = midiTrack->accum/2;
+            short halfAccum = midiTrack->getAccum()/2;
             auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,halfAccum);
             midiTrack->push_back(std::move(mSignalOff));
-            midiTrack->accum = halfAccum;
+            midiTrack->setAccum(halfAccum);
         }
 
         if (note->getEffects().getEffectAt(Effect::Vibrato)) {
-            short int vibroStep = midiTrack->accum/6;
+            short int vibroStep = midiTrack->getAccum()/6;
             midiTrack->pushVibration(channel,3,vibroStep);
-            midiTrack->takeAccum();
+            midiTrack->flushAccum();
         }
-
     }
 }
 
 
 void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t channel) {
-    short rOffset = midiTrack->accum;
-    midiTrack->takeAccum();
+    short rOffset = midiTrack->getAccum();
+    midiTrack->flushAccum();
 
     size_t lastAbs = 0;
     size_t lastH = 0;
