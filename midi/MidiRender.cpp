@@ -12,7 +12,7 @@ using namespace gtmy;
 MidiRender::MidiRender()
 {
     _renderFrameSize = 1024;
-    _sampleRate = 8000; //Was default for fast rendering
+    _sampleRate = 44100;
     _totalMsSpent = 0;
 }
 
@@ -311,46 +311,46 @@ QByteArray MidiRender::renderMemoryFloatNext(const int len)
         if (SampleBlock > SampleCount) SampleBlock = SampleCount;
 
         for (_msRendered += SampleBlock * (1000.0 / _sampleRate);
-             (_trackPosition < _midiTrack->size()) && (_msRendered >= _midiTrack->at(_trackPosition)->absoluteTime());
+             (_trackPosition < _midiTrack->size()) && (_msRendered >= _midiTrack->at(_trackPosition).absoluteTime());
              ++_trackPosition)
         {
             auto& signal = _midiTrack->at(_trackPosition);
 
-            switch (signal->getTypeAndChannel() & 0xf0)
+            switch (signal.getTypeAndChannel() & 0xf0)
             {
                 case TML_PROGRAM_CHANGE:
-                    if (signal->getChannel() != 9) {
-                        _g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex(_soundFont, 0, signal->getParameter1());
-                        if (_g_MidiChannelPreset[signal->getChannel()] < 0)
-                                _g_MidiChannelPreset[signal->getChannel()] = 0;
+                    if (signal.getChannel() != 9) {
+                        _g_MidiChannelPreset[signal.getChannel()] = tsf_get_presetindex(_soundFont, 0, signal.getParameter1());
+                        if (_g_MidiChannelPreset[signal.getChannel()] < 0)
+                                _g_MidiChannelPreset[signal.getChannel()] = 0;
                     }
                     else {
                         int preset_index;
-                        preset_index = tsf_get_presetindex(_soundFont, 128, signal->getChannel());
+                        preset_index = tsf_get_presetindex(_soundFont, 128, signal.getChannel());
                         if (preset_index == -1) preset_index = tsf_get_presetindex(_soundFont, 128, 0);
-                        _g_MidiChannelPreset[signal->getChannel()] = preset_index;
-                        if (_g_MidiChannelPreset[signal->getChannel()] < 0)
-                                _g_MidiChannelPreset[signal->getChannel()] = 0;
+                        _g_MidiChannelPreset[signal.getChannel()] = preset_index;
+                        if (_g_MidiChannelPreset[signal.getChannel()] < 0)
+                                _g_MidiChannelPreset[signal.getChannel()] = 0;
                     }
-                    tsf_channel_set_presetnumber(_soundFont, signal->getChannel(), signal->getParameter1(), (signal->getChannel() == 9));
+                    tsf_channel_set_presetnumber(_soundFont, signal.getChannel(), signal.getParameter1(), (signal.getChannel() == 9));
                     break;
                 case TML_NOTE_ON:
-                    tsf_note_on(_soundFont, _g_MidiChannelPreset[signal->getChannel()], signal->getParameter1(), signal->getParameter2() / 127.0f);
+                    tsf_note_on(_soundFont, _g_MidiChannelPreset[signal.getChannel()], signal.getParameter1(), signal.getParameter2() / 127.0f);
                     break;
                 case TML_NOTE_OFF:
-                    tsf_note_off(_soundFont, _g_MidiChannelPreset[signal->getChannel()], signal->getParameter1());
+                    tsf_note_off(_soundFont, _g_MidiChannelPreset[signal.getChannel()], signal.getParameter1());
                     break;
                 case TML_CONTROL_CHANGE:
-                    tsf_channel_midi_control(_soundFont, signal->getChannel(), signal->getParameter1(), signal->getParameter2());
+                    tsf_channel_midi_control(_soundFont, signal.getChannel(), signal.getParameter1(), signal.getParameter2());
                     break;
                 case TML_PITCH_BEND:
-                    tsf_channel_set_pitchwheel(_soundFont, signal->getChannel(), signal->getParameter1());
+                    tsf_channel_set_pitchwheel(_soundFont, signal.getChannel(), signal.getParameter1());
                     break;
                 case TML_SET_TEMPO:
                     //Unhandled
                 break;
                 default:
-                    qDebug() << "EVENT NOT HANDLED: " << static_cast<int>(signal->getEventType());
+                    qDebug() << "EVENT NOT HANDLED: " << static_cast<int>(signal.getEventType());
             }
 
         }
@@ -379,46 +379,46 @@ QByteArray MidiRender::renderMemoryShortNext(const int len)
         if (SampleBlock > SampleCount) SampleBlock = SampleCount;
 
         for (_msRendered += SampleBlock * (1000.0 / _sampleRate);
-             (_trackPosition < _midiTrack->size()) && (_msRendered >= _midiTrack->at(_trackPosition)->absoluteTime());
+             (_trackPosition < _midiTrack->size()) && (_msRendered >= _midiTrack->at(_trackPosition).absoluteTime());
              ++_trackPosition)
         {
             auto& signal = _midiTrack->at(_trackPosition);
 
-            switch (signal->getTypeAndChannel() & 0xf0)
+            switch (signal.getTypeAndChannel() & 0xf0)
             {
                 case TML_PROGRAM_CHANGE:
-                    if (signal->getChannel() != 9) {
-                        _g_MidiChannelPreset[signal->getChannel()] = tsf_get_presetindex(_soundFont, 0, signal->getParameter1());
-                        if (_g_MidiChannelPreset[signal->getChannel()] < 0)
-                                _g_MidiChannelPreset[signal->getChannel()] = 0;
+                    if (signal.getChannel() != 9) {
+                        _g_MidiChannelPreset[signal.getChannel()] = tsf_get_presetindex(_soundFont, 0, signal.getParameter1());
+                        if (_g_MidiChannelPreset[signal.getChannel()] < 0)
+                                _g_MidiChannelPreset[signal.getChannel()] = 0;
                     }
                     else {
                         int preset_index;
-                        preset_index = tsf_get_presetindex(_soundFont, 128, signal->getChannel());
+                        preset_index = tsf_get_presetindex(_soundFont, 128, signal.getChannel());
                         if (preset_index == -1) preset_index = tsf_get_presetindex(_soundFont, 128, 0);
-                        _g_MidiChannelPreset[signal->getChannel()] = preset_index;
-                        if (_g_MidiChannelPreset[signal->getChannel()] < 0)
-                                _g_MidiChannelPreset[signal->getChannel()] = 0;
+                        _g_MidiChannelPreset[signal.getChannel()] = preset_index;
+                        if (_g_MidiChannelPreset[signal.getChannel()] < 0)
+                                _g_MidiChannelPreset[signal.getChannel()] = 0;
                     }
-                    tsf_channel_set_presetnumber(_soundFont, signal->getChannel(), signal->getParameter1(), (signal->getChannel() == 9));
+                    tsf_channel_set_presetnumber(_soundFont, signal.getChannel(), signal.getParameter1(), (signal.getChannel() == 9));
                     break;
                 case TML_NOTE_ON:
-                    tsf_note_on(_soundFont, _g_MidiChannelPreset[signal->getChannel()], signal->getParameter1(), signal->getParameter2() / 127.0f);
+                    tsf_note_on(_soundFont, _g_MidiChannelPreset[signal.getChannel()], signal.getParameter1(), signal.getParameter2() / 127.0f);
                     break;
                 case TML_NOTE_OFF:
-                    tsf_note_off(_soundFont, _g_MidiChannelPreset[signal->getChannel()], signal->getParameter1());
+                    tsf_note_off(_soundFont, _g_MidiChannelPreset[signal.getChannel()], signal.getParameter1());
                     break;
                 case TML_CONTROL_CHANGE:
-                    tsf_channel_midi_control(_soundFont, signal->getChannel(), signal->getParameter1(), signal->getParameter2());
+                    tsf_channel_midi_control(_soundFont, signal.getChannel(), signal.getParameter1(), signal.getParameter2());
                     break;
                 case TML_PITCH_BEND:
-                    tsf_channel_set_pitchwheel(_soundFont, signal->getChannel(), signal->getParameter1());
+                    tsf_channel_set_pitchwheel(_soundFont, signal.getChannel(), signal.getParameter1());
                     break;
                 case TML_SET_TEMPO:
                     //Unhandled
                 break;
                 default:
-                    qDebug() << "EVENT NOT HANDLED: " << static_cast<int>(signal->getEventType());
+                    qDebug() << "EVENT NOT HANDLED: " << static_cast<int>(signal.getEventType());
             }
         }
 

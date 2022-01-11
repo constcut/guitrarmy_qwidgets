@@ -10,7 +10,7 @@
 namespace gtmy {
 
 
-    class MidiTrack : public std::vector<std::unique_ptr<MidiSignal>> {
+    class MidiTrack : public std::vector<MidiSignal> {
 
     public:
 

@@ -91,12 +91,12 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                     int num = newDen = bar->getSignNum(); //TODO shouldn't be -1
                     for (int i = 0; i < num; ++i)
                         if (firstRun){
-                            auto noteOn = std::make_unique<MidiSignal>(0x90 | 9, 33, 127,0);
+                            auto noteOn = MidiSignal(0x90 | 9, 33, 127,0);
                             metronomeClickTrack->push_back(std::move(noteOn));
                             firstRun = false;
                         }
                         else{
-                            auto noteOn = std::make_unique<MidiSignal>(0x90 | 9, 33, 127,metronomeClickSize);
+                            auto noteOn = MidiSignal(0x90 | 9, 33, 127,metronomeClickSize);
                             metronomeClickTrack->push_back(std::move(noteOn));
                         }
                 }
@@ -527,9 +527,9 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             if (graceLen == 0)
                 graceLen = 1;
 
-            auto mSignalGraceOff = std::make_unique<MidiSignal>(0x80  | channel,midiNote+2,80,graceLen-1);
+            auto mSignalGraceOff = MidiSignal(0x80  | channel,midiNote+2,80,graceLen-1);
             midiTrack->push_back(std::move(mSignalGraceOff));
-            auto mSignalOn = std::make_unique<MidiSignal>(0x90  | channel,midiNote,midiVelocy,1);
+            auto mSignalOn = MidiSignal(0x90  | channel,midiNote,midiVelocy,1);
             midiTrack->push_back(std::move(mSignalOn));
             midiTrack->accum -= graceLen;
         }
@@ -571,9 +571,9 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             //pushTremoloPick - tremolo pick - trills
             short int tremoloStep = midiTrack->accum/4;
             for (size_t i = 0; i < 3; ++i) {
-                auto mSignalOff = std::make_unique<MidiSignal>(0x80 | channel,midiNote,midiVelocy,tremoloStep);
+                auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,tremoloStep);
                 midiTrack->push_back(std::move(mSignalOff));
-                auto mSignalOn = std::make_unique<MidiSignal>(0x90 | channel,midiNote,midiVelocy,0);
+                auto mSignalOn = MidiSignal(0x90 | channel,midiNote,midiVelocy,0);
                 midiTrack->push_back(std::move(mSignalOn));
             }
             midiTrack->accum = tremoloStep;
@@ -583,7 +583,7 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
         if (note->getEffects().getEffectAt(Effect::Stokatto)) {
             //stokato - stop earlier
             short halfAccum = midiTrack->accum/2;
-            auto mSignalOff = std::make_unique<MidiSignal>(0x80 | channel,midiNote,midiVelocy,halfAccum);
+            auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,halfAccum);
             midiTrack->push_back(std::move(mSignalOff));
             midiTrack->accum = halfAccum;
         }
@@ -637,7 +637,7 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
             if (midiExportLog)
             qDebug() <<"rStep="<<rhyStep<<"; rAccum="<<rAccum<<"; pSh="<<pitchStep;
 
-            auto mSignalBendOpen = std::make_unique<MidiSignal>(0xE0 |channel,0,lastShift, rAccum);
+            auto mSignalBendOpen = MidiSignal(0xE0 |channel,0,lastShift, rAccum);
             midiTrack->push_back(std::move(mSignalBendOpen));
             rAccum = 0;
 
@@ -653,7 +653,7 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
                 short thisMidiShift = thisShift;
                 short totalShiftNow = lastShift + shiftDone;
 
-                auto mSignalBend = std::make_unique<MidiSignal>(0xE0 | channel,0,totalShiftNow,thisROffset);
+                auto mSignalBend = MidiSignal(0xE0 | channel,0,totalShiftNow,thisROffset);
                 midiTrack->push_back(std::move(mSignalBend));
 
                 if (midiExportLog)
@@ -674,9 +674,9 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
 
     //last point push
     std::uint8_t lastShift = 64+(lastH*32)/4; //decreased from 100
-    auto mSignalBendLast = std::make_unique<MidiSignal>(0xE0 | channel,0,lastShift, rAccum);
+    auto mSignalBendLast = MidiSignal(0xE0 | channel,0,lastShift, rAccum);
     midiTrack->push_back(std::move(mSignalBendLast));
-    auto mSignalBendClose = std::make_unique<MidiSignal>(0xE0 | channel,0,64,0);
+    auto mSignalBendClose = MidiSignal(0xE0 | channel,0,64,0);
     midiTrack->push_back(std::move(mSignalBendClose));
 
     if (midiExportLog)

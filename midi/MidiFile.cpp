@@ -83,8 +83,8 @@ bool MidiFile::readStream(std::ifstream & ifile)
             size_t totalRead = 0;
 			
             while (totalRead < trackSize) {
-                auto singleSignal = std::make_unique<MidiSignal>(); //for those who have troubles in speach
-                size_t signalBytesRead = singleSignal->readStream(ifile);
+                auto singleSignal = MidiSignal(); //for those who have troubles in speach
+                size_t signalBytesRead = singleSignal.readStream(ifile);
 				totalRead += signalBytesRead;
                 at(i)->push_back(std::move(singleSignal));
                 if (midiLog)  qDebug() << "Cycle of events. Read " << totalRead << " of " << trackSize;
@@ -137,7 +137,7 @@ size_t MidiFile::writeStream(std::ofstream &ofile) {
         size_t amountOfEvents = at(i)->size();
 		
 		for (size_t j = 0; j < amountOfEvents; ++j)
-            bytesWritten += at(i)->at(j)->writeStream(ofile);
+            bytesWritten += at(i)->at(j).writeStream(ofile);
 	}
 		
 	return bytesWritten;		
@@ -174,7 +174,7 @@ size_t MidiFile::noMetricsTest(std::ofstream &ofile)
 
         for (size_t j = 0; j < amountOfEvents; ++j)
         {
-            bytesWritten += at(i)->at(j)->writeStream(ofile,true);
+            bytesWritten += at(i)->at(j).writeStream(ofile,true);
         }
     }
 

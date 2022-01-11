@@ -13,9 +13,7 @@
 struct tml_message;
 struct tsf;
 
-
 namespace gtmy {
-
 
     class MidiRender
     {
@@ -52,7 +50,7 @@ namespace gtmy {
         void setVolumeDb(const float newVol) {
             _volume = newVol; }
 
-    private:
+    protected:
 
         QByteArray renderShortNext(const int len);
         QByteArray renderFloatNext(const int len);
@@ -69,7 +67,7 @@ namespace gtmy {
         int _renderFrameSize;
         double _sampleRate;
         float _volume = -6.0;
-        QString _soundfontFile = "fullset.sf2";
+        QString _soundfontFile = "epiano.sf2";
 
         int _g_MidiChannelPreset[16];
         double _msRendered;
