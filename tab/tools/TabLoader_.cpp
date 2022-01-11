@@ -3,14 +3,13 @@
 #include <fstream>
 #include <QDebug>
 
-#include "tab/GmyFile.hpp"
-#include "tab/GtpFiles.hpp"
+#include "tab/tools/GmyFile.hpp"
+#include "tab/tools/GtpFiles.hpp"
 
 
 using namespace gtmy;
 
 
-//TODO move to gtp files
 bool GTabLoader::open(std::string fileName)
 {
     std::ifstream file(fileName, std::ios::binary);
