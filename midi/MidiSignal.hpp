@@ -51,6 +51,7 @@ namespace gtmy {
 
         ChannelMask = 0xF,
         EventTypeMask = 0xF0,
+        DrumTrackMask = 0x9
     };
 
 

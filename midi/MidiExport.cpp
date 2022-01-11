@@ -91,12 +91,12 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
                     int num = newDen = bar->getSignNum(); //TODO shouldn't be -1
                     for (int i = 0; i < num; ++i)
                         if (firstRun){
-                            auto noteOn = MidiSignal(0x90 | 9, 33, 127,0);
+                            auto noteOn = MidiSignal(NoteOnMask | DrumTrackMask, 33, 127,0);
                             metronomeClickTrack.push_back(std::move(noteOn));
                             firstRun = false;
                         }
                         else{
-                            auto noteOn = MidiSignal(0x90 | 9, 33, 127,metronomeClickSize);
+                            auto noteOn = MidiSignal(NoteOnMask | DrumTrackMask, 33, 127,metronomeClickSize);
                             metronomeClickTrack.push_back(std::move(noteOn));
                         }
                 }
@@ -166,7 +166,7 @@ std::unique_ptr<MidiFile> gtmy::exportMidi(Tab* tab, size_t shiftTheCursor) {
         if (track->isDrums())
         {
             ++drumsTrack;
-            size_t realInd = 9;
+            size_t realInd = DrumTrackMask;
             exportTrack(track.get(), &mTrack, realInd, startCursorBar);
         }
         else
@@ -527,9 +527,9 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             if (graceLen == 0)
                 graceLen = 1;
 
-            auto mSignalGraceOff = MidiSignal(0x80  | channel,midiNote+2,80,graceLen-1);
+            auto mSignalGraceOff = MidiSignal(NoteOffMask | channel,midiNote+2,80,graceLen-1);
             midiTrack->push_back(std::move(mSignalGraceOff));
-            auto mSignalOn = MidiSignal(0x90  | channel,midiNote,midiVelocy,1);
+            auto mSignalOn = MidiSignal(NoteOnMask | channel,midiNote,midiVelocy,1);
             midiTrack->push_back(std::move(mSignalOn));
             midiTrack->accumulate(-graceLen);
         }
@@ -540,19 +540,19 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
             {
                    //if (effects==5) velocyShift=19; //set decreace legatto slide
                     short int slideStep = midiTrack->getAccum() / 8;
-                    midiTrack->pushSlideUp(channel,2,slideStep);//channel + shift
+                    midiTrack->pushSlideUp(channel, 2, slideStep);//channel + shift
                     midiTrack->flushAccum();
             }
             else if ((note->getEffects() == Effect::SlideDownV2) || (note->getEffects() == Effect::SlideDownV1))
             {
                 short int slideStep = midiTrack->getAccum()/8;
-                midiTrack->pushSlideDown(channel,7,slideStep);//channel + shift
+                midiTrack->pushSlideDown(channel, 7, slideStep);//channel + shift
                 midiTrack->flushAccum();
             }
             else if ((note->getEffects() == Effect::SlideUpV2)|| (note->getEffects() == Effect::SlideUpV1))
             {
                 short int slideStep = midiTrack->getAccum()/8;
-                midiTrack->pushSlideUp(channel,7,slideStep);//channel + shift
+                midiTrack->pushSlideUp(channel, 7, slideStep);//channel + shift
                 midiTrack->flushAccum();
 
             }
@@ -569,11 +569,11 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
 
         if (note->getEffects().getEffectAt(Effect::TremoloPick)) { //tremolo pick {
             //pushTremoloPick - tremolo pick - trills
-            short int tremoloStep = midiTrack->getAccum()/4;
+            short int tremoloStep = midiTrack->getAccum() / 4;
             for (size_t i = 0; i < 3; ++i) {
-                auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,tremoloStep);
+                auto mSignalOff = MidiSignal(NoteOffMask | channel, midiNote, midiVelocy, tremoloStep);
                 midiTrack->push_back(std::move(mSignalOff));
-                auto mSignalOn = MidiSignal(0x90 | channel,midiNote,midiVelocy,0);
+                auto mSignalOn = MidiSignal(NoteOnMask | channel, midiNote, midiVelocy, 0);
                 midiTrack->push_back(std::move(mSignalOn));
             }
             midiTrack->setAccum(tremoloStep);
@@ -582,15 +582,15 @@ void gtmy::exportPostEffect(Beat* beat, MidiTrack* midiTrack, std::uint8_t chann
 
         if (note->getEffects().getEffectAt(Effect::Stokatto)) {
             //stokato - stop earlier
-            short halfAccum = midiTrack->getAccum()/2;
-            auto mSignalOff = MidiSignal(0x80 | channel,midiNote,midiVelocy,halfAccum);
+            short halfAccum = midiTrack->getAccum() / 2;
+            auto mSignalOff = MidiSignal(NoteOffMask | channel,midiNote,midiVelocy,halfAccum);
             midiTrack->push_back(std::move(mSignalOff));
             midiTrack->setAccum(halfAccum);
         }
 
         if (note->getEffects().getEffectAt(Effect::Vibrato)) {
-            short int vibroStep = midiTrack->getAccum()/6;
-            midiTrack->pushVibration(channel,3,vibroStep);
+            short int vibroStep = midiTrack->getAccum() / 6;
+            midiTrack->pushVibration(channel, 3, vibroStep);
             midiTrack->flushAccum();
         }
     }
@@ -624,19 +624,19 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
 
         if (shiftH != 0)
         {
-            std::uint8_t lastShift = 64+(lastH*32)/4; //decreased from 100 to 4
-            std::uint8_t curShift = 64+(curH*32)/4; //next
+            std::uint8_t lastShift = 64 + (lastH * 32) / 4; //decreased from 100 to 4
+            std::uint8_t curShift = 64 + (curH * 32) / 4; //next
 
             if (midiExportLog)
             qDebug() <<"lastShiftPitch="<<lastShift<<"; curShiftPitch="<<curShift;
 
-            double rhyStep = (shiftAbs*rOffset)/600.0; //10 steps
-            double pitchStep = (curShift-lastShift)/10.0;
+            double rhyStep = (shiftAbs*rOffset) / 600.0; //10 steps
+            double pitchStep = (curShift-lastShift) / 10.0;
 
             if (midiExportLog)
             qDebug() <<"rStep="<<rhyStep<<"; rAccum="<<rAccum<<"; pSh="<<pitchStep;
 
-            auto mSignalBendOpen = MidiSignal(0xE0 |channel,0,lastShift, rAccum);
+            auto mSignalBendOpen = MidiSignal(PitchWheelMask | channel,0,lastShift, rAccum);
             midiTrack->push_back(std::move(mSignalBendOpen));
             rAccum = 0;
 
@@ -652,7 +652,7 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
                 short thisMidiShift = thisShift;
                 short totalShiftNow = lastShift + shiftDone;
 
-                auto mSignalBend = MidiSignal(0xE0 | channel,0,totalShiftNow,thisROffset);
+                auto mSignalBend = MidiSignal(PitchWheelMask | channel,0,totalShiftNow,thisROffset);
                 midiTrack->push_back(std::move(mSignalBend));
 
                 if (midiExportLog)
@@ -673,9 +673,9 @@ void gtmy::pushBendToTrack(BendPoints* bend, MidiTrack* midiTrack, std::uint8_t 
 
     //last point push
     std::uint8_t lastShift = 64+(lastH*32)/4; //decreased from 100
-    auto mSignalBendLast = MidiSignal(0xE0 | channel,0,lastShift, rAccum);
+    auto mSignalBendLast = MidiSignal(PitchWheelMask | channel, 0, lastShift, rAccum);
     midiTrack->push_back(std::move(mSignalBendLast));
-    auto mSignalBendClose = MidiSignal(0xE0 | channel,0,64,0);
+    auto mSignalBendClose = MidiSignal(PitchWheelMask | channel, 0, 64, 0);
     midiTrack->push_back(std::move(mSignalBendClose));
 
     if (midiExportLog)
