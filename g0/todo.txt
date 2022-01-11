@@ -14,3 +14,6 @@
      (или хотябы красивый вариант для Android из одного плеера, без грязи Win,
      возможно он будет работать и под iOs)
 }
+
+
+https://powertab.github.io/ - gpx\ptb reference
