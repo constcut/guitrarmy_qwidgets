@@ -58,6 +58,7 @@ namespace gtmy {
         void draw(QPainter *painter) override;
 
         virtual void keyevent(std::string press) override;
+
         virtual void onTabCommand(TabCommand command) override;
         virtual void onTrackCommand(TrackCommand command) override;
 

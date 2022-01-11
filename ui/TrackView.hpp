@@ -38,6 +38,7 @@ namespace gtmy {
         virtual ~TrackView();
 
         virtual void keyevent(std::string press) override;
+
         virtual void onTabCommand(TabCommand command) override;
         virtual void onTrackCommand(TrackCommand command) override;
 

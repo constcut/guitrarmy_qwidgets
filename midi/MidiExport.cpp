@@ -1,7 +1,7 @@
 #include "MidiExport.hpp"
 #include "g0/Config.hpp"
 
-bool midiExportLog = false; //TODO +++ MidiEnums
+bool midiExportLog = false;
 
 #include <QDebug>
 
