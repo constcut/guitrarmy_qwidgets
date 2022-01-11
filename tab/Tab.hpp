@@ -23,6 +23,7 @@ namespace gtmy {
 
         Tab() :_isPlaying(false), _displayTrack(0), _currentTrack(0),
             _currentBar(0), _displayBar(0), _lastOpenedTrack(0) {}
+
         virtual ~Tab() = default;
         Tab &operator=(Tab another);
 
@@ -62,7 +63,7 @@ namespace gtmy {
         bool playing() const { return _isPlaying; }
         void setPlaying(bool v) { _isPlaying = v; }
 
-    private:
+    private: //TODO всё перенести в TabCommandHandler который будет friend
 
         size_t _displayTrack;
         size_t _currentTrack;
@@ -71,7 +72,7 @@ namespace gtmy {
         int _lastOpenedTrack;
 
     public:
-        //TODO спрятать бы (мб френд как и для трека??)
+
         size_t& getDisplayTrack() { return _displayTrack; }
         size_t& getCurrentTrack() { return _currentTrack; }
         size_t& getCurrentBar() { return _currentBar; }

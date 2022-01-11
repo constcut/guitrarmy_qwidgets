@@ -11,14 +11,13 @@
 
 namespace gtmy {
 
-    class Tab;
 
+    class Tab;
 
     enum class NoteStates {
         Leeg = 2,
         Dead = 3,
     };
-
 
     class Track : public ChainContainer<Bar, Tab>
     {
@@ -99,7 +98,7 @@ namespace gtmy {
         const GuitarTuning& getTuning() const { return _tuning; }
         GuitarTuning& getTuningRef() { return _tuning; }
 
-    private:
+    private: //TODO всё перенести в TrackCommandHandler
         size_t _cursor;
         size_t _cursorBeat;
         size_t _stringCursor;
