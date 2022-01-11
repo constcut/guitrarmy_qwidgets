@@ -1,10 +1,15 @@
 #include <QCoreApplication>
 
-#define DONT_USE_GMY 1
+#include "g0/Base.hpp"
+
+using namespace gtmy;
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
 
+    BaseStatistics base;
+    base.start("/home/punnalyse/dev/gtab/base/", 166000);
+
+    QCoreApplication a(argc, argv);
     return a.exec();
 }
