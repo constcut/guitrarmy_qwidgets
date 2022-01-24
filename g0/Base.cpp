@@ -93,7 +93,9 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
         }
         else
             prevNote = -1;
+
         addToMap(_midiNoteStats, midiNote);
+        addToMap(_octaveStats, midiNote / 12);
         addToMap(_noteStats, _noteNames[midiNote % 12]);
         addToMap(_trackScale, midiNote % 12);
         addToMap(_fretStats, note->getFret());
@@ -262,7 +264,7 @@ void BaseStatistics::addTrackScaleAndClear() {
 }
 
 
-void BaseStatistics::start(std::string path, size_t count) {
+void BaseStatistics::start(std::string path, size_t count, size_t skip) {
 
     _path = path;
     reset();
@@ -272,8 +274,12 @@ void BaseStatistics::start(std::string path, size_t count) {
 
     for(auto const& file: std::filesystem::directory_iterator{basePath}) {
         ++filesCount;
+
         if (filesCount >= count)
             break;
+
+        if (filesCount < skip)
+            continue;
 
         std::string filePath = file.path();
         if (_loader.open(filePath)) {

@@ -180,9 +180,12 @@ void PlayAnimationThr::setupValues(Tab *tab, Track *track, size_t shiftTheCursor
                 {
                     //qDebug() << "Next wait arhived "<<toTheNextWait<<"; switch to "<<bpmChangeList[changeIndex].newBpm;
 
-                    //all bpm switch position
-                    _bpm =  bpmChangeList[changeIndex].newBpm;
-                    //qDebug() << "Changed bpm to "<<bpm;
+
+                    const auto newBpm = bpmChangeList[changeIndex].newBpm;
+
+                    if (newBpm != 0)
+                        _bpm =  newBpm;
+
 
                     {
                         ++changeIndex;

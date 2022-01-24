@@ -22,7 +22,7 @@ namespace gtmy {
 
     public:
 
-        void start(std::string path, size_t count);
+        void start(std::string path, size_t count, size_t skip=0);
 
     private:
 
