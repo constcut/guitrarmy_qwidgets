@@ -38,6 +38,8 @@ void BaseStatistics::reset() {
     _scalesStats.clear();
     _trackMostFreqNoteStats.clear();
     _trackSecondsLength.clear();
+    _stringsFretsStats = std::vector<std::unordered_map<int16_t, size_t>>(8);
+    _stringsEffectsStats = std::vector<std::unordered_map<std::string, size_t>>(8);
     _totalLength = 0;
 }
 
@@ -96,9 +98,13 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
         addToMap(_fretStats, note->getFret());
         addToMap(_notesVolumeStats, note->getVolume());
 
+        addToMap(_stringsFretsStats[stringNum-1], note->getFret());
+
         for (int16_t i = 1; i < 31; ++i)
-            if (note->getEffects() == static_cast<Effect>(i))
+            if (note->getEffects() == static_cast<Effect>(i)) {
                 addToMap(_noteEffectsStats, _effectNames[i]);
+                addToMap(_stringsEffectsStats[stringNum-1], _effectNames[i]);
+            }
     }
     else {
         addToMap(_drumNoteStats, note->getFret());
@@ -309,11 +315,20 @@ void BaseStatistics::writeAllCSV() {
     saveStats(_trackMostFreqNoteStats, "trackMostFreqNote");
     saveStats(_trackSecondsLength, "trackSecondsLength");
 
+
+    for (size_t i = 0; i < _stringsFretsStats.size(); ++i) {
+        saveStats(_stringsFretsStats[i], "string" + std::to_string(i+1) + "Frets");
+        saveStats(_stringsEffectsStats[i], "string" + std::to_string(i+1) + "Effects");
+    }
+
     const double minutes = _totalLength / 60.0;
     const double hours = minutes / 60.0;
     const double days = hours / 24.0;
+    const double moonMonthes = days / 29.5;
 
     std::cout << "Total seconds of tabs processed: " << _totalLength
               << " minutes: " <<  minutes << " hours: " << hours
               << " days: " << days << std::endl;
+
+    std::cout << "Moon monthes: " << moonMonthes << std::endl;
 }
