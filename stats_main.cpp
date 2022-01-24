@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
 
     BaseStatistics base;
-    base.start("/home/punnalyse/dev/gtab/base/", 166000);
+    base.start("/home/punnalyse/dev/gtab/base/", 1000);
 
     QCoreApplication a(argc, argv);
     return a.exec();

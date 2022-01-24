@@ -53,6 +53,9 @@ namespace gtmy {
         std::unordered_map<std::string, size_t> _trackMostFreqNoteStats;
         std::map<int16_t, size_t> _trackScale;
 
+        std::unordered_map<int32_t, size_t> _trackSecondsLength;
+        int64_t _totalLength;
+
         //TODO vector of stats - frets on each string
         //
 
@@ -84,7 +87,7 @@ namespace gtmy {
         template<typename T>
         void saveStats(std::unordered_map<T, size_t>&container, std::string name) {
             std::cout << container.size() << " " << name << std::endl;
-            std::ofstream os(_path + name + ".csv");
+            std::ofstream os(_path + "/csv/" + name + ".csv");
             os << "value,count" << std::endl;
             using ValuePair = std::pair<T, size_t>;
             std::vector<ValuePair> sortedData(container.begin(), container.end());

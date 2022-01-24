@@ -37,6 +37,8 @@ void BaseStatistics::reset() {
     _noteEffectsStats.clear();
     _scalesStats.clear();
     _trackMostFreqNoteStats.clear();
+    _trackSecondsLength.clear();
+    _totalLength = 0;
 }
 
 
@@ -114,6 +116,8 @@ void BaseStatistics::addTuneStats(GuitarTuning& tune) {
 
 void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab)
 {
+    static auto animationThr = std::make_unique<ThreadLocal>(); //TODO hide in class
+
     addToMap(_bpmStats, tab->getBPM());
     addToMap(_totalTracksStats, tab->size());
 
@@ -130,9 +134,10 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab)
         if (i == 0) {
             addToMap(_totalBarsStats, track->size());
 
-            auto animationThr = std::make_unique<ThreadLocal>();
             animationThr->setupValues(tab.get(), track.get(), 0);
-            double tabLength = animationThr->calculateSeconds();
+            int32_t tabLenSeconds = animationThr->calculateSeconds();
+            addToMap(_trackSecondsLength, tabLenSeconds);
+            _totalLength += tabLenSeconds;
         }
 
         int prevNote = -1;
@@ -302,4 +307,13 @@ void BaseStatistics::writeAllCSV() {
     saveStats(_noteEffectsStats, "noteEffects");
     saveStats(_scalesStats, "scales");
     saveStats(_trackMostFreqNoteStats, "trackMostFreqNote");
+    saveStats(_trackSecondsLength, "trackSecondsLength");
+
+    const double minutes = _totalLength / 60.0;
+    const double hours = minutes / 60.0;
+    const double days = hours / 24.0;
+
+    std::cout << "Total seconds of tabs processed: " << _totalLength
+              << " minutes: " <<  minutes << " hours: " << hours
+              << " days: " << days << std::endl;
 }
