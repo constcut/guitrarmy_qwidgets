@@ -239,16 +239,14 @@ void PlayAnimationThr::addNumDenum(std::uint8_t nu, std::uint8_t de, size_t next
     //log << "Adding n="<<nu<<"; d="<<de<<"; ind="<<nextIndex;
 }
 
-int PlayAnimationThr::calculateSeconds()
+double PlayAnimationThr::calculateSeconds()
 {
-    size_t totalSumm = 0;
+    double totalSumm = 0;
 
     for (size_t i = 0; i < _waitTimes.size(); ++i)
-    {
         totalSumm += _waitTimes[i];
-    }
 
-    int seconds = totalSumm/1000;
+    int seconds = totalSumm/1000.0;
     return seconds;
 }
 

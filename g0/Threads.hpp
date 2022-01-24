@@ -60,7 +60,7 @@ namespace gtmy {
        void addBeatTimes(Bar* bar);
 
        void threadRun();
-       int calculateSeconds();
+       double calculateSeconds();
 
     protected:
        virtual void sleepThread(int ms)=0;

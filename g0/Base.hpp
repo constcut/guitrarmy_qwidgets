@@ -53,6 +53,9 @@ namespace gtmy {
         std::unordered_map<std::string, size_t> _trackMostFreqNoteStats;
         std::map<int16_t, size_t> _trackScale;
 
+        //TODO vector of stats - frets on each string
+        //
+
 
         const std::vector<std::string> _noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
         const std::vector<std::string> _durationNames = {"2/1", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"};

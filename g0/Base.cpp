@@ -1,5 +1,5 @@
 #include "Base.hpp"
-
+#include "Threads.hpp"
 
 using namespace gtmy;
 
@@ -11,8 +11,10 @@ auto addToMap = [](auto& container, auto value) {
 };
 
 
+
+
 void BaseStatistics::reset() {
-    _bpmStats.clear();
+    _bpmStats.clear(); //TODO handlers
     _noteStats.clear();
     _midiNoteStats.clear();
     _drumNoteStats.clear();
@@ -110,18 +112,29 @@ void BaseStatistics::addTuneStats(GuitarTuning& tune) {
 }
 
 
-void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
+void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab)
+{
     addToMap(_bpmStats, tab->getBPM());
     addToMap(_totalTracksStats, tab->size());
 
-    for (size_t i = 0; i < tab->size(); ++i) {
+    for (size_t i = 0; i < tab->size(); ++i)
+    {
+
         auto& track = tab->at(i);
         auto tune = track->getTuning();
         addToMap(_instrumentStats,track->getInstrument());
+
         if (track->isDrums() == false)
             addTuneStats(tune);
-        if (i == 0)
+
+        if (i == 0) {
             addToMap(_totalBarsStats, track->size());
+
+            auto animationThr = std::make_unique<ThreadLocal>();
+            animationThr->setupValues(tab.get(), track.get(), 0);
+            double tabLength = animationThr->calculateSeconds();
+        }
+
         int prevNote = -1;
         for (size_t barI = 0; barI < track->size(); ++barI) {
             auto& bar = track->at(barI);
@@ -141,6 +154,7 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab) {
             addTrackScaleAndClear();
     }
 }
+
 
 std::string BaseStatistics::scaleStructure(int16_t freqNote) {
     auto foundIt = _trackScale.find(freqNote);
@@ -185,6 +199,7 @@ std::string nameDiatonicScale(std::string structure) {
         return "Lokrian";
     return structure;
 }
+
 
 std::string namePentanotincScale(std::string structure) {
     if (structure == "22323")
@@ -264,7 +279,7 @@ void BaseStatistics::start(std::string path, size_t count) {
 
 
 void BaseStatistics::writeAllCSV() {
-    saveStats(_bpmStats, "bpm");
+    saveStats(_bpmStats, "bpm"); //TODO as hanlder uo map
     saveStats(_noteStats, "notes");
     saveStats(_midiNoteStats, "midiNotes");
     saveStats(_drumNoteStats, "drumNotes");

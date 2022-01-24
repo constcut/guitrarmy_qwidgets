@@ -9,6 +9,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
     g0/Base.cpp \
+    g0/Threads.cpp \
     stats_main.cpp \
     tab/Bar.cpp \
     tab/Beat.cpp \
@@ -31,6 +32,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     g0/Base.hpp \
+    g0/Threads.hpp \
     tab/Bar.hpp \
     tab/Beat.hpp \
     tab/BeatStructs.hpp \

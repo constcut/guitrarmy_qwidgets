@@ -51,7 +51,7 @@ namespace gtmy {
         std::vector<TimeLineKnot> _timeLine;
 
         MidiChannelInfo _midiChannels[64];
-        VariableStrings _variableInforation; //TODO load for bast stats
+        VariableStrings _variableInforation; //TODO load for best stats
 
     public:
 
