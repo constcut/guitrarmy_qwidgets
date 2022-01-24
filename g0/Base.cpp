@@ -38,6 +38,7 @@ void BaseStatistics::reset() {
     _scalesStats.clear();
     _trackMostFreqNoteStats.clear();
     _trackSecondsLength.clear();
+    _octaveStats.clear();
     _stringsFretsStats = std::vector<std::unordered_map<int16_t, size_t>>(8);
     _stringsEffectsStats = std::vector<std::unordered_map<std::string, size_t>>(8);
     _totalLength = 0;

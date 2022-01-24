@@ -31,6 +31,7 @@ namespace gtmy {
         std::unordered_map<int16_t, size_t> _bpmStats;
         std::unordered_map<std::string, size_t> _noteStats;
         std::unordered_map<int16_t, size_t> _midiNoteStats;
+        std::unordered_map<int16_t, size_t> _octaveStats;
         std::unordered_map<int16_t, size_t> _drumNoteStats;
         std::unordered_map<std::string, size_t> _barSizeStats;
         std::unordered_map<std::string, size_t> _durStats;
