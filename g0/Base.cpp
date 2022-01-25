@@ -156,7 +156,6 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab)
                 addToMap(_barDenomStats, bar->getSignDenum());
             }
 
-
             addToMap(_totalBeatsStats, bar->size());
             for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                 auto& beat = bar->at(beatI);
@@ -324,6 +323,8 @@ void BaseStatistics::writeAllCSV() {
 
     saveStats(_barNumStats, "barNums");
     saveStats(_barDenomStats, "barDenums");
+
+    saveStats(_octaveStats, "octaves");
 
 
     for (size_t i = 0; i < _stringsFretsStats.size(); ++i) {
