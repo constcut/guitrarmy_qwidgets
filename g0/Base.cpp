@@ -42,6 +42,9 @@ void BaseStatistics::reset() {
     _stringsFretsStats = std::vector<std::unordered_map<int16_t, size_t>>(7);
     _stringsEffectsStats = std::vector<std::unordered_map<std::string, size_t>>(7);
     _totalLength = 0;
+
+    _barNumStats.clear();
+    _barDenomStats.clear();
 }
 
 
@@ -49,16 +52,10 @@ void BaseStatistics::reset() {
 void BaseStatistics::makeBeatStats(std::unique_ptr<Beat>& beat, GuitarTuning& tune) {
     auto dur = beat->getDuration();
     if (beat->getPause()) {
-        if (dur < _durationNames.size())
-            addToMap(_pauseDurStats, _durationNames[dur]);
-        else
-            addToMap(_pauseDurStats, std::to_string(dur));
+        addToMap(_pauseDurStats, dur);
     }
     else {
-        if (dur < _durationNames.size())
-            addToMap(_durStats, _durationNames[dur]);
-        else
-            addToMap(_durStats, std::to_string(dur));
+        addToMap(_durStats, dur);
 
         if (beat->size() == 2) {
             auto& note1 = beat->at(0);
@@ -96,8 +93,8 @@ void BaseStatistics::makeNoteStats(std::unique_ptr<Note>& note, size_t beatSize,
 
         addToMap(_midiNoteStats, midiNote);
         addToMap(_octaveStats, midiNote / 12);
-        addToMap(_noteStats, _noteNames[midiNote % 12]);
-        addToMap(_trackScale, midiNote % 12);
+        addToMap(_noteStats, midiNote % 12);
+        addToMap(_trackScale, midiNote % 12); //Difference is in post processing
         addToMap(_fretStats, note->getFret());
         addToMap(_notesVolumeStats, note->getVolume());
 
@@ -152,9 +149,14 @@ void BaseStatistics::makeTabStats(std::unique_ptr<Tab>& tab)
         int prevNote = -1;
         for (size_t barI = 0; barI < track->size(); ++barI) {
             auto& bar = track->at(barI);
-            if (i == 0)
-                addToMap(_barSizeStats, std::to_string(bar->getSignNum()) + "/" +
-                         std::to_string(bar->getSignDenum()));
+            if (i == 0) {
+                addToMap(_barSizeStats, static_cast<double>(bar->getSignNum()) /  bar->getSignDenum());
+
+                addToMap(_barNumStats, bar->getSignNum());
+                addToMap(_barDenomStats, bar->getSignDenum());
+            }
+
+
             addToMap(_totalBeatsStats, bar->size());
             for (size_t beatI = 0; beatI < bar->size(); ++beatI) {
                 auto& beat = bar->at(beatI);
@@ -239,10 +241,8 @@ void BaseStatistics::addTrackScaleAndClear() {
     [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
         return lhs.second < rhs.second; });
 
-
-
     std::string noteName = _noteNames[mostFrequent->first];
-    addToMap(_trackMostFreqNoteStats, noteName);
+    addToMap(_trackMostFreqNoteStats, mostFrequent->first);
 
     if(_trackScale.size() == 7) {
         auto structure = scaleStructure(mostFrequent->first);
@@ -321,6 +321,9 @@ void BaseStatistics::writeAllCSV() {
     saveStats(_scalesStats, "scales");
     saveStats(_trackMostFreqNoteStats, "trackMostFreqNote");
     saveStats(_trackSecondsLength, "trackSecondsLength");
+
+    saveStats(_barNumStats, "barNums");
+    saveStats(_barDenomStats, "barDenums");
 
 
     for (size_t i = 0; i < _stringsFretsStats.size(); ++i) {

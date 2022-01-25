@@ -29,13 +29,17 @@ namespace gtmy {
         std::string _path;
 
         std::unordered_map<int16_t, size_t> _bpmStats;
-        std::unordered_map<std::string, size_t> _noteStats;
+        std::unordered_map<int16_t, size_t> _noteStats;
         std::unordered_map<int16_t, size_t> _midiNoteStats;
         std::unordered_map<int16_t, size_t> _octaveStats;
         std::unordered_map<int16_t, size_t> _drumNoteStats;
-        std::unordered_map<std::string, size_t> _barSizeStats;
-        std::unordered_map<std::string, size_t> _durStats;
-        std::unordered_map<std::string, size_t> _pauseDurStats;
+
+        std::unordered_map<double, size_t> _barSizeStats;
+        std::unordered_map<int16_t, size_t> _barNumStats;
+        std::unordered_map<int16_t, size_t> _barDenomStats;
+
+        std::unordered_map<int16_t, size_t> _durStats;
+        std::unordered_map<int16_t, size_t> _pauseDurStats;
         std::unordered_map<int16_t, size_t> _stringStats;
         std::unordered_map<int16_t, size_t> _fretStats;
         std::unordered_map<std::string, size_t> _tuneStats;
@@ -45,13 +49,15 @@ namespace gtmy {
         std::unordered_map<int16_t, size_t> _absHarmStats;
         std::unordered_map<int16_t, size_t> _instrumentStats;
         std::unordered_map<int16_t, size_t> _notesVolumeStats;
+
         std::unordered_map<int16_t, size_t> _totalTracksStats;
         std::unordered_map<int16_t, size_t> _totalBarsStats;
         std::unordered_map<int16_t, size_t> _totalBeatsStats;
         std::unordered_map<int16_t, size_t> _totalNotesStats;
+
         std::unordered_map<std::string, size_t> _noteEffectsStats;
         std::unordered_map<std::string, size_t> _scalesStats;
-        std::unordered_map<std::string, size_t> _trackMostFreqNoteStats;
+        std::unordered_map<int16_t, size_t> _trackMostFreqNoteStats;
         std::map<int16_t, size_t> _trackScale;
 
         std::unordered_map<int32_t, size_t> _trackSecondsLength;
